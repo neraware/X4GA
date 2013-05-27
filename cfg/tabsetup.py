@@ -409,6 +409,7 @@ CREATE TABLE IF NOT EXISTS `x4`.`cfgmail` (
   `authreq`  tinyint(1) default NULL COMMENT 'Autorizzazione richiesta',
   `authuser` char(128)  default NULL COMMENT 'Nome utente per login smtp',
   `authpswd` char(128)  default NULL COMMENT 'Password per login smtp',
+  `authtls`  tinyint(1) default NULL COMMENT 'Flag TLS',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `index1` (`azienda`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='Setup SMTP'
@@ -932,8 +933,6 @@ UPDATE `cfgsetup`
         
             if oldver<'1.4.43' and ok:
                 
-                #adeguamento struttura tabella stati per aggiunta codice stato 
-                #nella codifica del modello unico di dichiarazione dei redditi
                 db.Execute(r"""ALTER TABLE `x4`.`cfgmail` 
                                     ADD COLUMN `authtls` TINYINT(1) AFTER `authpswd`""")
         
