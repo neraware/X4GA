@@ -1143,8 +1143,8 @@ class DbTable(object):
         
         if 'getcount' in kwargs:
             n = 0
-            if len(self._info.rs)>0:
-                if len(self._info.rs[0])>0:
+            if len(self._info.db.rs)>0:
+                if len(self._info.db.rs[0])>0:
                     n = self._info.db.rs[0][0]
             return n
         
@@ -3355,8 +3355,7 @@ class MultiEticList(DbMem):
 #    
     def GetPrintTable(self, rptdef, rows, cols, row0, col0,
                       startFunc=None, progrFunc=None, endFunc=None):
-        rs0 = self._info.dbetic.GetRecordset()
-        rsp = copy.deepcopy(rs0)
+        rsp = copy.deepcopy(self._info.dbetic.GetRecordset())
         self._info.colonne = cols
         if callable(startFunc):
             startFunc(self)
@@ -3372,5 +3371,4 @@ class MultiEticList(DbMem):
             if callable(endFunc):
                 endFunc(self)
         self.SetRecordset(rsp)
-        self._info.dbetic.SetRecordset(rs0)
         return pt
