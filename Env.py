@@ -290,7 +290,7 @@ class GeneralSetup(Setup):
                   ('shownews', 0),)),                   #flag visualizza modifiche
                  
                 ('Updates',                             #configurazione aggiornamenti
-                 (('url',       'http://www.x4ga.com'), #url aggiornamenti
+                 (('url',       'http://www.x4ga.org'), #url aggiornamenti
                   ('user',      ''),                    #nome utente
                   ('pswd',      ''),                    #password
                   ('folder',    ''),                    #cartella download
@@ -319,10 +319,6 @@ class GeneralSetup(Setup):
         self.loadHosts()
     
     def set(self, sec, opt, val):
-        
-        if sec == 'Updates':
-            if opt == 'url' and val == 'http://astrasrl.dyndns.org':
-                val = 'http://www.x4ga.com'
         
         Setup.set(self, sec, opt, val)
         
