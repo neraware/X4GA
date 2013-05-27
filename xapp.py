@@ -55,9 +55,7 @@ class XApp(wx.App):
     tempfiles = []
     
     keyver = 'x4_version'
-    setupname = 'x4setup'
-    if ver.OSS():
-        setupname += '_oss'
+    setupname = 'x4ga'
     
     def __init__(self, *args, **kwargs):
         
