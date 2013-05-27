@@ -317,20 +317,18 @@ def AboutFunc( parent, call_fit = True, set_sizer = True ):
 
     item8 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item9 = FlatButton( parent, ID_PLUGINS, "Plugins", wx.DefaultPosition, wx.DefaultSize, wx.NO_BORDER )
+    item9 = FlatButton( parent, ID_PLUGINS, "Plugins", wx.DefaultPosition, wx.DefaultSize, 0 )
     item9.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
     item9.SetName( "plugins" )
     item8.Add( item9, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.TOP, 5 )
 
-    item10 = wx.Button( parent, ID_LICINFO, "Visualizza licenza d'uso", wx.DefaultPosition, wx.DefaultSize, wx.NO_BORDER )
-    item10.SetForegroundColour( wx.BLUE )
+    item10 = FlatButton( parent, ID_LICINFO, "Licenza", wx.DefaultPosition, wx.DefaultSize, 0 )
     item10.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
     item10.SetToolTip( wx.ToolTip("Visualizza il testo della licenza d'uso") )
     item10.SetName( "licinfo" )
-    item8.Add( item10, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+    item8.Add( item10, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT, 5 )
 
-    item11 = wx.Button( parent, ID_VERINFO, "Informazioni sulla versione", wx.DefaultPosition, wx.DefaultSize, wx.NO_BORDER )
-    item11.SetForegroundColour( wx.BLUE )
+    item11 = FlatButton( parent, ID_VERINFO, "Versione", wx.DefaultPosition, wx.DefaultSize, 0 )
     item11.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
     item11.SetToolTip( wx.ToolTip("Visualizza l'elenco delle modifiche apportate in questa versione e quelle precedenti") )
     item11.SetName( "verinfo" )
