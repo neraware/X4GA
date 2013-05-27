@@ -81,7 +81,7 @@ class ListiniAttualiGrid(dbglib.DbGridColoriAlternati):
         
         for l in range(1,bt.MAGNUMLIS+1):
             n = 'listino_prezzo%d'%l
-            a((wp, (cc(n),               "Listino #%d"%l, _PRZ, False)))
+            a((wp, (cc(n),     self.get_listino_title(l), _PRZ, False)))
         
         a(( 50, (cc("pdc_codice"),       "Cod.",          _STR, True )))
         a((250, (cc("pdc_descriz"),      "Fornitore",     _STR, True )))
@@ -110,6 +110,9 @@ class ListiniAttualiGrid(dbglib.DbGridColoriAlternati):
         sz.SetSizeHints(parent)
         
         self.Bind(gl.EVT_GRID_CELL_LEFT_DCLICK, self.OnDblClick)
+    
+    def get_listino_title(self, l):
+        return "Listino #%d"%l
     
     def OnDblClick(self, event):
         lis = self.dblis

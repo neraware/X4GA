@@ -468,7 +468,7 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
                 C((wp, n, (cn(lis, n), "Sc.L#%d"%l, _PRC, False)))
             
             n = 'prezzo%d'%l
-            C((wp, n, (cn(lis, n), "Listino #%d"%l, _PRE, False)))
+            C((wp, n, (cn(lis, n), self.get_listino_title(l), _PRE, False)))
             
             #ricarica effettiva del listino - visualizzazione
             setattr(self, 'COL_P_VRE%d'%l, None) 
@@ -575,6 +575,9 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
         
         self.lastrow = -1
         self.Bind(gl.EVT_GRID_SELECT_CELL, self.OnSelectCell)
+    
+    def get_listino_title(self, l):
+        return "Listino #%d"%l
     
     def OnSelectCell(self, event):
         if event.GetRow() != self.lastrow:

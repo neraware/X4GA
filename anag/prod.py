@@ -1490,7 +1490,7 @@ class ProdPanel(ga.AnagPanel):
                     c = b(( pw, (cn('ricsco%d'%l), "Sc.L#%d"%l, _PRS, True)))
                     setattr(self, 'COL_SCOLIS%d'%l, c)
                     self.prccols.append(c)
-                c = b(( pw, (cn('prezzo%d'%l), "Listino #%d"%l,  _FLT, True)))
+                c = b(( pw, (cn('prezzo%d'%l), self.GridList_get_listino_title(l),  _FLT, True)))
                 setattr(self, 'COL_PRZ%d'%l, c)
         
         if not bt.MAGDATLIS:
@@ -1531,7 +1531,10 @@ class ProdPanel(ga.AnagPanel):
             grid.Bind(gl.EVT_GRID_SELECT_CELL, self.GridListOnSelected)
             self.Bind(wx.EVT_BUTTON, self.GridListOnCreate, id=wdr.ID_BTNLISTNEW)
             self.Bind(wx.EVT_BUTTON, self.GridListOnDelete, id=wdr.ID_BTNLISTDEL)
-
+    
+    def GridList_get_listino_title(self, l):
+        return "Listino #%d"%l
+    
     def GridListGetAttr(self, row, col, rscol, attr=gl.GridCellAttr):
         #blocco editazione su cella ID
         lis = self.dblis
