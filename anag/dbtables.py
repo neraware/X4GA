@@ -1050,3 +1050,13 @@ class GriglieCollegateClienti(GriglieCollegatePdc_):
 
 class GriglieCollegateFornit(GriglieCollegatePdc_):
     anag_table = bt.TABNAME_FORNIT
+
+
+
+
+class Recapiti(adb.DbTable):
+    
+    def __init__(self):
+        adb.DbTable.__init__(self, 'recapiti')
+        self.Reset()
+        
