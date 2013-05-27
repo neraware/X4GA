@@ -118,6 +118,33 @@ class _PdcRangeCode(object):
 # ------------------------------------------------------------------------------
 
 
+class RecapitiGrid(dbglib.ADB_Grid):
+    
+    def __init__(self, parent, dbrec):
+        
+        dbglib.ADB_Grid.__init__(self, parent, db_table=dbrec, 
+                                 can_edit=True, can_insert=True, 
+                                 on_menu_select='row')
+        rec = self.dbrec = dbrec
+        
+        AC = self.AddColumn
+        self.COL_TIPO = AC(rec, 'tipo',    'Tipo', col_width=40, is_editable=True)
+        self.COL_RECA = AC(rec, 'descriz', 'Recapito', col_width=200, is_fittable=True, is_editable=True)
+        self.COL_NOTE = AC(rec, 'note',    'Note', col_width=200, is_editable=True)
+        
+        self.CreateGrid()
+    
+    def OnContextMenu(self, event):
+        self.ResetContextMenu()
+        self.AppendContextMenuVoice('Elimina recapito', self.OnDeleteRecapito)
+        dbglib.ADB_Grid.OnContextMenu(self, event)
+    
+    def OnDeleteRecapito(self, event):
+        rec = self.dbrec
+        row = self.GetSelectedRows()[0]
+        if 0 <= row < rec.RowsCount():
+            self.DeleteRow(row)
+
 class _PdcRelPanel(ga.AnagPanel,\
                    auto.CfgAutomat,\
                    _PdcRangeCode):
@@ -169,6 +196,8 @@ class _PdcRelPanel(ga.AnagPanel,\
         self._auto_bilcee = None
         
         _PdcRangeCode.__init__(self)
+        
+        self.dbrec = dba.Recapiti()
         
         self.HelpBuilder_SetDir('anag.pdcrel_%s' % str(self.tabanag).capitalize())
     
@@ -223,6 +252,8 @@ class _PdcRelPanel(ga.AnagPanel,\
         if c:
             c.SetFocus()
         
+        self.gridrec = RecapitiGrid(self.FindWindowByName('pangridctt'), self.dbrec)
+        
         if ga.SEARCH_ON_SHOW or not self.complete:
             self.UpdateSearch()
         
@@ -275,6 +306,24 @@ class _PdcRelPanel(ga.AnagPanel,\
         event = ga.AcceptDataChanged()
         event.acceptchanges = True
         wx.PostEvent(self, event)
+        self.LoadRecapiti()
+    
+    def LoadRecapiti(self):
+        if self.db_recid is None:
+            self.dbrec.Reset()
+        else:
+            self.dbrec.Retrieve('id_pdc=%s', self.db_recid)
+        self.gridrec.ChangeData(self.dbrec.GetRecordset())
+    
+    def SaveRecapiti(self):
+        if self.dbrec.RowsCount():
+            for r in self.dbrec:
+                if r.id_pdc != self.db_recid:
+                    r.id_pdc = self.db_recid
+        self.dbrec.Save()
+    
+    def DeleteRecapiti(self, recid):
+        self.dbrec._info.db.Execute("DELETE FROM recapiti WHERE id_pdc=%s", recid)
     
     def CopyFrom_GetLastInserted(self):
         lastid = self.db_last_inserted_id
@@ -369,6 +418,9 @@ class _PdcRelPanel(ga.AnagPanel,\
                 MsgDialog(self, message=repr(e.args))
                 written = False
         
+        if written:
+            self.SaveRecapiti()
+        
         return written
 
     #def TestForDeletion( self ):
@@ -401,7 +453,10 @@ class _PdcRelPanel(ga.AnagPanel,\
             except:
                 pass
         if delete:
+            recid = self.db_recid
             out = ga.AnagPanel.DeleteDataRecord(self)
+            if out:
+                self.DeleteRecapiti(recid)
         return out
 
     def GetDbPrint(self):
