@@ -965,6 +965,31 @@ JOIN movmag_b mov ON mov.id_doc=doc.id
 JOIN pdc ON pdc.id=doc.id_pdc
 WHERE tpd.clasdoc IN ("vencli", "rescli") AND (doc.f_ann IS NULL OR doc.f_ann<>1)
 GROUP BY doc.id""")
+    
+            if oldver<'1.5.00' and ok:
+                
+                #popola la nuova tabella recapiti
+                s = (('T', 'ctt1numtel', 'ctt1nome'),
+                     ('T', 'ctt2numtel', 'ctt2nome'),
+                     ('T', 'ctt3numtel', 'ctt3nome'),
+                     ('E', 'ctt1email', 'ctt1nome'),
+                     ('E', 'ctt2email', 'ctt2nome'),
+                     ('E', 'ctt3email', 'ctt3nome'),)
+                
+                _cmd = "SELECT id"
+                for _type, _reca, _note in s:
+                    _cmd += (', %s, %s' % (_reca, _note))
+                for name in 'clienti fornit'.split():
+                    cmd = _cmd + (" FROM %s" % name)
+                    db.Retrieve(cmd)
+                    for r in db.rs:
+                        for n, (_type, _reca, _note) in enumerate(s):
+                            v_id = r[0]
+                            v_reca, v_note = r[n*2+1], r[n*2+2]
+                            if v_reca or (v_note and _type == "T"):
+                                db.Execute(r"INSERT INTO recapiti (id_pdc, tipo, descriz, note) VALUES (%s, %s, %s, %s)",
+                                           (v_id, _type, v_reca, v_note))
+        
         if ok:
             self.PerformExternalAdaptations()
         
