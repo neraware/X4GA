@@ -1619,16 +1619,25 @@ class Azienda(object):
         TABVOICE_VARLIST = {1: ['listino variabile', ['il', 'un', 'del', 'dal']],
                             2: ['listini variabili', ['i', 'dai', 'dai']]}
         
+        TABNAME_RECAPITI = "recapiti"
+        TABDESC_RECAPITI = "Recapiti"
+        TABSETUP_TABLE_RECAPITI = numtab.next()
+        TABSETUP_CONSTR_RECAPITI = []
+        TABVOICE_RECAPITI = {1: ['recapito', ['il', 'un', 'del', 'dal']],
+                             2: ['recapiti', ['i', 'dai', 'dai']]}
+        
         tabelle = None
         
         idw = 6    #larghezza colonne ID (integer)
         ntw = 1024 #larghezza colonne di tipo note
         dsw = 1024 #larghezza colonna descrizione in dettaglio doc.mag
         
-        std_indexes = ( ("PRIMARY KEY", "id"),
-                        ("UNIQUE KEY",  "codice"),
-                        ("UNIQUE KEY",  "descriz"), )
-        
+        std_indexes = [ ["PRIMARY KEY", "id"],
+                        ["UNIQUE KEY",  "codice"],
+                        ["UNIQUE KEY",  "descriz"], ]
+        @classmethod
+        def get_std_indexes(cls):
+            return []+cls.std_indexes
         
         @classmethod
         def getStdIdWidth(cls):
@@ -1675,7 +1684,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ],
                 [ "tipo",       "CHAR",     1, None, "Tipologia P/E/O", None ] ]
-            cls.bilmas_indexes = cls.std_indexes
+            cls.bilmas_indexes = cls.get_std_indexes()
             
             
             cls.bilcon =\
@@ -1706,7 +1715,7 @@ class Azienda(object):
                                 ((cls.TABSETUP_CONSTR_BILMAS, 'id_bilmas', cls.TABCONSTRAINT_TYPE_NOACTION),
                                  (cls.TABSETUP_CONSTR_BILCON, 'id_bilcon', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.pdctip_indexes = cls.std_indexes
+            cls.pdctip_indexes = cls.get_std_indexes()
             
             
             cls.aliqiva =\
@@ -1727,7 +1736,7 @@ class Azienda(object):
                 [ "pralfc4",    "TINYINT",  1, None, "Flag allegati fornitori col.4", None ],
                 [ "sm11_no",    "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], ]
             
-            cls.aliqiva_indexes = cls.std_indexes
+            cls.aliqiva_indexes = cls.get_std_indexes()
             
             
             cls.agenti =\
@@ -1756,7 +1765,7 @@ class Azienda(object):
             #cls.set_constraints(cls.TABNAME_AGENTI,
                                 #((cls.TABSETUP_CONSTR_ZONE, 'id_zona', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.agenti_indexes = cls.std_indexes
+            cls.agenti_indexes = cls.get_std_indexes()
             
             
             cls.zone =\
@@ -1764,7 +1773,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ] ]
             
-            cls.zone_indexes = cls.std_indexes
+            cls.zone_indexes = cls.get_std_indexes()
             
             
             cls.valute =\
@@ -1773,7 +1782,7 @@ class Azienda(object):
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ],
                 [ "cambio",     "DECIMAL",IVE,    6, "Cambio EURO", None ]  ]
             
-            cls.valute_indexes = cls.std_indexes
+            cls.valute_indexes = cls.get_std_indexes()
             
             
             cls.modpag =\
@@ -1807,7 +1816,7 @@ class Azienda(object):
             cls.set_constraints(cls.TABNAME_MODPAG,
                                 ((cls.TABSETUP_CONSTR_PDC, 'id_pdcpi', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.modpag_indexes = cls.std_indexes
+            cls.modpag_indexes = cls.get_std_indexes()
             
             
             cls.travet =\
@@ -1838,7 +1847,7 @@ class Azienda(object):
             cls.set_constraints(cls.TABNAME_TRAVET,
                                 ((cls.TABSETUP_CONSTR_MOVMAG_H, 'id_travet', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.travet_indexes = cls.std_indexes
+            cls.travet_indexes = cls.get_std_indexes()
             
             
             cls.speinc =\
@@ -1851,7 +1860,7 @@ class Azienda(object):
             cls.set_constraints(cls.TABNAME_SPEINC,
                                 ((cls.TABSETUP_CONSTR_ALIQIVA, 'id_aliqiva', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.speinc_indexes = cls.std_indexes
+            cls.speinc_indexes = cls.get_std_indexes()
             
             
             cls.regiva = \
@@ -1871,7 +1880,7 @@ class Azienda(object):
                 [ "numdocann",  "TINYINT",  1, None, "Flag per stampa anno su numero documento", None ], 
             ]
             
-            cls.regiva_indexes = cls.std_indexes
+            cls.regiva_indexes = cls.get_std_indexes()
             
             
             cls.cfgcontab =\
@@ -1915,7 +1924,7 @@ class Azienda(object):
                                  (cls.TABSETUP_CONSTR_PDC,      'id_pdcrow1',  cls.TABCONSTRAINT_TYPE_NOACTION),
                                  (cls.TABSETUP_CONSTR_TIPEVENT, 'id_tipevent', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.cfgcontab_indexes = cls.std_indexes
+            cls.cfgcontab_indexes = cls.get_std_indexes()
             
             
             cls.catcli =\
@@ -1923,7 +1932,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ], ]
             
-            cls.catcli_indexes = cls.std_indexes
+            cls.catcli_indexes = cls.get_std_indexes()
             
             
             cls.catfor =\
@@ -1931,7 +1940,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ], ]
             
-            cls.catfor_indexes = cls.std_indexes
+            cls.catfor_indexes = cls.get_std_indexes()
             
             
             cls.statcli =\
@@ -1945,7 +1954,7 @@ class Azienda(object):
                 [ "noeffetti",    "TINYINT",  1, None, "Flag per impedire l'uso di mod.pagemento con effetti", None ],
             ]
             
-            cls.statcli_indexes = cls.std_indexes
+            cls.statcli_indexes = cls.get_std_indexes()
             
             
             cls.statfor =\
@@ -1958,7 +1967,7 @@ class Azienda(object):
                 [ "nomov_resfor", "TINYINT",  1, None, "Flag per impedire l'inserimento nei resi a fornitore", None ],
             ]
             
-            cls.statfor_indexes = cls.std_indexes
+            cls.statfor_indexes = cls.get_std_indexes()
             
             
             cls.pdc =\
@@ -2421,7 +2430,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ] ]
             
-            cls.tipart_indexes = cls.std_indexes
+            cls.tipart_indexes = cls.get_std_indexes()
             
             
             cls.catart =\
@@ -2436,7 +2445,7 @@ class Azienda(object):
                                 ((cls.TABSETUP_CONSTR_PDC, 'id_pdcacq', cls.TABCONSTRAINT_TYPE_NOACTION),
                                  (cls.TABSETUP_CONSTR_PDC, 'id_pdcven', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.catart_indexes = cls.std_indexes
+            cls.catart_indexes = cls.get_std_indexes()
             
             
             cls.gruart =\
@@ -2464,7 +2473,7 @@ class Azienda(object):
                 [ "nomov_vencli", "TINYINT",  1, None, "Flag per impedire l'inserimento nelle vendite a cliente", None ],
             ]
             
-            cls.statart_indexes = cls.std_indexes
+            cls.statart_indexes = cls.get_std_indexes()
             
             
             cls.prod =\
@@ -2528,7 +2537,8 @@ class Azienda(object):
             
             cls.prod_indexes = [ ["PRIMARY KEY", "id"],
                                  ["UNIQUE KEY",  "codice"],
-                                 ["KEY",         "id_tipart,descriz"], ]
+                                 ["KEY",         "id_tipart,descriz"],
+                                 ["KEY",         "id_fornit"] ]
             
             
             cls.codartcf =\
@@ -2626,7 +2636,7 @@ class Azienda(object):
             cls.set_constraints(cls.TABNAME_MAGAZZ,
                                 ((cls.TABSETUP_CONSTR_PDC, 'id_pdc', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.magazz_indexes = cls.std_indexes
+            cls.magazz_indexes = cls.get_std_indexes()
             
             
             cls.cfgmagdoc =\
@@ -2746,7 +2756,7 @@ class Azienda(object):
                                  (cls.TABSETUP_CONSTR_CFGMAGDOC, 'id_tdoctra', cls.TABCONSTRAINT_TYPE_NOACTION),
                                  (cls.TABSETUP_CONSTR_PDC,       'id_pdc_ra',  cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.cfgmagdoc_indexes = cls.std_indexes
+            cls.cfgmagdoc_indexes = cls.get_std_indexes()
             
             
             cls.cfgmagmov =\
@@ -2982,7 +2992,7 @@ class Azienda(object):
                 [ "descriz",    "VARCHAR",   60, None, "Descrizione", "NOT NULL" ],
                 [ "macro",      "VARCHAR", 2048, None, "Espressione macro", None] ]
             
-            cls.tiplist_indexes = cls.std_indexes
+            cls.tiplist_indexes = cls.get_std_indexes()
             
             
             cls.tiplist =\
@@ -2992,7 +3002,7 @@ class Azienda(object):
                 [ "tipoprezzo", "CHAR",       1, None, "Tipo prezzo", None ],
                 [ "id_macro",   "VARCHAR", 2048, None, "ID Macro prezzo personalizzato", None] ]
             
-            cls.macro_indexes = cls.std_indexes
+            cls.macro_indexes = cls.get_std_indexes()
             
             
             cls.tracau =\
@@ -3001,7 +3011,7 @@ class Azienda(object):
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", "NOT NULL" ],
                 [ "esclftd",    "TINYINT",  1, None, "Flag esclusione raggruppamento ddt", "UNSIGNED NOT NULL DEFAULT '0'" ] ]
             
-            cls.tracau_indexes = cls.std_indexes
+            cls.tracau_indexes = cls.get_std_indexes()
             
             
             cls.tracur =\
@@ -3010,7 +3020,7 @@ class Azienda(object):
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", "NOT NULL" ],\
                 [ "askvet",     "TINYINT",  1, None, "Flag gestione vettore", "NOT NULL DEFAULT 0" ] ]
             
-            cls.tracur_indexes = cls.std_indexes
+            cls.tracur_indexes = cls.get_std_indexes()
             
             
             cls.traasp =\
@@ -3018,7 +3028,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", "NOT NULL" ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", "NOT NULL" ] ]
             
-            cls.traasp_indexes = cls.std_indexes
+            cls.traasp_indexes = cls.get_std_indexes()
             
             
             cls.trapor =\
@@ -3026,7 +3036,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", "NOT NULL" ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", "NOT NULL" ] ]
             
-            cls.trapor_indexes = cls.std_indexes
+            cls.trapor_indexes = cls.get_std_indexes()
             
             
             cls.tracon =\
@@ -3034,7 +3044,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", "NOT NULL" ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", "NOT NULL" ] ]
             
-            cls.tracon_indexes = cls.std_indexes
+            cls.tracon_indexes = cls.get_std_indexes()
             
             
             cls.cfgeff =\
@@ -3174,7 +3184,7 @@ class Azienda(object):
                                 ((cls.TABSETUP_CONSTR_CFGMAGDOC, 'id_docgen', cls.TABCONSTRAINT_TYPE_NOACTION),
                                  (cls.TABSETUP_CONSTR_MAGAZZ,    'id_chgmag', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.cfgftdif_indexes = cls.std_indexes
+            cls.cfgftdif_indexes = cls.get_std_indexes()
             
             
             cls.cfgftddr =\
@@ -3210,7 +3220,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice gruppo", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione gruppo", None ] ]
             
-            cls.scadgrp_indexes = cls.std_indexes
+            cls.scadgrp_indexes = cls.get_std_indexes()
             
             
             cls.promem =\
@@ -3265,7 +3275,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ] ]
             
-            cls.marart_indexes = cls.std_indexes
+            cls.marart_indexes = cls.get_std_indexes()
             
             
             cls.pdcrange =\
@@ -3275,7 +3285,7 @@ class Azienda(object):
                 [ "rangemin",   "INT",      6, None, "Range minimo", None ],
                 [ "rangemax",   "INT",      6, None, "Range massimo", None ] ]
             
-            cls.pdcrange_indexes = cls.std_indexes
+            cls.pdcrange_indexes = cls.get_std_indexes()
             
             
             cls.brimas =\
@@ -3283,7 +3293,7 @@ class Azienda(object):
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ],
                 [ "tipo",       "CHAR",     1, None, "Tipologia P/E/O", None ] ]
-            cls.brimas_indexes = cls.std_indexes
+            cls.brimas_indexes = cls.get_std_indexes()
             
             
             cls.bricon =\
@@ -3384,7 +3394,7 @@ class Azienda(object):
             cls.set_constraints(cls.TABNAME_GRUPREZ,
                                 ((cls.TABSETUP_CONSTR_GRUPREZ, 'id_lisdagp', cls.TABCONSTRAINT_TYPE_NOACTION),))
             
-            cls.gruprez_indexes = cls.std_indexes
+            cls.gruprez_indexes = cls.get_std_indexes()
             
             
             cls.sconticc =\
@@ -3558,7 +3568,7 @@ class Azienda(object):
                 [ "hidesearch",   "TINYINT",  1, None, "Flag per nascondere nelle ricerche", None ],
             ]
             
-            cls.statpdc_indexes = cls.std_indexes
+            cls.statpdc_indexes = cls.get_std_indexes()
             
             
             cls.tipevent =\
@@ -3569,7 +3579,7 @@ class Azienda(object):
                  [ "notify_xmppto",  "VARCHAR", 255, None, "Destinatario notifica xmpp", None ],
              ]
             
-            cls.tipevent_indexes = cls.std_indexes
+            cls.tipevent_indexes = cls.get_std_indexes()
             
             
             cls.eventi =\
@@ -3597,7 +3607,7 @@ class Azienda(object):
             
             
             cls.docsemail =\
-               [ [ "id",             "INT",       idw, None, "ID Email", "AUTO_INCREMENT" ],
+               [ [ "id",             "INT",       idw, None, "ID", "AUTO_INCREMENT" ],
                  [ "datcoda",        "DATETIME", None, None, "Data-ora inserimento nella coda", None ],
                  [ "datsend",        "DATETIME", None, None, "Data-ora invio", None ],
                  [ "id_pdc",         "INT",       idw, None, "ID anagrafica cliente/fornitore", None ],
@@ -3618,7 +3628,7 @@ class Azienda(object):
             
             
             cls.varlist =\
-               [ [ "id",             "INT",       idw, None, "ID Email", "AUTO_INCREMENT" ],
+               [ [ "id",             "INT",       idw, None, "ID", "AUTO_INCREMENT" ],
                  [ "id_cliente",     "INT",       idw, None, "ID cliente", None ],
                  [ "id_fornit",      "INT",       idw, None, "ID fornitore", None ],
                  [ "id_marart",      "INT",       idw, None, "ID marca prodotto", None ],
@@ -3632,6 +3642,21 @@ class Azienda(object):
             
             cls.varlist_indexes = [ ["PRIMARY KEY", "id"],
                                     ["KEY",         "id_cliente"], ]
+            
+            
+            cls.recapiti =\
+               [ [ "id",             "INT",       idw, None, "ID", "AUTO_INCREMENT" ],
+                 [ "id_pdc",         "INT",       idw, None, "ID cliente/fornitore", None ],
+                 [ "tipo",           "CHAR",        1, None, "Tipo di recapito", None ],
+                 [ "descriz",        "VARCHAR",    60, None, "Recapito", None ],
+                 [ "note",           "VARCHAR",   ntw, None, "Note recapito", None ],
+             ]
+            
+            cls.set_constraints(cls.TABNAME_RECAPITI,
+                                ((cls.TABSETUP_CONSTR_PDC, 'id_pdc', cls.TABCONSTRAINT_TYPE_CASCADE),))
+            
+            cls.recapiti_indexes = [["PRIMARY KEY", "id"],
+                                    ["KEY",         "id_pdc"], ]
             
             
             cls.tabelle = [ 
@@ -3714,6 +3739,7 @@ class Azienda(object):
                 (cls.TABNAME_EVENTI,    cls.TABDESC_EVENTI,    cls.eventi,    cls.eventi_indexes,    cls.TABSETUP_CONSTR_EVENTI,    cls.TABVOICE_EVENTI    ),
                 (cls.TABNAME_DOCSEMAIL, cls.TABDESC_DOCSEMAIL, cls.docsemail, cls.docsemail_indexes, cls.TABSETUP_CONSTR_DOCSEMAIL, cls.TABVOICE_DOCSEMAIL ),
                 (cls.TABNAME_VARLIST,   cls.TABDESC_VARLIST,   cls.varlist,   cls.varlist_indexes,   cls.TABSETUP_CONSTR_VARLIST,   cls.TABVOICE_VARLIST   ),
+                (cls.TABNAME_RECAPITI,  cls.TABDESC_RECAPITI,  cls.recapiti,  cls.recapiti_indexes,  cls.TABSETUP_CONSTR_RECAPITI,  cls.TABVOICE_RECAPITI  ),
             ]
             
             #alterazioni strutture tabelle da applicazione personalizzata
