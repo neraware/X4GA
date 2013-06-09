@@ -35,6 +35,7 @@ import awc.controls.windows as aw
 
 import anag.pdcrel_wdr as wdr
 import anag
+import anag.lib as alib
 
 from awc.util import GetNamedChildrens
 from awc.util import MsgDialog, MsgDialogDbError
@@ -127,15 +128,45 @@ class RecapitiGrid(dbglib.ADB_Grid):
                                  on_menu_select='row')
         rec = self.dbrec = dbrec
         
+        self._tiprec = {}
+        self._trlist = []
+        for tr in dba.TipoRecapito():
+            self._tiprec[tr.codice] = tr.descriz
+            self._trlist.append((tr.codice, tr.descriz))
         AC = self.AddColumn
-        self.COL_TIPO = AC(rec, 'tipo',    'Tipo', col_width=40, is_editable=True)
+        
+        rs = dbrec.GetRecordset()
+        def get_tiporecapito(row, col):
+            try:
+                gridcol = self.GetTable().rsColumns[col]
+                return self._tiprec.get(rs[row][gridcol], None)
+            except:
+                return ''
+        self.COL_TIPO = AC(rec, 'tipo',    'Tipo', col_width=100, get_cell_func=get_tiporecapito)
         self.COL_RECA = AC(rec, 'descriz', 'Recapito', col_width=200, is_fittable=True, is_editable=True)
         self.COL_NOTE = AC(rec, 'note',    'Note', col_width=200, is_editable=True)
         
         self.CreateGrid()
     
+    def CreateNewRow(self, *args):
+        dbglib.ADB_Grid.CreateNewRow(self, *args)
+        self.db_table.tipo = "T" #telefono x default
+        return True
+    
     def OnContextMenu(self, event):
         self.ResetContextMenu()
+        row = self.GetSelectedRows()[0]
+        if 0 <= row < self.dbrec.RowsCount():
+            for n, tr in enumerate(self._trlist):
+                def setta_tiporecapito(tr):
+                    def setta_tiporecapito(event):
+                        row = self.GetSelectedRows()[0]
+                        self.dbrec.MoveRow(row)
+                        self.dbrec.tipo = tr
+                        self.ResetView()
+                    return setta_tiporecapito
+                self.AppendContextMenuVoice('Imposta come %s' % tr[1], setta_tiporecapito(tr[0]))
+            self.AppendContextMenuVoice('-', None)
         self.AppendContextMenuVoice('Elimina recapito', self.OnDeleteRecapito)
         dbglib.ADB_Grid.OnContextMenu(self, event)
     

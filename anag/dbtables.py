@@ -1053,10 +1053,23 @@ class GriglieCollegateFornit(GriglieCollegatePdc_):
 
 
 
+class TipoRecapito(adb.DbMem):
+    def __init__(self):
+        adb.DbMem.__init__(self, 'codice,descriz')
+        self.Reset()
+        for cod, des in (('C', 'Cellulare'),
+                         ('T', 'Telefono'),
+                         ('F', 'FAX'),
+                         ('M', 'Email'),
+                         ('S', 'Sito Web'),
+                         ('A', 'Altro'),):
+            self.CreateNewRow()
+            self.codice = cod
+            self.descriz = des
+
 
 class Recapiti(adb.DbTable):
     
     def __init__(self):
         adb.DbTable.__init__(self, 'recapiti')
         self.Reset()
-        
