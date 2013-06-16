@@ -835,6 +835,72 @@ class LinkTableCliente(LinkTableCliFor):
 # ------------------------------------------------------------------------------
 
 
+class LinkTableDestin(LinkTable):
+    
+    tipdoc = None
+    
+    def __init__(self, parent, id, name=None, pdcfather=None, **kwargs):
+        LinkTable.__init__(self, parent, id, **kwargs)
+        self.SetDataLink(Env.Azienda.BaseTab.TABNAME_DESTIN, name, None)
+        self.SetMinWidth(500)
+        if pdcfather:
+            self.SetPdcFather(pdcfather)
+    
+    def SetPdc(self, td):
+        self._id_pdc = td
+        if td is None:
+            flt = "1"
+        else:
+            flt = "id_pdc=%d" % td
+        self.SetFilter(flt)
+    
+    def GetSql(self, count=False):
+        tabdes = Env.Azienda.BaseTab.TABNAME_DESTIN
+        tabpdc = Env.Azienda.BaseTab.TABNAME_PDC
+        self.db_alias = """dst"""
+        if count:
+            fields = 'COUNT(*)'
+        else:
+            fields = """dst.id, dst.codice, dst.descriz, 
+                        pdc.id      AS 'pdc_id', 
+                        pdc.codice  AS 'pdc_codice', 
+                        pdc.descriz AS 'pdc_descriz' 
+               """
+        return """SELECT %(fields)s
+                  FROM %(tabdes)s dst
+                  JOIN %(tabpdc)s pdc ON dst.id_pdc=pdc.id""" % locals()
+    
+    def GetSqlOrder(self, field):
+        return """pdc.%s, dst.%s""" % (field, field)
+    
+    def SetDataGrid(self, grid, rs):
+        _STR = gridlib.GRID_VALUE_STRING
+        cols = (( -1, ( 1, "Cod.",         _STR, False)),
+                (200, ( 2, "Destinazione", _STR, False)),
+                ( 35, ( 4, "Cod.",         _STR, False)),
+                (200, ( 5, "Anagrafica",   _STR, False)),
+                )
+        colmap  = [c[1] for c in cols]
+        colsize = [c[0] for c in cols]
+        grid.SetData(rs, colmap)
+        for n, w in enumerate(colsize):
+            if w>=0:
+                grid.SetColumnDefaultSize(n, w)
+                #grid.SetColSize(n, w)
+    
+    def SetPdcFather(self, ctrpdc):
+        assert isinstance(ctrpdc, LinkTableCliFor)
+        from awc.controls.linktable import EVT_LINKTABCHANGED
+        self.GetParent().Bind(EVT_LINKTABCHANGED, self.OnPdcChanged, ctrpdc)
+    
+    def OnPdcChanged(self, event):
+        self.SetPdc(event.GetEventObject().GetValue())
+        event.Skip()
+
+
+# ------------------------------------------------------------------------------
+
+
 class LinkTableFornit(LinkTableCliFor):
     
     tipanacods = "F"
