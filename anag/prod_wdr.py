@@ -239,7 +239,7 @@ def ProdCardFunc( parent, call_fit = True, set_sizer = True ):
     item11.SetName( "_btnattach" )
     item1.Add( item11, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item1.AddGrowableCol( 1 )
+    item1.AddGrowableCol( 2 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
