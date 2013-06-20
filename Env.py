@@ -2103,6 +2103,8 @@ class Azienda(object):
                 [ "cap",        "CHAR",     5, None, "CAP", None ],
                 [ "citta",      "VARCHAR", 60, None, "Città", None ],
                 [ "prov",       "CHAR",     2, None, "Provincia", None ],
+                [ "codfisc",    "CHAR",    16, None, "Cod. fiscale", None ],
+                [ "piva",       "CHAR",    11, None, "Partita IVA", None ],
                 [ "numtel",     "VARCHAR", 60, None, "Num. telefono", None ],
                 [ "numtel2",    "VARCHAR", 60, None, "Num. telefono agg.", None ],
                 [ "numcel",     "VARCHAR", 60, None, "Num. cellulare", None ],

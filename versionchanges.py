@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
     
+    ('1.5.05', None, (
+         ("BET1161",
+         """Implementazione dati stato, p.iva e codice fiscale sulla tabella
+         dei destinatari."""),
+        ),),
+    
     ('1.5.04', dt.Date(2013, 6, 18), (
          ("INT1007",
          """Sulla scheda prodotto il campo descrittivo che si autodimensiona

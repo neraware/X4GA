@@ -863,10 +863,12 @@ RSDES_NUMFAX   = 10
 RSDES_EMAIL    = 11
 RSDES_CONTATTO = 12
 RSDES_PREF     = 13
+RSDES_CODFISC  = 14
+RSDES_PIVA     = 15
 
 
 #campi della tabella destinatari del cliente
-desfields = 'id codice descriz indirizzo cap citta prov numtel numtel2 numcel numfax email contatto pref'.split()
+desfields = 'id codice descriz indirizzo cap citta prov numtel numtel2 numcel numfax email contatto pref codfisc piva'.split()
 
 
 class GrigliaPrezziAttualiPanel(wx.Panel):
@@ -1695,7 +1697,9 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             None, #RSDES_NUMFAX
             None, #RSDES_EMAIL
             None, #RSDES_CONTATTO
-            None])#RSDES_PREF
+            None, #RSDES_PREF
+            None, #RSDES_CODFISC
+            None])#RSDES_PIVA
         if len(self.rsdes) == 1:
             self.rsdes[0][RSDES_PREF] = 1
     
