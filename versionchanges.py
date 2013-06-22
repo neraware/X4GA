@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
     
+    ('1.5.06', dt.Date(2013, 6, 21), (
+         ("INT1008",
+         """Inserimento package per webservices."""),
+        ),),
+    
     ('1.5.05', None, (
          ("BET1161",
          """Implementazione dati stato, p.iva e codice fiscale sulla tabella
