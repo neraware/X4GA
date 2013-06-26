@@ -532,7 +532,11 @@ class AttachmentButton(wx.Button):
                                       style=wx.ICON_ERROR)
                         return
                     try:
-                        os.startfile(file.replace('/','\\'))
+                        if os.sys.platform.startswith('linux'):
+                            file = file.replace('\\', '/')
+                        else:
+                            file = file.replace('/','\\')
+                        os.startfile(file)
                         if am.voiceatt_id is not None:
                             self._voice_playnow = False
                             self.LaunchAttachment(am.voiceatt_id)
