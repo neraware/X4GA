@@ -2021,6 +2021,14 @@ class DocMag(adb.DbTable):
             id_regiva = self.config.caucon.id_regiva
         return id_regiva
     
+    def GetRegIvaTable(self):
+        riv = adb.DbTable('regiva')
+        riv.Reset()
+        id_regiva = self.GetRegIva()
+        if id_regiva is not None:
+            riv.Get(id_regiva)
+        return riv
+    
     def MakeRegCon(self):
         """
         Scrittura registrazione contabile

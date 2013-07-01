@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
     
+    ('1.5.07', None, (
+         ("BET1162",
+         """Introdotta possibilità di determinazione del sottoconto di costo
+         o ricavo per la contabilizzazione dei documenti sulla base del 
+         magazzino utilizzato."""),
+        ),),
+    
     ('1.5.06', dt.Date(2013, 6, 21), (
          ("INT1008",
          """Inserimento package per webservices."""),

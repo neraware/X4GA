@@ -2629,7 +2629,9 @@ class Azienda(object):
               [ [ "id",         "INT",    idw, None, "ID Magazzino", "AUTO_INCREMENT" ],
                 [ "codice",     "CHAR",    10, None, "Codice", None ],
                 [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ],
-                [ "id_pdc",     "INT",    idw, None, "ID sottoconto associato", None ] ]
+                [ "id_pdc",     "INT",    idw, None, "ID sottoconto associato", None ],
+                [ "id_pdcacq",  "INT",    idw, None, "ID Pdc collegamento contabile su acquisti", None ],
+                [ "id_pdcven",  "INT",    idw, None, "ID Pdc collegamento contabile su vendite", None ], ]
             
             cls.set_constraints(cls.TABNAME_MAGAZZ,
                                 ((cls.TABSETUP_CONSTR_PDC, 'id_pdc', cls.TABCONSTRAINT_TYPE_NOACTION),))

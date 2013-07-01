@@ -1347,10 +1347,18 @@ class GridBody(object):
                         DefImporto()
                         self._rowcol = (row+1, gridcol)
             if self.dbdoc.config.colcg == 'X':
-                if mov.prod.id_pdcven:
-                    mov.id_pdccg = mov.prod.id_pdcven
-                elif mov.prod.catart.id_pdcven:
-                    mov.id_pdccg = mov.prod.catart.id_pdcven
+                pdccol = 'id_pdcven'
+                if doc.GetRegIvaTable().tipo == "A":
+                    pdccol = 'id_pdcacq'
+                pdcmag = getattr(doc.magazz, pdccol)
+                pdcpro = getattr(mov.prod, pdccol)
+                pdccat = getattr(mov.prod.catart, pdccol)
+                if pdcmag is not None:
+                    mov.id_pdccg = pdcmag
+                elif pdcpro is not None:
+                    mov.id_pdccg = pdcpro
+                elif pdccat:
+                    mov.id_pdccg = pdccat
             
         elif col == m.RSMOV_PZCONF:
             mov.pzconf = value
