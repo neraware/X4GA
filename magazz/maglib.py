@@ -325,8 +325,7 @@ class GridMovEva(object):
                 if cn(name).GetValue():
                     filt.append(cond)
             if filt:
-                filt = '(mov.f_ann IS NULL OR mov.f_ann=0) AND (%s)'\
-                     % ' OR '.join(filt)
+                filt = ' OR '.join(filt)
             else:
                 filt = 'FALSE'
             mov.AddHaving(filt)
