@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
     
+    ('1.5.08', None, (
+         ("INT1009",
+         """Introdotto modulo per creazione Frame/Dialog OTF."""),
+        ),),
+    
     ('1.5.07', None, (
          ("BET1162",
          """Introdotta possibilità di determinazione del sottoconto di costo
