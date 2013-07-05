@@ -29,7 +29,7 @@ import mx.DateTime as dt
 
 history = (
     
-    ('1.5.08', None, (
+    ('1.5.08', dt.Date(2013, 7, 5), (
          ("INT1009",
          """Introdotto modulo per creazione Frame/Dialog OTF."""),
         ),),
