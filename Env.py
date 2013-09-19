@@ -500,7 +500,7 @@ class LicenseSetup(Setup):
 # ------------------------------------------------------------------------------
 
 
-def InitSettings(ask_missing_config=True):
+def InitSettings(ask_missing_config=True, init_colors=True):
     out = True
     try:
         locale.setlocale( locale.LC_ALL, "it" )
@@ -546,7 +546,8 @@ def InitSettings(ask_missing_config=True):
         Azienda.DB.servername = adb.DEFAULT_HOSTNAME = host
         Azienda.DB.username =   adb.DEFAULT_USERNAME = user
         Azienda.DB.password =   adb.DEFAULT_PASSWORD = psw
-    Azienda.Colours.SetDefaults()
+    if init_colors:
+        Azienda.Colours.SetDefaults()
     return out
     
 
