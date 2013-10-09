@@ -61,6 +61,7 @@ class GridMov(maglib.GridMov):
         pdc = doc.pdc
         iva = mov.iva
         age = doc.agente
+        des = doc.dest
         
         _STR = gl.GRID_VALUE_STRING
         _DAT = gl.GRID_VALUE_DATETIME
@@ -102,6 +103,8 @@ class GridMov(maglib.GridMov):
         a((120, (cn(mov, "note"),      "Note",         _STR, True)))
         a(( 35, (cn(iva, "codice"),    "Cod.",         _STR, True)))
         a(( 90, (cn(iva, "descriz"),   "Aliquota IVA", _STR, True)))
+        a(( 50, (cn(des, "codice"),    "Cod.",         _STR, True)))
+        a((260, (cn(des, "descriz"),   "Destinatario", _STR, True)))
         a(( 35, (cn(age, "codice"),    "Cod.",         _STR, True)))
         a(( 90, (cn(age, "descriz"),   "Agente",       _STR, True)))
         a(( 30, (cn(doc, "f_printed"), "St.",          _CHK, True)))

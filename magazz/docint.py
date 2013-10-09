@@ -106,6 +106,7 @@ class DocIntGrid(dbglib.DbGridColoriAlternati, _DocIntGridMixin):
         pdc = doc.pdc
         mpa = doc.modpag
         age = doc.agente
+        des = doc.dest
         
         _STR = gl.GRID_VALUE_STRING
         _DAT = gl.GRID_VALUE_DATETIME
@@ -128,6 +129,8 @@ class DocIntGrid(dbglib.DbGridColoriAlternati, _DocIntGridMixin):
             (110, (cn(doc,"totimposta"), "Imposta",       _IMP, True)),
             ( 80, (cn(doc,"datrif"),     "Data rif.",     _DAT, True)),
             ( 50, (cn(doc,"numrif"),     "N.Rif.",        _STR, True)),
+            ( 50, (cn(des,"codice"),     "Cod.",          _STR, True)),
+            (290, (cn(des,"descriz"),    "Destinatario",  _STR, True)),
             ( 35, (cn(age,"codice"),     "Cod.",          _STR, True)),
             (120, (cn(age,"descriz"),    "Agente",        _STR, True)),
             ( 30, (cn(doc,"f_printed"),  "St.",           _CHK, True)),
