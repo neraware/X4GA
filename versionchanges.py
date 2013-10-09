@@ -78,6 +78,56 @@ history = (
          """Aggiunto indice per fornitore su tabella prodotti."""),
         ),),
     
+    ('1.4.82', dt.Date(2013, 9, 30), (
+         ("BET1161",
+         """Aggiunta elaborazione per gestire il cambio delle aliquote IVA.
+         La funzione si fa carico di assegnare la nuova aliquota Iva ai prodotti assoggettati alla vecchia aliquota Iva.
+         Inoltre provvede a cambiare conseguentemente eventuali anagrafiche clienti in cui fosse stata specificata l'aliquota IVA prevalente.
+         Provvede inoltre a definire, se necessario nuove scaglioni di spese di incasso ed attribuirle conseguentemente ai clienti."""),
+        ),),
+    
+    
+    ('1.4.81', dt.Date(2013, 9, 19), (
+         ("BUG1141",                
+         """Corretta liquidazione iva, se il risultato della 
+         liquidazione era zero, originava eccezione nel componimento
+         del messaggio."""),
+        ),),
+    
+    ('1.4.80', dt.Date(2013, 9, 12), (
+         ("BUG1139",
+         """Corretta stampa prima nota con iva, ripeteva il
+         sottoconto della prima riga sulle righe iva."""),
+         ("BUG1140",                
+         """Corretta stampa prima nota con iva e cassa banca, 
+         dava errore su riepilogo iva."""),
+         ("BET1161",
+         """Possibilità di inclusione costi e ricavi su stampa
+         registri iva."""),
+        ),),
+    
+    ('1.4.79', dt.Date(2013, 8, 20), (
+         ("BET1160",
+         """Richiamo videate di interrogazione da bottone scheda
+         anagrafica di elementi derivanti dal piano dei conti."""),
+        ),),
+    
+    ('1.4.78', dt.Date(2013, 7, 8), (
+         ("BUG1138",
+         """Flag "con garanzia" su partite di tipo numerico."""),
+        ),),
+    
+    ('1.4.77', dt.Date(2013, 6, 19), (
+         ("BET1159",
+         """Implementata provincia nel file di emissione riba."""),
+        ),),
+    
+    ('1.4.76', dt.Date(2013, 6, 18), (
+         ("BET1158",
+         """Aumentate classificazioni su mod.pagamento: aggiunte cambiale/altro, con
+         garanzia/senza."""),
+        ),),
+    
     ('1.4.75', dt.Date(2013, 5, 13), (
          ("BUG1137",
          """Corretta la determinazione del conto di costo da utilizzare nel dataentry
