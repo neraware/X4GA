@@ -2727,19 +2727,19 @@ class MagazzPanel(aw.Panel,\
                     if not acq.doc.id in doc._info.acqmovann:
                         doc._info.acqmovann[acq.doc.id] = []
                     doc._info.acqmovann[acq.doc.id].append(acq.id)
-            if annacq and not acqdocid in doc._info.acqdocann:
-                #segno x l'annullamento, in fase di scrittura, del documento
-                #acquisito nel caso il tipo di acquisizione lo preveda
-                #ed al documento evaso non rimane altro da evadere
-                a = True
-                for mov in acq:
-                    if mov.annacq != 1:
-                        if mov.tipmov.askvalori in 'QT':
-                            if (mov.qtaacq or 0) < max(0, mov.qta-(mov.total_qtaeva or 0)):
-                                a = False
-                                break
-                if a:
-                    doc._info.acqdocann.append(acqdocid)
+#             if annacq and not acqdocid in doc._info.acqdocann:
+#                 #segno x l'annullamento, in fase di scrittura, del documento
+#                 #acquisito nel caso il tipo di acquisizione lo preveda
+#                 #ed al documento evaso non rimane altro da evadere
+#                 a = True
+#                 for mov in acq:
+#                     if mov.annacq != 1:
+#                         if mov.tipmov.askvalori in 'QT':
+#                             if (mov.qtaacq or 0) < max(0, mov.qta-(mov.total_qtaeva or 0)):
+#                                 a = False
+#                                 break
+#                 if a:
+#                     doc._info.acqdocann.append(acqdocid)
             if modoacq == "A" and not acqdocid in doc._info.acqdocacq:
                 #segno x contrassegnare, in fase di scrittura, il documento
                 #acquisito come 'acquisito'

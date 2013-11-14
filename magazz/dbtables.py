@@ -850,6 +850,29 @@ class DocMag(adb.DbTable):
         if out:
             del self._info.tradocdel[:]
             self._info.deleting = False
+        if out:
+            movs = [str(mov.id_moveva) for mov in self.mov if mov.id_moveva is not None]
+            cmd = """
+            SELECT doc.id
+              FROM movmag_b mov
+              JOIN movmag_h doc ON doc.id=mov.id_doc
+             WHERE mov.id IN (%s)
+          GROUP BY doc.id""" % ','.join(movs)
+            self._info.db.Retrieve(cmd)
+            for _d in self._info.db.rs:
+                doc_id = _d[0]
+                mov = ElencoMovimEva()
+                mov.Retrieve("doc.id=%s", doc_id)
+                ann = True
+                for _ in mov:
+                    if mov.qta and mov.qta > (mov.total_evas_qta or 0):
+                        ann = False
+                        break
+                if ann:
+                    doc = DocMag()
+                    doc.Get(doc_id)
+                    doc.f_ann = 1
+                    doc.Save()
         return out
     
     def AggiornaProdotti(self, deldoc=False):

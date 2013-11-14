@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
     
+    ('1.5.10', dt.Date(2013, 11, 14), (
+         ("BET1163",
+         """Aggiornamento flag documento annullato sui documenti evasi solo 
+         dopo conferma documento."""),
+        ),),
+    
     ('1.5.08', dt.Date(2013, 7, 5), (
          ("INT1009",
          """Introdotto modulo per creazione Frame/Dialog OTF."""),
