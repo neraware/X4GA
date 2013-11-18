@@ -1,9 +1,10 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------------------------
-# Name:         contab/alleg2011.py
+# Name:         contab/spesometro_2013.py
 # Author:       Fabio Cassini <fabio.cassini@gmail.com>
 # Copyright:    (C) 2011 Astra S.r.l. C.so Cavallotti, 122 18038 Sanremo (IM)
+# Copyright:    (C) 2013 Fabio Cassini <fabio.cassini@gmail.com>
 # ------------------------------------------------------------------------------
 # This file is part of X4GA
 # 
@@ -28,7 +29,7 @@ import awc.controls.windows as aw
 import awc.controls.dbgrid as dbgrid
 
 import contab
-import contab.spesometro_2011_wdr as wdr
+import contab.spesometro_2013_wdr as wdr
 
 import contab.dbtables as dbc
 
@@ -96,7 +97,7 @@ class SpesometroPanel(aw.Panel):
         wdr.SpesometroPanelFunc(self)
         cn = self.FindWindowByName
         
-        self.dbspe = dbc.Spesometro2011_AcquistiVendite()
+        self.dbspe = dbc.Spesometro2013_AcquistiVendite()
         self.gridspe = SpesometroGrid(cn('gridpanel'), self.dbspe)
         
         self.regspy = None
@@ -105,8 +106,12 @@ class SpesometroPanel(aw.Panel):
         self.maxpri = None
         
         anno, data1, data2 = map(lambda label: cn(label), 'anno data1 data2'.split())
-        anno.SetValue(Env.Azienda.Login.dataElab.year)
+        
+        anno_init = 2012
+        anno.SetValue(anno_init)#Env.Azienda.Login.dataElab.year)
         self.SetDates()
+        
+        self.SetMassimali(anno_init)
         
         self.SetModo(self.MODO_AGGIORNA)
         
@@ -183,13 +188,13 @@ class SpesometroPanel(aw.Panel):
         event.Skip()
     
     def GeneraFile(self):
-        defaultFile = '%s.TArt21' % Env.Azienda.piva
+        defaultFile = 'Spesometro_%s_%s.csv' % (self.anno, Env.Azienda.piva)
         filename = None
         dlg = wx.FileDialog(self,
                             message="Digita il nome del file da generare",
 #                            defaultDir=pathname,
                             defaultFile=defaultFile,
-                            wildcard="File di esportazione (*.TArt21)|*.TArt21",
+                            wildcard="File di esportazione (*.csv)|*.csv",
                             style=wx.SAVE)
         if dlg.ShowModal() == wx.ID_OK:
             filename = dlg.GetPath()
@@ -202,7 +207,7 @@ class SpesometroPanel(aw.Panel):
             wait = aw.awu.WaitDialog(self, "Generazione file in corso")
             err = None
             try:
-                self.dbspe.Esegui_GeneraFile(filename)
+                self.dbspe.genera_file(filename)
             except Exception, e:
                 err = repr(e.args)
             finally:
@@ -303,7 +308,8 @@ class SpesometroPanel(aw.Panel):
         spe = self.dbspe
         try:
             spe.GetData([(name, cn(name).GetValue()) for name in 'acqvencor data1 data2'.split()], 
-                        solo_all=cn('solo_all').IsChecked(),
+                        solo_anag_all=cn('solo_anag_all').IsChecked(),
+                        solo_caus_all=cn('solo_caus_all').IsChecked(),
                         escludi_bl_anag=cn('escludi_bla').IsChecked(),
                         escludi_bl_stato=cn('escludi_bls').IsChecked(),)
             self.anno = cn('data1').GetValue().year
@@ -331,8 +337,8 @@ class SpesometroPanel(aw.Panel):
                 grid = self.gridspe
                 grid.ChangeData(rs)
                 grid.ResetView()
-            except Exception, e:
-                aw.awu.MsgDialog(self, repr(e.args), style=wx.ICON_ERROR)
+#             except Exception, e:
+#                 aw.awu.MsgDialog(self, repr(e.args), style=wx.ICON_ERROR)
             finally:
                 wx.EndBusyCursor()
             self.SetModo(self.MODO_ESTRAI)
@@ -365,55 +371,74 @@ class SpesometroGrid(dbgrid.ADB_Grid):
         self._col_smlink = s._GetFieldIndex('Reg_Link')
         self._col_smrrif = s._GetFieldIndex('Reg_Rif')
         
-        self.COL_SELECTED = self.AddColumn(s, 'selected', 'Sel.', 
-                                           col_width=40, col_type=self.TypeCheck(), 
-                                           is_editable=True)
-        
-        def GetLinkIndicator(row, col):
-            none =   ''
-            first =  'AGGR.'
-            center = 'aggr.'
-            last =   'aggr*'
-            rs = self.db_table.GetRecordset()
-            value = rs[row][col]
-            smlink = rs[row][self._col_smlink]
-            if smlink is None:
-                return none
-            if row > 0 and rs[row-1][self._col_smlink] != smlink:
-                if rs[row][self._col_smrrif] == 1:
-                    return first
-                return center
-            if row < (len(s.GetRecordset())-1) and rs[row+1][self._col_smlink] != smlink:
-                return last
-            return center
-        
-        self.COL_INDICATR = self.AddColumn(get_cell_func=GetLinkIndicator, 
-                                           col_name='indicator', label='Abb?', col_width=50)
+#         self.COL_SELECTED = self.AddColumn(s, 'selected', 'Sel.', 
+#                                            col_width=40, col_type=self.TypeCheck(), 
+#                                            is_editable=True)
+#           
+#         def GetLinkIndicator(row, col):
+#             none =   ''
+#             first =  'AGGR.'
+#             center = 'aggr.'
+#             last =   'aggr*'
+#             rs = self.db_table.GetRecordset()
+#             value = rs[row][col]
+#             smlink = rs[row][self._col_smlink]
+#             if smlink is None:
+#                 return none
+#             if row > 0 and rs[row-1][self._col_smlink] != smlink:
+#                 if rs[row][self._col_smrrif] == 1:
+#                     return first
+#                 return center
+#             if row < (len(s.GetRecordset())-1) and rs[row+1][self._col_smlink] != smlink:
+#                 return last
+#             return center
+#         
+#         self.COL_INDICATR = self.AddColumn(get_cell_func=GetLinkIndicator, 
+#                                            col_name='indicator', label='Abb?', col_width=50)
         
         self.COL_ANAG_COD = self.AddColumn(s, 'Anag_Cod',       'Cod.', col_width=50)
         self.COL_ANAG_DES = self.AddColumn(s, 'Anag_Descriz',   'Cliente', col_width=300)
         self.COL_ANAG_APF = self.AddColumn(s, 'Anag_AziPer',    'A/P', col_width=35)
         self.COL_ANAG_ALL = self.AddColumn(s, 'Anag_AllegCF',   'All', col_type=self.TypeCheck(), col_width=35)
-        self.COL_ANAG_CFS = self.AddColumn(s, 'Anag_CodFisc',   'Cod.Fiscale', col_width=130)
+        self.COL_ANAG_CFS = self.AddColumn(s, 'Anag_CodFisc',   'Cod.Fiscale', col_width=140)
         self.COL_ANAG_STT = self.AddColumn(s, 'Anag_Nazione',   'Naz.', col_width=40)
-        self.COL_ANAG_PIV = self.AddColumn(s, 'Anag_PIVA',      'P.IVA', col_width=90)
+        self.COL_ANAG_PIV = self.AddColumn(s, 'Anag_PIVA',      'P.IVA', col_width=100)
         
-#        self.COL_CAUS_COD = self.AddColumn(s, 'Cau_Cod',        'Cod.', col_width=40)
-#        self.COL_CAUS_DES = self.AddColumn(s, 'Cau_Descriz',    'Causale', col_width=120)
-
         self.COL_DOCU_DAT = self.AddColumn(s, 'Reg_DatDoc',     'Doc.', col_type=self.TypeDate())
         self.COL_DOCU_NUM = self.AddColumn(s, 'Reg_NumDoc',     'Num.', col_width=60)
         self.COL_RIVA_COD = self.AddColumn(s, 'RegIva_Cod',     'Reg.', col_width=40)
         self.COL_RIVA_NIV = self.AddColumn(s, 'Reg_NumIva',     'Prot.', col_type=self.TypeInteger(6), col_width=50)
-        self.COL_TDAV_MCE = self.AddColumn(s, 'DAV_Merce',      'Merce', col_type=_float)
-        self.COL_TDAV_SRV = self.AddColumn(s, 'DAV_Servizi',    'Servizi', col_type=_float)
-        self.COL_TDAV_ALT = self.AddColumn(s, 'DAV_Altro',      'Altro', col_type=_float)
         self.COL_TIVA_IMP = self.AddColumn(s, 'IVA_Imponib',    'Imponibile', col_type=_float)
-        self.COL_TIVA_IVA = self.AddColumn(s, 'IVA_Imposta',    'Imposta', col_type=_float)
-        self.COL_TIVA_TOT = self.AddColumn(s, 'IVA_Totale',     'Totale', col_type=_float)
         self.COL_TIVA_NIM = self.AddColumn(s, 'IVA_NonImponib', 'Non Imponib.', col_type=_float)
         self.COL_TIVA_ESE = self.AddColumn(s, 'IVA_Esente',     'Esente', col_type=_float)
         self.COL_TIVA_FCA = self.AddColumn(s, 'IVA_FuoriCampo', 'Fuori Campo', col_type=_float)
+        self.COL_TIVA_INE = self.AddColumn(s, 'IVA_AllImpo',    'Importo', col_type=_float)
+        self.COL_TIVA_IVA = self.AddColumn(s, 'IVA_Imposta',    'Imposta', col_type=_float)
+        self.COL_TIVA_TOT = self.AddColumn(s, 'IVA_Totale',     'Totale', col_type=_float)
+        
+        self.COL_FAAT_CNT = self.AddColumn(s, 'fa_att_cnt',     '.#att', col_type=self.TypeInteger(3))
+        self.COL_FAAT_TOT = self.AddColumn(s, 'fa_att_tot',     'Importo', col_type=_float)
+        self.COL_FAAT_IVA = self.AddColumn(s, 'fa_att_iva',     'Imposta', col_type=_float)
+        self.COL_FAAT_VAR = self.AddColumn(s, 'fa_att_var',     'Var.Imponib.', col_type=_float)
+        self.COL_FAAT_VIV = self.AddColumn(s, 'fa_att_viv',     'Var.Imposta', col_type=_float)
+        
+        self.COL_FAPA_CNT = self.AddColumn(s, 'fa_pas_cnt',     '.#pas', col_type=self.TypeInteger(3))
+        self.COL_FAPA_TOT = self.AddColumn(s, 'fa_pas_tot',     'Importo', col_type=_float)
+        self.COL_FAPA_IVA = self.AddColumn(s, 'fa_pas_iva',     'Imposta', col_type=_float)
+        self.COL_FAPA_VAR = self.AddColumn(s, 'fa_pas_var',     'Var.Imponib.', col_type=_float)
+        self.COL_FAPA_VIV = self.AddColumn(s, 'fa_pas_viv',     'Var.Imposta', col_type=_float)
+        
+        self.COL_BLAT_CNT = self.AddColumn(s, 'bl_att_cnt',     '.#att/e', col_type=self.TypeInteger(3))
+        self.COL_BLAT_TOT = self.AddColumn(s, 'bl_att_tot',     'Importo att.', col_type=_float)
+        self.COL_BLAT_IVA = self.AddColumn(s, 'bl_att_iva',     'Imposta att.', col_type=_float)
+        
+        self.COL_BLPA_CNT = self.AddColumn(s, 'bl_pas_cnt',     '.#pas/e', col_type=self.TypeInteger(3))
+        self.COL_BLPA_TOT = self.AddColumn(s, 'bl_pas_tot',     'Importo pas.', col_type=_float)
+        self.COL_BLPA_IVA = self.AddColumn(s, 'bl_pas_iva',     'Imposta pas.', col_type=_float)
+        
+        self.COL_SAAT_CNT = self.AddColumn(s, 'sa_att_cnt',     '.#Sctr', col_type=self.TypeInteger(3))
+        self.COL_SAAT_TOT = self.AddColumn(s, 'sa_att_tot',     'Corrispettivi', col_type=_float)
+        
         self.COL_REG_ID =   self.AddColumn(s, 'Reg_Id',         '#reg', col_width=1)
         
         self.SetColorsByColumn(self.COL_ANAG_COD)
@@ -426,7 +451,7 @@ class SpesometroGrid(dbgrid.ADB_Grid):
     
     def GetRowLabel(self, row):
         if 0 <= row < self.db_table.RowsCount():
-            return str(row+2)
+            return str(row+1)
         return ''
     
     def IsRowOfPdcOrFree(self, row):
@@ -451,42 +476,62 @@ class SpesometroGrid(dbgrid.ADB_Grid):
         return wx.Colour(colors[0], colors[1], b)
     
     def GetAttr(self, row, col, rscol, attr):
-        
+         
         attr = dbgrid.ADB_Grid.GetAttr(self, row, col, rscol, attr)
-        
-        if not self.IsRowOfPdcOrFree(row):
-            attr.SetReadOnly()
-            attr.SetTextColour('lightgray')
-        
-        if col in (self.COL_TDAV_MCE,
-                   self.COL_TDAV_SRV,
-                   self.COL_TDAV_ALT,):
+         
+#         if not self.IsRowOfPdcOrFree(row):
+#             attr.SetReadOnly()
+#             attr.SetTextColour('lightgray')
+#          
+        if col in (self.COL_FAAT_CNT,
+                   self.COL_FAAT_TOT,
+                   self.COL_FAAT_IVA,
+                   self.COL_FAAT_VAR,
+                   self.COL_FAAT_VIV,):
             bg = self.AlterColor(attr.GetBackgroundColour(), -32)
             attr.SetBackgroundColour(bg)
-            
-        elif col in (self.COL_TIVA_IMP,
-                     self.COL_TIVA_NIM,
-                     self.COL_TIVA_ESE,
-                     self.COL_TIVA_FCA,):
+             
+        elif col in (self.COL_FAPA_CNT,
+                     self.COL_FAPA_TOT,
+                     self.COL_FAPA_IVA,
+                     self.COL_FAPA_VAR,
+                     self.COL_FAPA_VIV,):
             bg = self.AlterColor(attr.GetBackgroundColour(), -64)
             attr.SetBackgroundColour(bg)
-        
+            
+        elif col in (self.COL_BLAT_CNT,
+                     self.COL_BLAT_TOT,
+                     self.COL_BLAT_IVA,):
+            bg = self.AlterColor(attr.GetBackgroundColour(), -96)
+            attr.SetBackgroundColour(bg)
+            
+        elif col in (self.COL_BLPA_CNT,
+                     self.COL_BLPA_TOT,
+                     self.COL_BLPA_IVA,):
+            bg = self.AlterColor(attr.GetBackgroundColour(), -128)
+            attr.SetBackgroundColour(bg)
+            
+        elif col in (self.COL_SAAT_CNT,
+                     self.COL_SAAT_TOT,):
+            bg = self.AlterColor(attr.GetBackgroundColour(), -160)
+            attr.SetBackgroundColour(bg)
+         
         return attr
     
-    def _SwapCheckValue(self, row, col):
-        if col != self.COL_SELECTED:
-            return
-        if not self.IsRowOfPdcOrFree(row):
-            return
-        checked = dbgrid.ADB_Grid._SwapCheckValue(self, row, col)
-        if checked:
-            det = self.db_table
-            det.MoveRow(row)
-            self.current_pdc = det.Anag_Id
-        else:
-            if not self.db_table.Locate(lambda det: det.selected is True):
-                self.current_pdc = None
-        self.Refresh()
+#     def _SwapCheckValue(self, row, col):
+#         if col != self.COL_SELECTED:
+#             return
+#         if not self.IsRowOfPdcOrFree(row):
+#             return
+#         checked = dbgrid.ADB_Grid._SwapCheckValue(self, row, col)
+#         if checked:
+#             det = self.db_table
+#             det.MoveRow(row)
+#             self.current_pdc = det.Anag_Id
+#         else:
+#             if not self.db_table.Locate(lambda det: det.selected is True):
+#                 self.current_pdc = None
+#         self.Refresh()
     
     def OnCellSelected(self, event):
         row = event.GetRow()
@@ -524,6 +569,7 @@ class SpesometroGrid(dbgrid.ADB_Grid):
         cn('totanaimp').SetLabel(det.sepnvi(tot_imp))
         cn('totanaiva').SetLabel(det.sepnvi(tot_iva))
         cn('totanatot').SetLabel(det.sepnvi(tot_tot))
+        f.Layout()
     
     def ChangeData(self, new_rs):
         dbgrid.ADB_Grid.ChangeData(self, new_rs)
@@ -557,83 +603,83 @@ class SpesometroGrid(dbgrid.ADB_Grid):
                 self.GetEventHandler().AddPendingEvent(e)
         event.Skip()
     
-    def ShowContextMenu(self, position, row, col):
-        
-        if not self._can_modify:
-            aw.awu.MsgDialog(self, "Aggiornare i dati per apportare modifiche", style=wx.ICON_INFORMATION)
-            return
-        
-        det = self.db_table
-        if not 0 <= row < det.RowsCount():
-            return
-        det.MoveRow(row)
-        
-        righe_sel = det.Chiedi_QualiRigheSonoSelezionate()
-        
-        self.ResetContextMenu()
-        ACM = self.AppendContextMenuVoice
-        
-        def NotificaRegCambiata():
-            self.GetEventHandler().AddPendingEvent(RegChangedEvent())
-        
-        def Reset():
-            for d in det:
-                if d.selected:
-                    d.selected = 0
-            self.current_pdc = None
-            NotificaRegCambiata()
-        
-        wx.BeginBusyCursor()
-        try:
-            
-            riga_ok = row in righe_sel
-            
-            det.MoveRow(row)
-            if len(righe_sel) == 0:# and det.Anag_Associa:
-                def AssociaTutte(event):
-                    det.MoveRow(row)
-                    self.current_pdc = det.Anag_Id
-                    det.Esegui_SelezionaRighePdc(det.Anag_Id)
-                    self.ResetView()
-                ACM('Seleziona tutte le righe del sottoconto', AssociaTutte)
-            
-            det.MoveRow(row)
-            if len(righe_sel) > 0 and det.Anag_Id == self.current_pdc:
-                def DeselezionaRighe(event):
-                    det.Esegui_DeselezionaRighePdc(det.Anag_Id)
-                    self.current_pdc = None
-                    self.ResetView()
-                ACM('Deseleziona righe', DeselezionaRighe)
-            
-            det.MoveRow(row)
-            if det.Chiedi_MancanoChiaviNelleRighe(righe_sel):
-                
-                def AbbinaRighe(event):
-                    det.Esegui_AbbinaRighe(righe_sel)
-                    Reset()
-                    event.Skip()
-                ACM('Aggrega righe', AbbinaRighe, riga_ok)
-                
-            det.MoveRow(row)
-            if det.Chiedi_CiSonoChiaviNelleRighe(righe_sel):
-                def ResettaChiavi(event):
-                    det.Esegui_ResettaChiaviNelleRighe(righe_sel)
-                    Reset()
-                    event.Skip()
-                ACM('Resetta aggregazioni', ResettaChiavi, riga_ok)
-            
-            det.MoveRow(row)
-            if det.Reg_Link is not None:
-                def SetMainReg(event):
-                    det.Esegui_SetMainReg()
-                    Reset()
-                    event.Skip()
-                ACM('Imposta come riferimento per le registrazioni aggregate', SetMainReg, det.Reg_Rif != 1)
-            
-        finally:
-            wx.EndBusyCursor()
-        
-        return dbgrid.ADB_Grid.ShowContextMenu(self, position, row, col)
+#     def ShowContextMenu(self, position, row, col):
+#         
+#         if not self._can_modify:
+#             aw.awu.MsgDialog(self, "Aggiornare i dati per apportare modifiche", style=wx.ICON_INFORMATION)
+#             return
+#         
+#         det = self.db_table
+#         if not 0 <= row < det.RowsCount():
+#             return
+#         det.MoveRow(row)
+#         
+#         righe_sel = det.Chiedi_QualiRigheSonoSelezionate()
+#         
+#         self.ResetContextMenu()
+#         ACM = self.AppendContextMenuVoice
+#         
+#         def NotificaRegCambiata():
+#             self.GetEventHandler().AddPendingEvent(RegChangedEvent())
+#         
+#         def Reset():
+#             for d in det:
+#                 if d.selected:
+#                     d.selected = 0
+#             self.current_pdc = None
+#             NotificaRegCambiata()
+#         
+#         wx.BeginBusyCursor()
+#         try:
+#             
+#             riga_ok = row in righe_sel
+#             
+#             det.MoveRow(row)
+#             if len(righe_sel) == 0:# and det.Anag_Associa:
+#                 def AssociaTutte(event):
+#                     det.MoveRow(row)
+#                     self.current_pdc = det.Anag_Id
+#                     det.Esegui_SelezionaRighePdc(det.Anag_Id)
+#                     self.ResetView()
+#                 ACM('Seleziona tutte le righe del sottoconto', AssociaTutte)
+#             
+#             det.MoveRow(row)
+#             if len(righe_sel) > 0 and det.Anag_Id == self.current_pdc:
+#                 def DeselezionaRighe(event):
+#                     det.Esegui_DeselezionaRighePdc(det.Anag_Id)
+#                     self.current_pdc = None
+#                     self.ResetView()
+#                 ACM('Deseleziona righe', DeselezionaRighe)
+#             
+#             det.MoveRow(row)
+#             if det.Chiedi_MancanoChiaviNelleRighe(righe_sel):
+#                 
+#                 def AbbinaRighe(event):
+#                     det.Esegui_AbbinaRighe(righe_sel)
+#                     Reset()
+#                     event.Skip()
+#                 ACM('Aggrega righe', AbbinaRighe, riga_ok)
+#                 
+#             det.MoveRow(row)
+#             if det.Chiedi_CiSonoChiaviNelleRighe(righe_sel):
+#                 def ResettaChiavi(event):
+#                     det.Esegui_ResettaChiaviNelleRighe(righe_sel)
+#                     Reset()
+#                     event.Skip()
+#                 ACM('Resetta aggregazioni', ResettaChiavi, riga_ok)
+#             
+#             det.MoveRow(row)
+#             if det.Reg_Link is not None:
+#                 def SetMainReg(event):
+#                     det.Esegui_SetMainReg()
+#                     Reset()
+#                     event.Skip()
+#                 ACM('Imposta come riferimento per le registrazioni aggregate', SetMainReg, det.Reg_Rif != 1)
+#             
+#         finally:
+#             wx.EndBusyCursor()
+#         
+#         return dbgrid.ADB_Grid.ShowContextMenu(self, position, row, col)
 
         
 # ------------------------------------------------------------------------------

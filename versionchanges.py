@@ -29,59 +29,104 @@ import mx.DateTime as dt
 
 history = (
     
+    ('1.5.11', dt.Date(2013, 11, 14), (
+         ("BET4164",
+         """Spesometro."""),
+        ),),
+    
     ('1.5.10', dt.Date(2013, 11, 14), (
-         ("BET1163",
+         ("BET4163",
          """Aggiornamento flag documento annullato sui documenti evasi solo 
          dopo conferma documento."""),
         ),),
     
     ('1.5.08', dt.Date(2013, 7, 5), (
-         ("INT1009",
+         ("INT4009",
          """Introdotto modulo per creazione Frame/Dialog OTF."""),
         ),),
     
     ('1.5.07', None, (
-         ("BET1162",
+         ("BET4162",
          """Introdotta possibilità di determinazione del sottoconto di costo
          o ricavo per la contabilizzazione dei documenti sulla base del 
          magazzino utilizzato."""),
         ),),
     
     ('1.5.06', dt.Date(2013, 6, 21), (
-         ("INT1008",
+         ("INT4008",
          """Inserimento package per webservices."""),
         ),),
     
     ('1.5.05', None, (
-         ("BET1161",
+         ("BET4161",
          """Implementazione dati stato, p.iva e codice fiscale sulla tabella
          dei destinatari."""),
         ),),
     
     ('1.5.04', dt.Date(2013, 6, 18), (
-         ("INT1007",
+         ("INT4007",
          """Sulla scheda prodotto il campo descrittivo che si autodimensiona
          a video è ora la descrizione extra."""),
         ),),
     
     ('1.5.03', None, (
-         ("INT1006",
+         ("INT4006",
          """Helper destinatari del cliente"""),
         ),),
     
     ('1.5.02', None, (
-         ("BET1160",
+         ("BET4160",
          """Implementato contatto di riferimento su clienti/fornitori."""),
         ),),
     
     ('1.5.01', dt.Date(2013, 5, 28), (
-         ("BET1159",
+         ("BET4159",
          """Modificata gestione recapiti clienti/fornitori."""),
         ),),
     
     ('1.5.00', None, (
-         ("BET1158",
+         ("BET4158",
          """Aggiunto indice per fornitore su tabella prodotti."""),
+        ),),
+    
+    ('1.4.89', dt.Date(2013, 11, 8), (
+         ("BUG1142",
+         """Corretta estrazione dati spesometro per inclusione
+         autofatture su fornitori."""),
+         ("BUG1143",
+         """Corretta aggregazione dati spesometro in caso di
+         soggetto sia cliente che fornitore."""),
+        ),),
+    
+    ('1.4.87', dt.Date(2013, 11, 8), (
+         ("BET1166",
+         """Corretto encoding in generazione file spesometro."""),
+        ),),
+    
+    ('1.4.86', dt.Date(2013, 11, 7), (
+         ("BET1165",
+         """Adeguamento tabella stati per inclusione codice unico
+         se sprovvista.."""),
+        ),),
+    
+    ('1.4.85', dt.Date(2013, 11, 7), (
+         ("BET1164",
+         """Colorazione in rosso su griglia controllo dati fiscali su
+         clienti e fornitori in base a mancanza codice fiscale se persona,
+         o a mancanza di partita iva se azienda."""),
+        ),),
+    
+    ('1.4.84', dt.Date(2013, 11, 7), (
+         ("BET1163",
+         """Implementazione Spesometro 2013."""),
+        ),),
+    
+    ('1.4.83', dt.Date(2013, 10, 10), (
+         ("BET1162",
+         """Consentita estrazione registrazioni in consultazione spesometro
+         anche per l'anno 2012, al fine di evidenziare le registrazioni
+         considerate e i dati a corredo delle anagrafiche coinvolte, pur
+         con i meccanismi dello spesometro 2012 per l'anno 2011."""),
         ),),
     
     ('1.4.82', dt.Date(2013, 9, 30), (

@@ -26,6 +26,7 @@ import wx
 import lib
 import stormdb as adb
 import rss
+import strumenti
 
 appl = wx.GetApp()
 __app__ = (appl is not None)
@@ -1486,7 +1487,7 @@ class XFrame(aw.Frame):
         self.LaunchFrame(VendAziPrivFrame)
     
     def OnSpesometro(self, event):
-        from contab.spesometro_2011 import SpesometroFrame
+        from contab.spesometro_2013 import SpesometroFrame
         self.LaunchFrame(SpesometroFrame)
     
     def OnCfgAutoContab( self, event ):

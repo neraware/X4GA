@@ -457,16 +457,18 @@ class SelAziendaPanel(aw.Panel):
             db = adb.DB()
             db._dbCon = conn
             db.connected = True
-            db = adb.DbTable(Env.Azienda.BaseTab.TABNAME_CFGSETUP, 'setup', db=db)
-            for key in 'indirizzo cap citta prov codfisc stato piva numtel numfax email titprivacy infatti'.split():
-                if db.Retrieve('setup.chiave=%s',
-                               'azienda_%s' % key) and db.RowsCount() == 1:
-                    if db.flag:
-                        setattr(Env.Azienda, key, db.flag)
-                    elif db.importo:
-                        setattr(Env.Azienda, key, db.importo)
-                    elif db.descriz:
-                        setattr(Env.Azienda, key, db.descriz)
+#             db = adb.DbTable(Env.Azienda.BaseTab.TABNAME_CFGSETUP, 'setup', db=db)
+#             for key in 'indirizzo cap citta prov codfisc stato piva numtel numfax email titprivacy infatti codateco'.split():
+#                 if db.Retrieve('setup.chiave=%s',
+#                                'azienda_%s' % key) and db.RowsCount() == 1:
+#                     if db.flag:
+#                         setattr(Env.Azienda, key, db.flag)
+#                     elif db.importo:
+#                         setattr(Env.Azienda, key, db.importo)
+#                     elif db.descriz:
+#                         setattr(Env.Azienda, key, db.descriz)
+            Env.Azienda.read_dati_azienda(db)
+            Env.Azienda.BaseTab.ReadAziendaSetup()
             wx.GetApp().dbcon = conn
             #conn.close()
             
@@ -983,6 +985,10 @@ VALUES
                         filtmod += ' IS NULL OR azi.modname="")'
                 except MySQLdb.Error, e:
                     pass
+            order = 'azi.azienda, azi.codice'
+            curs.execute("DESCRIBE x4.aziende")
+            if filter(lambda r: r[0] == 'ordine', curs.fetchall()):
+                order = 'azi.ordine, %s' % order
             cn = lambda x: self.FindWindowById(x)
             sql = r"""
               SELECT azi.id, azi.codice, azi.azienda, azi.nomedb
@@ -991,7 +997,7 @@ VALUES
                 JOIN utenti ute ON dir.id_utente=ute.id
                WHERE dir.id_utente=ute.id AND
                      dir.attivo=1 AND ute.descriz=%%s %s
-            ORDER BY azi.azienda, azi.codice""" % filtmod
+            ORDER BY %s""" % (filtmod, order)
             curs.execute(sql, (cn(ID_USER).GetValue(),))
             self.dbaz.SetRecordset(curs.fetchall())
             self.gridaz.ChangeData(self.dbaz.GetRecordset())
