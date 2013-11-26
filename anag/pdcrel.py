@@ -228,8 +228,6 @@ class _PdcRelPanel(ga.AnagPanel,\
         
         _PdcRangeCode.__init__(self)
         
-        self.dbrec = dba.Recapiti()
-        
         self.HelpBuilder_SetDir('anag.pdcrel_%s' % str(self.tabanag).capitalize())
     
     def InitControls(self, *args, **kwargs):
@@ -283,12 +281,15 @@ class _PdcRelPanel(ga.AnagPanel,\
         if c:
             c.SetFocus()
         
-        self.gridrec = RecapitiGrid(self.FindWindowByName('pangridctt'), self.dbrec)
+        self.DataControlsInited()
         
         if ga.SEARCH_ON_SHOW or not self.complete:
             self.UpdateSearch()
         
         return out
+    
+    def DataControlsInited(self):
+        pass
     
     def UpdateDataControls( self, recno ):
         ga.AnagPanel.UpdateDataControls( self, recno, activatechanges=False )
@@ -337,24 +338,6 @@ class _PdcRelPanel(ga.AnagPanel,\
         event = ga.AcceptDataChanged()
         event.acceptchanges = True
         wx.PostEvent(self, event)
-        self.LoadRecapiti()
-    
-    def LoadRecapiti(self):
-        if self.db_recid is None:
-            self.dbrec.Reset()
-        else:
-            self.dbrec.Retrieve('id_pdc=%s', self.db_recid)
-        self.gridrec.ChangeData(self.dbrec.GetRecordset())
-    
-    def SaveRecapiti(self):
-        if self.dbrec.RowsCount():
-            for r in self.dbrec:
-                if r.id_pdc != self.db_recid:
-                    r.id_pdc = self.db_recid
-        self.dbrec.Save()
-    
-    def DeleteRecapiti(self, recid):
-        self.dbrec._info.db.Execute("DELETE FROM recapiti WHERE id_pdc=%s", recid)
     
     def CopyFrom_GetLastInserted(self):
         lastid = self.db_last_inserted_id
@@ -449,9 +432,6 @@ class _PdcRelPanel(ga.AnagPanel,\
                 MsgDialog(self, message=repr(e.args))
                 written = False
         
-        if written:
-            self.SaveRecapiti()
-        
         return written
 
     #def TestForDeletion( self ):
@@ -484,10 +464,7 @@ class _PdcRelPanel(ga.AnagPanel,\
             except:
                 pass
         if delete:
-            recid = self.db_recid
             out = ga.AnagPanel.DeleteDataRecord(self)
-            if out:
-                self.DeleteRecapiti(recid)
         return out
 
     def GetDbPrint(self):
@@ -1028,6 +1005,8 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         self.gridgrip = None
         
         self.loadrelated = None
+        
+        self.dbrec = dba.Recapiti()
     
     def InitControls(self, *args, **kwargs):
         self.loadrelated = False
@@ -1037,6 +1016,10 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         self.LoadBanche()
         self._GridDes_Init()
         self.LoadDestin()
+    
+    def DataControlsInited(self):
+        cn = self.FindWindowByName
+        self.gridrec = RecapitiGrid(cn('pangridctt'), self.dbrec)
     
     def InitAnagToolbar(self, parent):        
         out = ga.AnagToolbar(parent, -1, hide_ssv=False)
@@ -1099,6 +1082,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
     
     def UpdateDataControls( self, recno ):
         _PdcRelPanel.UpdateDataControls( self, recno )
+        self.LoadRecapiti()
         if self.loadrelated:
             self.LoadBanche()
             self._grid_ban.SetGridCursor(0,0)
@@ -1107,6 +1091,24 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             if self.gridgrip is not None:
                 self.LoadGriglia()
                 self.gridgrip.SetGridCursor(0,0)
+    
+    def LoadRecapiti(self):
+        if self.db_recid is None:
+            self.dbrec.Reset()
+        else:
+            self.dbrec.Retrieve('id_pdc=%s', self.db_recid)
+        self.gridrec.ChangeData(self.dbrec.GetRecordset())
+    
+    def SaveRecapiti(self):
+        if self.dbrec.RowsCount():
+            for r in self.dbrec:
+                if r.id_pdc != self.db_recid:
+                    r.id_pdc = self.db_recid
+        self.dbrec.Save()
+    
+    def DeleteRecapiti(self, recid):
+        cmd = r"DELETE FROM recapiti WHERE id_pdc=%s"
+        return self.dbrec._info.db.Execute(cmd, recid)
     
     def UpdateDataRecord( self ):
         
@@ -1182,6 +1184,12 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         
         return written
     
+    def TransferDataFromWindow(self):
+        written = _PdcRelPanel.TransferDataFromWindow(self)
+        if written:
+            self.SaveRecapiti()
+        return written
+    
     def WriteBanche(self):
         if len(self.rsban)>=2:
             try:
@@ -1253,6 +1261,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         recid = self.db_recid
         deleted = _PdcRelPanel.DeleteDataRecord(self)
         if deleted:
+            self.DeleteRecapiti(recid)
             try:
                 cmdDelDest =\
 """DELETE FROM %s WHERE id_pdc=%%s""" % bt.TABNAME_DESTIN
