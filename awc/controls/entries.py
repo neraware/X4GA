@@ -28,7 +28,7 @@ import awc.util as awu
 from awc.lib import ControllaPIVA, ControllaCodFisc
 import os, sys
 import subprocess
-from ZSI import FaultException
+# from ZSI import FaultException
 
 
 class _EntryCtrlMixin(wx.Window, cmix.ControlsMixin):
@@ -200,8 +200,8 @@ class PartitaIvaEntryCtrl(_EntryCtrlMixin):
                         if not c.CheckVies():
                             e = 'NON %s' % e
                         err = None
-                    except FaultException, e:
-                        err = e.fault.args[1]
+#                     except FaultException, e:
+#                         err = e.fault.args[1]
                     except Exception, e:
                         err = repr(e.args)
                 finally:
