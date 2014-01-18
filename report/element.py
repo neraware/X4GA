@@ -33,7 +33,7 @@ from reportlab.lib.pagesizes import A4, landscape, portrait
 from reportlab.lib.colors import *
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
 from reportlab.platypus import Paragraph as BaseParagraph
-from reportlab.platypus.paragraph import _handleBulletWidth, ParaLines, _parser, _sameFrag, FragLine
+from reportlab.platypus.paragraph import _handleBulletWidth, ParaLines, ParaParser, _sameFrag, FragLine
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.styles import ParagraphStyle, PropertySet
 
@@ -43,7 +43,6 @@ import os.path
 import Env
 
 import report
-
 
 _debug =0
 
@@ -105,6 +104,7 @@ class Paragraph(BaseParagraph):
         if frags is None:
             #text = cleaner(text)
             text = AdjustLineFeeds(text)
+            _parser = ParaParser()
             _parser.caseSensitive = self.caseSensitive
             style, frags, bulletTextFrags = _parser.parse(text,style)
             if frags is None:
