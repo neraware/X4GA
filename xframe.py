@@ -266,7 +266,7 @@ class XFrame(aw.Frame):
         v = Env.version
         l = Env.Azienda.Login
         sb = self.GetStatusBar()
-        msg = 'X4 v.%s' % v.VERSION_STRING
+        msg = 'X4GA v.%s' % v.VERSION_STRING
         if v.MODVERSION_NAME:
             msg += ' mod %s v.%s' % (v.MODVERSION_NAME, v.MODVERSION_STRING)
         msg += ' - Op.: %s - %s' % (l.usercode, l.username)
