@@ -205,7 +205,7 @@ class WorkstationSetupPanel(ConfigPanel):
             return out
         host, port, user, pswd, = map(lambda x: FindWindow(x).GetValue(),
                                       ('host', 'port', 'user', 'pswd'))
-        if not host or not port or not user or not pswd:
+        if not host or not port or not user:# or not pswd:
             if wait: wait.Hide()
             aw.awu.MsgDialog(self, 'Definire tutti i parametri')
             return False
