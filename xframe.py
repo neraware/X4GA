@@ -522,6 +522,7 @@ class XFrame(aw.Frame):
             (self.OnGestPdcTip,                ID_GESTIPANA),
             (self.OnGestScadGrp,               ID_GESGRUSCA),
             (self.OnGestListini,               ID_GESLISVEN),
+            (self.OnGestRiclassProd,           ID_RICLASPRO),
             (self.OnGestStampaListino,         ID_GESSTALIS),
             (self.OnGestGrpCli,                ID_GESGRPCLI),
             (self.OnGestGrpFor,                ID_GESGRPFOR),
@@ -1259,6 +1260,10 @@ class XFrame(aw.Frame):
     def OnGestListini(self, event):
         from magazz.listini import ListiniFrame
         self.LaunchFrame(ListiniFrame)
+    
+    def OnGestRiclassProd(self, event):
+        from magazz.riclassprod import RiclassProdFrame
+        self.LaunchFrame(RiclassProdFrame)
     
     def OnGestStampaListino(self, event):
         from magazz.stalis import ListiniAttualiFrame
