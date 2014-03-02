@@ -1031,6 +1031,7 @@ class ListiniPanel(aw.Panel, aw.awu.LimitiFiltersMixin):
         ALS(lis, 'tipart', 'id_tipart')
         ALS(lis, 'fornit', 'id_fornit')
         ALS(lis, 'marart', 'id_marart')
+        ALS(lis, 'gruprez', 'id_gruprez')
         
         self.dataval = None
         self.listchanged = False
