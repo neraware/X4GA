@@ -4349,6 +4349,7 @@ class Prodotti(adb.DbTable):
         tipart = self.AddJoin(bt.TABNAME_TIPART,  'tipart', join=adb.JOIN_LEFT)
         catart = self.AddJoin(bt.TABNAME_CATART,  'catart', join=adb.JOIN_LEFT)
         gruart = self.AddJoin(bt.TABNAME_GRUART,  'gruart', join=adb.JOIN_LEFT)
+        marart = self.AddJoin(bt.TABNAME_MARART,  'marart', join=adb.JOIN_LEFT)
         fornit = self.AddJoin(bt.TABNAME_PDC,     'fornit', join=adb.JOIN_LEFT)
         status = self.AddJoin(bt.TABNAME_STATART, 'status', join=adb.JOIN_LEFT)
         gruprez = self.AddJoin(bt.TABNAME_GRUPREZ, 'gruprez', join=adb.JOIN_LEFT)
