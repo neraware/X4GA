@@ -213,12 +213,12 @@ class LinkTable(wx.Control,\
     def GetDescrizFieldName(self):
         return self.descriz_fieldname
     
-    isapp = (wx.GetApp() is not None)
-    if not isapp:
-        dummy_app = wx.PySimpleApp()
-    f = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FIXED_FONT)
-    if not isapp:
-        dummy_app.Destroy()
+#     isapp = (wx.GetApp() is not None)
+#     if not isapp:
+#         dummy_app = wx.PySimpleApp()
+#     f = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FIXED_FONT)
+#     if not isapp:
+#         dummy_app.Destroy()
     
     _codewidth = wxinit.GetCodiceStandardWidth()#40
     _descwidth = None
