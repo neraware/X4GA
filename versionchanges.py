@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
     
+    ('1.6.05', dt.Date(2014, 4, 3), (
+         ("BET4167",
+         """Spesometro 2013."""),
+        ),),
+    
     ('1.6.04', dt.Date(2014, 3, 2), (
          ("BET4166",
          """Password mysql non obbligatoria."""),
