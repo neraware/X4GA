@@ -28,6 +28,11 @@ Riepilogo dei cambiamenti apportati alla versione
 import mx.DateTime as dt
 
 history = (
+           
+    ('1.6.05', dt.Date(2014, 4, 3), (
+         ("BET4167",
+         """Spesometro 2013."""),
+        ),),
     
     ('1.6.05', dt.Date(2014, 4, 3), (
          ("BET4167",
@@ -102,6 +107,39 @@ history = (
     ('1.5.00', None, (
          ("BET4158",
          """Aggiunto indice per fornitore su tabella prodotti."""),
+        ),),
+    
+    ('1.4.96', dt.Date(2014, 4, 22), (
+         ("BUG1148",
+         """Corretta fatturazione differita, non considerava il filtro su
+         mod.pagamento."""),
+        ),),
+    
+    ('1.4.95', dt.Date(2014, 4, 16), (
+         ("BUG1147",
+         """Uso di clienti/fornitori filtrati per tipologia, per
+         includere anche sottoconti dal tipo affine ma con diverso codice."""),
+        ),),
+    
+    ('1.4.94', dt.Date(2014, 04, 9), (
+         ("BUG1146",
+         """Corretta estrazione dati per spesometro, non considerava l'imposta
+         delle fatture di vendita di soli omaggi."""),
+        ),),
+    
+    ('1.4.92', dt.Date(2014, 03, 24), (
+         ("BUG1145",
+         """Corretta bug su visualizzazione griglia prodotti."""),
+        ),),
+    
+    ('1.4.91', dt.Date(2014, 03, 21), (
+         ("BET1167",
+         """Spesometro 2013."""),
+        ),),
+    
+    ('1.4.90', dt.Date(2014, 03, 21), (
+         ("BUG1144",
+         """Corretta esportazione da griglia in file excel."""),
         ),),
     
     ('1.4.89', dt.Date(2013, 11, 8), (

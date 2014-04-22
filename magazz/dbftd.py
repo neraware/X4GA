@@ -282,7 +282,8 @@ class FtDif(adb.DbTable):
         #determino l'alias della tabella anagrafica clienti o fornitori
         anag = dr.pdc.anag.GetTableAlias()
         for field, op, name, default in (
-            ('id_categ', '=', '_solocateg', None),
+            ('id_categ',  '=', '_solocateg', None),
+            ('id_modpag', '=', '_solomp',    None),
             ):                     
             value = self.docrag.__getattr__(name) or default
             if value:
@@ -544,10 +545,14 @@ class FtDif(adb.DbTable):
                     dg.tot.total_imponib += impriga
             
             self.BodyCopied(dg, dr)
+        self.AllBodyCopied(dg, dr)
     
     def HeadCreated(self, *args, **kwargs):
         pass
     
+    def AllBodyCopied(self, *args, **kwargs):
+        pass
+
     def BodyCopied(self, *args, **kwargs):
         pass
     
