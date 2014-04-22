@@ -29,9 +29,9 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.6.05', dt.Date(2014, 4, 3), (
-         ("BET4167",
-         """Spesometro 2013."""),
+    ('1.6.06', dt.Date(2014, 4, 22), (
+         ("INT4010",
+         """Allineamento a X4GA Astra 1.4.96."""),
         ),),
     
     ('1.6.05', dt.Date(2014, 4, 3), (
