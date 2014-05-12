@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.07', dt.Date(2014, 5, 12), (
+         ("BUG1149",
+         """Fix annullamento documenti evasi."""),
+        ),),
+    
     ('1.6.06', dt.Date(2014, 4, 22), (
          ("INT4010",
          """Allineamento a X4GA Astra 1.4.96."""),
