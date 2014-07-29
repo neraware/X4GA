@@ -1955,14 +1955,16 @@ class MagazzPanel(aw.Panel,\
             filt = "id IN (%s)" % ','.join([str(x.id_pdc)
                                             for x in mags 
                                             if x.id_pdc is not None])
-        mp = self.controls['id_modpag']
-        if cfg.askmpnoeff:
-            filt = "tipo<>'R'"
-        else:
-            filt = '1'
-        mp.SetFilter(filt)
         ci(wdr.ID_PDC).SetFilterValue(cfg.id_pdctip)
         ci(wdr.ID_PDC).SetFilter(filt)
+        mp = self.controls['id_modpag']
+        _filt = []
+        if cfg.askmpnoeff:
+            _filt.append('tipo<>"R"')
+        if not cfg.colcg:
+            _filt.append('modocalc<>"N"')
+        filt = ' AND '.join(_filt) or '1'
+        mp.SetFilter(filt)
         self.GridBodySetTipMovFilter()
         p = self.FindWindowByName('workzone').GetPageWithText('accomp', exact=False)
         if p:
@@ -2165,7 +2167,22 @@ class MagazzPanel(aw.Panel,\
     def Validate(self):
         for c in aw.awu.GetAllChildrens(self, lambda x: hasattr(x, 'IsTooBig')):
             if c.IsTooBig():
-#                aw.awu.MsgDialog(self, "Valore numerico troppo elevato\n(%s)" % c.GetName(), style=wx.ICON_ERROR)
+                return False
+        dbiva = adb.DbTable('aliqiva')
+        err = None
+        for i in self.dbdoc._info.totiva:
+            dbiva.Get(i[0])
+            if dbiva.datamin and self.dbdoc.datdoc < dbiva.datamin:
+                err = """La data documento è precedente alla data """\
+                      """di inizio validità dell'aliquota iva %s %s""" % (i[1], i[2])
+                break
+            elif dbiva.datamax and self.dbdoc.datdoc > dbiva.datamax:
+                err = """La data documento è successiva alla data """\
+                      """di fine validità dell'aliquota iva %s %s""" % (i[1], i[2])
+                break
+        if err:
+            err += '\n\nProseguo comunque ?'
+            if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                 return False
         return True
     

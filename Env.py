@@ -1749,7 +1749,9 @@ class Azienda(object):
                 [ "pralfc2",    "TINYINT",  1, None, "Flag allegati fornitori col.2", None ],
                 [ "pralfc3",    "TINYINT",  1, None, "Flag allegati fornitori col.3", None ],
                 [ "pralfc4",    "TINYINT",  1, None, "Flag allegati fornitori col.4", None ],
-                [ "sm11_no",    "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], ]
+                [ "sm11_no",    "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], 
+                [ "datamin",    "DATE",  None, None, "Data di validità minima", None ], 
+                [ "datamax",    "DATE",  None, None, "Data di validità massima", None ], ]
             
             cls.aliqiva_indexes = cls.get_std_indexes()
             

@@ -29,6 +29,18 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.09', None, (
+         ("BET4169",
+         """Introdotte date di validità minima e massima sulle 
+         aliquote iva e relativo controllo in immissione documenti."""),
+        ),),
+    
+    ('1.6.08', None, (
+         ("BET4168",
+         """Aggiunti limiti di ricarica e margine min/max 
+         su statistica redditività vendite."""),
+        ),),
+    
     ('1.6.07', dt.Date(2014, 5, 12), (
          ("BUG1149",
          """Fix annullamento documenti evasi."""),

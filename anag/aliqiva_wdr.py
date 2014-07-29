@@ -13,6 +13,7 @@ import wx.animate
 # Custom source
 from awc.controls.radiobox import RadioBox
 from awc.controls.numctrl import NumCtrl
+from awc.controls.datectrl import DateCtrl
 
 from anag.basetab import AnagCardPanel, WorkZoneNotebook, UnoZeroCheckBox
 
@@ -63,8 +64,10 @@ ID_TEXT = 16002
 ID_PERCIVA = 16003
 ID_PERCIND = 16004
 ID_TIPO = 16005
-ID_MODO = 16006
-ID_SM11_NO = 16007
+ID_DATAMIN = 16006
+ID_DATAMAX = 16007
+ID_MODO = 16008
+ID_SM11_NO = 16009
 
 def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -92,30 +95,57 @@ def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
 
     item8 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item9 = RadioBox( parent, ID_TIPO, "Tipologia", wx.DefaultPosition, wx.DefaultSize, 
+    item9 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item10 = RadioBox( parent, ID_TIPO, "Tipologia", wx.DefaultPosition, wx.DefaultSize, 
         ["Acquisti/Vendite","Acquisti CEE","Vendite in sospensione"] , 1, wx.RA_SPECIFY_COLS )
-    item9.SetName( "tipo" )
-    item8.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item10.SetName( "tipo" )
+    item9.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item10 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item12 = wx.StaticBox( parent, -1, "Periodo di validità" )
+    item11 = wx.StaticBoxSizer( item12, wx.VERTICAL )
     
-    item11 = ModoIvaRadioBox( parent, ID_MODO, "L'importo assogettato a questa aliquota è:", wx.DefaultPosition, wx.DefaultSize, 
+    item13 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item14 = wx.StaticText( parent, ID_TEXT, "Applicabile dal:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item13.Add( item14, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+
+    item15 = DateCtrl( parent, ID_DATAMIN, "", wx.DefaultPosition, [80,-1], 0 )
+    item15.SetName( "datamin" )
+    item13.Add( item15, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item16 = wx.StaticText( parent, ID_TEXT, "al:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item13.Add( item16, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item17 = DateCtrl( parent, ID_DATAMAX, "", wx.DefaultPosition, [80,-1], 0 )
+    item17.SetName( "datamax" )
+    item13.Add( item17, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item11.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item9.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item8.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item18 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item19 = ModoIvaRadioBox( parent, ID_MODO, "L'importo assogettato a questa aliquota è:", wx.DefaultPosition, wx.DefaultSize, 
         ["Imponibile","Non Imponibile","Esente","Fuori Campo"] , 1, wx.RA_SPECIFY_COLS )
-    item11.SetName( "modo" )
-    item10.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item19.SetName( "modo" )
+    item18.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item13 = wx.StaticBox( parent, -1, "Spesometro 2011" )
-    item12 = wx.StaticBoxSizer( item13, wx.VERTICAL )
+    item21 = wx.StaticBox( parent, -1, "Spesometro 2011" )
+    item20 = wx.StaticBoxSizer( item21, wx.VERTICAL )
     
-    item14 = UnoZeroCheckBox( parent, ID_SM11_NO, "Escludi dalla compilazione dello spesometro", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item14.SetName( "sm11_no" )
-    item12.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item22 = UnoZeroCheckBox( parent, ID_SM11_NO, "Escludi dalla compilazione dello spesometro", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item22.SetName( "sm11_no" )
+    item20.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item10.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item18.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item10.AddGrowableCol( 0 )
+    item18.AddGrowableCol( 0 )
 
-    item8.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item8.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item8.AddGrowableCol( 0 )
 
@@ -130,7 +160,7 @@ def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_RADIOBOX = 16008
+ID_RADIOBOX = 16010
 
 def AliqIvaCardAllegFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.StaticBox( parent, -1, "Progressivi allegati clienti/fornitori" )
