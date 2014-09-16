@@ -80,23 +80,42 @@ class ReddVendPanel(wx.Panel):
         cn = self.FindWindowByName
         self.dbtic = dbs.ReddVend()
         self.gridred = ReddVendGrid(cn('pangridven'), self.dbtic)
-        for name, func in (('butupd', self.OnUpdateData),
+        for name, func in (('butupd', self.OnButtonUpdate),
                            ('butprt', self.OnPrintData),):
             self.Bind(wx.EVT_BUTTON, func, cn(name))
     
-    def OnUpdateData(self, event):
+    def OnButtonUpdate(self, event):
         self.UpdateData()
         event.Skip()
     
     def UpdateData(self):
         cn = self.FindWindowByName
-        d1, d2 = map(lambda x: cn(x).GetValue(), 'data1 data2'.split())
+        cols = 'data1 data2 rica1 rica2 marg1 marg2 id_tipdoc id_pdc escmovann escdocann escdocacq'.split()
+        d1, d2, r1, r2, m1, m2, tpd, pdc, xma, xda, xdc = map(lambda x: cn(x).GetValue(), cols)
         red = self.dbtic
         red.ClearFilters()
         if d1:
             red.AddFilter("doc_data>=%s", d1)
         if d2:
             red.AddFilter("doc_data<=%s", d2)
+        if r1:
+            red.AddFilter("ricarica>=%s", r1)
+        if r2:
+            red.AddFilter("ricarica<=%s", r2)
+        if m1:
+            red.AddFilter("margine>=%s", m1)
+        if m2:
+            red.AddFilter("margine<=%s", m2)
+        if tpd:
+            red.AddFilter("causale_id=%s", tpd)
+        if pdc:
+            red.AddFilter("cliente_id=%s", pdc)
+        if xma:
+            red.AddFilter("mov_f_ann IS NULL OR mov_f_ann<>1")
+        if xda:
+            red.AddFilter("doc_f_ann IS NULL OR doc_f_ann<>1")
+        if xdc:
+            red.AddFilter("doc_f_acq IS NULL OR doc_f_acq<>1")
         wx.BeginBusyCursor()
         try:
             red.Retrieve()

@@ -936,10 +936,11 @@ UPDATE `cfgsetup`
                 db.Execute(r"""ALTER TABLE `x4`.`cfgmail` 
                                     ADD COLUMN `authtls` TINYINT(1) AFTER `authpswd`""")
         
-#            if oldver<'1.4.52' and ok:
-            if ok:
+            if oldver<'1.6.10' and ok:
                 
                 #crea vista per analisi utile, ricarica e marginalità su vendite
+                db.Execute(r"""
+DROP VIEW IF EXISTS stat_reddvend""")
                 db.Execute(r"""
 CREATE VIEW stat_reddvend AS
 SELECT  tpd.codice 'causale_cod',
@@ -957,14 +958,18 @@ SELECT  tpd.codice 'causale_cod',
         MONTH(doc.datdoc) 'mese',
         tpd.id 'causale_id',
         doc.id 'doc_id',
-        pdc.id 'cliente_id'
+        pdc.id 'cliente_id',
+        mov.f_ann 'mov_f_ann',
+        doc.f_ann 'doc_f_ann',
+        doc.f_acq 'doc_f_acq'
 FROM movmag_h doc
 JOIN cfgmagdoc tpd ON tpd.id=doc.id_tipdoc
 JOIN movmag_b mov ON mov.id_doc=doc.id
+JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
 JOIN pdc ON pdc.id=doc.id_pdc
-WHERE tpd.clasdoc IN ("vencli", "rescli") AND (doc.f_ann IS NULL OR doc.f_ann<>1)
+WHERE (tpm.statftcli IN (1, -1)) 
 GROUP BY doc.id""")
-    
+            
             if oldver<'1.5.00' and ok:
                 
                 #popola la nuova tabella recapiti
