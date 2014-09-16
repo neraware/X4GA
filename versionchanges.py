@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.10', None, (
+         ("BET4170",
+         """Statistica redditività vendite ora filtra i movimenti in
+         base al tipo adi aggiornamento del fatturato, aumentate
+         selezioni."""),
+         ("BET4171",
+         """La funzione di ricerca nella gestione clienti ora consente 
+         anche il filtro da codice a codice."""),
+        ),),
+    
     ('1.6.09', None, (
          ("BET4169",
          """Introdotte date di validità minima e massima sulle 
