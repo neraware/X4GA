@@ -2803,6 +2803,7 @@ class Azienda(object):
                 [ "aggordcli",    "TINYINT",  1, None, "Flag +/- aggiornamento ordini cliente", None ],
                 [ "aggordfor",    "TINYINT",  1, None, "Flag +/- aggiornamento ordini fornitore", None ],
                 [ "aggfornit",    "CHAR",     1, None, "Flag aggiornamento fornitore", None ],
+                [ "aggultcar",    "TINYINT",  1, None, "Flag aggiornamento data/numero ultimo carico", None ],
                 [ "aggcvccar",    "TINYINT",  1, None, "Flag +/- aggiornamento carichi c/vendita clienti", None ],
                 [ "aggcvcsca",    "TINYINT",  1, None, "Flag +/- aggiornamento scarichi c/vendita clienti", None ],
                 [ "aggcvfcar",    "TINYINT",  1, None, "Flag +/- aggiornamento carichi c/vendita fornitori", None ],

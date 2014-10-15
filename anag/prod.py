@@ -1016,6 +1016,8 @@ class ProdPanel(ga.AnagPanel):
                         c = cn('%s%d' % (prefix, n+1))
                         if c:
                             c.Hide()
+        for name in 'cst tpd num dat'.split():
+            cn('ucar%s'%name).SetReadOnly(True)
         return p
     
     def OnUpdateButtonRicalcCP(self, event):
@@ -1306,6 +1308,7 @@ class ProdPanel(ga.AnagPanel):
                             g*u,         #RSGIAC_TOTCSU
                             g*m))        #RSGIAC_TOTCSM
             self.giacmaggrid.ChangeData(gpm)
+        self.UpdateDatiUltimoCarico()
         if bt.MAGPPROMO:
             self.UpdatePromo()
         if self.listattgrid:
@@ -1316,6 +1319,18 @@ class ProdPanel(ga.AnagPanel):
             self.GridGriglieLoad()
         self.TestImmagine()
         self.TestEnable()
+    
+    def UpdateDatiUltimoCarico(self):
+        cn = self.FindWindowByName
+        pro = self.dbpro
+        pro.Get(self.db_recid)
+        if pro.id:
+            cn('ucartpd')
+        ucst, utpd, unum, udat = pro.GetDatiUltimoCarico()
+        cn('ucarcst').SetValue(ucst)
+        cn('ucartpd').SetValue(utpd)
+        cn('ucarnum').SetValue(unum)
+        cn('ucardat').SetValue(udat)
     
     def UpdatePromo(self):
         prm = self.dbpromo

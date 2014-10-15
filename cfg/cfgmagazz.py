@@ -136,6 +136,7 @@ class CfgDocMov(adb.DbTable):
                          "aggordcli", #Flag +/- aggiornamento ord.cliente
                          "aggordfor", #Flag +/- aggiornamento ord.fornitore
                          "aggfornit", #Flag aggiornamento fornitore
+                         "aggultcar"  #Flag 0/1 aggiornamento data/numero ultimo carico
                          "askvalori", #Flag richiesta quantità
                          "mancosto",  #Management costo riga
                          "id_pdc",    #ID Sottoconto per collegam. contabile

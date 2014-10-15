@@ -29,7 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.6.10', None, (
+    ('1.6.11', None, (
+         ("BET4172",
+         """Gestione e visualizzazione su scheda prodotto dei dati
+         relativi all'ultimo carico effettuato."""),
+        ),),
+    
+    ('1.6.10', dt.Date(2014, 9, 16), (
          ("BET4170",
          """Statistica redditività vendite ora filtra i movimenti in
          base al tipo adi aggiornamento del fatturato, aumentate

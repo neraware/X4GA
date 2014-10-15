@@ -4478,6 +4478,37 @@ class Prodotti(adb.DbTable):
                 lis.data = Env.Azienda.Login.dataElab
             prezzi[n] = p
         return prezzi
+    
+    def GetDatiUltimoCarico(self):
+        try:
+            db = self._info.db
+            id_prod = self.id
+            db.Retrieve("""
+                    SELECT MAX(doc.datdoc)
+                    FROM movmag_b mov
+                    JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+                    JOIN movmag_h doc ON doc.id=mov.id_doc
+                    WHERE mov.id_prod=%(id_prod)s 
+                      AND tpm.aggultcar=1
+            """ % locals())
+            ddmax = db.rs[0][0]
+            db.Retrieve("""
+                    SELECT mov.importo/qta,
+                           doc.id_tipdoc,
+                           doc.numdoc,
+                           doc.datdoc
+                    FROM movmag_b mov
+                    JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+                    JOIN movmag_h doc ON doc.id=mov.id_doc
+                    WHERE mov.id_prod=%(id_prod)s
+                      AND tpm.aggultcar=1 
+                      AND doc.datdoc="%(ddmax)s"
+                    ORDER BY doc.datdoc DESC
+                    LIMIT 1
+            """ % locals())
+            return []+db.rs[0]
+        except:
+            return [None]*4
 
 
 # ------------------------------------------------------------------------------

@@ -103,6 +103,7 @@ fldap('acc_sepiva');   defap(0);    RSMOV_ACCSEPIVA =    43
 fldap('canprezzo0');   defap(0);    RSMOV_CANPREZZO0 =   44
 fldap('modimpricalc'); defap(0);    RSMOV_MODIMPRICALC = 45
 fldap('nomastroprod'); defap(0);    RSMOV_NOPRODMASTRO = 46
+fldap('aggultcar');    defap(0);    RSMOV_AGGULTCAR =    47
 
 
 
@@ -403,6 +404,7 @@ class CauMagazzPanel(ga.AnagPanel):
                            ("noivaprof",  { True: 1,   False: 0  } ),
                            ("rptcolli",   { True: 1,   False: 0  } ),
                            ("aanotedoc",  { True: 1,   False: 0  } ),
+                           ("aggultcar",  { True: 1,   False: 0  } ),
                            ):
             ctr = cn(name)
             ctr.SetDataLink(name, val)
