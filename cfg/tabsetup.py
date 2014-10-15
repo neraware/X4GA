@@ -127,7 +127,13 @@ class TabSetupPanel(aw.Panel):
                 self.Update()
                 wx.Yield()
                 
-                tab = adb.DbTable(name, writable=False)
+                pk = None
+                for i, (indtype, indexpr) in enumerate(index):
+                    if "PRIMARY" in indtype:
+                        pk = indexpr
+                        break
+                
+                tab = adb.DbTable(name, writable=False, primaryKey=pk)
                 tab.Get(-1)
                 tabchange = False
                 tabcreate = False
