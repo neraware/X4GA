@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.12', None, (
+         ("BET4173",
+         """Attivazione ricerca in schede anagrafiche con il tasto tab."""),
+        ),),
+    
     ('1.6.11', None, (
          ("BET4172",
          """Gestione e visualizzazione su scheda prodotto dei dati
