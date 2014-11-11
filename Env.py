@@ -2541,6 +2541,8 @@ class Azienda(object):
                 [ "id_gruprez", "INT",    idw, None, "ID gruppo prezzi", None ],
                 [ "id_pdcacq",  "INT",    idw, None, "ID Pdc collegamento contabile su acquisti", None ],
                 [ "id_pdcven",  "INT",    idw, None, "ID Pdc collegamento contabile su vendite", None ],
+                [ "ucarnum",    "VARCHAR", 10, None, "Num. ultimo carico", None ],
+                [ "ucardat",    "DATE",  None, None, "Data ultimo carico", None ],
             ]
             
             cls.set_constraints(cls.TABNAME_PROD,

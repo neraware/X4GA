@@ -905,6 +905,12 @@ class DocMag(adb.DbTable):
                                       'type': tm.aggcosto,
                                       'sia': bt.MAGSCORPCOS == '1'}
                 
+                if tm.aggultcar:
+                    if mov.prod.ucardat is None or self.datdoc > mov.prod.ucardat:
+                        cols['ucarnum'] = {'val':  self.numdoc,}
+                        cols['ucardat'] = {'val':  self.datdoc,}
+                        self._prepare_for_ultimocarico_update(mov, cols)
+                
                 if (tm.aggprezzo or ' ') in '12':
                     cols['prezzo'] = {'val':  None, 
                                       'type': tm.aggprezzo,
@@ -977,6 +983,9 @@ class DocMag(adb.DbTable):
             self.UpdateProdotti(pup)
         if wait:
             wait.Destroy()
+    
+    def _prepare_for_ultimocarico_update(self, mov, cols):
+        pass
     
     def UpdateMovExternalRead(self):
         pass
@@ -4492,6 +4501,8 @@ class Prodotti(adb.DbTable):
                       AND tpm.aggultcar=1
             """ % locals())
             ddmax = db.rs[0][0]
+            if not ddmax:
+                raise Exception
             db.Retrieve("""
                     SELECT mov.importo/qta,
                            doc.id_tipdoc,

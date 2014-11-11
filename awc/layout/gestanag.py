@@ -543,12 +543,15 @@ class AnagPanel(aw.Panel):
                           (ID_BTNPRINT,        self.OnPrint)):
             self.Bind(wx.EVT_BUTTON, func, id=cid)
         
-        if bt.OPTTABSEARCH:
-            def update_search(e):
-                self.UpdateSearch()
-            self.FindWindowByName('_searchval').Bind(wx.EVT_KILL_FOCUS, update_search)
         
         if self.complete:
+            
+            if bt.OPTTABSEARCH:
+                sv = self.FindWindowByName('_searchval')
+                if sv:
+                    def update_search(e):
+                        self.UpdateSearch()
+                    sv.Bind(wx.EVT_KILL_FOCUS, update_search)
             
             self.FindWindowById(ID_BTN_RECNEW).Bind(wx.EVT_RIGHT_UP, self.OnCopyToDuplicate)
             

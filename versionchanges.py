@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.13', None, (
+         ("BET4174",
+         """Memorizzazione numero e data ultimo carico su scheda prodotto,
+         in base ad apposito flag su tipo movimento."""),
+        ),),
+    
     ('1.6.12', None, (
          ("BET4173",
          """Attivazione ricerca in schede anagrafiche con il tasto tab."""),
