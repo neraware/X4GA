@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.15', None, (
+         ("BET4175",
+         """Introdotta possibilità di reset sottoconto per collegamento
+         contabile sulle righe derivanti da evasione documenti ."""),
+        ),),
+    
     ('1.6.13', None, (
          ("BET4174",
          """Memorizzazione numero e data ultimo carico su scheda prodotto,

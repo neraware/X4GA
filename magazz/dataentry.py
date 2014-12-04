@@ -2737,6 +2737,8 @@ class MagazzPanel(aw.Panel,\
                         mov.sconto5 = acq.sconto5
                         mov.sconto6 = acq.sconto6
                         mov.f_ann = 0
+                        if mov.config.pdcreset:
+                            mov.id_pdccg = None
                         riga += 1
                 if acq.annacq:
                     #segno x l'annullamento, in fase di scrittura, del movimento

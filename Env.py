@@ -2834,6 +2834,7 @@ class Azienda(object):
                 [ "canprezzo0",   "TINYINT",  1, None, "Flag permesso prezzo nullo", None ],
                 [ "modimpricalc", "CHAR",     1, None, "Flag tipo ricalcolo se modifica importo", None ],
                 [ "nomastroprod", "TINYINT",  1, None, "Flag esclusione movimenti in mastro prodotto", None ],
+                [ "pdcreset",     "TINYINT",  1, None, "Flag reset pdc coll.cont. dopo evasione", None ],
             ]
             
             cls.set_constraints(cls.TABNAME_CFGMAGMOV,
