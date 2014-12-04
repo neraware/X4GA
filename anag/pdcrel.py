@@ -1097,7 +1097,8 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             self.dbrec.Reset()
         else:
             self.dbrec.Retrieve('id_pdc=%s', self.db_recid)
-        self.gridrec.ChangeData(self.dbrec.GetRecordset())
+        if hasattr(self, 'gridrec'):
+            self.gridrec.ChangeData(self.dbrec.GetRecordset())
     
     def SaveRecapiti(self):
         if self.dbrec.RowsCount():
