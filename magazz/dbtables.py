@@ -859,7 +859,7 @@ class DocMag(adb.DbTable):
              WHERE mov.id IN (%s)
           GROUP BY doc.id""" % ','.join(movs)
             self._info.db.Retrieve(cmd)
-            for _d in self._info.db.rs:
+            for _d in []+self._info.db.rs:
                 doc_id = _d[0]
                 mov = ElencoMovimEva()
                 mov.Retrieve("doc.id=%s", doc_id)
