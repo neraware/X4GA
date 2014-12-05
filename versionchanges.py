@@ -32,7 +32,11 @@ history = (
     ('1.6.15', None, (
          ("BET4175",
          """Introdotta possibilità di reset sottoconto per collegamento
-         contabile sulle righe derivanti da evasione documenti ."""),
+         contabile sulle righe derivanti da evasione documenti."""),
+         ("BUG1150",
+         """Corretto il salvataggio del documento, in alcune circostanze
+         annullava il documento evaso completamente a prescindere dalla
+         configurazione."""),
         ),),
     
     ('1.6.13', None, (
