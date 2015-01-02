@@ -136,7 +136,7 @@ class GridSintesi(dbglib.DbGrid):
 
 class GridGriglia(dbglib.DbGrid):
     
-    def __init__(self, parent, dbgri, clifor):
+    def __init__(self, parent, dbgri, clifor, show_unimis=True, show_preuff=True):
         
         dbglib.DbGrid.__init__(self, parent, -1, size=parent.GetSize(), style=0)
         self.dbgri = dbgri
@@ -178,11 +178,17 @@ class GridGriglia(dbglib.DbGrid):
         else:
             raise Exception, "Impossibile determinare se la griglia è per i clienti o per i fornitori"
         if cde:
-            self.COL_EXTCOD = b(( 80, (cn(gri, "ext_codice"),  "Codice Ext.",      _STR, False)))
-            self.COL_EXTDES = b((200, (cn(gri, "ext_descriz"), "Descrizione Ext.", _STR, False)))
+            self.COL_EXTCOD =  b(( 80, (cn(gri, "ext_codice"),  "Codice Ext.",      _STR, False)))
+            self.COL_EXTDES =  b((200, (cn(gri, "ext_descriz"), "Descrizione Ext.", _STR, False)))
         
-        self.COL_PREUFF =  a(( wp, (cn(pro, "prezzo"),  "Listino uff.",   _VAL, False)))
-        self.COL_PREGRI =  b(( wp, (cn(gri, "prezzo"),  "Prezzo griglia", _VAL, False)))
+        if show_unimis:
+            self.COL_UNIMIS =  b(( 35, (cn(gri, "um"),      "UM", _STR, False)))
+        
+        if show_preuff:
+            self.COL_PREUFF =  a(( wp, (cn(pro, "prezzo"),  "Listino uff.",   _VAL, False)))
+        
+        self.COL_PREGRI =      b(( wp, (cn(gri, "prezzo"),  "Prezzo griglia", _VAL, False)))
+        
         if bt.MAGNUMSCO >= 1:
             self.COL_SCONTO1 = b(( ws, (cn(gri, "sconto1"), "Sc.%"+'1'*int(bt.MAGNUMSCO>1), _PRC, False)))
         if bt.MAGNUMSCO >= 2:
@@ -197,9 +203,9 @@ class GridGriglia(dbglib.DbGrid):
             self.COL_SCONTO6 = b(( ws, (cn(gri, "sconto6"), "Sc.%6",      _PRC, False)))
         
         if bt.MAGPZCONF and bt.MAGPZGRIP:
-            self.COL_PZCONF = b(( 50, (cn(gri, "pzconf"), "Pz.Conf.",     _PZC, False)))
+            self.COL_PZCONF =  b(( 50, (cn(gri, "pzconf"),  "Pz.Conf.",   _PZC, False)))
         
-        self.COL_ID =      a((  1, (cn(gri, "id"),      "#gri",           _STR, True )))
+        self.COL_ID =          a((  1, (cn(gri, "id"),      "#gri",       _STR, True )))
         
         self.edcols = edc
         

@@ -29,7 +29,23 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.6.15', None, (
+    ('1.6.19', dt.Date(2015, 1, 2), (
+         ("BET4178",
+         """Possibilità di ordinare i prodotti nella stampa inventario per
+         codice o descrizione."""),
+        ),),
+    
+    ('1.6.18', None, (
+         ("BET4177",
+         """Aggiunta colonna unità di misura in interrogazione movimenti."""),
+        ),),
+    
+    ('1.6.16', None, (
+         ("BET4176",
+         """Aggiunta unità di misura sulle griglie prezzi."""),
+        ),),
+    
+    ('1.6.15', dt.Date(2014, 12, 5), (
          ("BET4175",
          """Introdotta possibilità di reset sottoconto per collegamento
          contabile sulle righe derivanti da evasione documenti."""),

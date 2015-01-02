@@ -2628,6 +2628,7 @@ class Azienda(object):
                 [ "id_prod",     "INT",    idw, None, "ID Prodotto", "NOT NULL" ],
                 [ "id_pdc",      "INT",    idw, None, "ID Cliente/Fornitore", "NOT NULL" ],
                 [ "data",        "DATE",  None, None, "Data di validità", None ],
+                [ "um",          "CHAR",     5, None, "Unità di misura", None ],
                 [ "prezzo",      "DECIMAL", 12,  DPM, "Prezzo di griglia", None ],
                 [ "sconto1",     "DECIMAL",  5,    2, "Sconto #1", None ],
                 [ "sconto2",     "DECIMAL",  5,    2, "Sconto #2", None ],

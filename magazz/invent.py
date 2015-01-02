@@ -294,6 +294,7 @@ class InventPanel(aw.Panel):
                                               dbm.VALINV_COSTOMEDIO,
                                               dbm.VALINV_PREZZOUFF,
                                               dbm.VALINV_PREZZOLIST))
+        cn('tipord').SetDataLink(values=("C", "D"))
         cn('datinv').SetValue(Env.Azienda.Login.dataElab)
         
         self.CreateGrid()
@@ -510,17 +511,21 @@ class InventPanel(aw.Panel):
                         i.AddFilter("%s.codice<=%%s" % name, v2.rstrip()+'Z')
         
         i.ClearOrders()
+        if cn('tipord').GetValue() == "D":
+            ordcol = 'descriz'
+        else:
+            ordcol = 'codice'
         i._info.raggrcat = False
         s1 = 1
         s2 = 1
         c = cn('raggrcat')
         if c:
             if c.GetValue():
-                i.AddOrder('catart.codice')
+                i.AddOrder('catart.%s' % ordcol)
                 i._info.raggrcat = True
                 s1 = 35
                 s2 = 120
-        i.AddOrder('prod.codice')
+        i.AddOrder('prod.%s' % ordcol)
         
         i.Retrieve()
         

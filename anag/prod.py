@@ -216,6 +216,8 @@ class GrigliaPrezziCliForGrid(dbglib.DbGridColoriAlternati):
             self.COL_EXTCOD = b(( 80, (cn(gri, "ext_codice"),  "Codice Ext.",      _STR, False)))
             self.COL_EXTDES = b((200, (cn(gri, "ext_descriz"), "Descrizione Ext.", _STR, False)))
         
+        self.COL_UNIMIS = b((35,(cn(gri,'um'), "UM", _STR, True)))
+        
         if bt.MAGPZGRIP:
             self.COL_PZCONF = b((70,(cn(gri,'pzconf'),  "Pz.Conf.",       _PZC, True)))
         
