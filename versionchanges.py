@@ -29,6 +29,14 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.20', dt.Date(2015, 1, 5), (
+         ("BUG1151",
+         """Inventario su movimenti limitato alla data di login."""),
+         ("BUG1152",
+         """Corretto il titolo della stampa inventario, metteva il
+         giorno precedente la data inventario richiesta."""),
+        ),),
+    
     ('1.6.19', dt.Date(2015, 1, 2), (
          ("BET4178",
          """Possibilità di ordinare i prodotti nella stampa inventario per
