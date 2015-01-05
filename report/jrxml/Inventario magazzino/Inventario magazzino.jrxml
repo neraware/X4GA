@@ -173,7 +173,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="6" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[RS.dita(RS.GetPrintValue('datinv')-1)]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[RS.dita(RS.GetPrintValue('datinv'))]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
