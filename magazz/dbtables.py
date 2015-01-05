@@ -3433,6 +3433,7 @@ class InventarioDaMovim(_InventarioMixin):
         
         self.AddOrder("prod.codice")
         
+        self.SetDataInv(Env.Azienda.Login.dataElab)
         self.Reset()
     
     def ClearFilters(self):
