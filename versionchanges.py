@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.21', None, (
+         ("BET4179",
+         """Introdotta possibilità di personalizzazione della schermata
+         di configurazione del registro iva."""),
+        ),),
+    
     ('1.6.20', dt.Date(2015, 1, 5), (
          ("BUG1151",
          """Inventario su movimenti limitato alla data di login."""),
