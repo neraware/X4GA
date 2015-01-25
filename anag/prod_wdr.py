@@ -419,7 +419,7 @@ def ProdAnagFunc( parent, call_fit = True, set_sizer = True ):
     item33 = wx.StaticText( parent, ID_TEXT, "Cod. prodotto del fornitore:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item32.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item34 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [140,-1], 0 )
+    item34 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [140,-1], 0 )
     item34.SetName( "codfor" )
     item32.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
