@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.22', None, (
+         ("BET4180",
+         """Lo scadenzario del cliente/fornitore non evidenzia la riga
+         selezionata per non confondere i colori del testo delle 
+         scadenze."""),
+         ("BET4181",
+         """La stampa dello scadenzario del cliente/fornitore ora riporta
+         la dicitura "INSOLUTO", oltre al colore rosso del saldo."""),
+        ),),
+    
     ('1.6.21', None, (
          ("BET4179",
          """Introdotta possibilità di personalizzazione della schermata
