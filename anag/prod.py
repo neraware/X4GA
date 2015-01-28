@@ -829,8 +829,9 @@ class ProdPanel(ga.AnagPanel):
     
     def TestRecordValuesAfterCopy(self, idcopyfrom):
         cn = self.FindWindowByName
-        cn('codice').SetValue(None)
-        cn('barcode').SetValue(None)
+#         cn('codice').SetValue(None)
+        cn('barcode').SetValue('')
+        cn('codfor').SetValue('')
         cn('note').SetValue('')
         cn('scomin').SetValue(0)
         def setfocus():
