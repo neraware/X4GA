@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.23', None, (
+         ("BUG1153",
+         """Fix errore in sottoscorta."""),
+        ),),
+    
     ('1.6.22', None, (
          ("BET4180",
          """Lo scadenzario del cliente/fornitore non evidenzia la riga

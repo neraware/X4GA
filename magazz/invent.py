@@ -511,9 +511,12 @@ class InventPanel(aw.Panel):
                         i.AddFilter("%s.codice<=%%s" % name, v2.rstrip()+'Z')
         
         i.ClearOrders()
-        if cn('tipord').GetValue() == "D":
-            ordcol = 'descriz'
-        else:
+        try:
+            if cn('tipord').GetValue() == "D":
+                ordcol = 'descriz'
+            else:
+                ordcol = 'codice'
+        except:
             ordcol = 'codice'
         i._info.raggrcat = False
         s1 = 1
