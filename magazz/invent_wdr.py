@@ -580,7 +580,7 @@ def SottoscortaFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
     item2 = wx.RadioBox( parent, ID_TIPOINV, "Tipo di inventario:", wx.DefaultPosition, wx.DefaultSize, 
-        ["Da progr.scheda (attuale)","Su movimenti (alla data)"] , 1, wx.RA_SPECIFY_ROWS )
+        ["Su movimenti (alla data)","Da progr.scheda (attuale)"] , 1, wx.RA_SPECIFY_ROWS )
     item2.SetName( "tipoinv" )
     item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 

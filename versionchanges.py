@@ -29,7 +29,7 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.6.23', None, (
+    ('1.6.23', dt.Date(2015, 2, 2), (
          ("BUG1153",
          """Fix errore in sottoscorta."""),
         ),),
