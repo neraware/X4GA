@@ -98,7 +98,7 @@ def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     item9 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
     item10 = RadioBox( parent, ID_TIPO, "Tipologia", wx.DefaultPosition, wx.DefaultSize, 
-        ["Acquisti/Vendite","Acquisti CEE","Vendite in sospensione"] , 1, wx.RA_SPECIFY_COLS )
+        ["Acquisti/Vendite","Acquisti CEE","Vendite in Split Payment"] , 1, wx.RA_SPECIFY_COLS )
     item10.SetName( "tipo" )
     item9.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
@@ -134,7 +134,7 @@ def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     item19.SetName( "modo" )
     item18.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item21 = wx.StaticBox( parent, -1, "Spesometro 2011" )
+    item21 = wx.StaticBox( parent, -1, "Spesometro" )
     item20 = wx.StaticBoxSizer( item21, wx.VERTICAL )
     
     item22 = UnoZeroCheckBox( parent, ID_SM11_NO, "Escludi dalla compilazione dello spesometro", wx.DefaultPosition, wx.DefaultSize, 0 )

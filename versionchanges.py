@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.24', dt.Date(2015, 2, 9), (
+         ("BET4182",
+         """Gestione vendite in split payment."""),
+        ),),
+    
     ('1.6.23', dt.Date(2015, 2, 2), (
          ("BUG1153",
          """Fix errore in sottoscorta."""),
