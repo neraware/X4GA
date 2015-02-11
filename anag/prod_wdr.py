@@ -639,125 +639,113 @@ def ProdSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
     item3 = wx.StaticBox( parent, -1, "Selezioni" )
     item2 = wx.StaticBoxSizer( item3, wx.VERTICAL )
     
-    item4 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item4 = wx.FlexGridSizer( 0, 4, 0, 0 )
     
-    item5 = wx.StaticText( parent, ID_TEXT, "Da tipo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item4.Add( item5, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+    item5 = wx.StaticText( parent, ID_TEXT, "Da codice:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item5, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item6 = LinkTable(parent, ID_FILT_TIPART); item6.SetDataLink(bt.TABNAME_TIPART, None, TipArtDialog); item6.SetName('tipart1')
-    item4.Add( item6, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item6 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [100,-1], 0 )
+    item6.SetName( "codice1" )
+    item4.Add( item6, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item7 = wx.StaticText( parent, ID_TEXT, "A tipo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item4.Add( item7, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+    item7 = wx.StaticText( parent, ID_TEXT, "Da codice:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item7, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item8 = LinkTable(parent, ID_FILT_TIPART); item8.SetDataLink(bt.TABNAME_TIPART, None, TipArtDialog); item8.SetName('tipart2')
-    item4.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item8 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [100,-1], 0 )
+    item8.SetName( "codice2" )
+    item4.Add( item8, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item9 = wx.StaticText( parent, ID_TEXT, "Da barcode:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item9, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item10 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
+    item10.SetName( "barcode1" )
+    item4.Add( item10, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item11 = wx.StaticText( parent, ID_TEXT, "A barcode:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item11, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item12 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
+    item12.SetName( "barcode2" )
+    item4.Add( item12, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item13 = wx.StaticText( parent, ID_TEXT, "Da tipo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item13, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item14 = LinkTable(parent, ID_FILT_TIPART); item14.SetDataLink(bt.TABNAME_TIPART, None, TipArtDialog); item14.SetName('tipart1')
+    item4.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item15 = wx.StaticText( parent, ID_TEXT, "A tipo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item15, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item16 = LinkTable(parent, ID_FILT_TIPART); item16.SetDataLink(bt.TABNAME_TIPART, None, TipArtDialog); item16.SetName('tipart2')
+    item4.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item17 = wx.StaticText( parent, ID_TEXT, "Da categoria:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item17, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item18 = LinkTable(parent, ID_FILT_CATART); item18.SetDataLink(bt.TABNAME_CATART, None, CatArtDialog); item18.SetName('catart1')
+    item4.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item19 = wx.StaticText( parent, ID_TEXT, "A categoria:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item19, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item20 = LinkTable(parent, ID_FILT_CATART); item20.SetDataLink(bt.TABNAME_CATART, None, CatArtDialog); item20.SetName('catart2')
+    item4.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item21 = wx.StaticText( parent, ID_TEXT, "Da gruppo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item21, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item22 = LinkTable(parent, ID_FILT_GRUART); item22.SetDataLink(bt.TABNAME_GRUART, None, GruArtDialog); item22.SetName('gruart1')
+    item4.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item23 = wx.StaticText( parent, ID_TEXT, "A gruppo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item23, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item24 = LinkTable(parent, ID_FILT_GRUART); item24.SetDataLink(bt.TABNAME_GRUART, None, GruArtDialog); item24.SetName('gruart2')
+    item4.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item25 = wx.StaticText( parent, ID_TEXT, "Da fornitore:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item25, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item26 = LinkTableFornit(parent, ID_FILT_FORNIT, 'fornit1')
+    item4.Add( item26, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item27 = wx.StaticText( parent, ID_TEXT, "A fornitore:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item27, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item28 = item28 = LinkTableFornit(parent, ID_FILT_FORNIT, 'fornit2')
+    item4.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item29 = wx.StaticText( parent, ID_TEXT, "Da marca:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item29, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item30 = LinkTable(parent, ID_FILT_MARART); item30.SetDataLink(bt.TABNAME_MARART, None, MarArtDialog); item30.SetName('marart1')
+    item4.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item31 = wx.StaticText( parent, ID_TEXT, "A marca:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item31, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item32 = LinkTable(parent, ID_FILT_MARART); item32.SetDataLink(bt.TABNAME_MARART, None, MarArtDialog); item32.SetName('marart2')
+    item4.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item33 = wx.StaticText( parent, ID_TEXT, "Da status:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item33, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item34 = LinkTableStatArt(parent, ID_FILT_STATART1, 'statart1')
+    item4.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item35 = wx.StaticText( parent, ID_TEXT, "A status:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item4.Add( item35, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item36 = LinkTableStatArt(parent, ID_FILT_STATART2, 'statart2')
+    item4.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item4.AddGrowableCol( 1 )
 
     item4.AddGrowableCol( 3 )
 
-    item2.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item9 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item10 = wx.StaticText( parent, ID_TEXT, "Da categoria:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item9.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
-
-    item11 = LinkTable(parent, ID_FILT_CATART); item11.SetDataLink(bt.TABNAME_CATART, None, CatArtDialog); item11.SetName('catart1')
-    item9.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
-    item12 = wx.StaticText( parent, ID_TEXT, "A categoria:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item9.Add( item12, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
-
-    item13 = LinkTable(parent, ID_FILT_CATART); item13.SetDataLink(bt.TABNAME_CATART, None, CatArtDialog); item13.SetName('catart2')
-    item9.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
-    item9.AddGrowableCol( 1 )
-
-    item9.AddGrowableCol( 3 )
-
-    item2.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item14 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item15 = wx.StaticText( parent, ID_TEXT, "Da gruppo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item14.Add( item15, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item16 = LinkTable(parent, ID_FILT_GRUART); item16.SetDataLink(bt.TABNAME_GRUART, None, GruArtDialog); item16.SetName('gruart1')
-    item14.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item17 = wx.StaticText( parent, ID_TEXT, "A gruppo:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item14.Add( item17, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item18 = LinkTable(parent, ID_FILT_GRUART); item18.SetDataLink(bt.TABNAME_GRUART, None, GruArtDialog); item18.SetName('gruart2')
-    item14.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item14.AddGrowableCol( 1 )
-
-    item14.AddGrowableCol( 3 )
-
-    item2.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item19 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item20 = wx.StaticText( parent, ID_TEXT, "Da fornitore:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item19.Add( item20, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item21 = LinkTableFornit(parent, ID_FILT_FORNIT, 'fornit1')
-    item19.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item22 = wx.StaticText( parent, ID_TEXT, "A fornitore:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item19.Add( item22, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item23 = item23 = LinkTableFornit(parent, ID_FILT_FORNIT, 'fornit2')
-    item19.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item19.AddGrowableCol( 1 )
-
-    item19.AddGrowableCol( 3 )
-
-    item2.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item24 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item25 = wx.StaticText( parent, ID_TEXT, "Da marca:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item24.Add( item25, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item26 = LinkTable(parent, ID_FILT_MARART); item26.SetDataLink(bt.TABNAME_MARART, None, MarArtDialog); item26.SetName('marart1')
-    item24.Add( item26, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item27 = wx.StaticText( parent, ID_TEXT, "A marca:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item24.Add( item27, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item28 = LinkTable(parent, ID_FILT_MARART); item28.SetDataLink(bt.TABNAME_MARART, None, MarArtDialog); item28.SetName('marart2')
-    item24.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item24.AddGrowableCol( 1 )
-
-    item24.AddGrowableCol( 3 )
-
-    item2.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item29 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item30 = wx.StaticText( parent, ID_TEXT, "Da status:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item29.Add( item30, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item31 = LinkTableStatArt(parent, ID_FILT_STATART1, 'statart1')
-    item29.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item32 = wx.StaticText( parent, ID_TEXT, "A status:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item29.Add( item32, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item33 = LinkTableStatArt(parent, ID_FILT_STATART2, 'statart2')
-    item29.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item29.AddGrowableCol( 1 )
-
-    item29.AddGrowableCol( 3 )
-
-    item2.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item2.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 

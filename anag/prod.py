@@ -769,6 +769,8 @@ class ProdPanel(ga.AnagPanel):
         
         self.db_tabprefix = "%s." % bt.TABNAME_PROD
         
+        self._valfilters['codice'] =  ['prod.codice', None, None]
+        self._valfilters['barcode'] = ['prod.barcode', None, None]
         self._valfilters['tipart'] =  ['tipart.codice', None, None]
         self._valfilters['catart'] =  ['catart.codice', None, None]
         self._valfilters['gruart'] =  ['gruart.codice', None, None]
