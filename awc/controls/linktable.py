@@ -756,7 +756,8 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
                         if self._ctrcod.GetValue():
                             self._fromtab = True
                             do = self.HelpChoice(obj, exact=False, resetFields=False)
-                            del self._fromtab
+                            if hasattr(self, '_fromtab'):
+                                del self._fromtab
                     if do:
                         self._ctrdes.SetFocus()
                 elif obj == self._ctrdes:
@@ -773,7 +774,8 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
                     if self._ctrcod.GetValue():
                         self._fromtab = True
                         self.HelpChoice(obj, exact=False, resetFields=False)
-                        del self._fromtab
+                        if hasattr(self, '_fromtab'):
+                            del self._fromtab
             elif obj == self._ctrdes:
                 if self.retsearch_ondescriz:
                     if self._ctrdes.GetValue():
