@@ -29,6 +29,20 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.25', dt.Date(2015, 2, 13), (
+         ("BET4184",
+         """Aliquote in split payment consentite anche su documenti contabilizzati
+         su causali con registro iva di tipo corrispettivi."""),
+         ("BUG1154",
+         """Corretto controllo congruenza aliquote split payment in immissione
+         documento."""),
+        ),),
+    
+    ('1.6.25', dt.Date(2015, 2, 11), (
+         ("BET4183",
+         """Aggiunta selezione da/a x codice e barcode in gestione prodotti."""),
+        ),),
+    
     ('1.6.24', dt.Date(2015, 2, 9), (
          ("BET4182",
          """Gestione vendite in split payment."""),
