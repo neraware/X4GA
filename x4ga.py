@@ -49,52 +49,55 @@ if hasattr(sys, 'frozen'):
         for p in pp.split(';'):
             sp.append(p)
 
-    for file in glob.glob(os.path.join(config_base_path, 'cust/*.zip')):
-        sp.append(file.replace('/', '\\'))
+    for _file in glob.glob(os.path.join(config_base_path, 'cust/*.zip')):
+        sp.append(_file.replace('/', '\\'))
     
-    for file in glob.glob(os.path.join(config_base_path, 'plugin/*.zip')):
-        sp.append(file.replace('/', '\\'))
+    for _file in glob.glob(os.path.join(config_base_path, 'plugin/*.zip')):
+        sp.append(_file.replace('/', '\\'))
     
-    for file in glob.glob(os.path.join(config_base_path, 'addon/*.zip')):
-        sp.append(file.replace('/', '\\'))
+    for _file in glob.glob(os.path.join(config_base_path, 'addon/*.zip')):
+        sp.append(_file.replace('/', '\\'))
     
     for n in range(len(sp)-1, -1, -1):
         sys.path.insert(0, sp[n])
-    
+
 
 stdmod = 10
 modmod = 0
 
 import wx
-import awc.wxinit
+import awc.wxinit  # @UnusedImport
 
 import xsplash
 
-import impex
+import impex  # @UnusedImport
+
+import awc.controls.windows as aw
+import awc.util as awu
 
 dummy_app = wx.PySimpleApp()
 dummy_app.splash = xsplash.XSplashScreen(stdmod)
 dummy_app.splash.SetJob("Inizializzazione in corso...")
 dummy_app.splash.Show()
 
+from plib import test_ext_req, get_reqfail_msg, load_plugin, PluginException
+
 try:
     #aggancio personalizzazione
+    dummy_app.splash.SetJob("Caricamento personalizzazione...")
     import custapp
-    import version
-    if hasattr(version, '__min_require_x4__'):
-        if version.__min_require_x4__ > version.VERSION_STRING:
-            import awc.controls.windows as aw
-            msg = "La versione di X4GA non offre funzionalita' sufficienti a questa personalizzazione.\n\n"
-            msg += "E' richiesta almeno la versione %s, e' installata la %s.\n\n"\
-                        % (version.__min_require_x4__, version.VERSION_STRING)
-            msg += "Alcune parti del programma potrebbero avere problemi, aggiornare X4GA quanto prima."
-            aw.awu.MsgDialog(None, msg, caption="Questa versione di X4GA è obsoleta!", style=wx.ICON_WARNING)
+    import custver
+    if hasattr(custver, '__min_compat_mod__'):
+        import version
+        version.__min_compat_mod__ = custver.__min_compat_mod__
+    if not test_ext_req(custver):
+        cap = "Questa versione di X4GA è obsoleta per %s!" % custapp.name
+        msg = get_reqfail_msg("C", custapp.name, custver)
+        aw.awu.MsgDialog(None, msg, cap, style=wx.ICON_ERROR)
 except ImportError, e:
     if not 'custapp' in repr(e.args):
-        import awc.util as awu
         awu.MsgDialog(None, "Errore di importazione modulo in caricamento personalizzazione:\n%s" % repr(e.args))
 except Exception, e:
-    import awc.util as awu
     awu.MsgDialog(None, "Errore in caricamento personalizzazione:\n%s" % repr(e.args))
 
 import xapp
@@ -103,12 +106,9 @@ dummy_app.Destroy()
 
 import Env
 
-#app = xapp.XApp(redirect=bool(not getattr(sys, 'frozen', True)))
-app = xapp.XApp(redirect=bool(not getattr(sys, 'frozen', True)) or Env.Azienda.params['redirect-output'])
+app = xapp.XApp(redirect=bool(not getattr(sys, 'frozen', True)) 
+                               or Env.Azienda.params['redirect-output'])
 app.splash = dummy_app.splash
-
-#import awc.controls.linktable as lt
-#lt.LinkTable._codewidth = 50
 
 adb.dbtable.DbInfo.GetEnv = classmethod(lambda *x: Env)
 
@@ -117,59 +117,25 @@ Env.SetConfigBasePath()
 if not Env.InitSettings():
     if app.splash:
         app.splash.Destroy()
-    import wx
-    import awc.util as awu
-    awu.MsgDialog(None, 
-                  """X4 necessita di una licenza d'uso per funzionare """
-                  """correttamente.\nImpossibile proseguire in mancanza """
-                  """delle informazioni richieste.""",
-                  style=wx.ICON_WARNING)
-    import os
-    os.sys.exit()
+    awu.MsgDialog(None, "Problema di configurazione di X4GA, impossibile proseguire.", style=wx.ICON_ERROR)
+    os.sys.exit(1)
 
-#aggancio plugins
-if hasattr(sys, 'frozen'):
-    plugins = Env.plugins
-    #carico plugins
-    files = glob.glob(Env.opj(Env.plugin_base_path, '*.zip'))
-    files.sort()
-    for file in files:
-        file = file.replace('\\','/')
-        n = file.rindex('/')
-        name = file[n+1:-4]
-        n2i = name
-        if not n2i.endswith('_plugin'):
-            n2i += '_plugin'
-        try:
-            #aggancio plugin
-            m = __import__(n2i)
-            if hasattr(m, 'TabStru'):
-                m.TabStru(Env.Azienda.BaseTab)
-        except ImportError, e:
-            print 'import fallito di %s: %s' % (name, repr(e.args))
-            m = None
-        if m is not None:
-            if name.endswith('_plugin'):
-                name = name[:-7]
-            plugins[name] = m
 
 
 if Env.Azienda.params['show-syspath']:
     wx.MessageBox('\n'.join(sys.path), 'sys.path')
 
-import xframe as xfr
-
 
 def Main():
     
     try:
-        import custrun
+        import custrun  # @UnusedImport
     except ImportError:
         pass
     
     if hasattr(sys, 'frozen'):
         import erman
-        def _exceptionhook(type, err, traceback):
+        def _exceptionhook(_type, err, traceback):
             erman.ErrorWarning(err, traceback)
         sys.excepthook = _exceptionhook
     
@@ -186,7 +152,6 @@ def Main():
     if bmp is None:
         bmp = images.getIconBitmap()
     icon.CopyFromBitmap(bmp)
-    import awc.controls.windows as aw
     aw.SetStandardIcon(icon)
     
     app.StartApp()
@@ -217,5 +182,15 @@ def Main():
 # ------------------------------------------------------------------------------
 
 
-if __name__ == '__main__':
+
+def run():
+    try:
+        c, _ = os.path.split(__file__)
+        os.chdir(c)
+    except:
+        pass
     Main()
+
+
+if __name__ == '__main__':
+    run()

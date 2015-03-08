@@ -1375,6 +1375,8 @@ def WriteCurrentVersion():
                     if not setup.OneRow():
                         setup.CreateNewRow()
                         setup.chiave = key
+                        if setup.flag is None:
+                            setup.flag = '1'
                     oldversion = setup.codice
                     setup.codice = p.version
                     setup.Save()

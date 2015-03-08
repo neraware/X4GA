@@ -4717,6 +4717,29 @@ class ListiniAttuali(adb.DbMem):
         pro.Retrieve('id=%s', idprod)
         tli = self._info.dbtli
         rs = []
+        #prezzo su cheda prodotto
+        pre = pro.prezzo or 0
+        pre, iva, pri, ind = self.CalcolaIVA(pro.id_aliqiva, pre, decimals=bt.MAGPRE_DECIMALS)
+        prp = pro.prezzo or 0
+        cos = pro.costo or 0
+        spp = 0 #sconto su prezzo al pubblico
+        rca = 0 #ricarica su costo d'acquisto
+        sl1 = 0 #sconto su listino 1
+        gsc = 0 #guadagno su costo d'acquisto
+        if pre:
+            pl1 = pre or 0
+            try: spp = (prp-pre)/prp*100
+            except ZeroDivisionError: pass
+            try: rca = (pre/cos-1)*100
+            except ZeroDivisionError: pass
+            try: sl1 = (pl1-pre)/pl1*100
+            except ZeroDivisionError: pass
+            try: gsc = (pre-cos)/pre*100
+            except ZeroDivisionError: pass
+        il = None
+        cl = ''
+        dl = 'Prezzo pubblico scheda'
+        rs.append((il, cl, dl, pre, pri, spp, rca, sl1, gsc))
         for n in range(1, bt.MAGNUMLIS+1, 1):
             if tli.Locate(lambda x: x.tipoprezzo == str(n)):
                 cl = tli.codice

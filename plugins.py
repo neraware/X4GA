@@ -28,6 +28,7 @@ import awc.controls.dbgrid as dbglib
 import awc.controls.windows as aw
 
 import Env
+import plib
 
 import X_wdr as wdr
 
@@ -84,11 +85,8 @@ class PluginsGrid(dbglib.DbGridColoriAlternati):
             except ImportError:
                 pass
         
-        plugins = Env.plugins
-        names = plugins.keys()
-        names.sort()
-        for name in names:
-            p = plugins[name]
+        for name in plib.get_plugin_names():
+            p = Env.plugins[name]
             i = PluginInfo(name)
             try: 
                 i.title = p.title
@@ -171,6 +169,7 @@ class PluginsDialog(aw.Dialog):
     Dialog Informazioni sui plugin installati.
     """
     def __init__(self, *args, **kwargs):
+        kwargs['title'] = "Estensioni installate"
         aw.Dialog.__init__(self, *args, **kwargs)
         p = PluginsPanel(self)
         self.AddSizedPanel(p)

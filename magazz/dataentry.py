@@ -1956,9 +1956,9 @@ class MagazzPanel(aw.Panel,\
         else:
             mags = adb.DbTable(bt.TABNAME_MAGAZZ, 'mag', writable=False)
             mags.Retrieve()
-            filt = "id IN (%s)" % ','.join([str(x.id_pdc)
-                                            for x in mags 
-                                            if x.id_pdc is not None])
+            filt = "pdc.id IN (%s)" % ','.join([str(x.id_pdc)
+                                                for x in mags 
+                                                if x.id_pdc is not None])
         ci(wdr.ID_PDC).SetFilterValue(cfg.id_pdctip)
         ci(wdr.ID_PDC).SetFilter(filt)
         mp = self.controls['id_modpag']

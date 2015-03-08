@@ -29,6 +29,23 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.28', None, (
+         ("BET4186",
+         """Migliorato il supporto ai plugin."""),
+        ),),
+    
+    ('1.6.27', None, (
+         ("BUG1155",
+         """Corretta selezione anagrafica in immissione documento di 
+         trasferimento."""),
+        ),),
+    
+    ('1.6.26', None, (
+         ("BET4185",
+         """Attivato controllo di versione minima di X4GA durante il caricamento 
+         di personalizzazioni e plugin."""),
+        ),),
+    
     ('1.6.25', dt.Date(2015, 2, 13), (
          ("BET4184",
          """Aliquote in split payment consentite anche su documenti contabilizzati

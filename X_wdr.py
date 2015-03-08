@@ -32,6 +32,7 @@ import wx.lib.hyperlink as hl
 from anag.basetab import WorkZoneNotebook, PhotoContainerPanel
 
 import Env
+import plib
 
 class BranchText(wx.StaticText):
     
@@ -125,7 +126,7 @@ class AboutPanel(wx.Panel):
         if historymod:
             nh.append(['modchanges', historymod])
         nb = aw.awu.GetAllChildrens(p, lambda x: isinstance(x, wx.Notebook))[0]
-        for name in Env.plugins:
+        for name in plib.get_plugin_names():
             module = Env.plugins[name]
             try:
                 ph = module.plugin_history
@@ -308,8 +309,8 @@ ID_LINE = 10001
 ID_APPINFO = 10002
 ID_DESTUSERLIC = 10003
 ID_PLUGINS = 10004
-ID_LICINFO = 10005
-ID_VERINFO = 10006
+ID_VERINFO = 10005
+ID_LICINFO = 10006
 ID_PANUSERLIC = 10007
 
 def AboutFunc( parent, call_fit = True, set_sizer = True ):
@@ -340,22 +341,22 @@ def AboutFunc( parent, call_fit = True, set_sizer = True ):
 
     item8 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item9 = FlatButton( parent, ID_PLUGINS, "Plugins", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item9 = FlatButton( parent, ID_PLUGINS, "Estensioni", wx.DefaultPosition, wx.DefaultSize, 0 )
     item9.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
     item9.SetName( "plugins" )
     item8.Add( item9, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.TOP, 5 )
 
-    item10 = FlatButton( parent, ID_LICINFO, "Licenza", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item10 = FlatButton( parent, ID_VERINFO, "Versione", wx.DefaultPosition, wx.DefaultSize, 0 )
     item10.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
-    item10.SetToolTip( wx.ToolTip("Visualizza il testo della licenza d'uso") )
-    item10.SetName( "licinfo" )
-    item8.Add( item10, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT, 5 )
+    item10.SetToolTip( wx.ToolTip("Visualizza l'elenco delle modifiche apportate in questa versione e quelle precedenti") )
+    item10.SetName( "verinfo" )
+    item8.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.RIGHT, 5 )
 
-    item11 = FlatButton( parent, ID_VERINFO, "Versione", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11 = FlatButton( parent, ID_LICINFO, "Licenza", wx.DefaultPosition, wx.DefaultSize, 0 )
     item11.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
-    item11.SetToolTip( wx.ToolTip("Visualizza l'elenco delle modifiche apportate in questa versione e quelle precedenti") )
-    item11.SetName( "verinfo" )
-    item8.Add( item11, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.RIGHT, 5 )
+    item11.SetToolTip( wx.ToolTip("Visualizza il testo della licenza d'uso") )
+    item11.SetName( "licinfo" )
+    item8.Add( item11, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT, 5 )
 
     item6.Add( item8, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 

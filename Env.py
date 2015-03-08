@@ -33,8 +33,10 @@ import wx.lib.colourdb
 import wx.grid as gl
 
 from awc.util import ListSearch, MsgDialog
+from plib import test_ext_req, get_reqfail_msg, clear_plugins, activate_new_plugin
 msgbox = lambda *args: MsgDialog(None, *args)
 
+import awc.controls.windows as aw
 import awc.controls.dbgrid as dbgrid
 import awc.controls.numctrl as numctrl
 
@@ -101,14 +103,15 @@ class PluginLoadingException(Exception):
 
 plugins = {}
 def LoadPlugin(plugin_name):
+    global plugins
     plugin_name = plugin_name.replace('_plugin', '')
     plugin_func = plugin_name
     if not plugin_func.endswith('_plugin'):
         plugin_func += '_plugin'
     m = __import__(plugin_func, {}, {}, False)
-    if True:#not hasattr(sys, 'frozen'):
-        global plugins
-        plugins[plugin_name] = m
+    if not test_ext_req(m):
+        raise Exception, get_reqfail_msg("P", plugin_name, m)
+    plugins[plugin_name] = m
     return True
 
 
@@ -3891,7 +3894,23 @@ class Azienda(object):
                                   """Configurazione azienda errata: manca """\
                                   """la definizione %s.\nVerificare il setup """\
                                   """dei dati aziendali.""" % err
+            clear_plugins()
             cls.defstru()
+            from plib import init_plugins, check_new_plugins, enable_plugin
+            init_plugins()
+            for new_plugin in check_new_plugins():
+                msg = "E' disponibile il nuovo plugin '%s': lo vuoi attivare ?" % new_plugin
+                stl = wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT
+                resp = aw.awu.MsgDialog(None, msg, style=stl)
+                if resp == wx.ID_YES:
+                    try:
+                        LoadPlugin(new_plugin)
+                        activate_new_plugin(new_plugin)
+                    except Exception, e:
+                        msg = "Errore durante il caricamento del plugin:\n%s" % ' - '.join(e.args)
+                        aw.awu.MsgDialog(None, msg, style=wx.ICON_ERROR)
+                elif resp == wx.ID_NO:
+                    enable_plugin(new_plugin, False)
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()
