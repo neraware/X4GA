@@ -1017,7 +1017,7 @@ class Azienda(object):
         MAGPROVCLI = False   #flag gestione provvigione su scheda cliente
         MAGPROVPRO = False   #flag gestione provvigione su scheda prodotto
         MAGPROVMOV = " "     #flag ereditarietà provvigione su riga movimento
-        MAGPROVSEQ = "P"     #tipo ereditarietà provvigione su riga moviment C=Cliente, P=Prodotto
+        MAGPROVSEQ = "P"     #tipo ereditarietà provvigione su riga moviment C=Cliente, P=Prodotto, A=Agente
         MAGDEMSENDFLAG = 0   #flag gestione email documenti
         MAGDEMSENDDESC = ""  #descrizione mittente email documenti
         MAGDEMSENDADDR = ""  #indirizzo posta elettroniva mittente email documenti
@@ -1780,6 +1780,7 @@ class Azienda(object):
                 [ "numcc",      "VARCHAR", 12, None, "Num. C/C", None ],
                 [ "iban",       "VARCHAR", 27, None, "Coord. IBAN", None ],
                 [ "id_zona",    "INT",    idw, None, "ID zona", None ],
+                [ "perpro",     "DECIMAL",  5,    2, "Percentuale provvigione", None ],
                 [ "noprovvig",  "TINYINT",  1, None, "Flag esclusione da provvigioni", None ], ]
             
             #cls.set_constraints(cls.TABNAME_AGENTI,
@@ -3896,7 +3897,7 @@ class Azienda(object):
                                   """dei dati aziendali.""" % err
             clear_plugins()
             cls.defstru()
-            from plib import init_plugins, check_new_plugins, enable_plugin
+            from plib import init_plugins, check_new_plugins, load_plugin, enable_plugin
             init_plugins()
             for new_plugin in check_new_plugins():
                 msg = "E' disponibile il nuovo plugin '%s': lo vuoi attivare ?" % new_plugin
@@ -3904,7 +3905,7 @@ class Azienda(object):
                 resp = aw.awu.MsgDialog(None, msg, style=stl)
                 if resp == wx.ID_YES:
                     try:
-                        LoadPlugin(new_plugin)
+                        load_plugin(new_plugin)
                         activate_new_plugin(new_plugin)
                     except Exception, e:
                         msg = "Errore durante il caricamento del plugin:\n%s" % ' - '.join(e.args)

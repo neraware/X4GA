@@ -1323,15 +1323,23 @@ class GridBody(object):
                                 if _prio == "P":
                                     #prodotto
                                     prio.append(self.dbprod.perpro or None)
-                                if _prio == "C":
+                                elif _prio == "C":
                                     #prodotto
                                     prio.append(getattr(self.dbanag, 'perpro', None) or None)
+                                elif _prio == "A":
+                                    #agente
+                                    prio.append(getattr(self.dbdoc.agente, 'perpro', None) or None)
                             except:
                                 pass
+                        old_perpro = mov.perpro
+                        mov.perpro = None
                         for n in range(len(prio)):
                             mov.perpro = prio[n]
                             if mov.perpro:
                                 break
+                        if not mov.perpro == old_perpro:
+                            self.gridbody.ForceResetView()
+                            self.gridbody.ResetView()
                     else:
                         if self.dbprod.perpro:
                             mov.perpro = self.dbprod.perpro

@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.29', None, (
+         ("BET4187",
+         """Possibilità di impostazione sull'agente della percentuale 
+         di calcolo provvigioni."""),
+        ),),
+    
     ('1.6.28', None, (
          ("BET4186",
          """Migliorato il supporto ai plugin."""),
