@@ -70,10 +70,14 @@ def clear_plugins():
     Env.plugins.clear()
 
 
-def get_plugin_names():
+def get_plugin_names(enabled=True):
     import Env
     setup = Env.adb.DbTable('cfgsetup', 'setup')
-    setup.AddFilter('setup.chiave LIKE "%_plugin_version" AND (setup.flag=1 OR setup.flag IS NULL)')
+    setup.AddFilter('setup.chiave LIKE "%_plugin_version"')
+    if enabled:
+        setup.AddFilter('(setup.flag="1" OR setup.flag IS NULL)')
+    else:
+        setup.AddFilter('setup.flag="0"')
     setup.AddOrder('setup.importo')
     setup.Retrieve()
     return [setup.chiave.split('_')[0] for _ in setup]
@@ -130,6 +134,9 @@ def enable_plugin(plugin_name, enable=True):
     import Env
     setup = Env.adb.DbTable('cfgsetup', 'setup')
     setup.AddFilter('setup.chiave LIKE "%s_plugin_version"' % plugin_name)
-    if setup.Retrieve() and setup.OneRow():
-        setup.flag = str(int(enable))
-        setup.Save()
+    setup.Retrieve()
+    if setup.IsEmpty():
+        setup.CreateNewRow()
+        setup.chiave = '%s_plugin_version' % plugin_name
+    setup.flag = str(int(enable))
+    setup.Save()

@@ -73,6 +73,9 @@ except Exception, e:
     #aw.awu.MsgDialog(None, message=repr(e.args), style=wx.ICON_ERROR)
     miracq = None
 
+from plib import get_plugin_names, load_plugin, enable_plugin, PluginException
+
+
 
 class ListAziende(adb.DbMem):
     def __init__(self):
@@ -208,6 +211,10 @@ class SelAziendaPanel(aw.Panel):
         self.Bind(gl.EVT_GRID_CELL_LEFT_DCLICK, self.OnSelect,  self.gridaz)
         self.gridaz.Bind(wx.EVT_KEY_DOWN, self.OnTestGridChar)
         
+        self.test_disabled_plugins = False
+        self.gridaz.Bind(wx.EVT_KEY_DOWN, self.OnTestGridKey)
+        self.gridaz.Bind(wx.EVT_KEY_UP, self.OnTestGridKey)
+        
         self.Bind(EVT_NEWAZI_CREATED, self.UpdateAziende)
         
         self.test_mod_name = True
@@ -215,6 +222,10 @@ class SelAziendaPanel(aw.Panel):
         ci(ID_PSWD).Bind(wx.EVT_KEY_UP, self.OnTestKey)
         
         self.UpdateServerUrl(0)
+    
+    def OnTestGridKey(self, event):
+        self.test_disabled_plugins = event.ControlDown()
+        event.Skip()
     
     def OnTestKey(self, event):
         self.test_mod_name = not event.ControlDown()
@@ -425,7 +436,17 @@ class SelAziendaPanel(aw.Panel):
         
         if self.AutorizzoUser(username, password):
             if self.CheckLogin(nomeazi, nomedb, codice, data):
-                #bt.defstru()
+                if self.test_disabled_plugins:
+                    for name in get_plugin_names(enabled=False):
+                        msg = "E' presente il plugin '%s', ma su questa azienda è disabilitato." % name
+                        msg += "\nVuoi attivarlo ?"
+                        stl = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
+                        if aw.awu.MsgDialog(self, msg, style=stl) == wx.ID_YES:
+                            enable_plugin(name)
+                            try:
+                                load_plugin(name)
+                            except Exception, e:
+                                aw.awu.MsgDialog(self, "Errore in caricamento plugin:\n%s" % ' - '.join(e.args))
                 try:
                     bt.ReadAziendaSetup()
                 except bt.AziendaSetupException, e:
