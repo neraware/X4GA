@@ -274,18 +274,26 @@ class LinkTableProd(LinkTable, LinkTableHideSearchMixin):
         cmd, par = LinkTable.GetSqlTextSearch(self, obj, forceAll, exact)
         fltv = obj.GetValue()
         if obj == self._ctrcod and len(fltv)>=3:
+            fltv = fltv.rstrip()
+            if not self.codexclusive:
+                if not fltv.endswith(r'%'):
+                    fltv += r'%'
             if cmd:
                 cmd += " OR "
-#            cmd += "%s.codfor LIKE %%s" % self.db_alias
-#            par.append('%s%%' % fltv.rstrip())
-            cmd += "%s.codfor=%%s" % self.db_alias
-            par.append(fltv.rstrip())
+            if self.codexclusive:
+                cmd += "%s.codfor=%%s" % self.db_alias
+                par.append(fltv)
+            else:
+                cmd += "%s.codfor LIKE %%s" % self.db_alias
+                par.append(fltv)
             if cmd:
                 cmd += " OR "
-#            cmd += "%s.barcode LIKE %%s" % self.db_alias
-#            par.append('%s%%' % fltv.rstrip())
-            cmd += "%s.barcode=%%s" % self.db_alias
-            par.append(fltv.rstrip())
+            if self.codexclusive:
+                cmd += "%s.barcode=%%s" % self.db_alias
+                par.append(fltv)
+            else:
+                cmd += "%s.barcode LIKE %%s" % self.db_alias
+                par.append(fltv)
         return cmd, par
     
     def SetValue(self, id, txt=None, **kw):
