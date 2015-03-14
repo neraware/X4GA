@@ -446,7 +446,7 @@ class SelAziendaPanel(aw.Panel):
                             try:
                                 load_plugin(name)
                             except Exception, e:
-                                aw.awu.MsgDialog(self, "Errore in caricamento plugin:\n%s" % ' - '.join(e.args))
+                                aw.awu.MsgDialog(self, "Errore in caricamento plugin:\n%s" % ' - '.join(map(str, e.args)))
                 try:
                     bt.ReadAziendaSetup()
                 except bt.AziendaSetupException, e:
