@@ -1002,6 +1002,7 @@ GROUP BY doc.id""")
         
         if ok:
             self.PerformExternalAdaptations()
+            self.CreateExternalViews()
         
         if ok:
             WriteCurrentVersion()
@@ -1013,6 +1014,18 @@ GROUP BY doc.id""")
     
     def PerformExternalAdaptations(self):
         pass
+    
+    def CreateExternalViews(self):
+        for name in Env.plugins:
+            m = Env.plugins[name]
+            if hasattr(m, 'CreateViews'):
+                m.CreateViews()
+        try:
+            import custapp
+            if hasattr(custapp, 'CreateViews'):
+                custapp.CreateViews()
+        except ImportError:
+            pass
 
 
 # ------------------------------------------------------------------------------
