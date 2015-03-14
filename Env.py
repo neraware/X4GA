@@ -3911,7 +3911,16 @@ class Azienda(object):
                         msg = "Errore durante il caricamento del plugin:\n%s" % ' - '.join(e.args)
                         aw.awu.MsgDialog(None, msg, style=wx.ICON_ERROR)
                 elif resp == wx.ID_NO:
-                    enable_plugin(new_plugin, False)
+                    msg = "Il plugin '%s' verrà disattivato su tutte le postazioni dell'azienda." % new_plugin
+                    msg += "\nConfermi la disattivazione ?" 
+                    stl = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
+                    resp = aw.awu.MsgDialog(None, msg, style=stl)
+                    if resp == wx.ID_YES:
+                        enable_plugin(new_plugin, False)
+                        msg = "Il plugin '%s' è stato disattivato su tutte le postazioni dell'azienda." % new_plugin
+                        msg += "\nPotrà essere riattivato in fase di login selezionando l'azienda"
+                        msg += "\ncon la combinazione di tasti Ctrl-Invio." 
+                        aw.awu.MsgDialog(None, msg, style=wx.ICON_INFORMATION)
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()
