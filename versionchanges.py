@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.30', None, (
+         ("BUG1156",
+         """Fix disattivazione plugins."""),
+        ),),
+    
     ('1.6.29', None, (
          ("BET4187",
          """Possibilità di impostazione sull'agente della percentuale 
