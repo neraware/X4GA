@@ -37,6 +37,7 @@ import awc.controls.mixin as cmix
 
 import Env
 from awc.controls.datectrl import DateCtrl
+from cfg.cfgmagazz import CfgDocMov
 Esercizio = Env.Azienda.Esercizio
 bt = Env.Azienda.BaseTab
 bc = Env.Azienda.Colours
@@ -772,6 +773,7 @@ class MagazzPanel(aw.Panel,\
         self.GridScadSetReg(doc.regcon)
         if self.onedoconly_id:
             self.controls['causale'].SetValue(doc.id_tipdoc)
+            self.SetCausale()
         self.UpdateDocIdControls()
         self.UpdatePanelHead()
         self.UpdateDatiScad()
@@ -1904,7 +1906,7 @@ class MagazzPanel(aw.Panel,\
         """
         out = True
         ctrcau = self.controls["causale"]
-        cfg = self.dbdoc.cfgdoc
+        cfg = CfgDocMov()
         flt = "TRUE"
         #escludo eventuali documenti di trasf.mag. generati in autom.
         if cfg.Retrieve("id_tdoctra IS NOT NULL"):
@@ -1932,7 +1934,8 @@ class MagazzPanel(aw.Panel,\
             descrizione
             configurazione
         """
-        self.SetCausale()
+        if self.FindWindowById(wdr.ID_CAUSALE).GetValue():
+            self.SetCausale()
         wx.CallAfter(self.SetProdZoneSize)
         event.Skip()
     
