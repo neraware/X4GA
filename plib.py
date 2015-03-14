@@ -94,7 +94,7 @@ def init_plugins():
             aw.awu.MsgDialog(None, msg, cap, style=wx.ICON_ERROR)
         except Exception, e:
             cap = "Errore in caricamento plugin!"
-            msg = ' -'.join(e.args)
+            msg = ' -'.join(map(str, e.args))
             aw.awu.MsgDialog(None, msg, cap, style=wx.ICON_ERROR)
 
 
