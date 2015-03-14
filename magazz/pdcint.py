@@ -66,6 +66,8 @@ class PdcIntMagDocGrid(dbglib.DbGridColoriAlternati, docint._DocIntGridMixin):
         pdc = doc.pdc
         dst = doc.dest
         mag = doc.magazz
+        mpa = doc.modpag
+        age = doc.agente
         
         _NUM = gl.GRID_VALUE_NUMBER+":6"
         _STR = gl.GRID_VALUE_STRING
@@ -84,6 +86,10 @@ class PdcIntMagDocGrid(dbglib.DbGridColoriAlternati, docint._DocIntGridMixin):
             (180, (cn(dst, 'descriz'),    "Destinazione",  _STR, True )),
             (100, (cn(doc, 'totimponib'), "Imponibile",    _IMP, True )),
             (100, (cn(doc, 'totimporto'), "Tot.Documento", _IMP, True )),
+            ( 40, (cn(mpa, "codice"),     "Cod",           _STR, True )),
+            (110, (cn(mpa, "descriz"),    "Mod.Pagamento", _STR, True )),
+            ( 40, (cn(age, "codice"),     "Cod",           _STR, True )),
+            (110, (cn(age, "descriz"),    "Agente",        _STR, True )),
             ( 30, (cn(doc, 'f_acq'),      "Acq",           _CHK, True )),
             ( 30, (cn(doc, 'f_ann'),      "Ann",           _CHK, True )),
             (  1, (cn(doc, "id"),         "#doc",          _STR, True )),
