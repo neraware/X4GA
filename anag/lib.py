@@ -384,7 +384,7 @@ class LinkTableCatFor(LinkTable):
 
 class LinkTableGruArt(LinkTable):
     
-    def __init__(self, parent, id, name=None, **kwargs):
+    def __init__(self, parent, id, name=None, catfather=None, **kwargs):
         LinkTable.__init__(self, parent, id, **kwargs)
         if name:
             self.SetName(name)
@@ -392,6 +392,25 @@ class LinkTableGruArt(LinkTable):
         self.db_alias = 'gruart'
         from anag.gruart import GruArtDialog
         self.cardclass = GruArtDialog
+        if catfather:
+            self.SetCatArtFather(catfather)
+    
+    def SetCatArt(self, ca):
+        self.catart = ca
+        if ca is None:
+            flt = "1"
+        else:
+            flt = "id_catart=%d" % ca
+        self.SetFilter(flt)
+    
+    def SetCatArtFather(self, ctrcat):
+        assert isinstance(ctrcat, LinkTableCatArt)
+        from awc.controls.linktable import EVT_LINKTABCHANGED
+        self.GetParent().Bind(EVT_LINKTABCHANGED, self.OnCatArtChanged, ctrcat)
+    
+    def OnCatArtChanged(self, event):
+        self.SetCatArt(event.GetEventObject().GetValue())
+        event.Skip()
 
 
 # ------------------------------------------------------------------------------

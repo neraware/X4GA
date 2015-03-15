@@ -1646,8 +1646,6 @@ class DocMag(adb.DbTable):
         
         self._InitTotalizzaRighe()
         
-        self._InitTotalizzaRighe()
-        
         for mov in self.mov:
             if not self._TotalizzaRiga(mov):
                 continue
