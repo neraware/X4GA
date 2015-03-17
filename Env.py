@@ -33,7 +33,8 @@ import wx.lib.colourdb
 import wx.grid as gl
 
 from awc.util import ListSearch, MsgDialog
-from plib import test_ext_req, get_reqfail_msg, clear_plugins, activate_new_plugin
+from plib import test_ext_req, get_reqfail_msg, clear_plugins, activate_new_plugin,\
+    load_new_plugins
 msgbox = lambda *args: MsgDialog(None, *args)
 
 import awc.controls.windows as aw
@@ -509,7 +510,7 @@ class LicenseSetup(Setup):
 def InitSettings(ask_missing_config=True, init_colors=True):
     out = True
     try:
-        locale.setlocale( locale.LC_ALL, "it" )
+        locale.setlocale( locale.LC_ALL, '')
     except locale.Error:
         locale.setlocale( locale.LC_ALL)
     config = GeneralSetup()
@@ -3899,28 +3900,7 @@ class Azienda(object):
             cls.defstru()
             from plib import init_plugins, check_new_plugins, load_plugin, enable_plugin
             init_plugins()
-            for new_plugin in check_new_plugins():
-                msg = "E' disponibile il nuovo plugin '%s': lo vuoi attivare ?" % new_plugin
-                stl = wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT
-                resp = aw.awu.MsgDialog(None, msg, style=stl)
-                if resp == wx.ID_YES:
-                    try:
-                        load_plugin(new_plugin)
-                        activate_new_plugin(new_plugin)
-                    except Exception, e:
-                        msg = "Errore durante il caricamento del plugin:\n%s" % ' - '.join(e.args)
-                        aw.awu.MsgDialog(None, msg, style=wx.ICON_ERROR)
-                elif resp == wx.ID_NO:
-                    msg = "Il plugin '%s' verrà disattivato su tutte le postazioni dell'azienda." % new_plugin
-                    msg += "\nConfermi la disattivazione ?" 
-                    stl = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
-                    resp = aw.awu.MsgDialog(None, msg, style=stl)
-                    if resp == wx.ID_YES:
-                        enable_plugin(new_plugin, False)
-                        msg = "Il plugin '%s' è stato disattivato su tutte le postazioni dell'azienda." % new_plugin
-                        msg += "\nPotrà essere riattivato in fase di login selezionando l'azienda"
-                        msg += "\ncon la combinazione di tasti Ctrl-Invio." 
-                        aw.awu.MsgDialog(None, msg, style=wx.ICON_INFORMATION)
+            load_new_plugins()
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()

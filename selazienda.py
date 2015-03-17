@@ -20,6 +20,7 @@
 # You should have received a copy of the GNU General Public License
 # along with X4GA.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------------
+import plib
 
 """
 Selezione azienda
@@ -502,6 +503,26 @@ class SelAziendaPanel(aw.Panel):
             aw.awu.MsgDialog(self, "Manca il nome dell'utente", style=wx.ICON_EXCLAMATION)
             
         else:
+            
+            try:
+                conn = MySQLdb.connect(host=Env.Azienda.DB.servername,
+                                       user=Env.Azienda.DB.username,
+                                       passwd=Env.Azienda.DB.password,
+                                       db='x4',
+                                       use_unicode=True)
+                Env.Azienda.DB.connection = conn
+                db = adb.DB()
+                db._dbCon = conn
+                db.connected = True
+                wx.GetApp().dbcon = conn
+                
+            except MySQLdb.Error, e:
+                errMessage = "Non è possibile accedere al database\n\n%s: %s" \
+                % (e.args[0], e.args[1])
+                aw.awu.MsgDialog(self, message=errMessage, style=wx.ICON_EXCLAMATION)
+            
+            plib.load_new_plugins(write_changes=False)
+            
             dlg = AziendaSetup(None, -1, "Creazione nuova azienda")
             dlg.x4conn = self.x4conn
             do = (dlg.ShowModal() is True)

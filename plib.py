@@ -99,7 +99,7 @@ def init_plugins():
 
 
 
-def check_new_plugins():
+def check_new_plugins(read_setup=True):
     import Env
     files = glob.glob(Env.opj(Env.plugin_base_path, '*.zip'))
     files.sort()
@@ -109,13 +109,43 @@ def check_new_plugins():
         n = _file.rindex('/')
         name = _file[n+1:-4]
         if not name in Env.plugins:
-            #test plugin disabilitato sull'azienda
-            setup = Env.adb.DbTable('cfgsetup', 'setup')
-            setup.AddFilter('setup.chiave="%s_plugin_version" AND setup.flag=0' % name)
-            setup.Retrieve()
-            if setup.IsEmpty():
+            if read_setup:
+                #test plugin disabilitato sull'azienda
+                setup = Env.adb.DbTable('cfgsetup', 'setup')
+                setup.AddFilter('setup.chiave="%s_plugin_version" AND setup.flag=0' % name)
+                setup.Retrieve()
+                append = setup.IsEmpty()
+            else:
+                append = True
+            if append:
                 new_plugins.append(name)
     return new_plugins
+
+
+def load_new_plugins(write_changes=True):
+    for new_plugin in check_new_plugins(read_setup=write_changes):
+        msg = "E' disponibile il nuovo plugin '%s': lo vuoi attivare ?" % new_plugin
+        stl = wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT
+        resp = aw.awu.MsgDialog(None, msg, style=stl)
+        if resp == wx.ID_YES:
+            try:
+                load_plugin(new_plugin)
+                if write_changes:
+                    activate_new_plugin(new_plugin)
+            except Exception, e:
+                msg = "Errore durante il caricamento del plugin:\n%s" % ' - '.join(e.args)
+                aw.awu.MsgDialog(None, msg, style=wx.ICON_ERROR)
+        elif resp == wx.ID_NO and write_changes:
+            msg = "Il plugin '%s' verrà disattivato su tutte le postazioni dell'azienda." % new_plugin
+            msg += "\nConfermi la disattivazione ?" 
+            stl = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
+            resp = aw.awu.MsgDialog(None, msg, style=stl)
+            if resp == wx.ID_YES:
+                enable_plugin(new_plugin, False)
+                msg = "Il plugin '%s' è stato disattivato su tutte le postazioni dell'azienda." % new_plugin
+                msg += "\nPotrà essere riattivato in fase di login selezionando l'azienda"
+                msg += "\ncon la combinazione di tasti Ctrl-Invio." 
+                aw.awu.MsgDialog(None, msg, style=wx.ICON_INFORMATION)
 
 
 def activate_new_plugin(plugin_name):

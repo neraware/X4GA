@@ -480,32 +480,3 @@ class Scadenze_Table(adb.DbTable):
             scad.append([dscad, imptot, 0, 0])
         
         return scad
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    import locale
-    locale.setlocale(locale.LC_ALL, 'it')
-    date = lib.DateTime.today()
-    Env.Azienda.DB.testdb()
-    con = Env.Azienda.DB.connection
-    cur = con.cursor()
-    try:
-        cur.execute("SELECT id, codice, descriz FROM modpag ORDER BY codice")
-        rsmp = cur.fetchall()
-    except MySQLdb.Error, e:
-        print "Errore %d - %s" % (e.args[0], e.args[1])
-    else:
-        space = lambda x: " "*x
-        scad = Scadenze(cur)
-        for mp in rsmp:
-            scad.SetupModPag(mp[0])
-            x = scad.CalcolaScadenze(date, mp[0], 1000.00)
-            row = ("%s %s:" % (mp[1], mp[2]) + space(20))[:21]
-            if x:
-                row += "%d\t" % x[0][1]
-            for d,i in x:
-                row += (d.Format().split()[0]+space(12))[:13]
-            print row

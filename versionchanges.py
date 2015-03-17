@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.32', None, (
+         ("BUG1157",
+         """Inizializza plugins presenti in creazione azienda."""),
+        ),),
+    
     ('1.6.30', None, (
          ("BUG1156",
          """Fix disattivazione plugins."""),
