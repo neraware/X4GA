@@ -452,6 +452,7 @@ class SelAziendaPanel(aw.Panel):
                     bt.ReadAziendaSetup()
                 except bt.AziendaSetupException, e:
                     aw.awu.MsgDialog(self, e.args[0], style=wx.ICON_ERROR)
+                Env.Azienda.read_dati_azienda()
                 Env.Azienda.Login.dataElab = data
                 cfg = CfgContab()
                 cfg.SetEsercizio(data)

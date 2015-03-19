@@ -29,9 +29,18 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.33', None, (
+         ("BUG1159",
+         """Fix calcolo scadenze in dataentry documento, veniva eseguito anche
+         a seguito del caricamento di un documento richiamandolo da fuori del
+         dataentry."""),
+        ),),
+    
     ('1.6.32', None, (
          ("BUG1157",
          """Inizializza plugins presenti in creazione azienda."""),
+         ("BUG1158",
+         """Fix lettura dati azienda."""),
         ),),
     
     ('1.6.30', None, (
