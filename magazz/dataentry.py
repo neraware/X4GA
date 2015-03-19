@@ -1453,7 +1453,8 @@ class MagazzPanel(aw.Panel,\
                                          """banca d'appoggio e delle spese """
                                          """di incasso.""",
                                          style=wx.ICON_INFORMATION)
-            self.MakeTotals()
+            if not getattr(self, '_stop_calc_scad_', False):
+                self.MakeTotals()
             if self.setenablecontrols:
                 self.EnableHeadControls()
                 self.EnableBodyControls()
@@ -1870,6 +1871,7 @@ class MagazzPanel(aw.Panel,\
     
     def SetOneDocOnly(self, iddoc):
         self.onedoconly_id = iddoc
+        setattr(self, '_stop_calc_scad_', True)
         if self.DocLoad(iddoc):
             for name in 'butnew butsrc'.split():
                 self.FindWindowByName(name).Hide()
@@ -1878,7 +1880,11 @@ class MagazzPanel(aw.Panel,\
             p.SetSize((s[0]+1, s[0]+1))
             p.SetSize(s)
             self.SetRegStatus(STATUS_DISPLAY)
-
+        def reset():
+            if hasattr(self, '_stop_calc_scad_'):
+                delattr(self, '_stop_calc_scad_')
+        wx.CallAfter(reset)
+    
     def UpdateAllControls(self):
         if   self.status == STATUS_SELCAUS: lbl = "Seleziona causale"
         elif self.status == STATUS_DISPLAY: lbl = "Visualizzazione"
