@@ -262,7 +262,7 @@ class XApp(wx.App):
             return
         
         #path aggiornamenti scaricati su percorso comune
-        path = Env.Azienda.config.Updates_folder
+        path = Env.Azienda.config.Updates_folder  # @UndefinedVariable
         if not path:
             return
         if not path.endswith('/'):
@@ -312,7 +312,7 @@ class XApp(wx.App):
                 dlver = parts[1]
                 over = ver.__modversion_exe__
                 if dlver > over:
-                    import custapp
+                    import custapp  # @UnresolvedImport
                     zips.append((name, 'C', custapp.title, dlver))
         
         files = glob.glob(path+'*.zip')

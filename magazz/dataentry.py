@@ -2951,8 +2951,8 @@ class DocSearch(wx.Dialog):
                           ('srcdatreg2', datregsrc2),
                           ('srcdatdoc1', datdocsrc1),
                           ('srcdatdoc2', datdocsrc2),
-                          ('id_magazz',  pdcsearch),
-                          ('id_pdc',     magsearch),
+                          ('id_magazz',  magsearch),
+                          ('id_pdc',     pdcsearch),
                           ('acqsearch',  acqsearch),
                           ('annsearch',  annsearch),
                           ('ricordasel', ricsearch),):
