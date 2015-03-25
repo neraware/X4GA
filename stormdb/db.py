@@ -707,8 +707,16 @@ class DB(object):
         
         class DescriptionIndexes(stormdb.DbMem):
             def __init__(mem, tabname):
+                fields = 'table,not_unique,key_name,seq_in_index,column_name,collation,cardinality,sub_part,packed,null,index_type,comment'
+                try:
+                    self.Retrieve("SELECT VERSION()")
+                    v = self.rs[0][0][:3]
+                    if v >= "5.5":
+                        fields += ',index_comment'
+                except:
+                    pass
+                indexes = stormdb.DbMem(fields)
                 stormdb.DbMem.__init__(mem, 'index_name,index_family,index_type,fields')
-                indexes = stormdb.DbMem('table,not_unique,key_name,seq_in_index,column_name,collation,cardinality,sub_part,packed,null,index_type,comment')
                 self.Retrieve("SHOW INDEX IN %s" % tabname)
                 indexes.SetRecordset(self.rs)
                 lastname = None
