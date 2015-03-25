@@ -32,6 +32,7 @@ import wx.lib.hyperlink as hl
 from anag.basetab import WorkZoneNotebook, PhotoContainerPanel
 
 import Env
+import plib
 
 class BranchText(wx.StaticText):
     
@@ -120,8 +121,31 @@ class AboutPanel(wx.Panel):
             historymod = cvc.historymod
         except:
             historymod = ()
-        for name, hist in (('changes',    history),
-                           ('modchanges', historymod),):
+        nh = []
+        nh.append(['changes', history])
+        if historymod:
+            nh.append(['modchanges', historymod])
+        nb = aw.awu.GetAllChildrens(p, lambda x: isinstance(x, wx.Notebook))[0]
+        for name in plib.get_plugin_names():
+            module = Env.plugins[name]
+            try:
+                ph = module.plugin_history
+                pp = wx.Panel(nb)
+                key = 'plugin_%s_changes' % name
+                ModVersionChangesVerFunc(pp, False)
+                pp.FindWindowByName('changes').SetName(key)
+#                 item0 = wx.FlexGridSizer(0, 1, 0, 0)
+#                 item1 = wx.TextCtrl(pp, style=wx.TE_MULTILINE)
+#                 item1.SetName(key)
+#                 item0.Add(item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+#                 item0.AddGrowableCol(0)
+#                 item0.AddGrowableRow(0)
+                
+                nb.AddPage(pp, 'Plugin %s' % name)
+                nh.append([key, ph])
+            except:
+                pass
+        for name, hist in nh:
             txt = ''
             for relver, reldat, relchg in hist:
                 if txt:
@@ -285,8 +309,8 @@ ID_LINE = 10001
 ID_APPINFO = 10002
 ID_DESTUSERLIC = 10003
 ID_PLUGINS = 10004
-ID_LICINFO = 10005
-ID_VERINFO = 10006
+ID_VERINFO = 10005
+ID_LICINFO = 10006
 ID_PANUSERLIC = 10007
 
 def AboutFunc( parent, call_fit = True, set_sizer = True ):
@@ -317,22 +341,22 @@ def AboutFunc( parent, call_fit = True, set_sizer = True ):
 
     item8 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item9 = FlatButton( parent, ID_PLUGINS, "Plugins", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item9 = FlatButton( parent, ID_PLUGINS, "Estensioni", wx.DefaultPosition, wx.DefaultSize, 0 )
     item9.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
     item9.SetName( "plugins" )
     item8.Add( item9, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.TOP, 5 )
 
-    item10 = FlatButton( parent, ID_LICINFO, "Licenza", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item10 = FlatButton( parent, ID_VERINFO, "Versione", wx.DefaultPosition, wx.DefaultSize, 0 )
     item10.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
-    item10.SetToolTip( wx.ToolTip("Visualizza il testo della licenza d'uso") )
-    item10.SetName( "licinfo" )
-    item8.Add( item10, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT, 5 )
+    item10.SetToolTip( wx.ToolTip("Visualizza l'elenco delle modifiche apportate in questa versione e quelle precedenti") )
+    item10.SetName( "verinfo" )
+    item8.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.RIGHT, 5 )
 
-    item11 = FlatButton( parent, ID_VERINFO, "Versione", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11 = FlatButton( parent, ID_LICINFO, "Licenza", wx.DefaultPosition, wx.DefaultSize, 0 )
     item11.SetFont( wx.Font( 7, wx.SWISS, wx.NORMAL, wx.BOLD ) )
-    item11.SetToolTip( wx.ToolTip("Visualizza l'elenco delle modifiche apportate in questa versione e quelle precedenti") )
-    item11.SetName( "verinfo" )
-    item8.Add( item11, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.RIGHT, 5 )
+    item11.SetToolTip( wx.ToolTip("Visualizza il testo della licenza d'uso") )
+    item11.SetName( "licinfo" )
+    item8.Add( item11, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT, 5 )
 
     item6.Add( item8, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -1794,133 +1818,6 @@ def XMenuBarFunc():
     item54.Append( ID_ABOUT, "Informazioni sulla versione\tCtrl-?", "" )
     item54.Append( ID_UPDATES, "Verifica disponibilità aggiornamenti", "" )
     item0.Append( item54, "?" )
-    
-    return item0
-
-ID_INTMAGSRCDES = 5013
-ID_HELP = 10264
-
-def XLiteMenuBar():
-    item0 = wx.MenuBar()
-    
-    item1 = wx.Menu()
-    item1.Append( ID_QUIT, "Esci", "Chiude la sessione di lavoro" )
-    item0.Append( item1, "File" )
-    
-    item2 = wx.Menu()
-    
-    item3 = wx.Menu()
-    item3.Append( ID_GESCLIENT, "Clienti", "Gestione tabella Clienti" )
-    item3.Append( ID_GESCASSE, "Casse", "Gestione tabella Sottoconti di tipo Cassa" )
-    item3.Append( ID_GESBANCHE, "Banche", "Gestione tabella Sottoconti di tipo Banca" )
-    item3.AppendSeparator()
-    item3.Append( ID_GESALQIVA, "Aliquote IVA", "Gestione tabella Aliquote IVA" )
-    item2.AppendMenu( ID_MENUTABGLOBAL, "Anagrafiche", item3 )
-
-    
-    item4 = wx.Menu()
-    item4.Append( ID_GESPROD, "Prodotti", "Gestione tabella Articoli di Magazzino" )
-    item4.AppendSeparator()
-    item4.Append( ID_GESPROD_TIPART, "Tipi Prodotto", "Gestione tabella Tipi prodotto" )
-    item4.Append( ID_GESPROD_CATART, "Categorie", "Gestione tabella Categorie merce" )
-    item4.Append( ID_GESPROD_GRUART, "Gruppi", "Gestione tabella Gruppi merce" )
-    item4.Append( ID_GESPROD_MARART, "Marche prodotti", "Gestione tabella Gruppi merce" )
-    item4.Append( ID_GESPROD_STATUS, "Status prodotti", "Gestione tabella Status prodotti" )
-    item4.AppendSeparator()
-    
-    item5 = wx.Menu()
-    item5.Append( ID_GESTRACAU, "Causali", "Gestione tabella Causali di trasporto" )
-    item5.Append( ID_GESTRACUR, "A cura", "Gestione tabella Trasporto a cura" )
-    item5.Append( ID_GESTRAPOR, "Porto", "Gestione tabella Tipo di porto" )
-    item5.Append( ID_GESTRAVET, "Vettori", "Gestione tabella Vettori di consegna" )
-    item5.Append( ID_GESTRAASP, "Aspetto esteriore dei beni", "Gestione tabella Aspetto esteriore dei beni" )
-    item5.Append( ID_GESTRACON, "Tipi di incasso dei contrassegni", "Gestione tabella Tipi di incasso dei contrassegni" )
-    item4.AppendMenu( ID_MENUTRASP, "Dati trasporto", item5 )
-
-    item2.AppendMenu( ID_MENUTABMAGAZZ, "Magazzino", item4 )
-
-    
-    item6 = wx.Menu()
-    item6.Append( ID_GESMODPAG, "ModalitÃ  di pagamento", "Gestione tabella ModalitÃ  di pagamento" )
-    item6.Append( ID_GESTSPEINC, "Spese di incasso", "Gestione tabella Spese di incasso su effetti" )
-    item2.AppendMenu( ID_MENUTABSCAD, "Scadenzari Clienti/Fornitori", item6 )
-
-    item0.Append( item2, "Tabelle" )
-    
-    item7 = wx.Menu()
-    item7.Append( ID_CONTABGES_INCPAG, "Registrazione Incassi", "Inserimento registrazioni di tipo Incasso/Pagamento" )
-    
-    item8 = wx.Menu()
-    
-    item9 = wx.Menu()
-    item9.Append( ID_INTCONCLI, "Clienti", "Interrogazione Mastri Clienti con dati anagrafici completi" )
-    item9.Append( ID_INTCONCAS, "Casse", "Interrogazione Mastri Sottoconti Cassa con dati anagrafici completi" )
-    item9.Append( ID_INTCONBAN, "Banche", "Interrogazione Mastri Sottoconti Banca con dati anagrafici completi" )
-    item8.AppendMenu( ID_INTCONTAB, "Mastri", item9 )
-
-    item8.Append( ID_INTREGCON, "Registrazioni contabili", "Interrogazione registrazioni contabili" )
-    item8.Append( ID_INTREGIVA, "Registrazioni IVA", "Interrogazione registrazioni IVA" )
-    item8.Append( ID_INTALIQIVA, "Utilizzo Aliquote IVA", "Interrogazione Aliquote IVA" )
-    item8.Append( ID_VENDAZIPRIV, "Sintesi vendite privati/aziende", "Analizza le vendite di un periodo e ne evidenzia imponibile ed imposta per anagrafica" )
-    item7.AppendMenu( ID_MENUCONTINT, "Interroga", item8 )
-
-    item0.Append( item7, "ContabilitÃ " )
-    
-    item10 = wx.Menu()
-    item10.Append( ID_MAGAZZINS, "Immissione documenti", "Inserimento documenti di magazzino" )
-    
-    item11 = wx.Menu()
-    item11.Append( ID_INTPROD, "Prodotto", "Interrogazione scheda e mastro prodotto" )
-    item11.Append( ID_INTDOCMAG, "Documenti", "Interrogazione documenti" )
-    item11.Append( ID_INTMOVMAG, "Movimenti", "Interrogazione movimenti" )
-    item11.AppendSeparator()
-    
-    item12 = wx.Menu()
-    item12.Append( ID_INTMAGCLI, "Clienti", "Interrogazione scheda e dati di magazzino dei clienti" )
-    item12.Append( ID_INTMAGSRCDES, "Ricerca destinazioni merce", "Ricerca clienti da destinazione merce" )
-    item11.AppendMenu( ID_MENU, "Anagrafiche", item12 )
-
-    item11.AppendSeparator()
-    
-    item13 = wx.Menu()
-    item13.Append( ID_STATFATCLI, "Fatturato Clienti", "Statistica sul fatturato clienti" )
-    item13.Append( ID_STATFATCLICAT, "Fatturato Clienti per Categoria prodotto", "Statistica sul fatturato clienti per categoria merce" )
-    item13.AppendSeparator()
-    item13.Append( ID_STATFATPRO, "Fatturato Prodotti", "Statistica sul fatturato prodotti" )
-    item13.Append( ID_STATFATPROCLI, "Fatturato Prodotti per Cliente", "Statistica sul fatturato prodotti per cliente" )
-    item13.AppendSeparator()
-    item13.Append( ID_STATFATCATART, "Fatturato Categorie prodotto", "Statistica sul fatturato per categoria prodotto" )
-    item13.Append( ID_PDCSINTART, "Schede clienti con sintesi vendite prodotti", "" )
-    item11.AppendMenu( ID_MENU, "Statistiche", item13 )
-
-    item10.AppendMenu( ID_MENU, "Interroga", item11 )
-
-    item0.Append( item10, "Magazzino" )
-    
-    item14 = wx.Menu()
-    item14.Append( ID_SCADINS, "Inserisci nuova scadenza", "" )
-    item14.Append( ID_INTPCFCLI, "Situazione del Cliente", "Interrogazione Scadenzario Clienti con dati anagrafici completi" )
-    item14.Append( ID_SCAD_SCAD, "Scadenzario dei Clienti", "Interrogazione Scadenzari Clienti/Fornitori" )
-    item0.Append( item14, "Scadenzari" )
-    
-    item15 = wx.Menu()
-    
-    item16 = wx.Menu()
-    item16.Append( ID_CFGAZIENDA, "Setup Azienda", "Imposta i dati aziendali e le caratteristiche di base della sua gestione" )
-    item16.Append( ID_CFGWKS, "Setup Workstation", "Impostazione caratteristiche del posto di lavoro" )
-    item16.AppendSeparator()
-    item16.Append( ID_CFGLICENSE, "Licenza d'uso", "Imposta il tipo di licenza d'so del programma" )
-    item16.Append( ID_CFGEMAIL, "Setup Posta elettronica", "Imposta i parametri occorrenti alla spedizione di messaggi email" )
-    item16.Append( ID_CFGDOCSEMAIL, "Setup invio documenti per posta elettronica", "Imposta i parametri occorrenti alla spedizione di documenti via email" )
-    item15.AppendMenu( ID_MENUSETUP, "Setup", item16 )
-
-    item0.Append( item15, "Strumenti" )
-    
-    item17 = wx.Menu()
-    item17.Append( ID_HELP, "Help - Manuale utente", "Richiama il manuale utente" )
-    item17.Append( ID_ABOUT, "Informazioni sulla versione", "" )
-    item17.Append( ID_UPDATES, "Verifica disponibilitÃ  aggiornamenti", "" )
-    item0.Append( item17, "?" )
     
     return item0
 

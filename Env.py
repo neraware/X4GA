@@ -33,8 +33,11 @@ import wx.lib.colourdb
 import wx.grid as gl
 
 from awc.util import ListSearch, MsgDialog
+from plib import test_ext_req, get_reqfail_msg, clear_plugins, activate_new_plugin,\
+    load_new_plugins
 msgbox = lambda *args: MsgDialog(None, *args)
 
+import awc.controls.windows as aw
 import awc.controls.dbgrid as dbgrid
 import awc.controls.numctrl as numctrl
 
@@ -101,14 +104,15 @@ class PluginLoadingException(Exception):
 
 plugins = {}
 def LoadPlugin(plugin_name):
+    global plugins
     plugin_name = plugin_name.replace('_plugin', '')
     plugin_func = plugin_name
     if not plugin_func.endswith('_plugin'):
         plugin_func += '_plugin'
     m = __import__(plugin_func, {}, {}, False)
-    if True:#not hasattr(sys, 'frozen'):
-        global plugins
-        plugins[plugin_name] = m
+    if not test_ext_req(m):
+        raise Exception, get_reqfail_msg("P", plugin_name, m)
+    plugins[plugin_name] = m
     return True
 
 
@@ -453,9 +457,9 @@ class GeneralSetup(Setup):
         for n,p in enumerate(plugins):
             if pathsub:
                 report.AppendPathAlt(opj(opj(pathsub or pathrpt, sub), 
-                                         'X4-plugin.%s' % p))
+                                         'X4GA-plugin.%s' % p))
             report.AppendPathAlt(opj(pathsub or pathrpt, 
-                                     'X4-plugin.%s' % p))
+                                     'X4GA-plugin.%s' % p))
         pathsub = opj(pathsub or pathrpt, sub)
         report.SetPathRpt(pathrpt)
         report.SetPathSub(pathsub)
@@ -506,7 +510,7 @@ class LicenseSetup(Setup):
 def InitSettings(ask_missing_config=True, init_colors=True):
     out = True
     try:
-        locale.setlocale( locale.LC_ALL, "it" )
+        locale.setlocale( locale.LC_ALL, '')
     except locale.Error:
         locale.setlocale( locale.LC_ALL)
     config = GeneralSetup()
@@ -1014,7 +1018,7 @@ class Azienda(object):
         MAGPROVCLI = False   #flag gestione provvigione su scheda cliente
         MAGPROVPRO = False   #flag gestione provvigione su scheda prodotto
         MAGPROVMOV = " "     #flag ereditarietà provvigione su riga movimento
-        MAGPROVSEQ = "P"     #tipo ereditarietà provvigione su riga moviment C=Cliente, P=Prodotto
+        MAGPROVSEQ = "P"     #tipo ereditarietà provvigione su riga moviment C=Cliente, P=Prodotto, A=Agente
         MAGDEMSENDFLAG = 0   #flag gestione email documenti
         MAGDEMSENDDESC = ""  #descrizione mittente email documenti
         MAGDEMSENDADDR = ""  #indirizzo posta elettroniva mittente email documenti
@@ -1749,7 +1753,9 @@ class Azienda(object):
                 [ "pralfc2",    "TINYINT",  1, None, "Flag allegati fornitori col.2", None ],
                 [ "pralfc3",    "TINYINT",  1, None, "Flag allegati fornitori col.3", None ],
                 [ "pralfc4",    "TINYINT",  1, None, "Flag allegati fornitori col.4", None ],
-                [ "sm11_no",    "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], ]
+                [ "sm11_no",    "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], 
+                [ "datamin",    "DATE",  None, None, "Data di validità minima", None ], 
+                [ "datamax",    "DATE",  None, None, "Data di validità massima", None ], ]
             
             cls.aliqiva_indexes = cls.get_std_indexes()
             
@@ -1775,6 +1781,7 @@ class Azienda(object):
                 [ "numcc",      "VARCHAR", 12, None, "Num. C/C", None ],
                 [ "iban",       "VARCHAR", 27, None, "Coord. IBAN", None ],
                 [ "id_zona",    "INT",    idw, None, "ID zona", None ],
+                [ "perpro",     "DECIMAL",  5,    2, "Percentuale provvigione", None ],
                 [ "noprovvig",  "TINYINT",  1, None, "Flag esclusione da provvigioni", None ], ]
             
             #cls.set_constraints(cls.TABNAME_AGENTI,
@@ -2539,6 +2546,8 @@ class Azienda(object):
                 [ "id_gruprez", "INT",    idw, None, "ID gruppo prezzi", None ],
                 [ "id_pdcacq",  "INT",    idw, None, "ID Pdc collegamento contabile su acquisti", None ],
                 [ "id_pdcven",  "INT",    idw, None, "ID Pdc collegamento contabile su vendite", None ],
+                [ "ucarnum",    "VARCHAR", 10, None, "Num. ultimo carico", None ],
+                [ "ucardat",    "DATE",  None, None, "Data ultimo carico", None ],
             ]
             
             cls.set_constraints(cls.TABNAME_PROD,
@@ -2624,6 +2633,7 @@ class Azienda(object):
                 [ "id_prod",     "INT",    idw, None, "ID Prodotto", "NOT NULL" ],
                 [ "id_pdc",      "INT",    idw, None, "ID Cliente/Fornitore", "NOT NULL" ],
                 [ "data",        "DATE",  None, None, "Data di validità", None ],
+                [ "um",          "CHAR",     5, None, "Unità di misura", None ],
                 [ "prezzo",      "DECIMAL", 12,  DPM, "Prezzo di griglia", None ],
                 [ "sconto1",     "DECIMAL",  5,    2, "Sconto #1", None ],
                 [ "sconto2",     "DECIMAL",  5,    2, "Sconto #2", None ],
@@ -2801,6 +2811,7 @@ class Azienda(object):
                 [ "aggordcli",    "TINYINT",  1, None, "Flag +/- aggiornamento ordini cliente", None ],
                 [ "aggordfor",    "TINYINT",  1, None, "Flag +/- aggiornamento ordini fornitore", None ],
                 [ "aggfornit",    "CHAR",     1, None, "Flag aggiornamento fornitore", None ],
+                [ "aggultcar",    "TINYINT",  1, None, "Flag aggiornamento data/numero ultimo carico", None ],
                 [ "aggcvccar",    "TINYINT",  1, None, "Flag +/- aggiornamento carichi c/vendita clienti", None ],
                 [ "aggcvcsca",    "TINYINT",  1, None, "Flag +/- aggiornamento scarichi c/vendita clienti", None ],
                 [ "aggcvfcar",    "TINYINT",  1, None, "Flag +/- aggiornamento carichi c/vendita fornitori", None ],
@@ -2829,6 +2840,7 @@ class Azienda(object):
                 [ "canprezzo0",   "TINYINT",  1, None, "Flag permesso prezzo nullo", None ],
                 [ "modimpricalc", "CHAR",     1, None, "Flag tipo ricalcolo se modifica importo", None ],
                 [ "nomastroprod", "TINYINT",  1, None, "Flag esclusione movimenti in mastro prodotto", None ],
+                [ "pdcreset",     "TINYINT",  1, None, "Flag reset pdc coll.cont. dopo evasione", None ],
             ]
             
             cls.set_constraints(cls.TABNAME_CFGMAGMOV,
@@ -3884,7 +3896,11 @@ class Azienda(object):
                                   """Configurazione azienda errata: manca """\
                                   """la definizione %s.\nVerificare il setup """\
                                   """dei dati aziendali.""" % err
+            clear_plugins()
             cls.defstru()
+            from plib import init_plugins, check_new_plugins, load_plugin, enable_plugin
+            init_plugins()
+            load_new_plugins()
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()

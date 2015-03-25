@@ -859,7 +859,7 @@ class DocMag(adb.DbTable):
              WHERE mov.id IN (%s)
           GROUP BY doc.id""" % ','.join(movs)
             self._info.db.Retrieve(cmd)
-            for _d in self._info.db.rs:
+            for _d in []+self._info.db.rs:
                 doc_id = _d[0]
                 mov = ElencoMovimEva()
                 mov.Retrieve("doc.id=%s", doc_id)
@@ -871,8 +871,18 @@ class DocMag(adb.DbTable):
                 if ann:
                     doc = DocMag()
                     doc.Get(doc_id)
-                    doc.f_ann = 1
-                    doc.Save()
+                    cfg = self.config
+                    n = [cfg.id_acqdoc1,
+                         cfg.id_acqdoc2,
+                         cfg.id_acqdoc3,
+                         cfg.id_acqdoc4,].index(doc.id_tipdoc)
+                    ann = [cfg.annacq1,
+                           cfg.annacq2,
+                           cfg.annacq3,
+                           cfg.annacq4,][n]
+                    if ann:
+                        doc.f_ann = 1
+                        doc.Save()
         return out
     
     def AggiornaProdotti(self, deldoc=False):
@@ -904,6 +914,12 @@ class DocMag(adb.DbTable):
                     cols['costo'] = {'val':  None, 
                                       'type': tm.aggcosto,
                                       'sia': bt.MAGSCORPCOS == '1'}
+                
+                if tm.aggultcar:
+                    if mov.prod.ucardat is None or self.datdoc > mov.prod.ucardat:
+                        cols['ucarnum'] = {'val':  self.numdoc,}
+                        cols['ucardat'] = {'val':  self.datdoc,}
+                        self._prepare_for_ultimocarico_update(mov, cols)
                 
                 if (tm.aggprezzo or ' ') in '12':
                     cols['prezzo'] = {'val':  None, 
@@ -977,6 +993,9 @@ class DocMag(adb.DbTable):
             self.UpdateProdotti(pup)
         if wait:
             wait.Destroy()
+    
+    def _prepare_for_ultimocarico_update(self, mov, cols):
+        pass
     
     def UpdateMovExternalRead(self):
         pass
@@ -1627,8 +1646,6 @@ class DocMag(adb.DbTable):
         
         self._InitTotalizzaRighe()
         
-        self._InitTotalizzaRighe()
-        
         for mov in self.mov:
             if not self._TotalizzaRiga(mov):
                 continue
@@ -2000,6 +2017,10 @@ class DocMag(adb.DbTable):
                 
             self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
         
+        if self.is_split_payment():
+            #adeguamento di totdare x split payment
+            self.totdare = RoundImp(self.totdare - (self.totimposta or 0))
+        
         #ridefinizione dei subtotali
         _t = {}
         for name in 'merce servi trasp spese'.split():
@@ -2019,6 +2040,23 @@ class DocMag(adb.DbTable):
         
         if scad and self.config.caucon.pcf == '1':
             self.CalcolaScadenze()
+    
+    def is_split_payment(self):
+        for ti in self._info.totiva:
+            if ti[magazz.RSIVA_tipoalq] == "S":
+                return True
+        return False
+    
+    def test_split_payment(self):
+        #test coerenza split payment
+        sp = {'splitp': 0,
+              'normal': 0,}
+        for ti in self._info.totiva:
+            if ti[magazz.RSIVA_tipoalq] == "S":
+                sp['splitp'] += 1
+            else:
+                sp['normal'] += 1
+        return sp['splitp'] == 0 or sp['normal'] == 0
     
     def AddTotalPesoColli(self, mov):
         if mov.config.tqtaxpeso:
@@ -2069,6 +2107,8 @@ class DocMag(adb.DbTable):
         
         if reg.RowsCount() == 0:
             reg.CreateNewRow()
+        
+        is_split_payment = self.is_split_payment()
         
         #testata registrazione
         reg.esercizio = self.datdoc.year
@@ -2176,6 +2216,23 @@ class DocMag(adb.DbTable):
                     if pdccpid is None:
                         pdccpid = body.id_pdcpa
                     numriga += 1
+            
+            if gestiva and is_split_payment:
+                #aggiungo riga solo contabile con l'imposta in split payment
+                #che manca dall'importo della riga 1
+                body.CreateNewRow()
+                body.numriga = numriga
+                body.tipriga = "C"
+                body.importo = abs(self.totimposta)
+                if self.totimporto >= 0:
+                    body.segno = segnopa
+                else:
+                    body.segno = segnocp
+                body.id_pdcpa = pdcivaid
+                body.id_pdccp = self.id_pdc
+                body.solocont = 1
+                numriga += 1
+            
         else:
             
             #semplif.
@@ -2363,8 +2420,8 @@ class DocMag(adb.DbTable):
                     cod = "ivaacqcee"
                     break
                 elif mov.iva.tipo == 'S':
-                    if regivatip != "V":
-                        raise Exception, "Impossibile usare l'aliquota %s, riservata alle vendite in sospensione di imposta, se il registro non e' di tipo Vendite" % mov.iva.codice
+                    if not regivatip in ("V", "C"):
+                        raise Exception, "Impossibile usare l'aliquota %s, riservata alle vendite in split payment, se il registro non e' di tipo Vendite" % mov.iva.codice
                     cod = "ivavensos"
                     break
         if cod is None:
@@ -3414,6 +3471,7 @@ class InventarioDaMovim(_InventarioMixin):
         
         self.AddOrder("prod.codice")
         
+        self.SetDataInv(Env.Azienda.Login.dataElab)
         self.Reset()
     
     def ClearFilters(self):
@@ -4478,6 +4536,39 @@ class Prodotti(adb.DbTable):
                 lis.data = Env.Azienda.Login.dataElab
             prezzi[n] = p
         return prezzi
+    
+    def GetDatiUltimoCarico(self):
+        try:
+            db = self._info.db
+            id_prod = self.id
+            db.Retrieve("""
+                    SELECT MAX(doc.datdoc)
+                    FROM movmag_b mov
+                    JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+                    JOIN movmag_h doc ON doc.id=mov.id_doc
+                    WHERE mov.id_prod=%(id_prod)s 
+                      AND tpm.aggultcar=1
+            """ % locals())
+            ddmax = db.rs[0][0]
+            if not ddmax:
+                raise Exception
+            db.Retrieve("""
+                    SELECT mov.importo/qta,
+                           doc.id_tipdoc,
+                           doc.numdoc,
+                           doc.datdoc
+                    FROM movmag_b mov
+                    JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+                    JOIN movmag_h doc ON doc.id=mov.id_doc
+                    WHERE mov.id_prod=%(id_prod)s
+                      AND tpm.aggultcar=1 
+                      AND doc.datdoc="%(ddmax)s"
+                    ORDER BY doc.datdoc DESC
+                    LIMIT 1
+            """ % locals())
+            return []+db.rs[0]
+        except:
+            return [None]*4
 
 
 # ------------------------------------------------------------------------------
@@ -4624,6 +4715,29 @@ class ListiniAttuali(adb.DbMem):
         pro.Retrieve('id=%s', idprod)
         tli = self._info.dbtli
         rs = []
+        #prezzo su cheda prodotto
+        pre = pro.prezzo or 0
+        pre, iva, pri, ind = self.CalcolaIVA(pro.id_aliqiva, pre, decimals=bt.MAGPRE_DECIMALS)
+        prp = pro.prezzo or 0
+        cos = pro.costo or 0
+        spp = 0 #sconto su prezzo al pubblico
+        rca = 0 #ricarica su costo d'acquisto
+        sl1 = 0 #sconto su listino 1
+        gsc = 0 #guadagno su costo d'acquisto
+        if pre:
+            pl1 = pre or 0
+            try: spp = (prp-pre)/prp*100
+            except ZeroDivisionError: pass
+            try: rca = (pre/cos-1)*100
+            except ZeroDivisionError: pass
+            try: sl1 = (pl1-pre)/pl1*100
+            except ZeroDivisionError: pass
+            try: gsc = (pre-cos)/pre*100
+            except ZeroDivisionError: pass
+        il = None
+        cl = ''
+        dl = 'Prezzo pubblico scheda'
+        rs.append((il, cl, dl, pre, pri, spp, rca, sl1, gsc))
         for n in range(1, bt.MAGNUMLIS+1, 1):
             if tli.Locate(lambda x: x.tipoprezzo == str(n)):
                 cl = tli.codice

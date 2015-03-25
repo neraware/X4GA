@@ -30,7 +30,6 @@ from Env import Azienda
 bt = Azienda.BaseTab
 
 import wx.grid as gl
-import awc.controls.dbgrid as dbglib
 
 
 FRAME_TITLE = "Aliquote IVA"
@@ -44,7 +43,6 @@ class AliqIvaSearchResultsGrid(ga.SearchResultsGrid):
         _DAT = gl.GRID_VALUE_DATETIME
         _PRC = bt.GetPerGenMaskInfo()
         cn = lambda x: self.db._GetFieldIndex(x)
-        tab = self.tabalias
         return (( 35, (cn('aliqiva_codice'),  "Cod.",     _STR, True)),
                 (240, (cn('aliqiva_descriz'), "Aliquota", _STR, True)),
                 ( 50, (cn('aliqiva_perciva'), "%IVA",     _PRC, True)),
@@ -119,24 +117,3 @@ class AliqIvaDialog(ga._AnagDialog):
         ga._AnagDialog.__init__(self, *args, **kwargs)
         self.panel = AliqIvaPanel(self, -1)
         self.LoadAnagPanel(AliqIvaPanel(self, -1))
-
-
-# ------------------------------------------------------------------------------
-
-
-def runTest(frame, nb, log):
-    win = AliqIvaDialog()
-    win.Show()
-    return win
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    import sys,os
-    import runtest
-    import stormdb as adb
-    db = adb.DB()
-    db.Connect()
-    runtest.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

@@ -543,6 +543,7 @@ class AnagPanel(aw.Panel):
                           (ID_BTNPRINT,        self.OnPrint)):
             self.Bind(wx.EVT_BUTTON, func, id=cid)
         
+        
         if self.complete:
             
             self.FindWindowById(ID_BTN_RECNEW).Bind(wx.EVT_RIGHT_UP, self.OnCopyToDuplicate)
@@ -561,6 +562,20 @@ class AnagPanel(aw.Panel):
             self.SetAcceleratorKey('2', ID_BTN_RECPREVIOUS, None,    'Sposta sull\'elemento precedente')
             self.SetAcceleratorKey('3', ID_BTN_RECNEXT,     None,    'Sposta sull\'elemento successivo')
             self.SetAcceleratorKey('4', ID_BTN_RECLAST,     None,    'Sposta sull\'ultimo elemento')
+            
+            sv = self.FindWindowByName('_searchval')
+            if sv and bt.OPTTABSEARCH:
+                
+                def set_focus(event):
+                    sv._initial_value_ = sv.GetValue()
+                    event.Skip()
+                sv.Bind(wx.EVT_SET_FOCUS, set_focus)
+                
+                def kill_focus(event):
+                    if sv.GetValue() != sv._initial_value_:
+                        self.UpdateSearch()
+                    event.Skip()
+                sv.Bind(wx.EVT_KILL_FOCUS, kill_focus)
         
         if not self._hasfilters:
             c = self.FindWindowById(ID_BTNFILTERS)

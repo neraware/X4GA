@@ -29,6 +29,152 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.32', None, (
+         ("BUG1157",
+         """Inizializza plugins presenti in creazione azienda."""),
+        ),),
+    
+    ('1.6.30', None, (
+         ("BUG1156",
+         """Fix disattivazione plugins."""),
+        ),),
+    
+    ('1.6.29', None, (
+         ("BET4187",
+         """Possibilità di impostazione sull'agente della percentuale 
+         di calcolo provvigioni."""),
+        ),),
+    
+    ('1.6.28', None, (
+         ("BET4186",
+         """Migliorato il supporto ai plugin."""),
+        ),),
+    
+    ('1.6.27', None, (
+         ("BUG1155",
+         """Corretta selezione anagrafica in immissione documento di 
+         trasferimento."""),
+        ),),
+    
+    ('1.6.26', None, (
+         ("BET4185",
+         """Attivato controllo di versione minima di X4GA durante il caricamento 
+         di personalizzazioni e plugin."""),
+        ),),
+    
+    ('1.6.25', dt.Date(2015, 2, 13), (
+         ("BET4184",
+         """Aliquote in split payment consentite anche su documenti contabilizzati
+         su causali con registro iva di tipo corrispettivi."""),
+         ("BUG1154",
+         """Corretto controllo congruenza aliquote split payment in immissione
+         documento."""),
+        ),),
+    
+    ('1.6.25', dt.Date(2015, 2, 11), (
+         ("BET4183",
+         """Aggiunta selezione da/a x codice e barcode in gestione prodotti."""),
+        ),),
+    
+    ('1.6.24', dt.Date(2015, 2, 9), (
+         ("BET4182",
+         """Gestione vendite in split payment."""),
+        ),),
+    
+    ('1.6.23', dt.Date(2015, 2, 2), (
+         ("BUG1153",
+         """Fix errore in sottoscorta."""),
+        ),),
+    
+    ('1.6.22', None, (
+         ("BET4180",
+         """Lo scadenzario del cliente/fornitore non evidenzia la riga
+         selezionata per non confondere i colori del testo delle 
+         scadenze."""),
+         ("BET4181",
+         """La stampa dello scadenzario del cliente/fornitore ora riporta
+         la dicitura "INSOLUTO", oltre al colore rosso del saldo."""),
+        ),),
+    
+    ('1.6.21', None, (
+         ("BET4179",
+         """Introdotta possibilità di personalizzazione della schermata
+         di configurazione del registro iva."""),
+        ),),
+    
+    ('1.6.20', dt.Date(2015, 1, 5), (
+         ("BUG1151",
+         """Inventario su movimenti limitato alla data di login."""),
+         ("BUG1152",
+         """Corretto il titolo della stampa inventario, metteva il
+         giorno precedente la data inventario richiesta."""),
+        ),),
+    
+    ('1.6.19', dt.Date(2015, 1, 2), (
+         ("BET4178",
+         """Possibilità di ordinare i prodotti nella stampa inventario per
+         codice o descrizione."""),
+        ),),
+    
+    ('1.6.18', None, (
+         ("BET4177",
+         """Aggiunta colonna unità di misura in interrogazione movimenti."""),
+        ),),
+    
+    ('1.6.16', None, (
+         ("BET4176",
+         """Aggiunta unità di misura sulle griglie prezzi."""),
+        ),),
+    
+    ('1.6.15', dt.Date(2014, 12, 5), (
+         ("BET4175",
+         """Introdotta possibilità di reset sottoconto per collegamento
+         contabile sulle righe derivanti da evasione documenti."""),
+         ("BUG1150",
+         """Corretto il salvataggio del documento, in alcune circostanze
+         annullava il documento evaso completamente a prescindere dalla
+         configurazione."""),
+        ),),
+    
+    ('1.6.13', None, (
+         ("BET4174",
+         """Memorizzazione numero e data ultimo carico su scheda prodotto,
+         in base ad apposito flag su tipo movimento."""),
+        ),),
+    
+    ('1.6.12', None, (
+         ("BET4173",
+         """Attivazione ricerca in schede anagrafiche con il tasto tab."""),
+        ),),
+    
+    ('1.6.11', None, (
+         ("BET4172",
+         """Gestione e visualizzazione su scheda prodotto dei dati
+         relativi all'ultimo carico effettuato."""),
+        ),),
+    
+    ('1.6.10', dt.Date(2014, 9, 16), (
+         ("BET4170",
+         """Statistica redditività vendite ora filtra i movimenti in
+         base al tipo adi aggiornamento del fatturato, aumentate
+         selezioni."""),
+         ("BET4171",
+         """La funzione di ricerca nella gestione clienti ora consente 
+         anche il filtro da codice a codice."""),
+        ),),
+    
+    ('1.6.09', None, (
+         ("BET4169",
+         """Introdotte date di validità minima e massima sulle 
+         aliquote iva e relativo controllo in immissione documenti."""),
+        ),),
+    
+    ('1.6.08', None, (
+         ("BET4168",
+         """Aggiunti limiti di ricarica e margine min/max 
+         su statistica redditività vendite."""),
+        ),),
+    
     ('1.6.07', dt.Date(2014, 5, 12), (
          ("BUG1149",
          """Fix annullamento documenti evasi."""),

@@ -274,18 +274,26 @@ class LinkTableProd(LinkTable, LinkTableHideSearchMixin):
         cmd, par = LinkTable.GetSqlTextSearch(self, obj, forceAll, exact)
         fltv = obj.GetValue()
         if obj == self._ctrcod and len(fltv)>=3:
+            fltv = fltv.rstrip()
+            if not self.codexclusive:
+                if not fltv.endswith(r'%'):
+                    fltv += r'%'
             if cmd:
                 cmd += " OR "
-#            cmd += "%s.codfor LIKE %%s" % self.db_alias
-#            par.append('%s%%' % fltv.rstrip())
-            cmd += "%s.codfor=%%s" % self.db_alias
-            par.append(fltv.rstrip())
+            if self.codexclusive:
+                cmd += "%s.codfor=%%s" % self.db_alias
+                par.append(fltv)
+            else:
+                cmd += "%s.codfor LIKE %%s" % self.db_alias
+                par.append(fltv)
             if cmd:
                 cmd += " OR "
-#            cmd += "%s.barcode LIKE %%s" % self.db_alias
-#            par.append('%s%%' % fltv.rstrip())
-            cmd += "%s.barcode=%%s" % self.db_alias
-            par.append(fltv.rstrip())
+            if self.codexclusive:
+                cmd += "%s.barcode=%%s" % self.db_alias
+                par.append(fltv)
+            else:
+                cmd += "%s.barcode LIKE %%s" % self.db_alias
+                par.append(fltv)
         return cmd, par
     
     def SetValue(self, id, txt=None, **kw):
@@ -376,7 +384,7 @@ class LinkTableCatFor(LinkTable):
 
 class LinkTableGruArt(LinkTable):
     
-    def __init__(self, parent, id, name=None, **kwargs):
+    def __init__(self, parent, id, name=None, catfather=None, **kwargs):
         LinkTable.__init__(self, parent, id, **kwargs)
         if name:
             self.SetName(name)
@@ -384,6 +392,25 @@ class LinkTableGruArt(LinkTable):
         self.db_alias = 'gruart'
         from anag.gruart import GruArtDialog
         self.cardclass = GruArtDialog
+        if catfather:
+            self.SetCatArtFather(catfather)
+    
+    def SetCatArt(self, ca):
+        self.catart = ca
+        if ca is None:
+            flt = "1"
+        else:
+            flt = "id_catart=%d" % ca
+        self.SetFilter(flt)
+    
+    def SetCatArtFather(self, ctrcat):
+        assert isinstance(ctrcat, LinkTableCatArt)
+        from awc.controls.linktable import EVT_LINKTABCHANGED
+        self.GetParent().Bind(EVT_LINKTABCHANGED, self.OnCatArtChanged, ctrcat)
+    
+    def OnCatArtChanged(self, event):
+        self.SetCatArt(event.GetEventObject().GetValue())
+        event.Skip()
 
 
 # ------------------------------------------------------------------------------

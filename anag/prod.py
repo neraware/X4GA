@@ -216,6 +216,8 @@ class GrigliaPrezziCliForGrid(dbglib.DbGridColoriAlternati):
             self.COL_EXTCOD = b(( 80, (cn(gri, "ext_codice"),  "Codice Ext.",      _STR, False)))
             self.COL_EXTDES = b((200, (cn(gri, "ext_descriz"), "Descrizione Ext.", _STR, False)))
         
+        self.COL_UNIMIS = b((35,(cn(gri,'um'), "UM", _STR, True)))
+        
         if bt.MAGPZGRIP:
             self.COL_PZCONF = b((70,(cn(gri,'pzconf'),  "Pz.Conf.",       _PZC, True)))
         
@@ -767,6 +769,8 @@ class ProdPanel(ga.AnagPanel):
         
         self.db_tabprefix = "%s." % bt.TABNAME_PROD
         
+        self._valfilters['codice'] =  ['prod.codice', None, None]
+        self._valfilters['barcode'] = ['prod.barcode', None, None]
         self._valfilters['tipart'] =  ['tipart.codice', None, None]
         self._valfilters['catart'] =  ['catart.codice', None, None]
         self._valfilters['gruart'] =  ['gruart.codice', None, None]
@@ -827,8 +831,9 @@ class ProdPanel(ga.AnagPanel):
     
     def TestRecordValuesAfterCopy(self, idcopyfrom):
         cn = self.FindWindowByName
-        cn('codice').SetValue(None)
-        cn('barcode').SetValue(None)
+#         cn('codice').SetValue(None)
+        cn('barcode').SetValue('')
+        cn('codfor').SetValue('')
         cn('note').SetValue('')
         cn('scomin').SetValue(0)
         def setfocus():

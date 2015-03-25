@@ -1291,7 +1291,7 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
     item1 = wx.StaticText( parent, ID_TEXT, "Mostra solo i clienti con i seguenti dati:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
-    item1.SetBackgroundColour( wx.LIGHT_GREY )
+    item1.SetForegroundColour( wx.BLUE )
     item1.SetName( "searchresultstitle" )
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -1320,14 +1320,16 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item9 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item10 = wx.StaticText( parent, ID_TEXT, "Agente:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item10 = wx.StaticText( parent, ID_TEXT, "Codice:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item9.Add( item10, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item11 = LinkTable(parent, ID_FILT_AGENTE1); item11.SetDataLink(bt.TABNAME_AGENTI, None, AgentiDialog); item11.SetName('agente1')
-    item9.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item11 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item11.SetName( "codice1" )
+    item9.Add( item11, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item12 = LinkTable(parent, ID_FILT_AGENTE2); item12.SetDataLink(bt.TABNAME_AGENTI, None, AgentiDialog); item12.SetName('agente2')
-    item9.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item12 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item12.SetName( "codice2" )
+    item9.Add( item12, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item9.AddGrowableCol( 1 )
 
@@ -1337,13 +1339,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item13 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item14 = wx.StaticText( parent, ID_TEXT, "Categoria:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item14 = wx.StaticText( parent, ID_TEXT, "Agente:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item13.Add( item14, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item15 = LinkTable(parent, ID_FILT_CATANA1); item15.SetDataLink(bt.TABNAME_CATCLI, None, CatCliDialog); item15.SetName('categ1')
+    item15 = LinkTable(parent, ID_FILT_AGENTE1); item15.SetDataLink(bt.TABNAME_AGENTI, None, AgentiDialog); item15.SetName('agente1')
     item13.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item16 = LinkTable(parent, ID_FILT_CATANA2); item16.SetDataLink(bt.TABNAME_CATCLI, None, CatCliDialog); item16.SetName('categ2')
+    item16 = LinkTable(parent, ID_FILT_AGENTE2); item16.SetDataLink(bt.TABNAME_AGENTI, None, AgentiDialog); item16.SetName('agente2')
     item13.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item13.AddGrowableCol( 1 )
@@ -1354,13 +1356,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item17 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item18 = wx.StaticText( parent, ID_TEXT, "Zona:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item18 = wx.StaticText( parent, ID_TEXT, "Categoria:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item17.Add( item18, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item19 = LinkTable(parent, ID_FILT_ZONA1); item19.SetDataLink(bt.TABNAME_ZONE, None, ZoneDialog); item19.SetName('zona1')
+    item19 = LinkTable(parent, ID_FILT_CATANA1); item19.SetDataLink(bt.TABNAME_CATCLI, None, CatCliDialog); item19.SetName('categ1')
     item17.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item20 = LinkTable(parent, ID_FILT_ZONA2 ); item20.SetDataLink(bt.TABNAME_ZONE, None, ZoneDialog); item20.SetName('zona2')
+    item20 = LinkTable(parent, ID_FILT_CATANA2); item20.SetDataLink(bt.TABNAME_CATCLI, None, CatCliDialog); item20.SetName('categ2')
     item17.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item17.AddGrowableCol( 1 )
@@ -1371,13 +1373,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item21 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item22 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item22 = wx.StaticText( parent, ID_TEXT, "Zona:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item21.Add( item22, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item23 = LinkTableStati(parent, ID_FILT_STATO1, 'stato1')
+    item23 = LinkTable(parent, ID_FILT_ZONA1); item23.SetDataLink(bt.TABNAME_ZONE, None, ZoneDialog); item23.SetName('zona1')
     item21.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item24 = LinkTableStati(parent, ID_FILT_STATO2, 'stato2')
+    item24 = LinkTable(parent, ID_FILT_ZONA2 ); item24.SetDataLink(bt.TABNAME_ZONE, None, ZoneDialog); item24.SetName('zona2')
     item21.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item21.AddGrowableCol( 1 )
@@ -1388,13 +1390,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item25 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item26 = wx.StaticText( parent, ID_TEXT, "Status:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item26 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item25.Add( item26, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item27 = LinkTable(parent, ID_FILT_STATUS1); item27.SetDataLink(bt.TABNAME_STATCLI, None, StatCliDialog); item27.SetName('status1')
+    item27 = LinkTableStati(parent, ID_FILT_STATO1, 'stato1')
     item25.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item28 = LinkTable(parent, ID_FILT_STATUS2); item28.SetDataLink(bt.TABNAME_STATCLI, None, StatCliDialog); item28.SetName('status2')
+    item28 = LinkTableStati(parent, ID_FILT_STATO2, 'stato2')
     item25.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item25.AddGrowableCol( 1 )
@@ -1405,13 +1407,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item29 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item30 = wx.StaticText( parent, ID_TEXT, "Mod.Pagam.:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item30 = wx.StaticText( parent, ID_TEXT, "Status:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item29.Add( item30, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item31 = LinkTable(parent, ID_FILT_MODPAG1); item31.SetDataLink(bt.TABNAME_MODPAG, None, ModPagDialog); item31.SetName('modpag1')
+    item31 = LinkTable(parent, ID_FILT_STATUS1); item31.SetDataLink(bt.TABNAME_STATCLI, None, StatCliDialog); item31.SetName('status1')
     item29.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item32 = LinkTable(parent, ID_FILT_MODPAG2); item32.SetDataLink(bt.TABNAME_MODPAG, None, ModPagDialog); item32.SetName('modpag2')
+    item32 = LinkTable(parent, ID_FILT_STATUS2); item32.SetDataLink(bt.TABNAME_STATCLI, None, StatCliDialog); item32.SetName('status2')
     item29.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item29.AddGrowableCol( 1 )
@@ -1422,13 +1424,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item33 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item34 = wx.StaticText( parent, ID_TEXT, "Spese incasso:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item34 = wx.StaticText( parent, ID_TEXT, "Mod.Pagam.:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item33.Add( item34, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item35 = LinkTable(parent, ID_FILT_SPEINC1); item35.SetDataLink(bt.TABNAME_SPEINC, None, SpeIncDialog); item35.SetName('speinc1')
+    item35 = LinkTable(parent, ID_FILT_MODPAG1); item35.SetDataLink(bt.TABNAME_MODPAG, None, ModPagDialog); item35.SetName('modpag1')
     item33.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item36 = LinkTable(parent, ID_FILT_SPEINC2); item36.SetDataLink(bt.TABNAME_SPEINC, None, SpeIncDialog); item36.SetName('speinc2')
+    item36 = LinkTable(parent, ID_FILT_MODPAG2); item36.SetDataLink(bt.TABNAME_MODPAG, None, ModPagDialog); item36.SetName('modpag2')
     item33.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item33.AddGrowableCol( 1 )
@@ -1439,13 +1441,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item37 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item38 = wx.StaticText( parent, ID_TEXT, "Vettore:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item38 = wx.StaticText( parent, ID_TEXT, "Spese incasso:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item37.Add( item38, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item39 = LinkTable(parent, ID_FILT_VETTORE1); item39.SetDataLink(bt.TABNAME_TRAVET, None, TraVetDialog); item39.SetName('travet1')
+    item39 = LinkTable(parent, ID_FILT_SPEINC1); item39.SetDataLink(bt.TABNAME_SPEINC, None, SpeIncDialog); item39.SetName('speinc1')
     item37.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item40 = LinkTable(parent, ID_FILT_TRAVET2); item40.SetDataLink(bt.TABNAME_TRAVET, None, TraVetDialog); item40.SetName('travet2')
+    item40 = LinkTable(parent, ID_FILT_SPEINC2); item40.SetDataLink(bt.TABNAME_SPEINC, None, SpeIncDialog); item40.SetName('speinc2')
     item37.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item37.AddGrowableCol( 1 )
@@ -1456,13 +1458,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item41 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item42 = wx.StaticText( parent, ID_TEXT, "Listino:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item42 = wx.StaticText( parent, ID_TEXT, "Vettore:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item41.Add( item42, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item43 = LinkTableTipList(parent, ID_FILT_TIPLIST1, 'tiplist1')
+    item43 = LinkTable(parent, ID_FILT_VETTORE1); item43.SetDataLink(bt.TABNAME_TRAVET, None, TraVetDialog); item43.SetName('travet1')
     item41.Add( item43, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item44 = LinkTableTipList(parent, ID_FILT_TIPLIST2, 'tiplist2')
+    item44 = LinkTable(parent, ID_FILT_TRAVET2); item44.SetDataLink(bt.TABNAME_TRAVET, None, TraVetDialog); item44.SetName('travet2')
     item41.Add( item44, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item41.AddGrowableCol( 1 )
@@ -1473,13 +1475,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item45 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item46 = wx.StaticText( parent, ID_TEXT, "Aliquota IVA:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item46 = wx.StaticText( parent, ID_TEXT, "Listino:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item45.Add( item46, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item47 = LinkTable(parent, ID_FILT_ALIQIVA1); item47.SetDataLink(bt.TABNAME_ALIQIVA, None, AliqIvaDialog); item47.SetName('aliqiva1')
+    item47 = LinkTableTipList(parent, ID_FILT_TIPLIST1, 'tiplist1')
     item45.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item48 = LinkTable(parent, ID_FILT_ALIQIVA2); item48.SetDataLink(bt.TABNAME_ALIQIVA, None, AliqIvaDialog); item48.SetName('aliqiva2')
+    item48 = LinkTableTipList(parent, ID_FILT_TIPLIST2, 'tiplist2')
     item45.Add( item48, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item45.AddGrowableCol( 1 )
@@ -1490,13 +1492,13 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item49 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item50 = wx.StaticText( parent, ID_TEXT, "Banca pag.:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item50 = wx.StaticText( parent, ID_TEXT, "Aliquota IVA:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
     item49.Add( item50, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item51 = LinkTableBanca(parent, ID_FILT_BANCAPAG1, 'bancapag1')
+    item51 = LinkTable(parent, ID_FILT_ALIQIVA1); item51.SetDataLink(bt.TABNAME_ALIQIVA, None, AliqIvaDialog); item51.SetName('aliqiva1')
     item49.Add( item51, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item52 = LinkTableBanca(parent, ID_FILT_BANCAPAG2, 'bancapag2')
+    item52 = LinkTable(parent, ID_FILT_ALIQIVA2); item52.SetDataLink(bt.TABNAME_ALIQIVA, None, AliqIvaDialog); item52.SetName('aliqiva2')
     item49.Add( item52, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item49.AddGrowableCol( 1 )
@@ -1505,43 +1507,60 @@ def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
 
     item2.Add( item49, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item53 = wx.StaticLine( parent, ID_LINE, wx.DefaultPosition, [20,-1], wx.LI_HORIZONTAL )
-    item2.Add( item53, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
-
-    item54 = wx.BoxSizer( wx.VERTICAL )
+    item53 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item55 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item54 = wx.StaticText( parent, ID_TEXT, "Banca pag.:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item53.Add( item54, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item55 = LinkTableBanca(parent, ID_FILT_BANCAPAG1, 'bancapag1')
+    item53.Add( item55, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item56 = LinkTableBanca(parent, ID_FILT_BANCAPAG2, 'bancapag2')
+    item53.Add( item56, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item53.AddGrowableCol( 1 )
+
+    item53.AddGrowableCol( 2 )
+
+    item2.Add( item53, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item57 = wx.StaticLine( parent, ID_LINE, wx.DefaultPosition, [20,-1], wx.LI_HORIZONTAL )
+    item2.Add( item57, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item58 = wx.BoxSizer( wx.VERTICAL )
     
-    item56 = wx.BoxSizer( wx.HORIZONTAL )
+    item59 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item57 = wx.StaticText( parent, ID_TEXT, "CittÃ :", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item56.Add( item57, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
-
-    item58 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], 0 )
-    item58.SetName( "citta" )
-    item56.Add( item58, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
-
-    item59 = wx.StaticText( parent, ID_TEXT, "Prov.:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item56.Add( item59, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
-
-    item60 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [50,-1], 0 )
-    item60.SetName( "prov" )
-    item56.Add( item60, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
-
-    item61 = wx.StaticText( parent, ID_TEXT, "Note:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item56.Add( item61, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
-
-    item55.Add( item56, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item60 = wx.BoxSizer( wx.HORIZONTAL )
+    
+    item61 = wx.StaticText( parent, ID_TEXT, "Città:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item60.Add( item61, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
     item62 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], 0 )
-    item62.SetName( "note" )
-    item55.Add( item62, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item62.SetName( "citta" )
+    item60.Add( item62, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item55.AddGrowableCol( 1 )
+    item63 = wx.StaticText( parent, ID_TEXT, "Prov.:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item60.Add( item63, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item54.Add( item55, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item64 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [50,-1], 0 )
+    item64.SetName( "prov" )
+    item60.Add( item64, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item2.Add( item54, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item65 = wx.StaticText( parent, ID_TEXT, "Note:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item60.Add( item65, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+
+    item59.Add( item60, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item66 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], 0 )
+    item66.SetName( "note" )
+    item59.Add( item66, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item59.AddGrowableCol( 1 )
+
+    item58.Add( item59, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item2.Add( item58, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 

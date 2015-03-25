@@ -647,6 +647,8 @@ class Panel(wx.Panel, mixin):
         b = event.GetEventObject()
         if b is None:
             return
+        if not b.IsEnabled():
+            return
         b.SetForegroundColour('yellow')
         b.SetBackgroundColour('blue')
         wx.YieldIfNeeded()

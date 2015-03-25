@@ -37,6 +37,7 @@ import awc.controls.mixin as cmix
 
 import Env
 from awc.controls.datectrl import DateCtrl
+from cfg.cfgmagazz import CfgDocMov
 Esercizio = Env.Azienda.Esercizio
 bt = Env.Azienda.BaseTab
 bc = Env.Azienda.Colours
@@ -772,6 +773,7 @@ class MagazzPanel(aw.Panel,\
         self.GridScadSetReg(doc.regcon)
         if self.onedoconly_id:
             self.controls['causale'].SetValue(doc.id_tipdoc)
+            self.SetCausale()
         self.UpdateDocIdControls()
         self.UpdatePanelHead()
         self.UpdateDatiScad()
@@ -1728,6 +1730,10 @@ class MagazzPanel(aw.Panel,\
             return False
         if not self.rowsok:
             return False
+        if (doc.totritacc or 0) != 0 and doc.is_split_payment():
+            msg = """La ritenuta d'acconto non può essere applicata in split payment"""
+            aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
+            return False
         if len(doc._info.righep0)>0:
             if MsgDialog(self, "Sono presenti righe senza prezzo.\nConfermi l'operazione?", 
                          style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
@@ -1900,7 +1906,7 @@ class MagazzPanel(aw.Panel,\
         """
         out = True
         ctrcau = self.controls["causale"]
-        cfg = self.dbdoc.cfgdoc
+        cfg = CfgDocMov()
         flt = "TRUE"
         #escludo eventuali documenti di trasf.mag. generati in autom.
         if cfg.Retrieve("id_tdoctra IS NOT NULL"):
@@ -1928,7 +1934,8 @@ class MagazzPanel(aw.Panel,\
             descrizione
             configurazione
         """
-        self.SetCausale()
+        if self.FindWindowById(wdr.ID_CAUSALE).GetValue():
+            self.SetCausale()
         wx.CallAfter(self.SetProdZoneSize)
         event.Skip()
     
@@ -1952,17 +1959,19 @@ class MagazzPanel(aw.Panel,\
         else:
             mags = adb.DbTable(bt.TABNAME_MAGAZZ, 'mag', writable=False)
             mags.Retrieve()
-            filt = "id IN (%s)" % ','.join([str(x.id_pdc)
-                                            for x in mags 
-                                            if x.id_pdc is not None])
-        mp = self.controls['id_modpag']
-        if cfg.askmpnoeff:
-            filt = "tipo<>'R'"
-        else:
-            filt = '1'
-        mp.SetFilter(filt)
+            filt = "pdc.id IN (%s)" % ','.join([str(x.id_pdc)
+                                                for x in mags 
+                                                if x.id_pdc is not None])
         ci(wdr.ID_PDC).SetFilterValue(cfg.id_pdctip)
         ci(wdr.ID_PDC).SetFilter(filt)
+        mp = self.controls['id_modpag']
+        _filt = []
+        if cfg.askmpnoeff:
+            _filt.append('tipo<>"R"')
+        if not cfg.colcg:
+            _filt.append('modocalc<>"N"')
+        filt = ' AND '.join(_filt) or '1'
+        mp.SetFilter(filt)
         self.GridBodySetTipMovFilter()
         p = self.FindWindowByName('workzone').GetPageWithText('accomp', exact=False)
         if p:
@@ -2165,7 +2174,22 @@ class MagazzPanel(aw.Panel,\
     def Validate(self):
         for c in aw.awu.GetAllChildrens(self, lambda x: hasattr(x, 'IsTooBig')):
             if c.IsTooBig():
-#                aw.awu.MsgDialog(self, "Valore numerico troppo elevato\n(%s)" % c.GetName(), style=wx.ICON_ERROR)
+                return False
+        dbiva = adb.DbTable('aliqiva')
+        err = None
+        for i in self.dbdoc._info.totiva:
+            dbiva.Get(i[0])
+            if dbiva.datamin and self.dbdoc.datdoc < dbiva.datamin:
+                err = """La data documento è precedente alla data """\
+                      """di inizio validità dell'aliquota iva %s %s""" % (i[1], i[2])
+                break
+            elif dbiva.datamax and self.dbdoc.datdoc > dbiva.datamax:
+                err = """La data documento è successiva alla data """\
+                      """di fine validità dell'aliquota iva %s %s""" % (i[1], i[2])
+                break
+        if err:
+            err += '\n\nProseguo comunque ?'
+            if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                 return False
         return True
     
@@ -2720,6 +2744,8 @@ class MagazzPanel(aw.Panel,\
                         mov.sconto5 = acq.sconto5
                         mov.sconto6 = acq.sconto6
                         mov.f_ann = 0
+                        if mov.config.pdcreset:
+                            mov.id_pdccg = None
                         riga += 1
                 if acq.annacq:
                     #segno x l'annullamento, in fase di scrittura, del movimento

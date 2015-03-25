@@ -673,7 +673,7 @@ class XFrame(aw.Frame):
 
             (self.OnChangeIva,                 ID_CHANGEIVA),
             
-            (self.OnHelp,                      ID_HELP),
+            #(self.OnHelp,                      ID_HELP),
             (self.OnAbout,                     ID_ABOUT),
             (self.OnProgramUpdate,             ID_UPDATES),
             ):

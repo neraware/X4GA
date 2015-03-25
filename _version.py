@@ -23,6 +23,6 @@
 
 apptype = "community"
 appType = "Community Edition"
-appinfo = "(C) 2005-2013 Astra S.r.l."
+appinfo = "(C) 2005-2015 Astra S.r.l."
 appinfo += " - "
 appinfo += "Build realizzata in collaborazione con la comunità."

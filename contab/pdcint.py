@@ -554,7 +554,7 @@ class GridScadenzario(dbglib.DbGridColoriAlternati,
         nci = pcf._GetFieldIndex('imptot')
         ncp = pcf._GetFieldIndex('imppar')
         
-        canedit = False
+        canedit = True
         canins = False
         
         rs = pcf.GetRecordset()

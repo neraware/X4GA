@@ -174,7 +174,14 @@ class ProdProgrPanel(wx.Panel):
         self.GridProMag_Init()
         self.GridProMov_Init()
         self.GridProScheda_Init()
-    
+        
+        cn = self.FindWindowByName
+        setup = dbm.adb.DbTable(bt.TABNAME_CFGSETUP, 'setup', writable=False)
+        if setup.Retrieve('chiave="magdatchi"') and setup.OneRow():
+            if setup.data is not None:
+                cn('promovdat1').SetValue(setup.data+Env.DateTime.timedelta(days=1))
+        cn('promovdat2').SetValue(Env.Azienda.Login.dataElab)
+        
     def GridProScheda_Init(self):
         self.proschegrid = ProdProSchedaGrid(
             self.FindWindowById(wdr.ID_PPRPANPROPRO), self.dbprosch)

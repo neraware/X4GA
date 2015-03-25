@@ -114,19 +114,19 @@ class DocIntGrid(dbglib.DbGridColoriAlternati, _DocIntGridMixin):
         _IMP = bt.GetValIntMaskInfo()
         
         cols = (\
-            ( 40, (cn(mag,"codice"),     "Mag.",          _STR, True)),
+            ( 35, (cn(mag,"codice"),     "Mag.",          _STR, True)),
             ( 80, (cn(doc,"datreg"),     "Data reg.",     _DAT, True)),
             (120, (cn(tpd,"descriz"),    "Documento",     _STR, True)),
             ( 50, (cn(doc,"numdoc"),     "Num.",          _STR, True)),
             ( 80, (cn(doc,"datdoc"),     "Data doc.",     _DAT, True)),
             ( 50, (cn(pdc,"codice"),     "Cod.",          _STR, True)),
-            (290, (cn(pdc,"descriz"),    "Sottoconto",    _STR, True)),
+            (240, (cn(pdc,"descriz"),    "Sottoconto",    _STR, True)),
             ( 35, (cn(mpa,"codice"),     "Cod.",          _STR, True)),
             (120, (cn(mpa,"descriz"),    "Mod.Pagamento", _STR, True)),
             ( 35, (cn(spe,"codice"),     "Spese",         _STR, True)),
-            (110, (cn(doc,"totimporto"), "Tot.Documento", _IMP, True)),
-            (110, (cn(doc,"totimponib"), "Imponibile",    _IMP, True)),
-            (110, (cn(doc,"totimposta"), "Imposta",       _IMP, True)),
+            (105, (cn(doc,"totimporto"), "Tot.Documento", _IMP, True)),
+            (105, (cn(doc,"totimponib"), "Imponibile",    _IMP, True)),
+            (105, (cn(doc,"totimposta"), "Imposta",       _IMP, True)),
             ( 80, (cn(doc,"datrif"),     "Data rif.",     _DAT, True)),
             ( 50, (cn(doc,"numrif"),     "N.Rif.",        _STR, True)),
             ( 50, (cn(des,"codice"),     "Cod.",          _STR, True)),
@@ -208,11 +208,24 @@ class DocIntGrid(dbglib.DbGridColoriAlternati, _DocIntGridMixin):
         for tab, name in (("doc", "id_magazz"),\
                           ("doc", "id_pdc"),\
                           ("doc", "id_agente"),\
-                          ("doc", "id_zona")):
+                          ("doc", "id_zona"),
+                          ("doc", "id_modpag")):
             ctr = cn(name)
-            val = ctr.GetValue()
-            if val is not None:
-                doc.AddFilter("%s.%s=%%s" % (tab, name), val)
+            if cn:
+                val = ctr.GetValue()
+                if val is not None:
+                    doc.AddFilter("%s.%s=%%s" % (tab, name), val)
+        
+        mp_r = cn('mptipo_r').IsChecked()
+        mp_i = cn('mptipo_i').IsChecked()
+        mp_x = cn('mptipo_x').IsChecked()
+        
+        if mp_r or mp_i or mp_x:
+            f = []
+            if mp_r: f.append('modpag.tipo="R"')
+            if mp_i: f.append('modpag.tipo="I"')
+            if mp_x: f.append('modpag.tipo NOT IN ("R", "I")')
+            doc.AddFilter(" OR ".join(f))
         
         doc.ClearOrders()
         doc.AddOrder('doc.datreg')
@@ -301,7 +314,7 @@ class DocIntPanel(aw.Panel):
     def EnableFields(self):
         cn = self.FindWindowByName
         td = cn('id_tipdoc').dbdoc
-        for col in 'agente zona'.split():
+        for col in 'agente zona modpag'.split():
             c = cn('id_%s' % col)
             if td.id:
                 f = getattr(td, 'ask%s' % col)

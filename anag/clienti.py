@@ -300,6 +300,7 @@ class ClientiPanel(pdcrel._CliForPanel):
         
         self._sqlrelcol += ', status.hidesearch'
         
+        self._valfilters['codice'] =   ['pdc.codice',       None, None]
         self._valfilters['agente'] =   ['agente.codice',    None, None]
         self._valfilters['zona'] =     ['zona.codice',      None, None]
         self._valfilters['stato'] =    ['stato.codice',     None, None]

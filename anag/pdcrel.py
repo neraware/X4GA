@@ -533,6 +533,8 @@ class GrigliaPrezziGrid(dbglib.DbGridColoriAlternati):
         self.COL_descriz = a((230, (cn(pro, 'descriz'), "Prodotto",       _STR, True)))
         self.COL_DATA =    b(( 90, (cn(gri, 'data'),    "Data",           _DAT, True)))
         
+        self.COL_UNIMIS = b((35,(cn(gri,'um'), "UM", _STR, True)))
+        
         if bt.MAGPZGRIP:
             self.COL_PZCONF = b((70,(cn(gri,'pzconf'),  "Pz.Conf.",       _PZC, True)))
         
@@ -1097,7 +1099,8 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             self.dbrec.Reset()
         else:
             self.dbrec.Retrieve('id_pdc=%s', self.db_recid)
-        self.gridrec.ChangeData(self.dbrec.GetRecordset())
+        if hasattr(self, 'gridrec'):
+            self.gridrec.ChangeData(self.dbrec.GetRecordset())
     
     def SaveRecapiti(self):
         if self.dbrec.RowsCount():

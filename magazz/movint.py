@@ -86,6 +86,7 @@ class GridMov(maglib.GridMov):
         a(( 90, (cn(pro, "codice"),    "Codice",       _STR, True)))
         a((205, (cn(mov, "descriz"),   "Descrizione",  _STR, True)))
         a(( 80, (cn(mov, "qta"),       "Qtà",          _QTA, True)))
+        a(( 40, (cn(mov, "um"),        "U.M.",         _STR, True)))
         a(( 80, (cn(mov, "prezzo"),    "Prezzo",       _PRE, True)))
         if bt.MAGNUMSCO >= 1:
             a(( 45, (cn(mov, "sconto1"),   "Sc.%"+'1'*int(bt.MAGNUMSCO>1), _SCO, True)))
@@ -115,6 +116,8 @@ class GridMov(maglib.GridMov):
         a((  1, (cn(mov, "id"),        "#mov",         _STR, True)))
         a((  1, (cn(doc, "id"),        "#doc",         _STR, True)))
         
+        self.DefColumns(cols)
+        
         colmap  = [c[1] for c in cols]
         colsize = [c[0] for c in cols]
         
@@ -141,6 +144,9 @@ class GridMov(maglib.GridMov):
         self.gridmov = grid
         
         self.PostInit()
+    
+    def DefColumns(self, cols):
+        pass
 
 
 # ------------------------------------------------------------------------------

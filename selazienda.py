@@ -20,6 +20,7 @@
 # You should have received a copy of the GNU General Public License
 # along with X4GA.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------------
+import plib
 
 """
 Selezione azienda
@@ -72,6 +73,9 @@ try:
 except Exception, e:
     #aw.awu.MsgDialog(None, message=repr(e.args), style=wx.ICON_ERROR)
     miracq = None
+
+from plib import get_plugin_names, load_plugin, enable_plugin, PluginException
+
 
 
 class ListAziende(adb.DbMem):
@@ -208,6 +212,10 @@ class SelAziendaPanel(aw.Panel):
         self.Bind(gl.EVT_GRID_CELL_LEFT_DCLICK, self.OnSelect,  self.gridaz)
         self.gridaz.Bind(wx.EVT_KEY_DOWN, self.OnTestGridChar)
         
+        self.test_disabled_plugins = False
+        self.gridaz.Bind(wx.EVT_KEY_DOWN, self.OnTestGridKey)
+        self.gridaz.Bind(wx.EVT_KEY_UP, self.OnTestGridKey)
+        
         self.Bind(EVT_NEWAZI_CREATED, self.UpdateAziende)
         
         self.test_mod_name = True
@@ -215,6 +223,10 @@ class SelAziendaPanel(aw.Panel):
         ci(ID_PSWD).Bind(wx.EVT_KEY_UP, self.OnTestKey)
         
         self.UpdateServerUrl(0)
+    
+    def OnTestGridKey(self, event):
+        self.test_disabled_plugins = event.ControlDown()
+        event.Skip()
     
     def OnTestKey(self, event):
         self.test_mod_name = not event.ControlDown()
@@ -425,7 +437,17 @@ class SelAziendaPanel(aw.Panel):
         
         if self.AutorizzoUser(username, password):
             if self.CheckLogin(nomeazi, nomedb, codice, data):
-                #bt.defstru()
+                if self.test_disabled_plugins:
+                    for name in get_plugin_names(enabled=False):
+                        msg = "E' presente il plugin '%s', ma su questa azienda è disabilitato." % name
+                        msg += "\nVuoi attivarlo ?"
+                        stl = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
+                        if aw.awu.MsgDialog(self, msg, style=stl) == wx.ID_YES:
+                            enable_plugin(name)
+                            try:
+                                load_plugin(name)
+                            except Exception, e:
+                                aw.awu.MsgDialog(self, "Errore in caricamento plugin:\n%s" % ' - '.join(map(str, e.args)))
                 try:
                     bt.ReadAziendaSetup()
                 except bt.AziendaSetupException, e:
@@ -457,20 +479,7 @@ class SelAziendaPanel(aw.Panel):
             db = adb.DB()
             db._dbCon = conn
             db.connected = True
-#             db = adb.DbTable(Env.Azienda.BaseTab.TABNAME_CFGSETUP, 'setup', db=db)
-#             for key in 'indirizzo cap citta prov codfisc stato piva numtel numfax email titprivacy infatti codateco'.split():
-#                 if db.Retrieve('setup.chiave=%s',
-#                                'azienda_%s' % key) and db.RowsCount() == 1:
-#                     if db.flag:
-#                         setattr(Env.Azienda, key, db.flag)
-#                     elif db.importo:
-#                         setattr(Env.Azienda, key, db.importo)
-#                     elif db.descriz:
-#                         setattr(Env.Azienda, key, db.descriz)
-            Env.Azienda.read_dati_azienda(db)
-            Env.Azienda.BaseTab.ReadAziendaSetup()
             wx.GetApp().dbcon = conn
-            #conn.close()
             
         except MySQLdb.Error, e:
             errMessage = "Non è possibile accedere al database\n\n%s: %s" \
@@ -494,6 +503,26 @@ class SelAziendaPanel(aw.Panel):
             aw.awu.MsgDialog(self, "Manca il nome dell'utente", style=wx.ICON_EXCLAMATION)
             
         else:
+            
+            try:
+                conn = MySQLdb.connect(host=Env.Azienda.DB.servername,
+                                       user=Env.Azienda.DB.username,
+                                       passwd=Env.Azienda.DB.password,
+                                       db='x4',
+                                       use_unicode=True)
+                Env.Azienda.DB.connection = conn
+                db = adb.DB()
+                db._dbCon = conn
+                db.connected = True
+                wx.GetApp().dbcon = conn
+                
+            except MySQLdb.Error, e:
+                errMessage = "Non è possibile accedere al database\n\n%s: %s" \
+                % (e.args[0], e.args[1])
+                aw.awu.MsgDialog(self, message=errMessage, style=wx.ICON_EXCLAMATION)
+            
+            plib.load_new_plugins(write_changes=False)
+            
             dlg = AziendaSetup(None, -1, "Creazione nuova azienda")
             dlg.x4conn = self.x4conn
             do = (dlg.ShowModal() is True)
