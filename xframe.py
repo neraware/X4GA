@@ -28,59 +28,22 @@ import stormdb as adb
 import rss
 import strumenti
 
-appl = wx.GetApp()
-__app__ = (appl is not None)
-
 import xml.dom.minidom
 
-if __app__:
-    def up():
-        if appl.splash:
-            appl.splash.UpdateProgress()
-            wx.SafeYield(onlyIfNeeded=True)
-    def setjob(x):
-        if appl:
-            if appl.splash:
-                appl.splash.SetJob(x)
-else:
-    def up():
-        pass
-    def setjob(x):
-        pass
-
-#setjob("Caricamento moduli di base")
-    
-
 import erman
-up()
-
 from version import __version__, __modversion__, MODVERSION_NAME
-up()
-
 import versionchanges
-up()
-
 import cfg.tabsetup as tabsetup
-up()
-
 import os
 def opj(x, y):
     return os.path.join(x, y).replace('\\', '/')
-up()
 
 import awc.controls.windows as aw
-up()
-
 import awc.util as awu
-up()
 
 import promem
-up()
-
 from X_wdr import *
-up()
 
-# ------------------------------------------------------------------------------
 
 
 ID_TB_CLIENT = wx.NewId()
