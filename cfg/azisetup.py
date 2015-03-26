@@ -224,8 +224,10 @@ class AziendaSetupPanel(_SetupPanel):
                                         ht.close()
                             except Exception, e:
                                 aw.awu.MsgDialog(self, repr(e.args))
-            
-                bt.ReadAziendaSetup()
+                try:
+                    bt.ReadAziendaSetup()
+                except Exception, e:
+                    aw.awu.MsgDialog(self, repr(e.args), style=wx.ICON_ERROR)
                 Env.Azienda.read_dati_azienda()
             
         return out

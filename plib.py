@@ -54,15 +54,9 @@ def load_plugin(plugin_name):
     return m
 
 
-import wx
-import awc.controls.windows as aw
-
 def load_plugins(plugin_names):
-    try:
-        for plugin_name in plugin_names:
-            load_plugin(plugin_name)
-    except PluginException, e:
-        aw.awu.MsgDialog(None, ' - '.join(e.args), style=wx.ICON_ERROR)
+    for plugin_name in plugin_names:
+        load_plugin(plugin_name)
 
 
 def clear_plugins():
@@ -91,11 +85,11 @@ def init_plugins():
         except PluginException:
             cap = "Questa versione di X4GA è obsoleta!"
             msg = get_reqfail_msg("P", name, Env.plugins[name])
-            aw.awu.MsgDialog(None, msg, cap, style=wx.ICON_ERROR)
+            raise Exception, cap+' '+msg
         except Exception, e:
             cap = "Errore in caricamento plugin!"
             msg = ' -'.join(map(str, e.args))
-            aw.awu.MsgDialog(None, msg, cap, style=wx.ICON_ERROR)
+            raise Exception, cap+' '+msg
 
 
 
@@ -123,6 +117,8 @@ def check_new_plugins(read_setup=True):
 
 
 def load_new_plugins(write_changes=True):
+    import wx
+    import awc.controls.windows as aw
     for new_plugin in check_new_plugins(read_setup=write_changes):
         msg = "E' disponibile il nuovo plugin '%s': lo vuoi attivare ?" % new_plugin
         stl = wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT
