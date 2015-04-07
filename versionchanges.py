@@ -29,6 +29,15 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.36', None, (
+         ("BET4188",
+         """Evidenzia cod.fisc./p.iva errata in riepilogo vendite 
+         aziente/privati."""),
+         ("BET4189",
+         """Nuova interrogazione vendite per aliquota iva, con controllo
+         validità cod.fisc./p.iva."""),
+        ),),
+    
     ('1.6.33', None, (
          ("BUG1159",
          """Fix calcolo scadenze in dataentry documento, veniva eseguito anche
