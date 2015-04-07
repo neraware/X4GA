@@ -77,3 +77,11 @@ class XSplashScreen(wx.SplashScreen):
     def UpdateProgress(self):
         self.pcount += 1
         self.pbar.SetValue(self.pcount)
+    
+    def Destroy(self):
+        try:
+            # x crash in chiusura su linux/gtk
+            self.pbar.Destroy()
+        except:
+            pass
+        return wx.SplashScreen.Destroy(self)
