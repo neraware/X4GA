@@ -126,7 +126,7 @@ class AboutPanel(wx.Panel):
         if historymod:
             nh.append(['modchanges', historymod])
         nb = aw.awu.GetAllChildrens(p, lambda x: isinstance(x, wx.Notebook))[0]
-        for name in plib.get_plugin_names():
+        for name in Env.plugins:
             module = Env.plugins[name]
             try:
                 ph = module.plugin_history
