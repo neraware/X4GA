@@ -29,7 +29,7 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.6.36', None, (
+    ('1.6.36', dt.Date(2015, 4, 8), (
          ("BET4188",
          """Evidenzia cod.fisc./p.iva errata in riepilogo vendite 
          aziente/privati."""),
