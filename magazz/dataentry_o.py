@@ -168,8 +168,8 @@ class _MagazzPanel_O_Mixin(object):
                         (wdr.ID_MARGINEPERC,doc._totmargineperc),):
             c = self.FindWindowById(ID)
             c.SetValue(val)
-            if c.IsTooBig():
-                return False
+#             if c.IsTooBig():
+#                 return False
         self.FindWindowById(wdr.ID_TOTSCTOT).SetValue(doc.totscmce+doc.totscpra)
         
         for ID, val in ((wdr.ID_SOGRITACC,  doc.sogritacc),\

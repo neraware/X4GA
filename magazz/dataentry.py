@@ -2179,7 +2179,7 @@ class MagazzPanel(aw.Panel,\
     
     def Validate(self):
         for c in aw.awu.GetAllChildrens(self, lambda x: hasattr(x, 'IsTooBig')):
-            if c.IsTooBig():
+            if c.IsTooBig() and not 'margine' in c.GetName().lower():
                 return False
         dbiva = adb.DbTable('aliqiva')
         err = None
