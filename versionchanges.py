@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.37', dt.Date(2015, 4, 10), (
+         ("BUG1160",
+         """Corretto dataentry documenti, bloccava la chiusura del
+         documento in caso di calcolo percentuale del margine fuori
+         limite."""),
+         ("BUG1161",
+         """Corretta estrazione vendite per aliquota iva e relativa
+         stampa."""),
+        ),),
+    
     ('1.6.36', dt.Date(2015, 4, 8), (
          ("BET4188",
          """Evidenzia cod.fisc./p.iva errata in riepilogo vendite 
