@@ -85,7 +85,7 @@ class PluginsGrid(dbglib.DbGridColoriAlternati):
             except ImportError:
                 pass
         
-        for name in plib.get_plugin_names():
+        for name in Env.plugins:
             p = Env.plugins[name]
             i = PluginInfo(name)
             try: 
