@@ -2643,15 +2643,16 @@ class DocMag(adb.DbTable):
         sendto = sei.sendto
         if not sendto.startswith("<") and sendto.endswith(">"):
             _, sendto = sendto[:-1].split("<")
-        if sm.send(SendFrom=sei.sendfrom,
-                    SendTo=sendto,#sei.sendto,
-                    Subject=sub,
-                    Message=sei.message,
-                    Attachments=[filename,]):
+        sended = sm.send(SendFrom=sei.sendfrom,
+                         SendTo=sendto,#sei.sendto,
+                         Subject=sub,
+                         Message=sei.message,
+                         Attachments=[filename,])
+        sm.storicizza('Documento', self.id_pdc, self.id, sm.error or "OK")
+        if sended:
             self.f_emailed = 1
             cmd = "UPDATE %s SET f_emailed=1 WHERE id=%s" % (bt.TABNAME_MOVMAG_H, self.id)
             self._info.db.Execute(cmd)
-            sm.storicizza('Documento', self.id_pdc, self.id)
         return sm
     
     def GetTraVetInlineDescription(self):

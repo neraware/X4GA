@@ -40,10 +40,6 @@ twain = None
 from mx import DateTime
 
 import locale
-try:
-    locale.setlocale(locale.LC_ALL, 'it')
-except locale.Error:
-    locale.setlocale(locale.LC_ALL)
 
 import shutil
 

@@ -675,6 +675,7 @@ class CliForEmailsGrid(dbglib.DbGridColoriAlternati):
             ( 50, (cn(doc, "numdoc"),  "Num.",       _NUM, True )),
             ( 80, (cn(doc, "datdoc"),  "Data",       _DAT, True )),
             (600, (cn(ema, "oggetto"), "Oggetto",    _STR, True )),
+            ( 50, (cn(ema, "esito"),   "Esito",      _STR, True )),
             (  1, (cn(ema, "id"),      "#ema",       _STR, False)),
             (  1, (cn(doc, "id"),      "#doc",       _STR, False)),
             )

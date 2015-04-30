@@ -146,6 +146,8 @@ class SendMail(object):
              SendBCC=None, 
              Attachments=None):
         
+        self.error = None
+        
         SendFrom = SendFrom or SENDER
         if isinstance(SendTo, basestring):
             SendTo = [SendTo]
@@ -202,7 +204,7 @@ class SendMail(object):
 
 class SendDocumentMail(SendMail):
     
-    def storicizza(self, tipologia="Documento", id_pdc=None, id_doc=None):
+    def storicizza(self, tipologia="Documento", id_pdc=None, id_doc=None, esito=None):
         if self.msg is None:
             raise Exception, "Impossibile storicizzare una mail non inizializzata"
         import Env
@@ -220,6 +222,7 @@ class SendDocumentMail(SendMail):
         s.destinat = ', '.join(self.SendTo)
         s.oggetto = self.Subject
         s.testo = self.Message
+        s.esito = esito
         stream = None
         if self.Attachments:
             try:

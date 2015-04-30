@@ -3650,6 +3650,7 @@ class Azienda(object):
                  [ "oggetto",        "VARCHAR",   ntw, None, "Oggetto della mail", None ],
                  [ "testo",          "VARCHAR",   ntw, None, "Testo della mail", None ],
                  [ "documento",      "LONGBLOB", None, None, "Stream del documento allegato", None ],
+                 [ "esito",          "VARCHAR",   ntw, None, "Esito spedizione", None ],
              ]
             
             cls.set_constraints(cls.TABNAME_DOCSEMAIL,

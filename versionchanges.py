@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.38', dt.Date(2015, 4, 30), (
+         ("BUG1162",
+         """Corretta spedizione email da stampa differita, in caso di 
+         errore di invio su una mail, proseguiva sulle seguenti, 
+         limitandosi a non storicizzare la spedizione."""),
+         ("BET4190",
+         """Implementato l'esito dell'operazione nella spedizione
+         documenti per email."""),
+        ),),
+    
     ('1.6.37', dt.Date(2015, 4, 10), (
          ("BUG1160",
          """Corretto dataentry documenti, bloccava la chiusura del

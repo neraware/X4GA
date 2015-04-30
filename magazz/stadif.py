@@ -344,7 +344,6 @@ class StaDifPanel(aw.Panel):
                             ur = r.GetUsedReport()
                             if ur is None:
                                 break
-                            sendfile = r.GetUsedReport().GetFileName()
                         else:
                             ur = r.StartReport(filename)
                         sei = d2p.SendMail_Prepare()
@@ -357,7 +356,9 @@ class StaDifPanel(aw.Panel):
                                 wx.Sleep(3)
                             wait.SetMessage("Invio a: %s" % sei.sendto)
                             wx.Sleep(3)
-                            d2p.SendMail(sei, ur.GetFileName())
+                            sm = d2p.SendMail(sei, ur.GetFileName())
+                            if sm.error:
+                                raise Exception, sm.error
                     if wait is not None:
                         wait.SetValue(n)
             except Exception, e:

@@ -3407,7 +3407,7 @@ class VenditeXAliqIVA(adb.DbTable, _Vendite_mixin_):
 class SendedEmail(adb.DbTable):
     
     def __init__(self):
-        adb.DbTable.__init__(self, bt.TABNAME_DOCSEMAIL, 'emails', fields='id,id_pdc,id_doc,datsend,oggetto')
+        adb.DbTable.__init__(self, bt.TABNAME_DOCSEMAIL, 'emails', fields='id,id_pdc,id_doc,datsend,oggetto,esito')
         doc = self.AddJoin(bt.TABNAME_MOVMAG_H, 'doc', idLeft='id_doc')
         tpd = doc.AddJoin(bt.TABNAME_CFGMAGDOC, 'tipdoc', idLeft='id_tipdoc')
         pdc = self.AddJoin(bt.TABNAME_PDC, 'pdc', idLeft='id_pdc')
