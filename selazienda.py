@@ -21,6 +21,7 @@
 # along with X4GA.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------------
 import plib
+from awc.controls.button import is_pushable
 
 """
 Selezione azienda
@@ -243,6 +244,7 @@ class SelAziendaPanel(aw.Panel):
         event.Skip()
 
     def OnWksSetup(self, event):
+        if not is_pushable(event.GetEventObject()): return
         import os
         def opj(x,y):
             return os.path.join(x,y).replace('\\','/')
@@ -496,6 +498,9 @@ class SelAziendaPanel(aw.Panel):
         """
         Crea una nuova azienda.
         """
+        
+        if not is_pushable(event.GetEventObject()): return
+        
         ctrHost = self.FindWindowById(ID_SERVER)
         ctrUser = self.FindWindowById(ID_USER)
         ctrPswd = self.FindWindowById(ID_PSWD)
@@ -557,6 +562,8 @@ class SelAziendaPanel(aw.Panel):
         self.GetParent().EndModal( self.ID_QUIT )
 
     def OnUtenti(self, event):
+        
+        if not is_pushable(event.GetEventObject()): return
         
         Env.Azienda.DB.connection = self.x4conn
         adb.DEFAULT_DATABASE = "x4"

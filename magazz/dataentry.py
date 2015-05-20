@@ -33,6 +33,8 @@ import awc.controls.windows as aw
 from awc.controls.linktable import LinkTable
 from awc.controls import EVT_DATECHANGED
 from awc.controls.linktable import EVT_LINKTABCHANGED
+from awc.controls.button import is_pushable
+
 import awc.controls.mixin as cmix
 
 import Env
@@ -1001,6 +1003,7 @@ class MagazzPanel(aw.Panel,\
         return out
     
     def OnButPrint(self, event):
+        if not is_pushable(event.GetEventObject()): return
         if self.PrintDoc():
             if self.status == STATUS_EDITING:
                 if self.onedoconly_id:
@@ -1009,6 +1012,7 @@ class MagazzPanel(aw.Panel,\
                     self.SetRegStatus(STATUS_SELCAUS)
     
     def OnButModify(self, event):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_DISPLAY and self.canedit:
             if self.TestCanModify():
                 if self.TestPcf():
@@ -1051,6 +1055,7 @@ class MagazzPanel(aw.Panel,\
         return out
     
     def OnButAcquis(self, event):
+        if not is_pushable(event.GetEventObject()): return
         self.AcqDoc()
         self.gridbody.ResetView()
         event.Skip()
@@ -1622,12 +1627,14 @@ class MagazzPanel(aw.Panel,\
             rpt.ReportLabels(self, dbsc, 'Etichette Segnacollo')
     
     def OnDocNew( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_SELCAUS:
             if self.TestConfig():
                 self.DocNew()
         event.Skip()
     
     def OnDocSearch( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_SELCAUS:
             if self.TestConfig():
                 self.DocSearch()
@@ -1666,6 +1673,7 @@ class MagazzPanel(aw.Panel,\
             event.Skip()
         
     def OnDocEnd( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.DocSave():
             if self.onedoconly_id:
                 event.Skip()
@@ -1845,6 +1853,7 @@ class MagazzPanel(aw.Panel,\
         return saved
 
     def OnDocQuit( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.TestQuit():
             if self.onedoconly_id:
                 event.Skip()
@@ -1852,6 +1861,7 @@ class MagazzPanel(aw.Panel,\
                 self.SetRegStatus(STATUS_SELCAUS)
 
     def OnDocDelete(self, event):
+        if not is_pushable(event.GetEventObject()): return
         action = MsgDialog(self,\
 """Sei sicuro di voler cancellare il documento?  Confermando, non sarà """\
 """più recuperabile in alcun modo.  """\

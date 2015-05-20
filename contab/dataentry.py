@@ -33,6 +33,7 @@ import awc.controls.windows as aw
 from awc.controls.dbgrid import DbGrid
 from awc.controls.datectrl import DateCtrl
 from awc.controls.linktable import LinkTable
+from awc.controls.button import is_pushable
 
 import Env
 from stormdb.dbtable import DbTable
@@ -262,6 +263,7 @@ class ContabPanel(aw.Panel,\
         event.Skip()
     
     def OnRegNew( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_SELCAUS:
             if self.controls['causale'].GetValue() is None:
                 aw.awu.MsgDialog(self, "Seleziona la causale", style=wx.ICON_ERROR)
@@ -269,12 +271,14 @@ class ContabPanel(aw.Panel,\
                 self.RegNew()
     
     def OnRegSearch( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_SELCAUS:
             self.RegSearch()
         elif self.status == STATUS_DISPLAY:
             self.SetRegStatus(STATUS_SELCAUS)
 
     def OnRegEnd( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if round(self.totdare,6) == round(self.totavere,6):
             if self.RegSave():
                 if self.oneregonly_id:
@@ -291,10 +295,12 @@ class ContabPanel(aw.Panel,\
 """squadrata.  Eliminare la squadratura e riprovare.""")
     
     def OnRegModify(self, event):
+        if not is_pushable(event.GetEventObject()): return
         self.SetRegStatus(STATUS_EDITING)
         event.Skip()
     
     def OnRegQuit( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         quit = True
         if self.editing:
             action = MsgDialog(self,\
@@ -314,6 +320,7 @@ class ContabPanel(aw.Panel,\
                 self.SetRegStatus(STATUS_SELCAUS)
 
     def OnRegDelete(self, event):
+        if not is_pushable(event.GetEventObject()): return
         action = MsgDialog(self,\
 """Sei sicuro di voler cancellare la registrazione ?  Confermando, la """\
 """registrazione non sarà più recuperabile in alcun modo.  """\

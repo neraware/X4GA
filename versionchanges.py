@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.39', dt.Date(2015, 5, 20), (
+         ("BUG1163",
+         """Corretta la gestione dei tasti acceleratore su bottoni,
+         venivano attivati anche se il bottone era disabilitato o
+         nascosto."""),
+        ),),
+    
     ('1.6.38', dt.Date(2015, 4, 30), (
          ("BUG1162",
          """Corretta spedizione email da stampa differita, in caso di 
