@@ -2679,6 +2679,34 @@ class DocMag(adb.DbTable):
                 if prv: out += (' (%s)' % prv)
                 return out
         return None
+    
+    def get_info_acconti(self, info_type=None):
+        col_importo = self.mov._GetFieldIndex('importo', inline=True)
+        col_isacconto = self.mov.config._GetFieldIndex('is_acconto', inline=True)
+        col_isaccstor = self.mov.config._GetFieldIndex('is_accstor', inline=True)
+        totale = 0
+        for r in self.mov.GetRecordset():
+            if r[col_importo]:
+                if info_type == 'addebito':
+                    if not r[col_isaccstor]:
+                        totale += (r[col_importo] or 0)
+                elif info_type == 'acconto':
+                    if r[col_isacconto]:
+                        totale += (r[col_importo] or 0)
+                elif info_type == 'stornoacconto':
+                    if r[col_isaccstor]:
+                        totale += (r[col_importo] or 0)
+        return totale
+    
+    def get_acconto_disponibile(self):
+        totale = 0
+        if self.id_pdc:
+            sitacc = PdcSituazioneAcconti()
+            sitacc.GetForPdc(self.id_pdc)
+            sitacc.Retrieve()
+            for _ in sitacc:
+                totale += (sitacc.acconto_disponib or 0)
+        return totale
 
 
 # ------------------------------------------------------------------------------
