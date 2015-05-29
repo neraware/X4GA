@@ -29,6 +29,20 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.41', None, (
+         ("BET4191",
+         """Implementata nuova interrogazione di dettaglio degli
+         incassi e pagamenti sui sottoconti movimentati in 
+         operazioni in saldaconto."""),
+        ),),
+    
+    ('1.6.40', None, (
+         ("BUG1164",
+         """Corretto dataentry saldaconto, in alcune circostanze 
+         la modifica della registrazione portava alla cancellazione
+         della partita."""),
+        ),),
+    
     ('1.6.39', dt.Date(2015, 5, 20), (
          ("BUG1163",
          """Corretta la gestione dei tasti acceleratore su bottoni,

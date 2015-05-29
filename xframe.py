@@ -512,6 +512,7 @@ class XFrame(aw.Frame):
             (self.OnPdcInterrCli,              ID_INTCONCLI),
             (self.OnPdcInterrFor,              ID_INTCONFOR),
             (self.OnPdcInterrCas,              ID_INTCONCAS),
+            (self.OnIncPagDet,                 ID_INCPAGDET),
             (self.OnQuadRegCont,               ID_CTR_QUADCON),
             (self.OnPdcInterrBan,              ID_INTCONBAN),
             (self.OnPdcInterrEff,              ID_INTCONEFF),
@@ -1300,6 +1301,10 @@ class XFrame(aw.Frame):
     def OnPdcInterrCas(self, event):
         from contab.pdcint import CasseInterrFrame
         self.PdcRelShowInterrFrame(CasseInterrFrame)
+    
+    def OnIncPagDet(self, event):
+        from contab.incpagdet import DettaglioIncassiPagamentiFrame
+        self.PdcRelShowInterrFrame(DettaglioIncassiPagamentiFrame)
     
     def OnPdcInterrBan(self, event):
         from contab.pdcint import BancheInterrFrame
