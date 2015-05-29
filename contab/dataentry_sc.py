@@ -1300,7 +1300,8 @@ LEFT JOIN %s AS mpa ON pcf.id_modpag=mpa.id
             #elimino le partite che dopo lo storno sono andate a zero
             cmd = """
             DELETE FROM %s 
-            WHERE id=%%s and imptot=0 and imppar=0""" % bt.TABNAME_PCF
+            WHERE id=%%s and imptot=0 and imppar=0
+              AND (SELECT COUNT(*) FROM contab_s s WHERE s.id_pcf=pcf.id)=0""" % bt.TABNAME_PCF
             par = []
             for scad in self.regrss_old:
                 pcf = scad[RSSCA_PCF_ID]
