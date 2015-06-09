@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.42', None, (
+         ("BUG1165",
+         """Dopo la selezione dell'azienda di lavoro, ora viene 
+         controllata la presenza di versioni aggiornate dei plugin 
+         tra quelli già scaricati."""),
+         ("BET4192",
+         """Disponibili funzioni relative alla gestione degli acconti
+         per evidenziazione in stampa documento."""),
+        ),),
+    
     ('1.6.41', None, (
          ("BET4191",
          """Implementata nuova interrogazione di dettaglio degli

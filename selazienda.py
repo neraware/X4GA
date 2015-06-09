@@ -452,6 +452,10 @@ class SelAziendaPanel(aw.Panel):
                                 aw.awu.MsgDialog(self, "Errore in caricamento plugin:\n%s" % ' - '.join(map(str, e.args)))
                 try:
                     bt.ReadAziendaSetup()
+                    app = wx.GetApp()
+                    test_updates = getattr(app, 'TestUpdates', None)
+                    if callable(test_updates):
+                        test_updates()
                 except bt.AziendaSetupException, e:
                     aw.awu.MsgDialog(self, e.args[0], style=wx.ICON_ERROR)
                 except Exception, e:
