@@ -2696,6 +2696,9 @@ class DocMag(adb.DbTable):
                 elif info_type == 'stornoacconto':
                     if r[col_isaccstor]:
                         totale += (r[col_importo] or 0)
+                elif info_type == 'acconto_o_storno':
+                    if r[col_isacconto] or r[col_isaccstor]:
+                        totale += (r[col_importo] or 0)
         return totale
     
     def get_acconto_disponibile(self):
