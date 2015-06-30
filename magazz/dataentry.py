@@ -784,6 +784,7 @@ class MagazzPanel(aw.Panel,\
         self.UpdateAnagAutoNotes()
         self.IsHeadValid()
         self.MakeTotals(False)
+        self.UpdatePanelFoot()
         if self.interrpdc:
             self.InterrPdc()
         return out

@@ -29,7 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.6.42', None, (
+    ('1.6.43', dt.Date(2015, 6, 30), (
+         ("BUG1166",
+         """Fix aggiornamento totali piede se documento caricato 
+         dall'esterno."""),
+        ),),
+    
+    ('1.6.42', dt.Date(2015, 6, 20), (
          ("BUG1165",
          """Dopo la selezione dell'azienda di lavoro, ora viene 
          controllata la presenza di versioni aggiornate dei plugin 
