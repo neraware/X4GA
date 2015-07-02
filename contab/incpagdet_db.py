@@ -50,7 +50,7 @@ class SottocontiCassaBanca(adb.DbMem):
 class DettaglioIncassiPagamenti(adb.DbMem):
     
     def __init__(self):
-        adb.DbMem.__init__(self, 'id_reg,id_cassa,codcassa,descassa,datreg,id_causale,codcausale,descausale,id_anag,codanag,desanag,importo,operazione,spesa,abbuono,tipabb,id_caudoc,codcaudoc,descaudoc,id_pcf,numdoc,datdoc,dare,avere')
+        adb.DbMem.__init__(self, 'id_reg,id_cassa,codcassa,descassa,datreg,id_causale,codcausale,descausale,id_anag,codanag,desanag,note,importo,operazione,spesa,abbuono,tipabb,id_caudoc,codcaudoc,descaudoc,id_pcf,numdoc,datdoc,dare,avere')
         self.Reset()
     
     def get_sottoconti_movimentati(self, 
@@ -148,6 +148,7 @@ class DettaglioIncassiPagamenti(adb.DbMem):
             pcc.id      'id_anag',
             pcc.codice  'codanag',
             pcc.descriz 'desanag',
+            mvc.note    'note',
             sca.importo 'importo',
             sca.importo*
             IF(mva.segno="D",1,-1)

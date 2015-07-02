@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.44', dt.Date(2015, 7, 2), (
+         ("BET4193",
+         """Aggiunte le note della riga 1 (cliente/fornitore) della 
+         registrazione di incasso/pagamento nella lista di dettaglio
+         delle operazioni in saldaconto."""),
+        ),),
+    
     ('1.6.43', dt.Date(2015, 6, 30), (
          ("BUG1166",
          """Fix aggiornamento totali piede se documento caricato 
