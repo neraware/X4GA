@@ -649,7 +649,8 @@ class print_Report:
                     qd = qd[:qd.rindex('/')+1]+queuedef+'.jrxml'
                     pn = self.oCanvas.userVariableList['PAGE_NUMBER'].valore
                     print_Report(qd, dbTable=queuetab, canvas=self.oCanvas,
-                                 parentWindow=parentWindow, firstPageNumber=pn)
+                                 parentWindow=parentWindow, firstPageNumber=pn,
+                                 output=output)
             
             if self.lFlatReport == True:
                 dbTable.SetFlatView(False)       
