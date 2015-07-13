@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.46', dt.Date(2015, 7, 13), (
+         ("BUG1167",
+         """Corretta acquisizione listino da file csv, non memorizzava
+         costo/prezzo scheda prodotto."""),
+        ),),
+    
     ('1.6.44', dt.Date(2015, 7, 2), (
          ("BET4193",
          """Aggiunte le note della riga 1 (cliente/fornitore) della 
