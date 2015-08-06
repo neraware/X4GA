@@ -186,6 +186,7 @@ def GetEffConfig(tipo="R", banca=None):
     cfg.AddFilter("cfg.tipo=%s", tipo)
     cfg.StoreFilters()
     cfg.AddFilter("cfg.id_banca=%s", banca)
+    cfg.AddOrder("cfg.riga")
     cfg.Retrieve()
     if cfg.RowsCount() == 0:
         cfg.ResumeFilters()
