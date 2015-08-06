@@ -1986,7 +1986,7 @@ class MagazzPanel(aw.Panel,\
         if cfg.askmpnoeff:
             _filt.append('tipo<>"R"')
         if not cfg.colcg:
-            _filt.append('modocalc<>"N"')
+            _filt.append('(modocalc<>"N" OR tipo="Y")')
         filt = ' AND '.join(_filt) or '1'
         mp.SetFilter(filt)
         self.GridBodySetTipMovFilter()
