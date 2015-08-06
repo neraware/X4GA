@@ -80,16 +80,17 @@ def get_plugin_names(enabled=True):
 def init_plugins():
     import Env
     for name in get_plugin_names():
-        try:
-            load_plugin(name)
-        except PluginException:
-            cap = "Questa versione di X4GA è obsoleta!"
-            msg = get_reqfail_msg("P", name, Env.plugins[name])
-            raise Exception, cap+' '+msg
-        except Exception, e:
-            cap = "Errore in caricamento plugin!"
-            msg = ' -'.join(map(str, e.args))
-            raise Exception, cap+' '+msg
+        if not name in Env.plugins:
+            try:
+                load_plugin(name)
+            except PluginException:
+                cap = "Questa versione di X4GA è obsoleta!"
+                msg = get_reqfail_msg("P", name, Env.plugins[name])
+                raise Exception, cap+' '+msg
+            except Exception, e:
+                cap = "Errore in caricamento plugin!"
+                msg = ' -'.join(map(str, e.args))
+                raise Exception, cap+' '+msg
 
 
 
