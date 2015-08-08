@@ -29,6 +29,42 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.53', None, (
+         ("BET4198",
+         """Gestione in scheda prodotto delle griglie delle giacenze e 
+         disponibilità in base a relativi flag in setup azienda."""),
+        ),),
+    
+    ('1.6.52', None, (
+         ("BET4196",
+         """Aggiunte selezioni di categoria clienti e categoria fornitori
+         in interrogazione documenti."""),
+         ("BET4197",
+         """Aggiunte selezioni di categoria clienti, categoria fornitori,
+         mod.pagamento, qta min/max e importo min/max in interrogazione 
+         movimenti."""),
+        ),),
+    
+    ('1.6.51', None, (
+         ("BET4195",
+         """Aggiunto codice creditore nella videata della banca per
+         emissione rid tracciato arricchito x sepa."""),
+        ),),
+    
+    ('1.6.49', None, (
+         ("BET4194",
+         """Introdotto automatismo per non addebitare al cliente l'iva
+         sugli omaggi, mediante la presenza o meno dell'automatismo di
+         magazzino "Iva su omaggi a carico dell'azienda."""),
+        ),),
+    
+    ('1.6.47', None, (
+         ("BUG1168",
+         """Introdotta griglia di valutazione delle disponibilità a
+         seguito dell'evasione ordini clienti/fornitori nella scheda
+         prodotto."""),
+        ),),
+    
     ('1.6.46', dt.Date(2015, 7, 13), (
          ("BUG1167",
          """Corretta acquisizione listino da file csv, non memorizzava
