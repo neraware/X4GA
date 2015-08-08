@@ -114,9 +114,16 @@ class NoteFotoNotebook(Notebook):
             self.AddPage(p, "Immagine")
         
         #pannello giacenze
-        p = wx.Panel(self)
-        ProdAnagGiacenzeFunc(p, False)
-        self.AddPage(p, "Giacenze")
+        if bt.MAGVISGIA:
+            p = wx.Panel(self)
+            ProdAnagGiacenzeFunc(p, False)
+            self.AddPage(p, "Giacenze")
+        
+        #pannello disponibilità
+        if bt.MAGVISDIS:
+            p = wx.Panel(self)
+            ProdAnagDisponibFunc(p, False)
+            self.AddPage(p, "Disponib.")
         
         #pannello listini attuali
         if bt.MAGNUMLIS>0:
@@ -2894,6 +2901,47 @@ def ValoriFunc( parent, call_fit = True, set_sizer = True ):
     item0.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 1 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+ID_BKCLI = 14225
+ID_BKFOR = 14226
+ID_PANGRIDDISP = 14227
+
+def ProdAnagDisponibFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item2 = wx.StaticText( parent, ID_TEXT, "Disponibilità da evasione ordini", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.SetForegroundColour( wx.BLUE )
+    item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item3 = wx.CheckBox( parent, ID_BKCLI, "Clienti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.SetValue( True )
+    item3.SetForegroundColour( wx.BLUE )
+    item3.SetName( "bkcli" )
+    item1.Add( item3, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP, 5 )
+
+    item4 = wx.CheckBox( parent, ID_BKFOR, "Fornitori", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.SetValue( True )
+    item4.SetForegroundColour( wx.BLUE )
+    item4.SetName( "bkfor" )
+    item1.Add( item4, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP, 5 )
+
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item5 = wx.Panel( parent, ID_PANGRIDDISP, wx.DefaultPosition, [360,140], wx.SUNKEN_BORDER )
+    item0.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item0.AddGrowableCol( 0 )
+
+    item0.AddGrowableRow( 1 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

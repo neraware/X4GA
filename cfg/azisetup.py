@@ -308,6 +308,7 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.MAGPZGRIP,
                    bt.MAGPPROMO,
                    bt.MAGVISGIA,
+                   bt.MAGVISDIS,
                    bt.MAGVISPRE,
                    bt.MAGVISCOS,
                    bt.MAGVISCPF,
@@ -389,6 +390,7 @@ class AziendaSetupPanel(_SetupPanel):
             bt.MAGPZGRIP = bool(cn('setup_magpzgrip').GetValue())
             bt.MAGPPROMO = bool(cn('setup_magppromo').GetValue())
             bt.MAGVISGIA = bool(cn('setup_magvisgia').GetValue())
+            bt.MAGVISDIS = bool(cn('setup_magvisdis').GetValue())
             bt.MAGVISPRE = bool(cn('setup_magvispre').GetValue())
             bt.MAGVISCOS = bool(cn('setup_magviscos').GetValue())
             bt.MAGVISCPF = bool(cn('setup_magviscpf').GetValue())
@@ -473,6 +475,7 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.MAGPZGRIP,
                 bt.MAGPPROMO,
                 bt.MAGVISGIA,
+                bt.MAGVISDIS,
                 bt.MAGVISPRE,
                 bt.MAGVISCOS,
                 bt.MAGVISCPF,
