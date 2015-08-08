@@ -209,12 +209,20 @@ class DocIntGrid(dbglib.DbGridColoriAlternati, _DocIntGridMixin):
                           ("doc", "id_pdc"),\
                           ("doc", "id_agente"),\
                           ("doc", "id_zona"),
-                          ("doc", "id_modpag")):
+                          ("doc", "id_modpag"), ):
             ctr = cn(name)
             if cn:
                 val = ctr.GetValue()
                 if val is not None:
                     doc.AddFilter("%s.%s=%%s" % (tab, name), val)
+        
+        for tab, name in (("catcli", "id_catcli"),\
+                          ("catfor", "id_catfor"), ):
+            ctr = cn(name)
+            if cn:
+                val = ctr.GetValue()
+                if val is not None:
+                    doc.AddFilter("%s.id=%%s" % tab, val)
         
         mp_r = cn('mptipo_r').IsChecked()
         mp_i = cn('mptipo_i').IsChecked()
