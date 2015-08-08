@@ -1939,7 +1939,23 @@ class MagazzPanel(aw.Panel,\
                 flt += " AND "
             flt = "id IN (%s)" % ','.join([str(p.id_rel) for p in p])
         ctrcau.SetFilter(flt)
+        
+        self.Freeze()
+        try:
+            cfg.Reset()
+            c = self.FindWindowByName('panritaccdati')
+            c.Show(bool(bt.CONATTRITACC and cfg.sogritacc))
+            self.FindWindowByName('panmargine').Show(bool(cfg.vismargine == 1))
+            a = (bt.MAGGESACC == 1)
+            if a:
+                a = cfg.HasMovAcconto() or cfg.HasMovStornoAcconto()
+            self.FindWindowByName('panacconti').Show(a)
+            self.Layout_()
+        finally:
+            self.Thaw()
+        
         self.Bind(EVT_LINKTABCHANGED, self.OnCauChanged, ctrcau)
+        
         return out
     
     def OnCauChanged(self, event):
@@ -1953,6 +1969,12 @@ class MagazzPanel(aw.Panel,\
         """
         if self.FindWindowById(wdr.ID_CAUSALE).GetValue():
             self.SetCausale()
+        else:
+            for name in 'panmargine panritaccdati'.split():
+                c = self.FindWindowByName(name)
+                if c:
+                    c.Hide()
+            self._Layout()
         wx.CallAfter(self.SetProdZoneSize)
         event.Skip()
     
@@ -1995,9 +2017,8 @@ class MagazzPanel(aw.Panel,\
             p.Enable(cfg.askdatiacc == "X")
         self.Freeze()
         try:
-            for name in 'dati tot'.split():
-                c = self.FindWindowByName('panritacc%s'%name)
-                c.Show(bool(bt.CONATTRITACC and cfg.sogritacc))
+            c = self.FindWindowByName('panritaccdati')
+            c.Show(bool(bt.CONATTRITACC and cfg.sogritacc))
             cn('panmargine').Show(bool(cfg.vismargine == 1))
             a = (bt.MAGGESACC == 1)
             if a:
@@ -2457,8 +2478,7 @@ class MagazzPanel(aw.Panel,\
         def cn(x):
             return self.FindWindowByName(x)
         enable = enable and bool(bt.CONATTRITACC and self.dbdoc.cfgdoc.sogritacc)
-        for name in 'dati tot'.split():
-            cn('panritacc%s'%name).Enable(enable)
+        cn('panritaccdati').Enable(enable)
         enable = enable and cn('sogritacc').GetValue()
         for name in 'per com imp'.split():
             cn('%sritacc'%name).Enable(enable)

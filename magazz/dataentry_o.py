@@ -172,6 +172,12 @@ class _MagazzPanel_O_Mixin(object):
 #                 return False
         self.FindWindowById(wdr.ID_TOTSCTOT).SetValue(doc.totscmce+doc.totscpra)
         
+        self.FindWindowById(wdr.ID_TOTIVASPL).SetValue(doc.get_iva_splitplayment())
+        io, _, do = doc.get_iva_omaggi_a_carico()
+        if not do:
+            io = 0
+        self.FindWindowById(wdr.ID_TOTIVAOMA).SetValue(io)
+        
         for ID, val in ((wdr.ID_SOGRITACC,  doc.sogritacc),\
                         (wdr.ID_PERRITACC,  doc.perritacc),\
                         (wdr.ID_COMRITACC,  doc.comritacc),\
