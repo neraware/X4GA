@@ -278,6 +278,7 @@ class AutomatMagazzPanel(aw.Panel, _automatmixin):
         wdr.AutomatMagazzFunc(self, True)
         
         for aut, des in (('magomaggi', 'Sottoconto Omaggi'),\
+                         ('magomaiva', 'Sottoconto Iva Omaggi'),\
                          ('magomareg', 'Omaggi in registrazione'),\
                          ('magivascm', 'Aliquota Iva per sconto merce'),\
                          ('magivacee', 'Aliquota Iva per documenti CEE'),\

@@ -191,12 +191,14 @@ class CfgAutomat(object):
         Automatismi di magazzino.
         Automatismi facoltativi::
             - magomaggi - id pdc sottoconto omaggi
+            - magomaiva - id pdc sottoconto iva omaggi
             - magivascm - id aliquota iva per sconto merce
             - magivacee - id aliquota iva per vendite cee
             - magivaest - id aliquota iva per vendite estero
             - magivadef - id aliquota iva di default
         """
         self._autoKeys["magomaggi"] = False
+        self._autoKeys["magomaiva"] = False
         self._autoKeys["magivascm"] = False
         self._autoKeys["magivacee"] = False
         self._autoKeys["magivaest"] = False
