@@ -959,11 +959,12 @@ ID_FIRMARIBA = 14048
 ID_PROVFIN = 14049
 ID_AUBANUM = 14050
 ID_AUBADAT = 14051
+ID_RIDCCRED = 14052
 
 def BancheAnag2Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item2 = wx.StaticBox( parent, -1, "Dati per trasmissione Ri.Ba." )
+    item2 = wx.StaticBox( parent, -1, "Dati per trasmissione Ri.Ba. / RID" )
     item1 = wx.StaticBoxSizer( item2, wx.VERTICAL )
     
     item3 = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -1011,32 +1012,39 @@ def BancheAnag2Func( parent, call_fit = True, set_sizer = True ):
     item3.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item16 = wx.StaticText( parent, ID_TEXT, "Firma:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item3.Add( item16, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item3.Add( item16, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item17 = TextCtrl( parent, ID_FIRMARIBA, "", wx.DefaultPosition, [80,-1], 0 )
     item17.SetName( "firmariba" )
-    item3.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item3.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item18 = wx.StaticText( parent, ID_TEXT, "Prov. Finanza:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item3.Add( item18, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item3.Add( item18, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item19 = TextCtrl( parent, ID_PROVFIN, "", wx.DefaultPosition, [120,-1], 0 )
     item19.SetName( "provfin" )
     item3.Add( item19, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item20 = wx.StaticText( parent, ID_TEXT, "Num. Autorizzazione banca:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item3.Add( item20, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item3.Add( item20, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item21 = TextCtrl( parent, ID_AUBANUM, "", wx.DefaultPosition, [80,-1], 0 )
     item21.SetName( "aubanum" )
-    item3.Add( item21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item3.Add( item21, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item22 = wx.StaticText( parent, ID_TEXT, "Data autorizzazione:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item3.Add( item22, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item3.Add( item22, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item23 = DateCtrl( parent, ID_AUBADAT, "", wx.DefaultPosition, [80,-1], 0 )
     item23.SetName( "aubadat" )
-    item3.Add( item23, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item3.Add( item23, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item24 = wx.StaticText( parent, ID_TEXT, "Codice creditore x RID:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item24, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item25 = TextCtrl( parent, ID_RIDCCRED, "", wx.DefaultPosition, [160,-1], 0 )
+    item25.SetName( "ridccred" )
+    item3.Add( item25, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item3.AddGrowableCol( 1 )
 
@@ -1096,10 +1104,10 @@ def EffettiCardFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TIPO = 14052
-ID_EFFBANCA = 14053
-ID_EFFCAUS = 14054
-ID_PATH = 14055
+ID_TIPO = 14053
+ID_EFFBANCA = 14054
+ID_EFFCAUS = 14055
+ID_PATH = 14056
 
 def EffettiAnagFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1172,7 +1180,7 @@ def EffettiAnagFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PDCPREF = 14056
+ID_PDCPREF = 14057
 
 def FornitPdcPrefFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1202,11 +1210,11 @@ def FornitPdcPrefFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_INCLCF = 14057
-ID_VISCARD = 14058
-ID_PANELSTRU = 14059
-ID_PRINT = 14060
-ID_CARDSPANEL = 14061
+ID_INCLCF = 14058
+ID_VISCARD = 14059
+ID_PANELSTRU = 14060
+ID_PRINT = 14061
+ID_CARDSPANEL = 14062
 
 def PdcStruFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -1263,29 +1271,29 @@ def PdcStruFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LINE = 14062
-ID_FILT_AGENTE1 = 14063
-ID_FILT_AGENTE2 = 14064
-ID_FILT_CATANA1 = 14065
-ID_FILT_CATANA2 = 14066
-ID_FILT_ZONA1 = 14067
-ID_FILT_ZONA2 = 14068
-ID_FILT_STATO1 = 14069
-ID_FILT_STATO2 = 14070
-ID_FILT_STATUS1 = 14071
-ID_FILT_STATUS2 = 14072
-ID_FILT_MODPAG1 = 14073
-ID_FILT_MODPAG2 = 14074
-ID_FILT_SPEINC1 = 14075
-ID_FILT_SPEINC2 = 14076
-ID_FILT_VETTORE1 = 14077
-ID_FILT_TRAVET2 = 14078
-ID_FILT_TIPLIST1 = 14079
-ID_FILT_TIPLIST2 = 14080
-ID_FILT_ALIQIVA1 = 14081
-ID_FILT_ALIQIVA2 = 14082
-ID_FILT_BANCAPAG1 = 14083
-ID_FILT_BANCAPAG2 = 14084
+ID_LINE = 14063
+ID_FILT_AGENTE1 = 14064
+ID_FILT_AGENTE2 = 14065
+ID_FILT_CATANA1 = 14066
+ID_FILT_CATANA2 = 14067
+ID_FILT_ZONA1 = 14068
+ID_FILT_ZONA2 = 14069
+ID_FILT_STATO1 = 14070
+ID_FILT_STATO2 = 14071
+ID_FILT_STATUS1 = 14072
+ID_FILT_STATUS2 = 14073
+ID_FILT_MODPAG1 = 14074
+ID_FILT_MODPAG2 = 14075
+ID_FILT_SPEINC1 = 14076
+ID_FILT_SPEINC2 = 14077
+ID_FILT_VETTORE1 = 14078
+ID_FILT_TRAVET2 = 14079
+ID_FILT_TIPLIST1 = 14080
+ID_FILT_TIPLIST2 = 14081
+ID_FILT_ALIQIVA1 = 14082
+ID_FILT_ALIQIVA2 = 14083
+ID_FILT_BANCAPAG1 = 14084
+ID_FILT_BANCAPAG2 = 14085
 
 def ClientiSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1807,8 +1815,8 @@ def FornitSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_RAGGR = 14085
-ID_SELECT = 14086
+ID_RAGGR = 14086
+ID_SELECT = 14087
 
 def OrdStampaCliFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1851,8 +1859,8 @@ def OrdStampaForFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDSCOCC = 14087
-ID_PRINTSCOCC = 14088
+ID_PANGRIDSCOCC = 14088
+ID_PRINTSCOCC = 14089
 
 def ScontiCategoriaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1882,11 +1890,11 @@ def ScontiCategoriaFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_FIDOMAXGGS = 14089
-ID_FIDOMAXIMP = 14090
-ID_FIDOMAXPCF = 14091
-ID_FIDOMAXESP = 14092
-ID_BUTFIDO = 14093
+ID_FIDOMAXGGS = 14090
+ID_FIDOMAXIMP = 14091
+ID_FIDOMAXPCF = 14092
+ID_FIDOMAXESP = 14093
+ID_BUTFIDO = 14094
 
 def FidiPanelFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.StaticBox( parent, -1, "Condizioni di fido" )
@@ -1937,13 +1945,13 @@ def FidiPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_SCONTO1 = 14094
-ID_SCONTO2 = 14095
-ID_SCONTO3 = 14096
-ID_SCONTO4 = 14097
-ID_SCONTO5 = 14098
-ID_SCONTO6 = 14099
-ID_PANPROVVIG = 14100
+ID_SCONTO1 = 14095
+ID_SCONTO2 = 14096
+ID_SCONTO3 = 14097
+ID_SCONTO4 = 14098
+ID_SCONTO5 = 14099
+ID_SCONTO6 = 14100
+ID_PANPROVVIG = 14101
 
 def ScontiPanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -2033,8 +2041,8 @@ def ScontiPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANSCONTI = 14101
-ID_PANFIDI = 14102
+ID_PANSCONTI = 14102
+ID_PANFIDI = 14103
 
 def ScontiFidiPanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -2054,9 +2062,9 @@ def ScontiFidiPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_DESDES = 14103
-ID_BTNSEARCH = 14104
-ID_PANGRIDSEARCH = 14105
+ID_DESDES = 14104
+ID_BTNSEARCH = 14105
+ID_PANGRIDSEARCH = 14106
 
 def DestinazSearchFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2101,10 +2109,10 @@ def DestinazSearchFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PDCGRP = 14106
-ID_BUTVEDIPDCGRP = 14107
-ID_BUTVEDIPREVIG = 14108
-ID_PANGRIP = 14109
+ID_PDCGRP = 14107
+ID_BUTVEDIPDCGRP = 14108
+ID_BUTVEDIPREVIG = 14109
+ID_PANGRIP = 14110
 
 def CliForGrigliaPrezziFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2158,8 +2166,8 @@ def CliForGrigliaPrezziFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_CTRBRIMAS = 14110
-ID_CTRBRICON = 14111
+ID_CTRBRIMAS = 14111
+ID_CTRBRICON = 14112
 
 def BilRiclPanelFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.StaticBox( parent, -1, "Bilancio riclassificato" )
@@ -2190,7 +2198,7 @@ def BilRiclPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_CTRBILCEE = 14112
+ID_CTRBILCEE = 14113
 
 def BilRCeePanelFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.StaticBox( parent, -1, "Riclassificazione CEE" )
@@ -2215,9 +2223,9 @@ def BilRCeePanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BAN_PANELGRID = 14113
-ID_BANCAWARNING = 14114
-ID_BAN_PANELCARD = 14115
+ID_BAN_PANELGRID = 14114
+ID_BANCAWARNING = 14115
+ID_BAN_PANELCARD = 14116
 
 def CliForBanFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2269,22 +2277,22 @@ def CliForBanFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BAN_CODICE = 14116
-ID_BAN_DESCRIZ = 14117
-ID_BAN_BIC = 14118
-ID_BAN_ABI = 14119
-ID_BAN_CAB = 14120
-ID_BAN_NUMCC = 14121
-ID_BTNBANCHENEW = 14122
-ID_BTNBANCHEDEL = 14123
-ID_BTNBANCHELIST = 14124
-ID_BAN_CINBBAN = 14125
-ID_BAN_BBAN = 14126
-ID_BAN_BUTCALC_BBAN = 14127
-ID_BAN_PAESE = 14128
-ID_BAN_CINIBAN = 14129
-ID_BAN_IBAN = 14130
-ID_BAN_BUTCALC_IBAN = 14131
+ID_BAN_CODICE = 14117
+ID_BAN_DESCRIZ = 14118
+ID_BAN_BIC = 14119
+ID_BAN_ABI = 14120
+ID_BAN_CAB = 14121
+ID_BAN_NUMCC = 14122
+ID_BTNBANCHENEW = 14123
+ID_BTNBANCHEDEL = 14124
+ID_BTNBANCHELIST = 14125
+ID_BAN_CINBBAN = 14126
+ID_BAN_BBAN = 14127
+ID_BAN_BUTCALC_BBAN = 14128
+ID_BAN_PAESE = 14129
+ID_BAN_CINIBAN = 14130
+ID_BAN_IBAN = 14131
+ID_BAN_BUTCALC_IBAN = 14132
 
 def CliForBanCardFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2450,9 +2458,9 @@ def CliForBanCardFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_DES_PANELGRID = 14132
-ID_DESTWARNING = 14133
-ID_DES_PANELCARD = 14134
+ID_DES_PANELGRID = 14133
+ID_DESTWARNING = 14134
+ID_DES_PANELCARD = 14135
 
 def CliForDesFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2504,23 +2512,23 @@ def CliForDesFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_DES_CODICE = 14135
-ID_DES_DESCRIZ = 14136
-ID_DES_INDIRIZZO = 14137
-ID_DES_CAP = 14138
-ID_DES_CITTA = 14139
-ID_DES_PROV = 14140
-ID_DES_CODFISC = 14141
-ID_DES_PIVA = 14142
-ID_BTNDESTNEW = 14143
-ID_BTNDESTDEL = 14144
-ID_BTNDESTLIST = 14145
-ID_DES_CONTATTO = 14146
-ID_DES_EMAIL = 14147
-ID_DES_NUMTEL = 14148
-ID_DES_NUMTEL2 = 14149
-ID_DES_NUMFAX = 14150
-ID_DES_NUMCEL = 14151
+ID_DES_CODICE = 14136
+ID_DES_DESCRIZ = 14137
+ID_DES_INDIRIZZO = 14138
+ID_DES_CAP = 14139
+ID_DES_CITTA = 14140
+ID_DES_PROV = 14141
+ID_DES_CODFISC = 14142
+ID_DES_PIVA = 14143
+ID_BTNDESTNEW = 14144
+ID_BTNDESTDEL = 14145
+ID_BTNDESTLIST = 14146
+ID_DES_CONTATTO = 14147
+ID_DES_EMAIL = 14148
+ID_DES_NUMTEL = 14149
+ID_DES_NUMTEL2 = 14150
+ID_DES_NUMFAX = 14151
+ID_DES_NUMCEL = 14152
 
 def CliForDesCardFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -2706,7 +2714,7 @@ def CliForDesCardFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PERPRO = 14152
+ID_PERPRO = 14153
 
 def ProvvigPanelFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.StaticBox( parent, -1, "Provv." )
@@ -2725,8 +2733,8 @@ def ProvvigPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PDC_MASTER = 14153
-ID_PANGRIDLINK = 14154
+ID_PDC_MASTER = 14154
+ID_PANGRIDLINK = 14155
 
 def GriglieCollegateFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2765,23 +2773,23 @@ def GriglieCollegateFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TXT_INDIRIZZO = 14155
-ID_TXT_CAP = 14156
-ID_TXT_CITTA = 14157
-ID_TXT_PROVINCIA = 14158
-ID_STATO = 14159
-ID_TXT_CODFISC = 14160
-ID_TXT_NAZIONE = 14161
-ID_TXT_PIVA = 14162
-ID_CTT1NOME = 14163
-ID_SPEDINDZONE = 14164
-ID_TXT_NUMTEL = 14165
-ID_TXT_NUMTEL2 = 14166
-ID_TXT_NUMFAX = 14167
-ID_TXT_NUMFAX2 = 14168
-ID_TXT_EMAIL = 14169
-ID_TXT_SITEURL = 14170
-ID_CONTATTIZONE = 14171
+ID_TXT_INDIRIZZO = 14156
+ID_TXT_CAP = 14157
+ID_TXT_CITTA = 14158
+ID_TXT_PROVINCIA = 14159
+ID_STATO = 14160
+ID_TXT_CODFISC = 14161
+ID_TXT_NAZIONE = 14162
+ID_TXT_PIVA = 14163
+ID_CTT1NOME = 14164
+ID_SPEDINDZONE = 14165
+ID_TXT_NUMTEL = 14166
+ID_TXT_NUMTEL2 = 14167
+ID_TXT_NUMFAX = 14168
+ID_TXT_NUMFAX2 = 14169
+ID_TXT_EMAIL = 14170
+ID_TXT_SITEURL = 14171
+ID_CONTATTIZONE = 14172
 
 def CliForAnagFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -3021,7 +3029,7 @@ def CliForAnagFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDCTT = 14172
+ID_PANGRIDCTT = 14173
 
 def CliForContattiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -3041,18 +3049,18 @@ def CliForContattiFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_CTRSPEINC = 14173
-ID_CTRCLIFAT = 14174
-ID_SOGRITACC = 14175
-ID_LABELAGENTE = 14176
-ID_CTRAGENTE = 14177
-ID_CTRZONA = 14178
-ID_CHIUSURA = 14179
-ID_LABELLIST = 14180
-ID_CTRLISTINO = 14181
-ID_DDTSTAPRE = 14182
-ID_DDTFIXPRE = 14183
-ID_COMMZONE = 14184
+ID_CTRSPEINC = 14174
+ID_CTRCLIFAT = 14175
+ID_SOGRITACC = 14176
+ID_LABELAGENTE = 14177
+ID_CTRAGENTE = 14178
+ID_CTRZONA = 14179
+ID_CHIUSURA = 14180
+ID_LABELLIST = 14181
+ID_CTRLISTINO = 14182
+ID_DDTSTAPRE = 14183
+ID_DDTFIXPRE = 14184
+ID_COMMZONE = 14185
 
 def ClientiCommFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -3278,7 +3286,7 @@ def ClientiCommFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANSCOFID = 14185
+ID_PANSCOFID = 14186
 
 def ClientiScontiFidiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -3298,7 +3306,7 @@ def ClientiScontiFidiFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANSCONTICC = 14186
+ID_PANSCONTICC = 14187
 
 def ClientiScontiCategoriaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -3318,7 +3326,7 @@ def ClientiScontiCategoriaFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_NOEXEMAIL = 14187
+ID_NOEXEMAIL = 14188
 
 def CliForSpedIndFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -3413,15 +3421,15 @@ def CliForSpedIndFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_SM11_COGNOME = 14188
-ID_SM11_NOME = 14189
-ID_SM11_NASCDAT = 14190
-ID_SM11_NASCCOM = 14191
-ID_SM11_NASCPRV = 14192
-ID_SM11_SEDEIND = 14193
-ID_SM11_SEDECIT = 14194
-ID_SM11_SEDESTT = 14195
-ID_SM1_ASSOCIA = 14196
+ID_SM11_COGNOME = 14189
+ID_SM11_NOME = 14190
+ID_SM11_NASCDAT = 14191
+ID_SM11_NASCCOM = 14192
+ID_SM11_NASCPRV = 14193
+ID_SM11_SEDEIND = 14194
+ID_SM11_SEDECIT = 14195
+ID_SM11_SEDESTT = 14196
+ID_SM1_ASSOCIA = 14197
 
 def Spesometro2011Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -3512,8 +3520,8 @@ def Spesometro2011Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDPDC = 14197
-ID_BUTSAVE = 14198
+ID_PANGRIDPDC = 14198
+ID_BUTSAVE = 14199
 
 def CliFor_DatiFiscaliFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
