@@ -1009,6 +1009,7 @@ class Azienda(object):
         MAGPZGRIP = False    #flag gestione confezioni su griglie prezzi
         MAGPPROMO = False    #flag gestione condizioni promozionali di vendita
         MAGVISGIA = False    #flag visualizzazione giacenza prodotti in ricerca e gestione
+        MAGVISDIS = False    #flag visualizzazione disponibilità prodotti in ricerca e gestione
         MAGVISPRE = False    #flag visualizzazione prezzo prodotti in ricerca e gestione
         MAGVISCOS = False    #flag visualizzazione costo prodotti in ricerca e gestione
         MAGVISCPF = False    #flag visualizzazione codice prodotto del fornitore prodotti in ricerca e gestione
@@ -2275,7 +2276,8 @@ class Azienda(object):
                 [ "firmariba",  "VARCHAR", 20, None, "Firma x disco riba", None ],
                 [ "provfin",    "VARCHAR", 15, None, "Prov. Finanza", None],
                 [ "aubanum",    "VARCHAR", 10, None, "Num. autorizz. banca", None],
-                [ "aubadat",    "DATE",  None, None, "Data autorizz. banca", None] ]
+                [ "aubadat",    "DATE",  None, None, "Data autorizz. banca", None],
+                [ "ridccred",   "CHAR",    23, None, "Cod.creditore x rid/sepa", None] ]
             
             cls.banche_indexes = [ ["PRIMARY KEY", "id"], ]
             
@@ -3828,7 +3830,7 @@ class Azienda(object):
             return cls.BaseTab
             
         @classmethod
-        def ReadAziendaSetup(cls):
+        def ReadAziendaSetup(cls, load_plugins=True):
             
             cfg = adb.DbTable(cls.TABNAME_CFGSETUP, 'cfg', writable=False)
             
@@ -3899,9 +3901,10 @@ class Azienda(object):
                                   """dei dati aziendali.""" % err
             clear_plugins()
             cls.defstru()
-            from plib import init_plugins, check_new_plugins, load_plugin, enable_plugin
-            init_plugins()
-            load_new_plugins()
+            if load_plugins:
+                from plib import init_plugins
+                init_plugins()
+                load_new_plugins()
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()
@@ -3970,6 +3973,7 @@ class Azienda(object):
                 ('MAGPZGRIP',       'magpzgrip',          f, _int, None),
                 ('MAGPPROMO',       'magppromo',          f, _int, None),
                 ('MAGVISGIA',       'magvisgia',          f, _int, None),
+                ('MAGVISDIS',       'magvisdis',          f, _int, None),
                 ('MAGVISPRE',       'magvispre',          f, _int, None),
                 ('MAGVISCOS',       'magviscos',          f, _int, None),
                 ('MAGVISCPF',       'magviscpf',          f, _int, None),
