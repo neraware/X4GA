@@ -880,17 +880,19 @@ class DocMag(adb.DbTable):
                     doc = DocMag()
                     doc.Get(doc_id)
                     cfg = self.config
-                    n = [cfg.id_acqdoc1,
-                         cfg.id_acqdoc2,
-                         cfg.id_acqdoc3,
-                         cfg.id_acqdoc4,].index(doc.id_tipdoc)
-                    ann = [cfg.annacq1,
-                           cfg.annacq2,
-                           cfg.annacq3,
-                           cfg.annacq4,][n]
-                    if ann:
-                        doc.f_ann = 1
-                        doc.Save()
+                    tipdocs = [cfg.id_acqdoc1,
+                               cfg.id_acqdoc2,
+                               cfg.id_acqdoc3,
+                               cfg.id_acqdoc4,]
+                    if doc.id_tipdoc in tipdocs:
+                        n = tipdocs.index(doc.id_tipdoc)
+                        ann = [cfg.annacq1,
+                               cfg.annacq2,
+                               cfg.annacq3,
+                               cfg.annacq4,][n]
+                        if ann:
+                            doc.f_ann = 1
+                            doc.Save()
         return out
     
     def AggiornaProdotti(self, deldoc=False):
