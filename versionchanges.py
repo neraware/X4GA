@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.54', None, (
+         ("BUG1169",
+         """Corretta acquisizione documento, selezionando un documento con
+         destinatario questo non veniva riportato nel documento 
+         acquisente."""),
+        ),),
+    
     ('1.6.53', None, (
          ("BET4198",
          """Gestione in scheda prodotto delle griglie delle giacenze e 

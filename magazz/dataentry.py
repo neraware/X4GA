@@ -2690,6 +2690,8 @@ class MagazzPanel(aw.Panel,\
             if doc.mov.IsEmpty():
                 daq = dbm.DocMag()
                 daq.Get(acqdocid)
+                if doc.id_dest is None and daq.id_dest is not None:
+                    self.FindWindowByName('id_dest').SetValue(daq.id_dest)
                 headfields = []
                 for field, desc in (('id_modpag',  'Mod.Pagamento'),
                                     ('id_bancf',   'Banca'),
