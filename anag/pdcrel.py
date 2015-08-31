@@ -1279,9 +1279,8 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         return deleted
     
     def LoadBanche(self):
-        if self.db_recid is None:
-            rsban = ()
-        else:
+        rsban = ()
+        if self.db_recid is not None:
             cmd =\
 """SELECT """
             for field in banfields:
