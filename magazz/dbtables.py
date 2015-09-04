@@ -217,6 +217,8 @@ class DocMag(adb.DbTable):
             bt.TABNAME_MOVMAG_B,  "mov",     idRight="id_doc",\
             fields=magazz.movfields, writable=writable)
         
+        dbmov.AddOrder('mov.numriga')
+        
         dbtmov = dbmov.AddJoin(\
             bt.TABNAME_CFGMAGMOV, "config",  idLeft="id_tipmov",\
             join=adb.JOIN_LEFT)
