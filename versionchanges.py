@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.55', None, (
+         ("BUG1170",
+         """Corretto calcolo totali documento in caso di iva su
+         omaggi da non addebitare."""),
+        ),),
+    
     ('1.6.54', None, (
          ("BUG1169",
          """Corretta acquisizione documento, selezionando un documento con

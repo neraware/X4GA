@@ -1914,7 +1914,7 @@ class DocMag(adb.DbTable):
                     self.totimponib = RoundImp(self.totimponib+imponib)
                     self.totimporto = RoundImp(self.totimporto+importo)
             
-            self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
+#             self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
         
         # ripartizione sconti su totali x pdc
         if totscrip and totpdc:
@@ -2027,16 +2027,18 @@ class DocMag(adb.DbTable):
                     self.totimponib += imp
                     self.totimporto += mpr
                 
-            self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
+#             self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
         
-        if self.is_split_payment():
-            #adeguamento di totdare x split payment
-            self.totdare = RoundImp(self.totdare - (self.totimposta or 0))
+#         if self.is_split_payment():
+#             #adeguamento di totdare x split payment
+#             self.totdare = RoundImp(self.totdare - (self.totimposta or 0))
+#         
+#         ivaoma_iva, ivaoma_pdc, ivaoma_do = self.get_iva_omaggi_a_carico()
+#         if ivaoma_do:
+#             #adeguamento di totdare x iva omaggi a carico azienda
+#             self.totdare = RoundImp(self.totdare - ivaoma_iva)
         
-        ivaoma_iva, ivaoma_pdc, ivaoma_do = self.get_iva_omaggi_a_carico()
-        if ivaoma_do:
-            #adeguamento di totdare x iva omaggi a carico azienda
-            self.totdare = RoundImp(self.totdare - ivaoma_iva)
+        self.totdare = self.get_totdare()
         
         #ridefinizione dei subtotali
         _t = {}
@@ -2057,6 +2059,23 @@ class DocMag(adb.DbTable):
         
         if scad and self.config.caucon.pcf == '1':
             self.CalcolaScadenze()
+    
+    def get_totdare(self):
+        
+        ND = bt.VALINT_DECIMALS
+        
+        totdare = round(self.totimporto - (self.totritacc or 0), ND)
+        
+        if self.is_split_payment():
+            #adeguamento di totdare x split payment
+            totdare = round(totdare - (self.totimposta or 0), ND)
+        
+        ivaoma_iva, _ivaoma_pdc, ivaoma_do = self.get_iva_omaggi_a_carico()
+        if ivaoma_do:
+            #adeguamento di totdare x iva omaggi a carico azienda
+            totdare = round(totdare - ivaoma_iva, ND)
+        
+        return totdare
     
     def is_split_payment(self):
         for ti in self._info.totiva:

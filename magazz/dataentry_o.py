@@ -79,9 +79,10 @@ class _MagazzPanel_O_Mixin(object):
         doc.sogritacc = sra
         if not sra:
             doc.totritacc = 0
-            doc.totdare = doc.totimporto
-            if doc.is_split_payment():
-                doc.totdare -= doc.totimposta
+#             doc.totdare = doc.totimporto
+#             if doc.is_split_payment():
+#                 doc.totdare -= doc.totimposta
+            doc.totdare = doc.get_totdare()
         self.UpdateRitAcc()
         event.Skip()
     
@@ -103,9 +104,10 @@ class _MagazzPanel_O_Mixin(object):
         doc = self.dbdoc
         doc.totritacc = round(doc.perritacc*doc.impritacc/100*doc.comritacc/100, 
                               bt.VALINT_DECIMALS)
-        doc.totdare = doc.totimporto-doc.totritacc
-        if doc.is_split_payment():
-            doc.totdare -= doc.totimposta
+#         doc.totdare = doc.totimporto-doc.totritacc
+#         if doc.is_split_payment():
+#             doc.totdare -= doc.totimposta
+        doc.totdare = doc.get_totdare()
     
     def OnRitAccChanged(self, event):
         if hasattr(self, 'stopritacc'):
