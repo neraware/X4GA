@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.56', None, (
+         ("BET4199",
+         """Implementata possibilità di definizione della larghezza
+         della singola barra nei barcode ean13."""),
+        ),),
+    
     ('1.6.55', None, (
          ("BUG1170",
          """Corretto calcolo totali documento in caso di iva su
