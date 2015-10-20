@@ -533,6 +533,10 @@ class Report:
         dlg.SetReport(path, name, multi_default)
         dlg.SetPrinter(printer)
         dlg.SetCopies(copies)
+        def on_path_info(event):
+            awu.MsgDialog(dlg, path.replace('\\', '/'), 'Report path', style=wx.ICON_INFORMATION)
+            event.Skip()
+        dlg.FindWindowById(wdr.ID_REPORTNAME).Bind(wx.EVT_RIGHT_DCLICK, on_path_info)
         do = dlg.ShowModal() == wx.ID_OK
         if do:
             rptdef = dlg.GetReportName()
