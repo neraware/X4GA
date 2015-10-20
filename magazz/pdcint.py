@@ -700,7 +700,7 @@ class PdcIntMagPanel(aw.Panel):
     
     def UpdateFtProd(self):
         cn = lambda x: self.FindWindowByName(x)
-        if self.dbfta is None:
+        if self.dbfta is None or self.pdcid is None:
             return
         if self.ftalastpdc == self.pdcid:
             return
