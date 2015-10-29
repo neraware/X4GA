@@ -502,8 +502,10 @@ class AcqDocDialog(wx.Dialog):
             m.impacq = 0
             if m.tipmov.askvalori in 'QT':
                 m.closed = (m.total_qtaeva or 0) >= (m.qta or 0)
-            else:
+            elif not 'EVAMULTI' in m.tipmov.prtdestot:
                 m.closed = (m.count_numovi > 0)
+            else:
+                m.closed = False
         
         self.gridacq = AcqDocGrid(self.FindWindowById(wdr.ID_ACQPANGRID),\
                                   self.dbacq, modoacq)
@@ -541,7 +543,7 @@ class AcqDocDialog(wx.Dialog):
             elif acq.tipmov.askvalori in "QT":
                 canevas = (acq.total_qtaeva or 0)<(acq.qta or 0)
             else:
-                canevas = not acq.count_numovi
+                canevas = not acq.count_numovi or "EVAMULTI" in acq.tipmov.prtdestot
         return canevas
     
     def OnEvadiRiga(self, event):

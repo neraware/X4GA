@@ -29,6 +29,14 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.59', None, (
+         ("BET4203",
+         """Implementata possibilità di evadere più volte le righe
+         sprovviste di quantità (solo importo/descrizione) mediante
+         indicazione nel tipo movimento della scritta EVAMULTI sul
+         campo di descrizione del totale."""),
+        ),),
+    
     ('1.6.58', None, (
          ("BET4201",
          """Implementati i dati di riferimento nella griglia di 
