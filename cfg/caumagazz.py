@@ -407,6 +407,7 @@ class CauMagazzPanel(ga.AnagPanel):
                            ("aanotedoc",  { True: 1,   False: 0  } ),
                            ("aggultcar",  { True: 1,   False: 0  } ),
                            ("pdcreset",   { True: 1,   False: 0  } ),
+                           ("desevarif",  { True: 1,   False: 0  } ),
                            ):
             ctr = cn(name)
             ctr.SetDataLink(name, val)

@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.58', None, (
+         ("BET4201",
+         """Implementati i dati di riferimento nella griglia di 
+         selezione del documento da evadere."""),
+         ("BET4202",
+         """Implementata possibilità di descrivere il documento evaso
+         mediante i suoi dati di riferimento della testata invece che
+         come causale, numero e data."""),
+        ),),
+    
     ('1.6.57', None, (
          ("BET4200",
          """Implementata possibilità di contabilizzazione degli 

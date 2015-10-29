@@ -2756,9 +2756,17 @@ class MagazzPanel(aw.Panel,\
                 mov.CreateNewRow()
                 mov.id_tipmov = movdesid
                 acq = dlgacq.dbacq
-                mov.descriz = """Rif.to %s n. %s del %s"""\
-                   % (acq.doc.tipdoc.descriz, acq.doc.numdoc,\
-                      lib.dtoc(acq.doc.datdoc))
+                if acq.doc.tipdoc.desevarif:
+                    desrif = acq.doc.desrif or ''
+                    numrif = acq.doc.numrif or ''
+                    try: datrif = lib.dtoc(acq.doc.datrif)
+                    except: datrif = ''
+                else:
+                    desrif = acq.doc.tipdoc.descriz
+                    numrif = acq.doc.numdoc
+                    try: datrif = lib.dtoc(acq.doc.datdoc)
+                    except: datrif = ''
+                mov.descriz = """Rif.to %s n. %s del %s""" % (desrif, numrif, datrif)
                 mov.numriga = riga
                 riga += 1
             for acq in dlgacq.dbacq:

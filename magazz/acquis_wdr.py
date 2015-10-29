@@ -52,86 +52,89 @@ ID_ACQBUTSEL = 10009
 def AcqDocSearchFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item1 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item2 = wx.StaticText( parent, ID_TEXT, "Acquisizione documenti di tipo:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item1.Add( item2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
-    item3 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item3 = wx.StaticBox( parent, -1, "Causale" )
+    item2 = wx.StaticBoxSizer( item3, wx.VERTICAL )
     
-    item4 = LinkTable(parent, ID_ACQTIPDOC ); item4.SetDataLink(bt.TABNAME_CFGMAGDOC, "acqtipdoc", None); item4.SetObligatory(True)
-    item3.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item4 = wx.StaticText( parent, ID_TEXT, "Acquisizione documenti di tipo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item3.Add( [ 200, 1 ] , 0, wx.ALIGN_CENTER, 5 )
+    item5 = LinkTable(parent, ID_ACQTIPDOC ); item5.SetDataLink(bt.TABNAME_CFGMAGDOC, "acqtipdoc", None); item5.SetObligatory(True)
+    item2.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item3.AddGrowableCol( 0 )
+    item2.Add( [ 200, 1 ] , 0, wx.ALIGN_CENTER, 5 )
 
-    item1.Add( item3, 0, wx.ALIGN_CENTER, 5 )
+    item1.Add( item2, 0, wx.ALIGN_CENTER|wx.TOP, 5 )
+
+    item7 = wx.StaticBox( parent, -1, "Data doc." )
+    item6 = wx.StaticBoxSizer( item7, wx.HORIZONTAL )
+    
+    item8 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item9 = wx.StaticText( parent, ID_TEXT, "Dal:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item8.Add( item9, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item10 = wx.StaticText( parent, ID_TEXT, "Al:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item8.Add( item10, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item11 = DateCtrl( parent, ID_ACQDATDOC1, "", wx.DefaultPosition, [80,-1], 0 )
+    item11.SetName( "acqdatdoc1" )
+    item8.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item12 = DateCtrl( parent, ID_ACQDATDOC2, "", wx.DefaultPosition, [80,-1], 0 )
+    item12.SetName( "acqdatdoc2" )
+    item8.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item6.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+    item1.Add( item6, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item14 = wx.StaticBox( parent, -1, "Estrai documenti:" )
+    item13 = wx.StaticBoxSizer( item14, wx.HORIZONTAL )
+    
+    item15 = wx.CheckBox( parent, ID_ACQAPERTI, "Mai evasi", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item15.SetValue( True )
+    item15.SetName( "acqaperti" )
+    item13.Add( item15, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item16 = wx.CheckBox( parent, ID_ACQPARZ, "Parzialmente evasi", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item16.SetValue( True )
+    item16.SetName( "acqparz" )
+    item13.Add( item16, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item17 = wx.CheckBox( parent, ID_ACQCHIUSI, "Chiusi", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item17.SetValue( True )
+    item17.SetName( "acqchiusi" )
+    item13.Add( item17, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item1.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+
+    item18 = wx.Button( parent, ID_ACQBUTSRC, "Cerca", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.SetName( "acqbutsrc" )
+    item1.Add( item18, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.BOTTOM, 5 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item5 = wx.BoxSizer( wx.HORIZONTAL )
+    item19 = wx.StaticText( parent, ID_TEXT, "Documenti trovati:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item19.SetForegroundColour( wx.BLUE )
+    item0.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item20 = wx.Panel( parent, ID_ACQPANGRID, wx.DefaultPosition, [1000,300], wx.SUNKEN_BORDER )
+    item20.SetName( "acqpangrid" )
+    item0.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item21 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item7 = wx.StaticBox( parent, -1, "Periodo" )
-    item6 = wx.StaticBoxSizer( item7, wx.HORIZONTAL )
-    
-    item8 = wx.StaticText( parent, ID_TEXT, "Data documento dal:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item6.Add( item8, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item22 = wx.Button( parent, ID_ACQBUTSEL, "Seleziona", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item22.SetName( "acqbutsel" )
+    item21.Add( item22, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item9 = DateCtrl( parent, ID_ACQDATDOC1, "", wx.DefaultPosition, [80,-1], 0 )
-    item9.SetName( "acqdatdoc1" )
-    item6.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item10 = wx.StaticText( parent, ID_TEXT, "al:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item6.Add( item10, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
-
-    item11 = DateCtrl( parent, ID_ACQDATDOC2, "", wx.DefaultPosition, [80,-1], 0 )
-    item11.SetName( "acqdatdoc2" )
-    item6.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item5.Add( item6, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item13 = wx.StaticBox( parent, -1, "Estrai documenti:" )
-    item12 = wx.StaticBoxSizer( item13, wx.HORIZONTAL )
-    
-    item14 = wx.CheckBox( parent, ID_ACQAPERTI, "Mai evasi", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item14.SetValue( True )
-    item14.SetName( "acqaperti" )
-    item12.Add( item14, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
-
-    item15 = wx.CheckBox( parent, ID_ACQPARZ, "Parzialmente evasi", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item15.SetValue( True )
-    item15.SetName( "acqparz" )
-    item12.Add( item15, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
-
-    item16 = wx.CheckBox( parent, ID_ACQCHIUSI, "Chiusi", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item16.SetValue( True )
-    item16.SetName( "acqchiusi" )
-    item12.Add( item16, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
-
-    item5.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item17 = wx.Button( parent, ID_ACQBUTSRC, "Cerca", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item17.SetName( "acqbutsrc" )
-    item5.Add( item17, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item0.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item18 = wx.Panel( parent, ID_ACQPANGRID, wx.DefaultPosition, [830,300], wx.SUNKEN_BORDER )
-    item18.SetName( "acqpangrid" )
-    item0.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item19 = wx.BoxSizer( wx.HORIZONTAL )
-    
-    item20 = wx.Button( parent, ID_ACQBUTSEL, "Seleziona", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item20.SetName( "acqbutsel" )
-    item19.Add( item20, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item0.Add( item19, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item21, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 
-    item0.AddGrowableRow( 3 )
+    item0.AddGrowableRow( 2 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

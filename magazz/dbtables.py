@@ -4124,12 +4124,12 @@ class RiepDocAcquis(adb.SubDbTable):
         mov = adb.DbTable(\
             bt.TABNAME_MOVMAG_B,  "mov", writable=False,
             fields='id,id_doc,qta,prezzo,sconto1,sconto2,sconto3,sconto4,sconto5,sconto6')
-        mov.AddFilter("mov.f_ann IS NULL or mov.f_ann<>1")
+        mov.AddFilter("(mov.f_ann IS NULL or mov.f_ann<>1)")
+        mov.AddFilter("(doc.f_ann IS NULL or doc.f_ann<>1) AND (doc.f_acq IS NULL or doc.f_acq<>1)")
         
         doc = mov.AddJoin(\
             bt.TABNAME_MOVMAG_H,  "doc", idLeft="id_doc", idRight="id", 
-            fields='id_tipdoc,id_pdc,id_dest,datdoc,numdoc,datreg')
-        mov.AddFilter("(doc.f_ann IS NULL or doc.f_ann<>1) AND (doc.f_acq IS NULL or doc.f_acq<>1)")
+            fields='id_tipdoc,id_pdc,id_dest,datdoc,numdoc,datreg,desrif,numrif,datrif')
         
         pdc = doc.AddJoin(\
             bt.TABNAME_PDC,       "pdc", fields='id,codice,descriz')

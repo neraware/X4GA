@@ -72,14 +72,20 @@ class SelDocGrid(dbglib.DbGrid):
         ncdesana = cn(dbacq, 'pdc_descriz')
         nccoddes = cn(dbacq, 'dest_codice')
         ncdesdes = cn(dbacq, 'dest_descriz')
+        ncdesrif = cn(dbacq, 'doc_desrif')
+        ncnumrif = cn(dbacq, 'doc_numrif')
+        ncdatrif = cn(dbacq, 'doc_datrif')
         
         cols = (\
         ( 80, (ncdatreg, "Data reg.",      _DAT, True )),\
-        ( 60, (ncnumdoc, "Num.",           _NUM, True )),\
+        ( 50, (ncnumdoc, "Num.",           _NUM, True )),\
         ( 80, (ncdatdoc, "Data doc.",      _DAT, True )),\
         ( 60, (nccodana, "Cod.",           _STR, True )),\
+        ( 90, (ncdesrif, "Rif.",           _STR, True )),\
+        ( 50, (ncnumrif, "Num.",           _STR, True )),\
+        ( 80, (ncdatrif, "Data",           _DAT, True )),\
         (180, (ncdesana, "Anagrafica",     _STR, True )),\
-        ( 60, (nccoddes, "Cod.",           _STR, True )),\
+        ( 50, (nccoddes, "Cod.",           _STR, True )),\
         (180, (ncdesdes, "Destinazione",   _STR, True )),\
         (100, (-1,       "Stato evasione", _STR, True )),\
             )
@@ -180,6 +186,10 @@ class SelDocDialog(wx.Dialog):
         cn = self.FindWindowById
         
         tipdocacq = cn(wdr.ID_ACQTIPDOC).GetValue()
+        if tipdocacq is None:
+            aw.awu.MsgDialog(self, "Definire il tipo documento", style=wx.ICON_ERROR)
+            return
+        
         n = aw.awu.ListSearch(self.docs_id, lambda d: d[0] == tipdocacq)
         self.struacq = self.docs_id[n]
         

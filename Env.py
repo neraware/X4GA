@@ -2796,6 +2796,7 @@ class Azienda(object):
                 [ "noivaprof",  "TINYINT",  1, None, "Flag accorpamento iva su c/partita se causale non iva in reg. contabile", None ],
                 [ "rptcolli",   "TINYINT",  1, None, "Flag stampa segnacolli", None ],
                 [ "aanotedoc",  "TINYINT",  1, None, "Flag inibizione note documento da anagrafica", None ],
+                [ "desevarif",  "TINYINT",  1, None, "Flag descrizione riga documento evaso basata su dati riferimento", None ]
             ]
             
             cls.set_constraints(cls.TABNAME_CFGMAGDOC,
