@@ -1054,6 +1054,8 @@ class Azienda(object):
         MAGNOCDEFVET = False #flag attivazione di default vettori non codificati su ogni nuovo doc.
         MAGEXTRAVET = False  #flag attivazione campi extra sui vettori
         
+        EFFCONSCA = False    #flag contabilizzazione effetti in base a data di scadenza
+        
         #variabili per la gestione dei listini
         MAGNUMSCO = 3        #numero di sconti gestiti
         MAGNUMRIC = 3        #numero di ricariche gestite
@@ -4038,6 +4040,7 @@ class Azienda(object):
                 ('MAGSEPLIS',       'magseplis',          f, _flt, None),
                 ('MAGRELLIS',       'magrellis',          f, _flt, None),
                 ('MAGSELLIS',       'magsellis',          f, _flt, None),
+                ('EFFCONSCA',       'effconsca',          f, _flt, None),
             ]
         
         

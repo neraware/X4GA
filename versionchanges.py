@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.57', None, (
+         ("BET4200",
+         """Implementata possibilità di contabilizzazione degli 
+         effetti in base a data scadenza invece che data distinta."""),
+        ),),
+    
     ('1.6.56', None, (
          ("BET4199",
          """Implementata possibilità di definizione della larghezza

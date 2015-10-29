@@ -344,7 +344,8 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.MAGREPLIS,
                    bt.MAGSEPLIS,
                    bt.MAGRELLIS,
-                   bt.MAGSELLIS,)
+                   bt.MAGSELLIS,
+                   bt.EFFCONSCA,)
             bt.TIPO_CONTAB = cn('setup_tipo_contab').GetValue()
             bt.CONSOVGES = cn('setup_consovges').GetValue()
             bt.CONBILRICL = cn('setup_conbilricl').GetValue()
@@ -427,6 +428,7 @@ class AziendaSetupPanel(_SetupPanel):
             bt.MAGSEPLIS = cn('setup_magseplis').GetValue()
             bt.MAGRELLIS = cn('setup_magrellis').GetValue()
             bt.MAGSELLIS = cn('setup_magsellis').GetValue()
+            bt.EFFCONSCA = cn('setup_effconsca').GetValue()
             bt.defstru()
             out = wx.GetApp().TestDBVers(force=True)
             if not out:
@@ -511,7 +513,8 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.MAGREPLIS,
                 bt.MAGSEPLIS,
                 bt.MAGRELLIS,
-                bt.MAGSELLIS = old
+                bt.MAGSELLIS,
+                bt.EFFCONSCA = old
         if out:
             cfg = CfgContab()
             cfg.SetEsercizio(Env.Azienda.Login.dataElab)

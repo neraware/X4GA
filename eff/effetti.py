@@ -838,6 +838,8 @@ class EmiEffettiPanel(wx.Panel):
                 reg.id_caus = idcaucont
                 reg.tipreg = reg.config.tipo
                 reg.datreg = datdist
+                if bt.EFFCONSCA:
+                    reg.datreg = eff.datscad
                 #dettaglio: riga1=cliente, riga2=conto effetti
                 body = reg.body
                 for riga, cpa, ccp, segno in\
