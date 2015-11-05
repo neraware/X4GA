@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.60', None, (
+         ("BET4204",
+         """Aggiornamento della data sulle griglie in inserimento
+         nuova riga da scheda prodotto e scheda cliente ed in
+         manutenzione griglie attive."""),
+        ),),
+    
     ('1.6.59', None, (
          ("BET4203",
          """Implementata possibilità di evadere più volte le righe

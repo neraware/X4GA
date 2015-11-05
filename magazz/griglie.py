@@ -215,8 +215,9 @@ class GridGriglia(dbglib.DbGrid):
         canedit = True
         canins = False
         
-        #afteredit = ( (dbglib.CELLEDIT_AFTER_UPDATE,  -1, self.TestValues), )
-        self.SetData((), colmap, canedit, canins)
+        afteredit = ((dbglib.CELLEDIT_AFTER_UPDATE, -1, self.EditedValues),)
+        
+        self.SetData((), colmap, canedit, canins, afterEdit=afteredit)
         
         self._bgcol1 = bc.GetColour("antiquewhite")
         self._bgcol2 = bc.GetColour("moccasin")
@@ -235,6 +236,14 @@ class GridGriglia(dbglib.DbGrid):
         sz.SetSizeHints(parent)
         
         self.Bind(gl.EVT_GRID_CELL_LEFT_DCLICK, self.OnCallProd)
+    
+    def EditedValues(self, row, gridcol, col, value):
+        dbgrip = self.dbgri
+        if 0 <= row < dbgrip.RowsCount():
+            dbgrip.MoveRow(row)
+            if dbgrip.data is None:
+                dbgrip.data = Env.Azienda.Login.dataElab
+        return True
     
     def OnCallProd(self, event):
         try:

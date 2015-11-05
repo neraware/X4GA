@@ -695,8 +695,7 @@ class GrigliaPrezziGrid(dbglib.DbGridColoriAlternati):
         g = self.dbgri
         g.CreateNewRow()
         g.id_pdc = self.idpdc
-        if bt.MAGDATGRIP:
-            g.data = Env.Azienda.Login.dataElab
+        g.data = Env.Azienda.Login.dataElab
         return True
 
 
