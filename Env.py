@@ -2061,7 +2061,7 @@ class Azienda(object):
                 [ "numfax2",        "VARCHAR", 60, None, "Num. FAX aggiuntivo", None ],
                 [ "email",          "VARCHAR",120, None, "Email", None ],
                 [ "docsemail",      "VARCHAR",120, None, "Email spedizione fatture e documenti", None ],
-                [ "noexemail",      "VARCHAR",120, None, "Flag stampa comunque carta anche se ha email documenti", None ],
+                [ "noexemail",      "TINYINT",  1, None, "Flag stampa comunque carta anche se ha email documenti", None ],
                 [ "siteurl",        "VARCHAR",120, None, "Url sito internet", None ],
                 [ "ctt1nome",       "VARCHAR",255, None, "Contatto1: nome", None ],
                 [ "ctt1email",      "VARCHAR",255, None, "Contatto1: email", None ],
