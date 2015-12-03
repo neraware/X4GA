@@ -361,16 +361,23 @@ class SelAziendaPanel(aw.Panel):
 
     def AutorizzoUser(self, user, psw):
         
+        error = False
+        
         c = self.x4conn.cursor()
         if (c.execute("SELECT psw FROM utenti WHERE descriz=%s", user)>0):
             psw_memo = c.fetchone()[0]
-            c.execute("select old_password(%s)", psw)
-            psw_digi=c.fetchone()[0]
+            c.execute("select password(%s)", psw)
+            psw_digi_new = c.fetchone()[0]
+            try:
+                c.execute("select old_password(%s)", psw)
+                psw_digi_old = c.fetchone()[0]
+            except:
+                psw_digi_old = psw_digi_new
+            error = not psw_memo in (psw_digi_new, psw_digi_old)
         else:
-            psw_memo='1'
-            psw_digi='2'
+            error = True
         
-        if (psw_memo <> psw_digi):
+        if error:
             dlg = wx.MessageDialog(
                 parent=None,
                 message = "Utente non autorizzato!\nVerificare nome utente e password e riprovare.",
@@ -379,8 +386,7 @@ class SelAziendaPanel(aw.Panel):
             dlg.ShowModal()
             dlg.Destroy()
         
-        ok = (psw_memo==psw_digi)
-        if ok:
+        else:
             try:
                 c.execute("SELECT max_sqlrows FROM utenti WHERE descriz=%s", user)
                 maxrows = c.fetchone()[0]
@@ -390,8 +396,8 @@ class SelAziendaPanel(aw.Panel):
             except:
                 pass
             
-        return ok
-
+        return not error
+    
     def OnSelect(self, event):
         self.AziSelect()
         event.Skip()
@@ -644,23 +650,23 @@ class SelAziendaPanel(aw.Panel):
         curs = self.x4conn.cursor()
         curs.execute("SELECT psw FROM utenti where nome=" + chr(34) + user + chr(34) + ";")
         memoPsw = curs.fetchone()[0]
-        curs.execute("SELECT old_PASSWORD(" + chr(34) + psw + chr(34) + ");")
-        digiPsw = curs.fetchone()[0]
-        if memoPsw == digiPsw:
-            return True                 
-        else:
-            return False
-        
+        curs.execute("SELECT PASSWORD(%s)" % psw)
+        digiPsw_new = curs.fetchone()[0]
+        try:
+            curs.execute("SELECT old_PASSWORD(%s)" % psw)
+            digiPsw_old = curs.fetchone()[0]
+        except:
+            digiPsw_old = digiPsw_new
+        return not memoPsw in (digiPsw_new, digiPsw_old)
     
     def CheckUser( self, user, psw):
-        lOk=False
-        msg=None
-        if self.UserExist(user)==False:
-            msg="Utente non codificato"
-        elif self.CheckUserPassword(user, psw)==False:
-            msg="Password Errata"
+        msg = None
+        if not self.UserExist(user)==False:
+            msg = "Utente non codificato"
+        elif not self.CheckUserPassword(user, psw):
+            msg = "Password Errata"
         return msg
-        
+    
     def OpenX4db(self, hostname, username, password):
         """
         Apre il database delle aziende

@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.61', None, (
+         ("BET4205",
+         """Passaggio a password di nuovo tipo nella gestione utenti."""),
+        ),),
+    
     ('1.6.60', None, (
          ("BET4204",
          """Aggiornamento della data sulle griglie in inserimento
