@@ -939,23 +939,3 @@ class EmiEffettiDialog(aw.Dialog):
             kwargs['title'] = FRAME_TITLE
         aw.Dialog.__init__(self, *args, **kwargs)
         self.AddSizedPanel(EmiEffettiPanel(self, -1))
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    
-    class _testApp(wx.App):
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            Env.Azienda.DB.testdb()
-            db = adb.DB()
-            db.Connect()
-            return True
-    
-    app = _testApp(True)
-    app.MainLoop()
-    Env.InitSettings()
-    test = EmiEffettiDialog()
-    test.ShowModal()

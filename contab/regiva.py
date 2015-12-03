@@ -692,24 +692,3 @@ class RegIvaDialog(aw.Dialog):
             kwargs['size'] = (970,600)
         aw.Dialog.__init__(self, *args, **kwargs)
         self.AddSizedPanel(RegIvaPanel(self, -1))
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    
-    class _testApp(wx.App):
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            Env.Azienda.DB.testdb()
-            db = adb.DB()
-            db.Connect()
-            return True
-    
-    app = _testApp(True)
-    app.MainLoop()
-    Env.InitSettings()
-    test = RegIvaDialog()
-    test.CenterOnScreen()
-    test.ShowModal()

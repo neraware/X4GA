@@ -496,23 +496,3 @@ class AccorpaDialog(aw.Dialog):
             self.EndModal(wx.ID_OK)
         else:
             self.EndModal(wx.ID_ABORT)
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    
-    class _testApp(wx.App):
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            Env.Azienda.DB.testdb()
-            db = adb.DB()
-            db.Connect()
-            return True
-    
-    app = _testApp(True)
-    app.MainLoop()
-    Env.InitSettings()
-    test = AccorpaDialog()
-    test.ShowModal()

@@ -1411,26 +1411,3 @@ class AdeguaDialog(aw.Dialog):
         self.panel.SetAdeg(adeg)
         self.AddSizedPanel(self.panel)
         self.CenterOnScreen()
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    
-    class _testApp(wx.App):
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            Env.Azienda.DB.testdb()
-            db = adb.DB()
-            out = db.Connect(host='marcel')
-            if not out:
-                print "Problema in connessione:\n%s"\
-                      % repr(db.dbError.description)
-            return out
-    
-    app = _testApp(True)
-    app.MainLoop()
-    Env.InitSettings()
-    test = TabSetupDialog()
-    test.ShowModal()

@@ -671,36 +671,3 @@ def get_report(rptdef):
         if os.path.isfile(test):
             return 'report', test
     return None, 'not found'
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-   
-    class TryReport(wx.App):
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            dialog = wx.Dialog( None, -1, "SuperApp", [0,0], [100,76] )
-            return True
-        
-    app = TryReport(True)
-    
-    db = adb.DB()
-    db.Connect()
-    
-    pdc = adb.DbTable("pdc", writable=False)
-    mas = pdc.AddJoin("bilmas")
-    con = pdc.AddJoin("bilcon")
-    tip = pdc.AddJoin("pdctip", "tipana", idLeft="id_tipo")
-    pdc.AddOrder("IF(bilmas.tipo='P',1,IF(bilmas.tipo='E',2,3))")
-    pdc.AddOrder("bilmas.descriz")
-    pdc.AddOrder("bilcon.descriz")
-    pdc.AddOrder("pdc.descriz")
-    pdc.AddFilter("tipana.tipo NOT IN ('C','F')")
-    if pdc.Retrieve():
-        Report(pdc, "test")
-    else:
-        print pdc.GetError()
-        app.MainLoop()
-

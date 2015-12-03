@@ -2824,20 +2824,6 @@ ORDER BY tipana.tipo, pdc.descriz
         return out
 
 
-if __name__ == '__main__':
-    db = adb.DB()
-    db.Connect()
-    q = PdcQuadPcfCont()
-    if q.Retrieve():
-        for x in q:
-            print x.tipana_descriz, x.pdc_codice, x.pdc_descriz, x.saldocont, x.saldopcf
-    else:
-        print q.GetError()
-
-
-# ------------------------------------------------------------------------------
-
-
 class QuadReg(adb.DbMem):
     
     def __init__(self):

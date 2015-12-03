@@ -78,24 +78,3 @@ class SpeIncDialog(ga._AnagDialog):
         ga._AnagDialog.__init__(self, *args, **kwargs)
         self.panel = SpeIncPanel(self, -1)
         self.LoadAnagPanel(SpeIncPanel(self, -1))
-
-
-# ------------------------------------------------------------------------------
-
-
-def runTest(frame, nb, log):
-    win = SpeIncDialog()
-    win.Show()
-    return win
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    import sys,os
-    import runtest
-    import stormdb as adb
-    db = adb.DB()
-    db.Connect()
-    runtest.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

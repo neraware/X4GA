@@ -252,25 +252,3 @@ class PdcQuadPcfContDialog(aw.Dialog):
         aw.Dialog.__init__(self, *args, **kwargs)
         self.AddSizedPanel(PdcQuadPcfContPanel(self, -1))
         self.CenterOnScreen()
-
-
-# ------------------------------------------------------------------------------
-
-
-def runTest(frame, nb, log):
-    import Env
-    Env.InitSettings()
-    db = dbc.adb.DB()
-    db.Connect()
-    win = PdcQuadPcfContFrame()
-    win.ShowModal()
-    return win
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    import sys,os
-    import runtest
-    runtest.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

@@ -618,18 +618,3 @@ class ProgramUpdateSetupDialog(ConfigDialog):
         self.AddSizedPanel(self.panel)
         self.Bind(wx.EVT_BUTTON, self.OnQuit, id=wdr.ID_BTNQUIT)
         self.Bind(wx.EVT_BUTTON, self.OnSave, id=wdr.ID_BTNOK)
-
-
-# ------------------------------------------------------------------------------
-
-
-def runTest(frame, nb, log):
-    win = ProgramUpdateDialog()
-    win.ShowModal()
-    win.Destroy()
-    return win
-
-if __name__ == '__main__':
-    import sys,os
-    import runtest
-    runtest.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

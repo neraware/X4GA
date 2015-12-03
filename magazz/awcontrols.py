@@ -60,31 +60,3 @@ class TipoListinoChoice(awch.Choice):
         except:
             return None
         return l.id
-
-if __name__ == '__main__':
-    
-    db = adb.DB()
-    if not db.Connect(host='localhost', user='x4user', passwd='x4user', db='x4_niris'):
-        print db.dbError.description
-        import sys
-        sys.exit()
-    
-    a = wx.PySimpleApp()
-    
-    f = wx.Frame(None, -1, 'test')
-    p = wx.Panel(f)
-    test = TipoListinoChoice(p, allow_none=True)
-    
-    def OnSelected(event):
-        o = event.GetEventObject()
-        v = o.GetValue()
-        if v == 3:
-            o.SetValue(None)
-    
-    f.Bind(wx.EVT_CHOICE, OnSelected, test)
-    
-    f.Show()
-    
-    test.SetValue(3)
-    
-    a.MainLoop()
