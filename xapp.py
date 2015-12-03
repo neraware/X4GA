@@ -108,6 +108,8 @@ class XApp(wx.App):
         from selazienda import SelAziendaDialog
         aziDialog = SelAziendaDialog()
         if aziDialog.ShowModal() == 1:
+            if self.dbcon is not None:
+                self.dbcon.close()
             if self.db is None:
                 self.db = adb.DB()
             else:

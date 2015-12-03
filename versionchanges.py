@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.6.62', None, (
+         ("BUG1171",
+         """Eliminata doppia connessione al database."""),
+        ),),
+    
     ('1.6.61', None, (
          ("BET4205",
          """Passaggio a password di nuovo tipo nella gestione utenti."""),

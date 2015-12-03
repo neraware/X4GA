@@ -1083,7 +1083,11 @@ class SelAziendaDialog(aw.Dialog):
         self.selazpanel = SelAziendaPanel(self)
         self.AddSizedPanel(self.selazpanel, 'selaziendapanel')
         self.CentreOnScreen()
-
+    
+    def EndModal(self, *args, **kwargs):
+        if self.selazpanel.x4conn:
+            self.selazpanel.x4conn.close()
+        return aw.Dialog.EndModal(self, *args, **kwargs)
 
 # ------------------------------------------------------------------------------
 
