@@ -108,16 +108,7 @@ class XApp(wx.App):
         from selazienda import SelAziendaDialog
         aziDialog = SelAziendaDialog()
         if aziDialog.ShowModal() == 1:
-            if self.dbcon is not None:
-                self.dbcon.close()
-            if self.db is None:
-                self.db = adb.DB()
-            else:
-                self.db.Close()
-            self.db.Connect(host =   Env.Azienda.DB.servername,
-                            user =   Env.Azienda.DB.username,
-                            passwd = Env.Azienda.DB.password,
-                            db =     Env.Azienda.DB.schema)
+            self.db = Env.adb.db.get_db()
             out = True
         aziDialog.Destroy()
         return out

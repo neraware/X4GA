@@ -63,6 +63,7 @@ import wx.lib.newevent
 
 from contab.dataentry_i import GeneraPartiteMixin, SelRowPa
 
+import stormdb as adb
 
 FRAME_TITLE = "Registrazioni contabili"
 
@@ -81,7 +82,7 @@ class ContabPanelTipo_C(ctb.ContabPanel,
         self._grid_sca = None
         
         ctb.ContabPanel.__init__(self, *args, **kwargs)
-        GeneraPartiteMixin.__init__(self, self.db_curs)
+        GeneraPartiteMixin.__init__(self)
         self.Bind(wx.EVT_BUTTON, self.OnParity, self.FindWindowByName('butparity'))
         
         self.SetName('regcompostapanel')
@@ -267,8 +268,10 @@ class ContabPanelTipo_C(ctb.ContabPanel,
                             bt.TABNAME_FORNIT )
         
         try:
-            self.db_curs.execute(cmd, self.id_pdcpa)
-            rs = self.db_curs.fetchone()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, self.id_pdcpa)
+            rs = cur.fetchone()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -504,7 +507,7 @@ class ContabPanelTipo_C(ctb.ContabPanel,
     def _GridEdit_Dav_NewRow(self, pdcid=None, impd=None, impa=None):
         pdccod = pdcdes = None
         if pdcid:
-            pdccod, pdcdes = GetRecordInfo(self.db_curs, bt.TABNAME_PDC, pdcid,
+            pdccod, pdcdes = GetRecordInfo(bt.TABNAME_PDC, pdcid,
                                            'codice,descriz'.split(','))
         nrig = len(self.regrsb)+1
         self.regrsb.append([nrig,   #RSDET_NUMRIGA

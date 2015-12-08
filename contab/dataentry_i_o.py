@@ -56,6 +56,7 @@ import wx.lib.newevent
 
 import anag.lib as lib
 
+import stormdb as adb
 from stormdb.dbtable import DbTable
 samefloat = DbTable.samefloat
 
@@ -352,8 +353,9 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
     WHERE row.id_reg=%%s and row.tipriga IN ('S','C','A')""" % (bt.TABNAME_CONTAB_B,
                                                                 bt.TABNAME_PDC,
                                                                 bt.TABNAME_ALIQIVA,)
-            self.db_curs.execute(cmd, idreg)
-            rsb = self.db_curs.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, idreg)
+            rsb = cur.fetchall()
             
             #recordset righe iva
             cmd =\
@@ -370,8 +372,9 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
                                                              bt.TABNAME_ALIQIVA,\
                                                              bt.TABNAME_PDC,\
                                                              bt.TABNAME_PDC )
-            self.db_curs.execute(cmd, idreg)
-            rsi = self.db_curs.fetchall()
+            cur.execute(cmd, idreg)
+            rsi = cur.fetchall()
+            cur.close()
             
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
@@ -647,7 +650,7 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
                 
                 import awc.tables.util as awtu
                 perc, pind, tipo =\
-                    awtu.GetRecordInfo(self.db_curs, bt.TABNAME_ALIQIVA, value,\
+                    awtu.GetRecordInfo(bt.TABNAME_ALIQIVA, value,\
                                        ('perciva', 'percind', 'tipo',))
                 id1,cod1,des1,id2,cod2,des2 = self.GetSottocontiIva(tipo)
                 
@@ -1245,7 +1248,7 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
             if aliqid:
                 
                 perc, pind, tipo =\
-                    awtu.GetRecordInfo(self.db_curs, bt.TABNAME_ALIQIVA, aliqid,\
+                    awtu.GetRecordInfo(bt.TABNAME_ALIQIVA, aliqid,\
                                        ('perciva', 'percind', 'tipo',))
                 pivaid,pivacod,pivades,pindid,pindcod,pinddes = self.GetSottocontiIva(tipo)
                 

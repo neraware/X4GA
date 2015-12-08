@@ -30,8 +30,8 @@ VERSION_BRANCH  = branch
 from _version import apptype, appType, appinfo
 
 VERSION_MAJOR   = 1
-VERSION_MINOR   = 6
-VERSION_RELEASE = 62
+VERSION_MINOR   = 7
+VERSION_RELEASE = 0
 VERSION_TAG     = ""
 VERSION_TYPE    = apptype
 VERSION_TYPEXT  = appType

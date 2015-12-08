@@ -51,6 +51,8 @@ from anag.aliqiva import AliqIvaDialog
 from anag.pdc import PdcDialog
 from anag.pdctip import PdcTipDialog
 
+import stormdb as adb
+
 (GridSelectedEvent, EVT_GRIDSELECTED) = wx.lib.newevent.NewEvent()
 
 
@@ -137,8 +139,10 @@ class ContabPanelTipo_I_SI(ctbio.ContabPanelTipo_I_O):
 """SELECT row.id_pdcpa """\
 """FROM %s AS row """\
 """WHERE row.id_reg=%%s and row.tipriga='I'""" % bt.TABNAME_CONTAB_B
-        self.db_curs.execute(cmd, self.reg_id)
-        rs = self.db_curs.fetchone()
+        cur = adb.db.get_cursor()
+        cur.execute(cmd, self.reg_id)
+        rs = cur.fetchone()
+        cur.close()
         if rs:
             self.id_pdcpa = rs[0]
 
@@ -262,10 +266,10 @@ class Reg_SI_SearchPanel(ctbi.Reg_I_SearchPanel):
 """          pdc.descriz, reg.numdoc, reg.datdoc """\
 """ ORDER BY reg.datreg, reg.numiva """\
  % (bt.TABNAME_CONTAB_H, bt.TABNAME_CFGCONTAB, filter)
-                db_curs = Env.adb.db.__database__._dbCon.cursor()
-                db_curs.execute(cmd, par)
-                rs = db_curs.fetchall()
-                db_curs.close()
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, par)
+                rs = cur.fetchall()
+                cur.close()
                 self.gridsrc.ChangeData(rs)
                 
             except MySQLdb.Error, e:

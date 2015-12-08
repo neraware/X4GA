@@ -341,11 +341,9 @@ class MagazzPanel(aw.Panel,\
         self.dbevas = dbm.ElencoMovimEva()
         self.dbevas.AddLimit(1)
         
-        db_curs = adb.db.__database__.GetConnection().cursor()
-        
-        cfgcon.CfgCausale.__init__(self, db_curs)
-        auto.CfgAutomat.__init__(self, db_curs)
-        progr.CfgProgr.__init__(self, db_curs)
+        cfgcon.CfgCausale.__init__(self)
+        auto.CfgAutomat.__init__(self)
+        progr.CfgProgr.__init__(self)
         
         self.gridbodyclass.__init__(self)
         
@@ -2653,11 +2651,6 @@ class MagazzPanel(aw.Panel,\
             if srccls is not None:
                 dlg = srccls(self, self.cauid, self.caudes, 
                              self.dbdoc.cfgdoc.numdoc)
-                dlg.db_curs = self.db_curs
-                #if self.dbdoc.cfgdoc.ctrnum:
-                    #dlg.SetOrderDocOut()
-                #else:
-                    #dlg.SetOrderDocIn()
                 idreg = dlg.ShowModal()
                 dlg.Destroy()
                 if idreg >= 0:
@@ -2978,7 +2971,6 @@ class DocSearch(wx.Dialog):
     Ricerca registrazioni.
     Dialog per la ricerca di registrazioni della causale selezionata.
     """
-    db_curs = None
     _idreg = None
     _ctrlist = None
     

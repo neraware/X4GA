@@ -2809,13 +2809,13 @@ JOIN pdctip tipana ON pdc.id_tipo=tipana.id
 HAVING (saldocont IS NULL AND saldopcf IS NOT NULL AND saldopcf<>0) OR (saldocont IS NOT NULL AND saldocont<>0 AND saldopcf IS NULL) OR saldocont<>saldopcf
 ORDER BY tipana.tipo, pdc.descriz
         """ % filter
-        db = adb.db.__database__
-        dbcon = db._dbCon
+        db = adb.db.get_db()
         try:
-            c = dbcon.cursor()
+            c = adb.db.get_cursor()
             c.execute(cmd, par)
             rs = c.fetchall()
             self.SetRecordset(rs)
+            c.close()
             out = True
         except Exception, e:
             db.dbError.description = repr(e.args)

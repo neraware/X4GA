@@ -31,17 +31,13 @@ bt = Env.Azienda.BaseTab
 
 import awc.util as util
 
+import stormdb as adb
 
 class Scadenze(object):
     """
     Calcoli per scadenzari.
     """
-    def __init__(self, db_curs):
-        """
-        @param db_curs: Cursore di database
-        @type db_curs: MySQLdb.Cursor
-        """
-        self.db_curs = db_curs
+    def __init__(self):
         self.mp_id = None
         self.mp_codice = None
         self.mp_descriz = None
@@ -106,8 +102,10 @@ class Scadenze(object):
 """FROM %s AS mp """\
 """WHERE mp.id=%%s""" % bt.TABNAME_MODPAG
         try:
-            self.db_curs.execute(cmd, id_modpag)
-            rsmp = self.db_curs.fetchone()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, id_modpag)
+            rsmp = cur.fetchone()
+            cur.close()
         except MySQLdb.Error, e:
             util.MsgDialogDbError(None, e)
         else:
@@ -148,8 +146,10 @@ class Scadenze(object):
                 """FROM %s AS pdc """\
                 """WHERE pdc.id=%%s""" % bt.TABNAME_PDC
             try:
-                self.db_curs.execute(cmd, self.mp_id_pdcpi)
-                rs = self.db_curs.fetchone()
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, self.mp_id_pdcpi)
+                rs = cur.fetchone()
+                cur.close()
             except:
                 rs = (None, None)
             self.mp_pdcpi_cod = rs[0]

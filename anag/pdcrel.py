@@ -220,7 +220,7 @@ class _PdcRelPanel(ga.AnagPanel,\
         
         self.anag_db_columns = None
         
-        auto.CfgAutomat.__init__(self, self.db_curs)
+        auto.CfgAutomat.__init__(self)
         self._auto_pdctip = None
         self._auto_bilmas = None
         self._auto_bilcon = None
@@ -319,9 +319,11 @@ class _PdcRelPanel(ga.AnagPanel,\
             par.append(self.db_recid)
         void = True
         try:
-            if self.db_curs.execute(cmd, par):
-                rsanag = self.db_curs.fetchone()
+            cur = adb.db.get_cursor()
+            if cur.execute(cmd, par):
+                rsanag = cur.fetchone()
                 void = False
+            cur.close()
         except Exception, e:
             MsgDialog(self, "Problema di definizione tabella:\nErrore=%s"\
                       % repr(e.args))
@@ -395,13 +397,14 @@ class _PdcRelPanel(ga.AnagPanel,\
         Scrittura dati.  Vengono prima salvati i dati del pdc se con
         successo vengono salvati i dati anagrafici.
         """
+        cur = adb.db.get_cursor()
         new = self.db_recid is None
         if not new:
             #in modifica di cli/for nato come pdc non relazionato ad anagrafiche
             try:
-                self.db_curs.execute("SELECT COUNT(id) FROM %s WHERE id=%%s" \
-                                     % self.tabanag, self.db_recid)
-                n = self.db_curs.fetchone()[0]
+                cur.execute("SELECT COUNT(id) FROM %s WHERE id=%%s" \
+                                % self.tabanag, self.db_recid)
+                n = cur.fetchone()[0]
                 new = (n == 0)
             except MySQLdb.Error, e:
                 pass
@@ -427,10 +430,12 @@ class _PdcRelPanel(ga.AnagPanel,\
                     par.append(ctr.GetValue())
             
             try:
-                self.db_curs.execute(cmd, par)
+                cur.execute(cmd, par)
             except MySQLdb.Error, e:
                 MsgDialog(self, message=repr(e.args))
                 written = False
+        
+        cur.close()
         
         return written
 
@@ -458,11 +463,13 @@ class _PdcRelPanel(ga.AnagPanel,\
         else:
             cmd =\
 """DELETE FROM %s WHERE id=%s""" % (self.tabanag, self.db_recid)
+            cur = adb.db.get_cursor()
             try:
-                self.db_curs.execute(cmd)
+                cur.execute(cmd)
                 delete = True
             except:
                 pass
+            cur.close()
         if delete:
             out = ga.AnagPanel.DeleteDataRecord(self)
         return out
@@ -1215,6 +1222,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
     
     def WriteRelated(self, table, fields, rs, rsins, rsmod, rsdel):
         written = False
+        cur = adb.db.get_cursor()
         setCol = ""
         for field in fields[1:]:
             setCol += "%s=%%s, " % field
@@ -1245,17 +1253,18 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
                 parDel.append(recid)
         try:
             if parDel:
-                self.db_curs.executemany(cmdDel, parDel)
+                cur.executemany(cmdDel, parDel)
             if parIns:
-                self.db_curs.executemany(cmdIns, parIns)
+                cur.executemany(cmdIns, parIns)
             if parUpd:
-                self.db_curs.executemany(cmdUpd, parUpd)
+                cur.executemany(cmdUpd, parUpd)
             written = True
         except MySQLdb.Error, e:
             aw.awu.MsgDialog(self, repr(e.args))
             #MsgDialogDbError(self, e)
         except Exception, e:
             pass
+        cur.close()
         return written
     
 
@@ -1269,8 +1278,10 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
 """DELETE FROM %s WHERE id_pdc=%%s""" % bt.TABNAME_DESTIN
                 cmdDelBanche =\
 """DELETE FROM %s WHERE id_pdc=%%s""" % bt.TABNAME_BANCF
-                self.db_curs.execute(cmdDelDest, recid)
-                self.db_curs.execute(cmdDelBanche, recid)
+                cur = adb.db.get_cursor()
+                cur.execute(cmdDelDest, recid)
+                cur.execute(cmdDelBanche, recid)
+                cur.close()
             except MySQLdb.Error, e:
                 MsgDialogDbError(self, e)
             except Exception, e:
@@ -1288,9 +1299,10 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
 """FROM %s AS b WHERE b.id_pdc=%%s """\
 """ORDER BY b.codice, b.descriz """ % bt.TABNAME_BANCF
             try:
-                self.db_curs.execute(cmd, self.db_recid)
-                rsban = self.db_curs.fetchall()
-                void = False
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, self.db_recid)
+                rsban = cur.fetchall()
+                cur.close()
             except MySQLdb.Error, e:
                 MsgDialogDbError(self, e)
             except Exception, e:
@@ -1311,9 +1323,8 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             self._ban_updating = False
 
     def LoadDestin(self):
-        if self.db_recid is None:
-            rsdes = ()
-        else:
+        rsdes = ()
+        if self.db_recid is not None:
             cmd =\
 """SELECT """
             for field in desfields:
@@ -1322,9 +1333,10 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
 """FROM %s AS d WHERE d.id_pdc=%%s """\
 """ORDER BY d.codice, d.codice""" % bt.TABNAME_DESTIN
             try:
-                self.db_curs.execute(cmd, self.db_recid)
-                rsdes = self.db_curs.fetchall()
-                void = False
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, self.db_recid)
+                rsdes = cur.fetchall()
+                cur.close()
             except MySQLdb.Error, e:
                 MsgDialogDbError(self, e)
             except Exception, e:
@@ -1449,10 +1461,11 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
     
     def _GridBan_AddNewRow(self):
         try:
-            c = self.db_curs
-            c.execute("SELECT MAX(0+CODICE) FROM %s ban WHERE ban.id_pdc=%s"\
+            cur = adb.db.get_cursor()
+            cur.execute("SELECT MAX(0+CODICE) FROM %s ban WHERE ban.id_pdc=%s"\
                       % (bt.TABNAME_BANCF, self.db_recid))
-            rs = c.fetchone()
+            rs = cur.fetchone()
+            cur.close()
             lastab = rs[0] or 0
             lasmem = max([int(x[RSBAN_CODICE] or '') for x in self.rsban])
             newc = str(int(max(lastab, lasmem)+1))
@@ -1548,7 +1561,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
                 banid = self.rsban[row][RSBAN_ID]
                 do = True
                 if banid is not None:
-                    do = CheckRefIntegrity(self, self.db_curs, bt.TABSETUP_CONSTR_BANCF, banid)
+                    do = CheckRefIntegrity(self, bt.TABSETUP_CONSTR_BANCF, banid)
                     if do:
                         if aw.awu.MsgDialog(self, "Confermi la cancellazione di questa banca?", style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                             do = False
@@ -1684,10 +1697,11 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
     
     def _GridDes_AddNewRow(self):
         try:
-            c = self.db_curs
-            c.execute("SELECT MAX(0+CODICE) FROM %s des WHERE des.id_pdc=%s"\
+            cur = adb.db.get_cursor()
+            cur.execute("SELECT MAX(0+CODICE) FROM %s des WHERE des.id_pdc=%s"\
                       % (bt.TABNAME_DESTIN, self.db_recid))
-            rs = c.fetchone()
+            rs = cur.fetchone()
+            cur.close()
             lastab = rs[0] or 0
             lasmem = max([int(x[RSDES_CODICE] or '') for x in self.rsdes])
             newc = str(int(max(lastab, lasmem)+1))
@@ -1788,7 +1802,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
                 desid = self.rsdes[row][RSDES_ID]
                 do = True
                 if desid is not None:
-                    do = CheckRefIntegrity(self, self.db_curs, bt.TABSETUP_CONSTR_DESTIN, desid)
+                    do = CheckRefIntegrity(self, bt.TABSETUP_CONSTR_DESTIN, desid)
                     if do:
                         if aw.awu.MsgDialog(self, "Confermi la cancellazione di questa destinazione?", style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                             do = False

@@ -472,9 +472,11 @@ class CauMagazzPanel(ga.AnagPanel):
     
     def DeleteDataRecord(self):
         try:
-            self.db_curs.execute( "DELETE FROM %s WHERE id_tipdoc=%d;"  
-                                  % ( bt.TABNAME_CFGMAGMOV, 
-                                      self.db_recid ) )
+            cur = adb.db.get_cursor()
+            cur.execute( "DELETE FROM %s WHERE id_tipdoc=%d;"  
+                          % ( bt.TABNAME_CFGMAGMOV, 
+                              self.db_recid ) )
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
             return False
@@ -534,7 +536,7 @@ class CauMagazzPanel(ga.AnagPanel):
                     do = True
                 else:
                     movconstr = bt.TABSETUP_CONSTR_CFGMAGMOV
-                    do = CheckRefIntegrity(self, self.db_curs, movconstr, movid)
+                    do = CheckRefIntegrity(self, movconstr, movid)
                 if do:
                     if movid is not None:
                         if not movid in dbmov._info.deletedRecords:
@@ -570,29 +572,6 @@ class CauMagazzPanel(ga.AnagPanel):
             if not self.dbmov.Save():
                 MsgDialog(self, repr(self.dbmov.GetError()), style=wx.ICON_ERROR)
             self.LoadMovs()
-#        if written:
-#            setCol = ""
-#            for field in movfields:
-#                setCol += "%s=%%s, " % field
-#            setCol += r"id_tipdoc=%s"
-#            cmdIns = "INSERT INTO %s SET %s" % (bt.TABNAME_CFGMAGMOV, setCol)
-#            parIns = []
-#            for mov in self.rsmov:
-#                par = mov
-#                par.append(self.db_recid)
-#                parIns.append(par)
-#            try:
-#                if self.db_recid is not None:
-#                    cmdDel = "DELETE FROM %s WHERE id_tipdoc=%%s"\
-#                           % bt.TABNAME_CFGMAGMOV
-#                    self.db_curs.execute(cmdDel, self.db_recid)
-#                self.db_curs.executemany(cmdIns, parIns)
-#                written = True
-#            except MySQLdb.Error, e:
-#                MsgDialogDbError(self, e)
-#            except Exception, e:
-#                pass
-#            self.LoadMovs()
         return written
     
     def TransferDataFromWindow(self):

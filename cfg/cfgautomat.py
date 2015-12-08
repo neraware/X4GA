@@ -37,6 +37,7 @@ class AutomatException(Exception):
 
 # ------------------------------------------------------------------------------
 
+import stormdb as adb
 
 class CfgAutomat(object):
     """
@@ -45,15 +46,15 @@ class CfgAutomat(object):
     La variabile di classe C{_autoKeys} è un dizionario; vedere il metodo
     L{CfgAutomat.ReadAutomat}
     """
-    def __init__(self, db_curs):
+    def __init__(self):
         """
         Costruttore.  Passare il cursore di database che verrà
         utilizzato per accedere alla tabella degli automatismi.
         """
         object.__init__(self)
-        self.db_curs = db_curs
+        db = adb.db.__database__
         self._autoKeys = {}
-
+    
     def ReadAutomat(self):
         """
         Lettura automatismi definiti in C{self._autoKeys}.
@@ -83,8 +84,10 @@ class CfgAutomat(object):
 """FROM %s ORDER BY codice ASC;""" % bt.TABNAME_CFGAUTOM
         
         try:
-            self.db_curs.execute(cmd)
-            rs = self.db_curs.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd)
+            rs = cur.fetchall()
+            cur.close()
             
         except MySQLdb.Error, e:
             MsgDialogDbError(None, e)
@@ -208,18 +211,3 @@ class CfgAutomat(object):
         self._Auto_AddKeysContabTipo_I(read=False)
         if read:
             self.ReadAutomat()
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    app = wx.PySimpleApp()
-    app.MainLoop()
-    Azienda.DB.testdb()
-    
-    test = CfgAutomat(Azienda.DB.connection.cursor())
-    print "%d automatismi caricati: " % test._Auto_AddKeysMagazz()
-    for key, val in test.__dict__.iteritems():
-        if key.startswith("_auto_"):
-            print key, val

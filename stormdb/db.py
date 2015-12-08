@@ -36,10 +36,19 @@ import re
 
 import base64
 
-__database__ =    None
+__database__ = None
 
-def GetConnection():
+def get_db():
     return __database__
+
+def get_connection():
+    return get_db()._dbCon
+GetConnection = get_connection
+
+def get_cursor(connection=None):
+    if connection is None:
+        connection = get_connection()
+    return connection.cursor()
 
 log = False
 
@@ -304,7 +313,7 @@ class DB(object):
         elif self._dbType == 'mysql':
             self.lastInsertedId = None
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 logmsg('retrieve: %s' % sql)
                 logmsg('parameters: %s' % repr(par))
                 if len(par) == 0:
@@ -339,7 +348,7 @@ class DB(object):
             sql = sql.replace(r'%s', '?')
             self.lastInsertedId = None
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 logmsg('retrieve: %s' % sql)
                 logmsg('parameters: %s' % repr(par))
                 if len(par) == 0:
@@ -372,7 +381,7 @@ class DB(object):
         elif self._dbType == 'adodb':
             self.lastInsertedId = None
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 dbCursor.execute(sql)
                 rs = dbCursor.fetchall()
                 if asList:
@@ -412,7 +421,7 @@ class DB(object):
         self.dbError.Reset()
         if self._dbType == 'mysql':
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 logmsg('execute: %s' % sql, 'parameters: %s' % repr(par))
                 self.recordCount = dbCursor.execute(sql, par)
                 logmsg('done')
@@ -433,7 +442,7 @@ class DB(object):
         elif self._dbType == 'odbc':
             try:
                 sql = sql.replace(r'%s', '?')
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor()
                 logmsg('execute: %s' % sql, 'parameters: %s' % repr(par))
                 self.recordCount = dbCursor.execute(sql, par)
                 logmsg('done')
@@ -453,7 +462,7 @@ class DB(object):
             
         elif self._dbType == 'adodb':
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 self.recordCount = dbCursor.execute(sql, par)
                 self.lastInsertedId = dbCursor.lastrowid
                 dbCursor.close()
@@ -475,7 +484,7 @@ class DB(object):
         self.dbError.Reset()
         if self._dbType == 'mysql':
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 self.recordCount = dbCursor.executemany(sql, par)
                 dbCursor.close()
                 del dbCursor
@@ -495,7 +504,7 @@ class DB(object):
         elif self._dbType == 'odbc':
             sql = sql.replace(r'%s', '?')
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 self.recordCount = dbCursor.executemany(sql, par)
                 dbCursor.close()
                 del dbCursor
@@ -514,7 +523,7 @@ class DB(object):
             
         elif self._dbType == 'adodb':
             try:
-                dbCursor = self._dbCon.cursor()
+                dbCursor = get_cursor(self._dbCon)
                 for y in range(len(par)):
                     for x in range(len(par[y])):
                         if type(par[y][x]) in (str, unicode):

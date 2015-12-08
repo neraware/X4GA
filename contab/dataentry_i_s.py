@@ -28,6 +28,8 @@ from contab.dataentry_i_o import ContabPanelTipo_I_O, ctb, ctbi, ctbw, MySQLdb, 
 import Env
 from contab.dataentry import RSDET_PDCPA_ID, RSDET_PDCPA_cod, RSDET_PDCPA_des
 
+import stormdb as adb
+
 bt = Env.Azienda.BaseTab
 
 l = ctb.RSDET_last_col
@@ -857,8 +859,10 @@ LEFT JOIN %s AS pdn ON row.id_pdcind=pdn.id
                                                                         bt.TABNAME_ALIQIVA,
                                                                         bt.TABNAME_PDC,
                                                                         bt.TABNAME_PDC)
-            self.db_curs.execute(cmd, idreg)
-            rsb = self.db_curs.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, idreg)
+            rsb = cur.fetchall()
+            cur.close()
             
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
@@ -895,7 +899,6 @@ LEFT JOIN %s AS pdn ON row.id_pdcind=pdn.id
         """
         Scrittura dettaglio registrazione su db.
         """
-        out = False
         self.TestPagImm()
         rows = []
         rsb = self.regrsb
@@ -981,20 +984,22 @@ LEFT JOIN %s AS pdn ON row.id_pdcind=pdn.id
                 rows.append(addRows[n])
         
         try:
+            cur = adb.db.get_cursor()
             cmd =\
 """DELETE FROM %s WHERE id_reg=%%s""" % bt.TABNAME_CONTAB_B
-            self.db_curs.execute(cmd, self.reg_id)
+            cur.execute(cmd, self.reg_id)
             cmd =\
 """INSERT INTO %s ("""\
 """id_reg, numriga, tipriga, imponib, imposta, importo, indeduc, ivaman, segno, """\
 """id_aliqiva, davscorp, solocont, id_pdcpa, id_pdccp, id_pdciva, id_pdcind, note) """\
 """VALUES (%s)""" % ( bt.TABNAME_CONTAB_B,\
                       (r"%s, " * 17)[:-2] )
-            self.db_curs.executemany(cmd, rows)
-            out = True
+            cur.executemany(cmd, rows)
+            cur.close()
+            return  True
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
-        return out
+        return False
 
 
 # ------------------------------------------------------------------------------

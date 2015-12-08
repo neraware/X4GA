@@ -229,7 +229,7 @@ class PcfPanel(aw.Panel):
         pcf_id = self.GetParent().pcf_id
         out = False
         try:
-            curs = self.db_conn.cursor()
+            curs = adb.db.get_cursor()
             #estrazione recordset partita
             cmd =\
 """SELECT pcf.id_pdc, pcf.datscad, pcf.datdoc, pcf.numdoc, pcf.id_caus, """\
@@ -343,7 +343,7 @@ class PcfPanel(aw.Panel):
         cn = lambda n: self.FindWindowByName(n)
         values = [cn(x).GetValue() for x in cols]
         try:
-            curs = self.db_conn.cursor()
+            curs = adb.db.get_cursor()
             if pcf_id is None:
                 #inserimento nuova partita
                 cmd = """
@@ -385,7 +385,7 @@ UPDATE %s SET %s WHERE id=%s"""\
     def DeletePcf(self):
         pcf_id = self.GetParent().pcf_id
         if pcf_id is None: return False
-        curs = adb.db.__database__._dbCon.cursor()
+        curs = adb.db.get_cursor()
         constr = bt.TABSETUP_CONSTR_PCF
         do = CheckRefIntegrity(self, curs, constr, pcf_id)
         curs.close()
@@ -393,7 +393,7 @@ UPDATE %s SET %s WHERE id=%s"""\
             return False
         if aw.awu.AskForDeletion(self, "Sicuro di voler cancellare la partita?"):
             try:
-                curs = self.db_conn.cursor()
+                curs = adb.db.get_cursor()
                 cmd = """DELETE FROM %s WHERE id=%s""" % (bt.TABNAME_PCF, 
                                                           pcf_id)
                 curs.execute(cmd)

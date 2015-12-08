@@ -178,7 +178,7 @@ class GeneraPartiteMixin(scad.Scadenze):
         return SelRowPa
     
     def OnAnagDisplay(self, event):
-        tipo = GetRecordInfo(self.db_curs, bt.TABNAME_PDC, self.id_pdcpa, ('id_tipo',))[0]
+        tipo = GetRecordInfo(bt.TABNAME_PDC, self.id_pdcpa, ('id_tipo',))[0]
         dc = autil.GetPdcDialogClass(tipo)
         if dc:
             dlg = dc(self, onecodeonly=self.id_pdcpa)
@@ -419,8 +419,10 @@ class GeneraPartiteMixin(scad.Scadenze):
             par1.append((imptot, imppar, scad[RSSCA_PCF_ID]))
             
         try:
-            x = self.db_curs.executemany(cmd1, par1)
-            z = self.db_curs.execute(cmd2, par2)
+            cur = adb.db.get_cursor()
+            cur.executemany(cmd1, par1)
+            cur.execute(cmd2, par2)
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -429,8 +431,8 @@ class GeneraPartiteMixin(scad.Scadenze):
         return True
     
     def ScadWrite(self):
-        out = True
         try:
+            cur = adb.db.get_cursor()
             nsca = 0
             last_datscad = None
             last_pcf_id = None
@@ -486,10 +488,10 @@ class GeneraPartiteMixin(scad.Scadenze):
                             imppar,\
                             pcf ]
                 
-                self.db_curs.execute(cmd, par)
+                cur.execute(cmd, par)
                 if pcf is None:
-                    self.db_curs.execute("SELECT LAST_INSERT_ID();")
-                    rs = self.db_curs.fetchone()
+                    cur.execute("SELECT LAST_INSERT_ID();")
+                    rs = cur.fetchone()
                     pcf = int(rs[0])
                     self.regrss[nsca][RSSCA_PCF_ID] = pcf
                 
@@ -507,7 +509,7 @@ class GeneraPartiteMixin(scad.Scadenze):
                      scad[RSSCA_DATA],\
                      scad[RSSCA_IMPORTO],\
                      scad[RSSCA_NOTE] ] for scad in self.regrss ]
-            self.db_curs.executemany(cmd, par)
+            cur.executemany(cmd, par)
             
             #elimino le partite che dopo lo storno sono andate a zero
             cmd =\
@@ -516,13 +518,14 @@ class GeneraPartiteMixin(scad.Scadenze):
             for scad in self.regrss_old+self.regrss:
                 pcf = scad[RSSCA_PCF_ID]
                 par.append((pcf,))
-            self.db_curs.executemany(cmd, par)
+            cur.executemany(cmd, par)
+            cur.close()
+            return True
             
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
-            out = False
         
-        return out
+        return False
 
     def ScadRead(self, idreg):
         """
@@ -536,8 +539,10 @@ class GeneraPartiteMixin(scad.Scadenze):
 """ WHERE id_reg=%%s ORDER BY sca.datscad;"""\
             % (bt.TABNAME_CONTAB_S, bt.TABNAME_PCF)
         try:
-            self.db_curs.execute(cmd, idreg)
-            rss = self.db_curs.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, idreg)
+            rss = cur.fetchall()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
             out = False
@@ -599,8 +604,10 @@ class GeneraPartiteMixin(scad.Scadenze):
           FROM %s pdc
          WHERE pdc.id=%%s""" % bt.TABNAME_PDC
         try:
-            self.db_curs.execute(cmd, self.id_pdcpa)
-            rs = self.db_curs.fetchone()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, self.id_pdcpa)
+            rs = cur.fetchone()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -611,8 +618,10 @@ class GeneraPartiteMixin(scad.Scadenze):
               FROM %s pdc JOIN %s pdctip ON pdc.id_tipo=pdctip.id
              WHERE pdc.id=%%s""" % (bt.TABNAME_PDC, bt.TABNAME_PDCTIP)
             try:
-                self.db_curs.execute(cmd, self.id_pdcpa)
-                rs = self.db_curs.fetchone()
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, self.id_pdcpa)
+                rs = cur.fetchone()
+                cur.close()
             except:
                 pass
             else:
@@ -628,8 +637,10 @@ class GeneraPartiteMixin(scad.Scadenze):
                     FROM %s anag
                     WHERE anag.id=%%s""" % tab
                     try:
-                        self.db_curs.execute(cmd, self.id_pdcpa)
-                        rs = self.db_curs.fetchone()
+                        cur = adb.db.get_cursor()
+                        cur.execute(cmd, self.id_pdcpa)
+                        rs = cur.fetchone()
+                        cur.close()
                     except MySQLdb.Error, e:
                         MsgDialogDbError(self, e)
                     else:
@@ -663,8 +674,10 @@ class GeneraPartiteMixin(scad.Scadenze):
                             bt.TABNAME_FORNIT )
         
         try:
-            self.db_curs.execute(cmd, self.id_pdcpa)
-            rs = self.db_curs.fetchone()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, self.id_pdcpa)
+            rs = cur.fetchone()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -731,8 +744,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         self._Auto_AddKeysContabTipo_I()
         self.ReadAutomat()
         
-        ivalib.IVA.__init__(self, self.db_curs)
-        GeneraPartiteMixin.__init__(self, self.db_curs)
+        ivalib.IVA.__init__(self)
+        GeneraPartiteMixin.__init__(self)
         
         self._progr_iva_ultins_num = 0
         
@@ -824,7 +837,6 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             srccls = self.RegSearchClass()
             if srccls is not None:
                 dlg = srccls(self)
-                dlg.db_curs = self.db_curs
                 dlg.SetCausale(self.cauid, self.caudes)
                 dlg.SetRegIva(self.controls['id_regiva'].GetValue())
                 dlg.UpdateSearch()
@@ -1016,16 +1028,16 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
              WHERE rim.id_caus=%%s
           ORDER BY riv.codice""" % (bt.TABNAME_CFGMAGRIV,
                                     bt.TABNAME_REGIVA)
-            c = self.db_curs
-            c.execute(cmd, self.cauid)
-            rs = c.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, self.cauid)
+            rs = cur.fetchall()
+            cur.close()
             rim = []
             if self._cfg_regiva_id is not None:
                 rim.append(str(self._cfg_regiva_id))
             rim += [str(x[0]) for x in rs]
-            filter = "id IN (%s)" % ', '.join(rim)
             cri = self.FindWindowById(wdr.ID_REGIVA)
-            cri.SetFilter(filter)
+            cri.SetFilter("id IN (%s)" % ', '.join(rim))
             cri.SetValue(self._cfg_regiva_id)
         
         return cauchanged
@@ -1053,24 +1065,20 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 self._auto_pdcsos_id = None
             
             self._auto_pdciva_cod, self._auto_pdciva_des =\
-                GetRecordInfo(self.db_curs, bt.TABNAME_PDC,\
+                GetRecordInfo(bt.TABNAME_PDC,\
                               self._auto_pdciva_id, ("codice","descriz"))
             
             self._auto_pdcind_cod, self._auto_pdcind_des =\
-                GetRecordInfo(self.db_curs, bt.TABNAME_PDC,\
+                GetRecordInfo(bt.TABNAME_PDC,\
                               self._auto_pdcind_id, ("codice","descriz"))
             
             self._auto_pdccee_cod, self._auto_pdccee_des =\
-                GetRecordInfo(self.db_curs, bt.TABNAME_PDC,\
+                GetRecordInfo(bt.TABNAME_PDC,\
                               self._auto_pdccee_id, ("codice","descriz"))
             
             self._auto_pdcsos_cod, self._auto_pdcsos_des =\
-                GetRecordInfo(self.db_curs, bt.TABNAME_PDC,\
+                GetRecordInfo(bt.TABNAME_PDC,\
                               self._auto_pdcsos_id, ("codice","descriz"))
-            
-            #if self._cfg_regiva_id is not None:
-                #self._Progr_AddKeysContabTipo_I(ctb.YEAR,\
-                                                #self._cfg_regiva_id)
     
     def OnDatRegChanged(self, event):
         if self.reg_id is None:
@@ -1220,6 +1228,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         forcereq = False
         try:
             #test esistenza numero protocollo
+            cur = adb.db.get_cursor()
             filt = ""
             if not self.newreg:
                 filt = """reg.id!=%d and """ % self.reg_id
@@ -1233,11 +1242,11 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
 """LEFT JOIN %s AS det ON reg.id=det.id_reg """\
 """LEFT JOIN %s AS pdc ON pdc.id=det.id_pdcpa """\
 """WHERE %s"""
-            self.db_curs.execute(cmd % (bt.TABNAME_CFGCONTAB,\
+            cur.execute(cmd % (bt.TABNAME_CFGCONTAB,\
                                         bt.TABNAME_CONTAB_B,\
                                         bt.TABNAME_PDC,\
                                         filt), par)
-            rs = self.db_curs.fetchone()
+            rs = cur.fetchone()
             if rs:
                 err =\
 """Il protocollo n.%s è già stato attribuito alla registrazione """\
@@ -1257,11 +1266,11 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 ndoc = self.controls['numdoc'].GetValue()
                 if ndoc:
                     filt += ' AND reg.numdoc="%s"' % ndoc.replace('"','')
-                    self.db_curs.execute(cmd % (bt.TABNAME_CFGCONTAB,\
-                                                bt.TABNAME_CONTAB_B,\
-                                                bt.TABNAME_PDC,\
-                                                filt), par)
-                    rs = self.db_curs.fetchone()
+                    cur.execute(cmd % (bt.TABNAME_CFGCONTAB,\
+                                        bt.TABNAME_CONTAB_B,\
+                                        bt.TABNAME_PDC,\
+                                        filt), par)
+                    rs = cur.fetchone()
                     if not rs:
                         forcereq = True
             else:
@@ -1291,8 +1300,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                         """WHERE %s=(%s)""" % (bt.TABNAME_CONTAB_H, 
                                                filt,
                                                cmd)
-                    self.db_curs.execute(cmd)
-                    rs = self.db_curs.fetchone()
+                    cur.execute(cmd)
+                    rs = cur.fetchone()
                     if rs:
                         if n == 0:
                             dprec, nprec = rs
@@ -1303,6 +1312,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                             dnext, nnext = rs
                             #print "next: ", nnext, dnext
                     n += 1
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -1396,32 +1406,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         GeneraPartiteMixin.UpdateModPag(self, totimposta=self.totimpst)
     
     def UpdateRegIva(self):
-        out = True
-        #filt = r"codice=%s and keydiff=%s and key_id=%s"
-        #lastnum = None
-        #cmd =\
-#"""SELECT progrnum FROM %s WHERE %s""" % (bt.TABNAME_CFGPROGR, filt)
-        #par = ( "IVA_ULTINS",\
-                #"%s" % self.reg_datreg.year,\
-                #self.reg_regiva_id )
-        #try:
-            #self.db_curs.execute(cmd, par)
-            #rs = self.db_curs.fetchone()
-            #if rs:
-                #lastnum = rs[0]
-                #if self.reg_numiva > lastnum:
-                    #cmd =\
-#"""UPDATE %s SET progrnum=%%s, progrdate=%%s """\
-#"""WHERE %s""" % (bt.TABNAME_CFGPROGR, filt)
-                    #self.db_curs.execute(cmd, ( self.reg_numiva,\
-                                                #self.reg_datreg ) + par)
-            #else:
-                #MsgDialog(self,"Progressivi di numerazione del registro iva non trovati")
-        #except MySQLdb.Error, e:
-            #MsgDialogDbError(self, e)
-            #out = True
-        
-        return out
+        return True
 
     def RegWriteHead(self):
         written = False
@@ -1458,7 +1443,6 @@ class SelRowPa(wx.Dialog):
         self.des = None
         self.doc = 0
         
-        self.db_curs = parent.db_curs
         self.rspref = []
         self._grid_pref = None
         
@@ -1601,8 +1585,10 @@ class SelRowPa(wx.Dialog):
                     WHERE pref.ambito=%%s and pref.key_id=%%s
                     ORDER BY pdcord""" % (bt.TABNAME_CFGPDCP, bt.TABNAME_PDC)
                     try:
-                        self.db_curs.execute(cmd, (amb, key))
-                        rs = self.db_curs.fetchall()
+                        cur = adb.db.get_cursor()
+                        cur.execute(cmd, (amb, key))
+                        rs = cur.fetchall()
+                        cur.close()
                     except MySQLdb.Error, e:
                         MsgDialogDbError(self, e)
                     else:
@@ -1676,10 +1662,10 @@ class Reg_I_SearchPanel(ctb.RegSearchPanel):
 """    WHERE (row.numriga=1 OR row.numriga IS NULL) and %s """\
 """ ORDER BY reg.datreg, reg.numiva"""\
  % (bt.TABNAME_CONTAB_H, bt.TABNAME_CFGCONTAB, filter)
-                db_curs = Env.adb.db.__database__._dbCon.cursor()
-                db_curs.execute(cmd, par)
-                rs = db_curs.fetchall()
-                db_curs.close()
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, par)
+                rs = cur.fetchall()
+                cur.close()
                 self.gridsrc.ChangeData(rs)
                 
             except MySQLdb.Error, e:

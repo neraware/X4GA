@@ -45,9 +45,8 @@ COL_TOTALE =  11
 
 
 class IVA(object):
-    def __init__(self, db_curs=None):
+    def __init__(self):
         object.__init__(self)
-        self.db_curs = db_curs
 
     def CalcolaIVA(self, id_aliq, 
                    imponib=None, imposta=None, ivato=None, indeduc=None, decimals=None):
@@ -75,13 +74,10 @@ class IVA(object):
         def R(n):
             return round(n, decimals)
         
-        curs = self.db_curs
-        if curs is None:
-            import stormdb as adb
-            con = getattr(adb.db.__database__, '_dbCon')
-            curs = con.cursor()
-        curs.execute(cmd, id_aliq)
-        rs = curs.fetchone()
+        cur = adb.db.get_cursor()
+        cur.execute(cmd, id_aliq)
+        rs = cur.fetchone()
+        cur.close()
             
         cod, des, perciva, percind = rs
         perciva /= 100
@@ -104,9 +100,6 @@ class IVA(object):
         
         indeduc = R(imposta*percind)
         imposta = R(imposta-indeduc)
-        
-        if curs and self.db_curs is None:
-            curs.close()
         
         return imponib, imposta, ivato, indeduc
 

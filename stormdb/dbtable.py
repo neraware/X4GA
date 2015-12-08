@@ -2531,7 +2531,7 @@ class DbTable(object):
         cmd = "SELECT MAX(%s) FROM %s" % (field, table)
         if prefix:
             cmd += " WHERE %s LIKE '%s___________'" % (field, prefix)
-        cur = self._info.db._dbCon.cursor()
+        cur = adb.db.get_cursor()
         cur.execute(cmd)
         rs = cur.fetchone()
         cur.close()

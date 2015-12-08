@@ -361,19 +361,17 @@ class SelAziendaPanel(aw.Panel):
 
     def AutorizzoUser(self, user, psw):
         
-        error = False
-        
         c = self.x4conn.cursor()
         if (c.execute("SELECT psw FROM utenti WHERE descriz=%s", user)>0):
             psw_memo = c.fetchone()[0]
             c.execute("select password(%s)", psw)
-            psw_digi_new = c.fetchone()[0]
-            try:
-                c.execute("select old_password(%s)", psw)
-                psw_digi_old = c.fetchone()[0]
-            except:
-                psw_digi_old = psw_digi_new
-            error = not psw_memo in (psw_digi_new, psw_digi_old)
+            error = psw_memo != c.fetchone()[0]
+            if error:
+                try:
+                    c.execute("select old_password(%s)", psw)
+                    error = psw_memo != c.fetchone()[0]
+                except:
+                    error = True
         else:
             error = True
         
@@ -403,9 +401,6 @@ class SelAziendaPanel(aw.Panel):
         event.Skip()
     
     def AziSelect(self):
-        
-        retVal = 0
-        errMessage = None
         
         def ErrMsg(msg):
             aw.awu.MsgDialog(self, message=msg, style=wx.ICON_EXCLAMATION)
@@ -495,7 +490,6 @@ class SelAziendaPanel(aw.Panel):
             db = adb.DB()
             db._dbCon = conn
             db.connected = True
-            wx.GetApp().dbcon = conn
             
         except MySQLdb.Error, e:
             errMessage = "Non è possibile accedere al database\n\n%s: %s" \
@@ -533,7 +527,6 @@ class SelAziendaPanel(aw.Panel):
                 db = adb.DB()
                 db._dbCon = conn
                 db.connected = True
-                wx.GetApp().dbcon = conn
                 
             except MySQLdb.Error, e:
                 errMessage = "Non è possibile accedere al database\n\n%s: %s" \
@@ -651,13 +644,14 @@ class SelAziendaPanel(aw.Panel):
         curs.execute("SELECT psw FROM utenti where nome=" + chr(34) + user + chr(34) + ";")
         memoPsw = curs.fetchone()[0]
         curs.execute("SELECT PASSWORD(%s)" % psw)
-        digiPsw_new = curs.fetchone()[0]
-        try:
-            curs.execute("SELECT old_PASSWORD(%s)" % psw)
-            digiPsw_old = curs.fetchone()[0]
-        except:
-            digiPsw_old = digiPsw_new
-        return not memoPsw in (digiPsw_new, digiPsw_old)
+        error = memoPsw != curs.fetchone()[0]
+        if error:
+            try:
+                curs.execute("SELECT old_PASSWORD(%s)" % psw)
+                error = memoPsw != curs.fetchone()[0]
+            except:
+                error = True
+        return not error
     
     def CheckUser( self, user, psw):
         msg = None

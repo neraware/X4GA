@@ -175,7 +175,7 @@ class TabSetupPanel(aw.Panel):
                         tabchange = True
                 
                 #controllo indici
-                c = tab._info.db._dbCon.cursor()
+                c = adb.db.get_cursor()
                 c.execute("SHOW INDEXES FROM %s" % name)
                 rsi = c.fetchall()
                 for i, (indtype, indexpr) in enumerate(index):

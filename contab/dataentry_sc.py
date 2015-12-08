@@ -226,8 +226,7 @@ class DavGrid(dbglib.DbGrid):
                     editor.startValue = None
                     #imposto il tipo anagrafico di filtro del sottoconto
                     #uguale a quello del sottoconto qui inizializzato
-                    id_tipo = GetRecordInfo(
-                        o.db_curs, bt.TABNAME_PDC, out, ('id_tipo',))[0]
+                    id_tipo = GetRecordInfo(bt.TABNAME_PDC, out, ('id_tipo',))[0]
                     editor._tc.SetFilterValue(id_tipo)
                 wx.CallAfter(ResetStartValue)
         return out
@@ -657,8 +656,7 @@ class ScaGrid(dbglib.DbGrid):
         if pcfid is None:
             salatt = diff = 0
         else:
-            imp,par = GetRecordInfo(o.db_curs, bt.TABNAME_PCF,\
-                                    pcfid, ("imptot","imppar"))
+            imp,par = GetRecordInfo(bt.TABNAME_PCF, pcfid, ("imptot","imppar"))
             salatt = imp-par
             try:
                 n = awc.util.ListSearch(o.regrss_old,\
@@ -802,17 +800,17 @@ class ContabPanelTipo_SC(ctb.ContabPanel):
         
         self._auto_abbatt_id =  self._auto_abbatt
         self._auto_abbatt_cod,\
-        self._auto_abbatt_des = GetRecordInfo(self.db_curs, bt.TABNAME_PDC,\
+        self._auto_abbatt_des = GetRecordInfo(bt.TABNAME_PDC,\
                                   self._auto_abbatt_id, ("codice","descriz"))
         
         self._auto_abbpas_id =  self._auto_abbpas
         self._auto_abbpas_cod,\
-        self._auto_abbpas_des = GetRecordInfo(self.db_curs, bt.TABNAME_PDC,\
+        self._auto_abbpas_des = GetRecordInfo(bt.TABNAME_PDC,\
                                   self._auto_abbpas_id, ("codice","descriz"))
         
         self._auto_speinc_id =  self._auto_speinc
         self._auto_speinc_cod,\
-        self._auto_speinc_des = GetRecordInfo(self.db_curs, bt.TABNAME_PDC,\
+        self._auto_speinc_des = GetRecordInfo(bt.TABNAME_PDC,\
                                   self._auto_speinc_id, ("codice","descriz"))
         
         self.SetName('saldacontopanel')
@@ -1117,8 +1115,10 @@ class ContabPanelTipo_SC(ctb.ContabPanel):
 """ORDER BY pcf.datscad, pcf.id""" % ( bt.TABNAME_PCF, bt.TABNAME_CFGCONTAB,\
                                        bt.TABNAME_MODPAG, filt )
         try:
-            self.db_curs.execute(cmd, par)
-            rsp = self.db_curs.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, par)
+            rsp = cur.fetchall()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -1157,8 +1157,10 @@ LEFT JOIN %s AS mpa ON pcf.id_modpag=mpa.id
                                      bt.TABNAME_MODPAG )
         par = (idreg,)
         try:
-            self.db_curs.execute(cmd, par)
-            rss = self.db_curs.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, par)
+            rss = cur.fetchall()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -1242,8 +1244,10 @@ LEFT JOIN %s AS mpa ON pcf.id_modpag=mpa.id
             par1.append((imptot, imppar, scad[RSSCA_PCF_ID]))
             
         try:
-            x = self.db_curs.executemany(cmd1, par1)
-            z = self.db_curs.execute(cmd2, par2)
+            cur = adb.db.get_cursor()
+            cur.executemany(cmd1, par1)
+            cur.execute(cmd2, par2)
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
         else:
@@ -1252,8 +1256,8 @@ LEFT JOIN %s AS mpa ON pcf.id_modpag=mpa.id
         return True
     
     def ScadWrite(self):
-        out = True
         try:
+            cur = adb.db.get_cursor()
             nsca = 0
             for scad in self.regrss:
                 #aggiornamento partite
@@ -1278,7 +1282,7 @@ LEFT JOIN %s AS mpa ON pcf.id_modpag=mpa.id
                         cmd += """, insoluto=1"""
                     cmd += r""" WHERE id=%s""" 
                     par = [ imptot, imppar, pcf ]
-                    self.db_curs.execute(cmd, par)
+                    cur.execute(cmd, par)
                     nsca += 1
             
             #scrittura riferimenti
@@ -1295,7 +1299,7 @@ LEFT JOIN %s AS mpa ON pcf.id_modpag=mpa.id
                             tipabb, spesa, note)
                  VALUES (%s)""" % (bt.TABNAME_CONTAB_S, 
                                    (r"%s, "*len(par[0]))[:-2])
-            self.db_curs.executemany(cmd, par)
+            cur.executemany(cmd, par)
             
             #elimino le partite che dopo lo storno sono andate a zero
             cmd = """
@@ -1306,13 +1310,15 @@ LEFT JOIN %s AS mpa ON pcf.id_modpag=mpa.id
             for scad in self.regrss_old:
                 pcf = scad[RSSCA_PCF_ID]
                 par.append((pcf,))
-            self.db_curs.executemany(cmd, par)
+            cur.executemany(cmd, par)
+            
+            cur.close()
+            return True
             
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
-            out = False
         
-        return out
+        return False
 
     def InitCausale(self):
         """
@@ -1405,8 +1411,6 @@ class SelRowPa(aw.Dialog):
         self.cpid = None
         self.cpcod = None
         self.cpdes = None
-        
-        self.db_curs = parent.db_curs
         
         wdr.SelRowPa_SC_Func(self)
         wx.CallAfter(self.SetFirstFocus)

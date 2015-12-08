@@ -1480,7 +1480,9 @@ class ProdPanel(ga.AnagPanel):
         if out and recid is not None:
             cmd = "DELETE FROM %s WHERE id_prod=%%s" % bt.TABNAME_LISTINI
             try:
-                self.db_curs.execute(cmd, recid)
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, recid)
+                cur.close()
             except MySQLdb.Error, e:
                 awu.MsgDialogDbError(self, e)
         return out
@@ -1726,7 +1728,6 @@ class ProdPanel(ga.AnagPanel):
         del self._glist_rsdel[:]
 
     def GridListWrite(self):
-        out = False
         dblis = self.dblis
         for recno in range(len(dblis.GetRecordset())):
             dblis.MoveRow(recno)
@@ -1734,11 +1735,13 @@ class ProdPanel(ga.AnagPanel):
         if dblis.SaveAll():
             cmd = "DELETE FROM %s WHERE id=%%s" % bt.TABNAME_LISTINI
             try:
-                self.db_curs.executemany(cmd, self._glist_rsdel)
-                out = True
+                cur = adb.db.get_cursor()
+                cur.executemany(cmd, self._glist_rsdel)
+                cur.close()
+                return True
             except MySQLdb.Error, e:
                 awu.MsgDialogDbError(self, e)
-        return out
+        return False
 
 
 # ------------------------------------------------------------------------------

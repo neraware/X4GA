@@ -35,6 +35,8 @@ import awc.util as awu
 import Env
 bt = Env.Azienda.BaseTab
 
+import stormdb as adb
+
 cn = lambda self, name: self.FindWindowByName(name)
 
 
@@ -58,7 +60,6 @@ class _automatmixin(object):
         object.__init__(self)
         self.table = bt.TABNAME_CFGAUTOM
         self.db_conn = Env.Azienda.DB.connection
-        self.db_curs = self.db_conn.cursor()
         self.auto = {}
 
     def LoadValues(self):
@@ -80,8 +81,10 @@ class _automatmixin(object):
 """SELECT aut_id """\
 """FROM %s """\
 """WHERE codice=%%s""" % self.table
-        self.db_curs.execute(cmd, codice)
-        rs = self.db_curs.fetchone()
+        cur = adb.db.get_cursor()
+        cur.execute(cmd, codice)
+        rs = cur.fetchone()
+        cur.close()
         if rs:
             out = rs[0]
         return out
@@ -96,13 +99,17 @@ class _automatmixin(object):
             cmd = """INSERT INTO %s (codice, descriz, aut_id) """\
                   """VALUES (%%s, %%s, %%s);""" % self.table
             try:
-                self.db_curs.execute(cmd, (key,des, id) )
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, (key,des, id) )
+                cur.close()
             except MySQLdb.Error, e:
                 if e.args[0] == 1062:
                     cmd = """UPDATE %s SET descriz=%%s, aut_id=%%s """\
                           """WHERE codice=%%s;""" % self.table
                     try:
-                        self.db_curs.execute(cmd, (des,id,key) )
+                        cur = adb.db.get_cursor()
+                        cur.execute(cmd, (des,id,key) )
+                        cur.close()
                     except MySQLdb.Error, e:
                         dberr = e.args
                 else:

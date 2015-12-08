@@ -57,6 +57,8 @@ from cfg.dbtables import ProgrEsercizio
 
 from cfg.dbtables import ProgrStampaGiornale, ProgrStampaMastri
 
+import stormdb as adb
+
 
 #costanti per l'uscita dal dialog se modale
 REG_UNMODIFIED = 0
@@ -138,72 +140,63 @@ class ContabPanel(aw.Panel,\
         self.dbprog = ProgrStampaGiornale()
         self.dbprom = ProgrStampaMastri()
         
-        self.db_conn = Env.Azienda.DB.connection
-        try:
-            self.db_curs = self.db_conn.cursor()
-            
-        except MySQLdb.Error, e:
-            MsgDialogDbError(self, e)
-            
-        else:
-            #auto.CfgAutomatContab.__init__(self, self.db_curs)
-            self._auto_cod_tippdc_pdciva = "I" #DA AUTOMATIZZARE!!!
-            self._auto_cod_tippdc_pdcric = "R" #DA AUTOMATIZZARE!!!
-            self._auto_cod_tippdc_pdcspe = "S" #DA AUTOMATIZZARE!!!
-            
-            cfg.CfgCausale.__init__(self, self.db_curs)
-            auto.CfgAutomat.__init__(self, self.db_curs)
-            progr.CfgProgr.__init__(self, self.db_curs)
-            
-            self._Auto_AddKeysContab()
-            self._Progr_AddKeysContab(Env.Azienda.Esercizio.year)
-            
-            #self.cfgctb = cfg.CfgContab()
-            self.dbese = ProgrEsercizio()
-            
-            self.regrsb = []       # recordset dettaglio
-            
-            self.status = None
-            
-            self.cautipo = None
-            self.caufilt = None
-            
-            self.pancaus = None
-            self.panhead = None
-            self.panbody = None
-            
-            self.InitPanelCaus()
-            self.InitPanelHead()
-            self.InitPanelBody()
-            
-            wdr.DialogFunc( self, True )
-            
-            self.controls = awc.util.DictNamedChildrens(self)
-            
-            c = self.controls["butattach"]
-            c.SetScope("contab_h")
-            c.SetAutoText(self.controls['autonotes'])
-            c.SetSpyPanel(self.FindWindowByName('attachspy'))
-            
-            butnew = self.controls["button_new"]
-            butsrc = self.controls["button_search"]
-            butend = self.controls["button_end"]
-            butmod = self.controls["button_modify"]
-            butquit = self.controls["button_quit"]
-            butdel = self.controls["button_delete"]
-            
-            self.InitCausale()
-            
-            self.__postInit()
-            
-            self.Bind(wx.EVT_BUTTON, self.OnRegNew,    butnew)
-            self.Bind(wx.EVT_BUTTON, self.OnRegSearch, butsrc)
-            self.Bind(wx.EVT_BUTTON, self.OnRegEnd,    butend)
-            self.Bind(wx.EVT_BUTTON, self.OnRegModify, butmod)
-            self.Bind(wx.EVT_BUTTON, self.OnRegQuit,   butquit)
-            self.Bind(wx.EVT_BUTTON, self.OnRegDelete, butdel)
-            
-            self.Bind(wx.EVT_SIZE,   self.OnResize)
+        self._auto_cod_tippdc_pdciva = "I" #DA AUTOMATIZZARE!!!
+        self._auto_cod_tippdc_pdcric = "R" #DA AUTOMATIZZARE!!!
+        self._auto_cod_tippdc_pdcspe = "S" #DA AUTOMATIZZARE!!!
+        
+        cfg.CfgCausale.__init__(self)
+        auto.CfgAutomat.__init__(self)
+        progr.CfgProgr.__init__(self)
+        
+        self._Auto_AddKeysContab()
+        self._Progr_AddKeysContab(Env.Azienda.Esercizio.year)
+        
+        #self.cfgctb = cfg.CfgContab()
+        self.dbese = ProgrEsercizio()
+        
+        self.regrsb = []       # recordset dettaglio
+        
+        self.status = None
+        
+        self.cautipo = None
+        self.caufilt = None
+        
+        self.pancaus = None
+        self.panhead = None
+        self.panbody = None
+        
+        self.InitPanelCaus()
+        self.InitPanelHead()
+        self.InitPanelBody()
+        
+        wdr.DialogFunc( self, True )
+        
+        self.controls = awc.util.DictNamedChildrens(self)
+        
+        c = self.controls["butattach"]
+        c.SetScope("contab_h")
+        c.SetAutoText(self.controls['autonotes'])
+        c.SetSpyPanel(self.FindWindowByName('attachspy'))
+        
+        butnew = self.controls["button_new"]
+        butsrc = self.controls["button_search"]
+        butend = self.controls["button_end"]
+        butmod = self.controls["button_modify"]
+        butquit = self.controls["button_quit"]
+        butdel = self.controls["button_delete"]
+        
+        self.InitCausale()
+        
+        self.__postInit()
+        
+        self.Bind(wx.EVT_BUTTON, self.OnRegNew,    butnew)
+        self.Bind(wx.EVT_BUTTON, self.OnRegSearch, butsrc)
+        self.Bind(wx.EVT_BUTTON, self.OnRegEnd,    butend)
+        self.Bind(wx.EVT_BUTTON, self.OnRegModify, butmod)
+        self.Bind(wx.EVT_BUTTON, self.OnRegQuit,   butquit)
+        self.Bind(wx.EVT_BUTTON, self.OnRegDelete, butdel)
+        
+        self.Bind(wx.EVT_SIZE,   self.OnResize)
     
     def OptimizeSize(self, min_width=1000, min_height=640):
         mw, mh = min_width, min_height
@@ -341,7 +334,6 @@ class ContabPanel(aw.Panel,\
             srccls = self.RegSearchClass()
             if srccls is not None:
                 dlg = srccls(self)
-                dlg.db_curs = self.db_curs
                 dlg.SetCausale(self.cauid, self.caudes)
                 dlg.UpdateSearch()
                 idreg = dlg.ShowModal()
@@ -409,21 +401,6 @@ class ContabPanel(aw.Panel,\
                 f += "esercizio<>'1'"
             ctrcau.SetFilter(f)
         self.Bind(linktab.EVT_LINKTABCHANGED, self.OnCauChanged, ctrcau)
-        #try:
-            #cmd =\
-#"""SELECT id, codice, descriz """\
-#"""FROM %s AS cau """\
-#"""WHERE %s ;""" % ( bt.TABNAME_CFGCONTAB, 
-                     #self.caufilt )
-            #self.db_curs.execute( cmd )
-            #self.caurs = self.db_curs.fetchall()
-        #except MySQLdb.Error, e:
-            #MsgDialogDbError(self, e)
-        #else:
-            #ctrcau.Clear()
-            #for rec in self.caurs:
-                #ctrcau.Append( rec[2], ( int(rec[0]), rec[1] ) )
-            #out = True
         return out
     
     def OnCauChanged( self, event ):
@@ -609,8 +586,10 @@ class ContabPanel(aw.Panel,\
                 """LEFT JOIN %s AS riv ON reg.id_regiva=riv.id """\
                 """WHERE reg.id=%%s;""" % ( bt.TABNAME_CONTAB_H,\
                                             bt.TABNAME_REGIVA )
-            self.db_curs.execute(cmd, idreg)
-            rsh = self.db_curs.fetchone()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, idreg)
+            rsh = cur.fetchone()
+            cur.close()
             
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
@@ -842,7 +821,6 @@ class ContabPanel(aw.Panel,\
         """
         Scrive la testata e i record di dettaglio della registrazione.
         """
-        out = False
         par = [ self.reg_esercizio,\
                 self.reg_cau_id,\
                 self.reg_cau_tipo,\
@@ -853,8 +831,6 @@ class ContabPanel(aw.Panel,\
                 self.reg_numiva,\
                 self.reg_modpag_id,\
                 self.reg_nocalciva]
-        headwritten = False
-        bodywritten = False
         if self.newreg:
             #inserimento testata nuova registrazione
             cmd =\
@@ -874,16 +850,18 @@ class ContabPanel(aw.Panel,\
             par.append(self.reg_id)
         
         try:
-            self.db_curs.execute(cmd, par)
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, par)
             if self.newreg:
-                self.db_curs.execute( "SELECT LAST_INSERT_ID();" )
-                self.SetNewRegId( self.db_curs.fetchone()[0] )
-            out = True
+                cur.execute( "SELECT LAST_INSERT_ID();" )
+                self.SetNewRegId( cur.fetchone()[0] )
+            cur.close()
+            return True
             
         except MySQLdb.Error, e:
             print e.args[0], e.args[1]
         
-        return out
+        return False
 
     def SetNewRegId(self, newid):
         self.reg_id = newid
@@ -893,7 +871,6 @@ class ContabPanel(aw.Panel,\
         """
         Scrittura dettaglio registrazione su db.
         """
-        out = False
         rows = []
         rsb = self.regrsb
         #rmax = 0
@@ -969,25 +946,27 @@ class ContabPanel(aw.Panel,\
                 rows.append(addRows[n])
         
         try:
+            cur = adb.db.get_cursor()
             cmd =\
 """DELETE FROM %s WHERE id_reg=%%s""" % bt.TABNAME_CONTAB_B
-            self.db_curs.execute(cmd, self.reg_id)
+            cur.execute(cmd, self.reg_id)
             cmd =\
 """INSERT INTO %s ("""\
 """id_reg, numriga, tipriga, imponib, imposta, importo, indeduc, ivaman, segno, """\
 """id_aliqiva, davscorp, solocont, id_pdcpa, id_pdccp, id_pdciva, id_pdcind, note) """\
 """VALUES (%s)""" % ( bt.TABNAME_CONTAB_B,\
                       (r"%s, " * 17)[:-2] )
-            self.db_curs.executemany(cmd, rows)
-            out = True
+            cur.executemany(cmd, rows)
+            cur.close()
+            return True
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
-        return out
+        return False
     
     def RegReadBody(self, idreg):
-        out = True
         rsb = []
         try:
+            cur = adb.db.get_cursor()
             cmd = """
    SELECT row.numriga, 
           row.tipriga, 
@@ -1009,20 +988,21 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
  WHERE row.id_reg=%%s""" % (bt.TABNAME_CONTAB_B,
                             bt.TABNAME_PDC,
                             bt.TABNAME_ALIQIVA)
-            self.db_curs.execute(cmd, idreg)
-            rsb = self.db_curs.fetchall()
+            cur.execute(cmd, idreg)
+            rsb = cur.fetchall()
+            cur.close()
             if not rsb:
                 MsgDialog(self,\
 """Attenzione!  La registrazione non contiene alcuna riga!""")
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
-            out = False
+            return False
         else:
             del self.regrsb[:]
             for b in rsb:
                 self.regrsb.append(list(b))
         self.totdare, self.totavere = self.GetTotaliDA()
-        return out
+        return True
     
     def RegReset(self):
         #reset valori testata
@@ -1075,19 +1055,20 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
             self.reg_datdoc = self.reg_datreg
 
     def RegDelete(self):
-        out = False
         try:
+            cur = adb.db.get_cursor()
             cmd =\
 """DELETE FROM %s WHERE id=%%s""" % bt.TABNAME_CONTAB_H
-            self.db_curs.execute(cmd, self.reg_id)
+            cur.execute(cmd, self.reg_id)
             cmd =\
 """DELETE FROM %s WHERE id_reg=%%s""" % bt.TABNAME_CONTAB_B
-            self.db_curs.execute(cmd, self.reg_id)
+            cur.execute(cmd, self.reg_id)
+            cur.close()
             self.controls['butattach'].SetKey(self.reg_id, delete=True)
-            out = True
+            return True
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
-        return out
+        return False
     
     def UpdatePanelHead(self):
         """
@@ -1390,10 +1371,10 @@ class RegSearchPanel(aw.Panel):
 """WHERE row.numriga=1 and %s """\
 """ORDER BY reg.datreg, year(reg.datdoc), reg.numdoc;"""\
  % (bt.TABNAME_CONTAB_H, bt.TABNAME_CFGCONTAB, filter)
-                db_curs = getattr(Env.adb.db.__database__, '_dbCon').cursor()
-                db_curs.execute(cmd, par)
-                rs = db_curs.fetchall()
-                db_curs.close()
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, par)
+                rs = cur.fetchall()
+                cur.close()
                 self.gridsrc.ChangeData(rs)
                 
             except MySQLdb.Error, e:

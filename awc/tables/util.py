@@ -31,10 +31,13 @@ import awc.tables.util_wdr as wdr
 
 from awc.util import MsgDialog, MsgDialogDbError
 
+import stormdb as adb
+
 base = Azienda.BaseTab
 
-def CheckRefIntegrity(parent, db_curs, db_constr, rec_id):
+def CheckRefIntegrity(parent, db_constr, rec_id):
     out = False
+    cur = adb.db.get_cursor()
     try:
         ref = []
         for r_table, r_field, r_type in db_constr:
@@ -42,8 +45,8 @@ def CheckRefIntegrity(parent, db_curs, db_constr, rec_id):
                               base.TABCONSTRAINT_TYPE_NOACTION,):
                 continue
             cmd = "SELECT COUNT(1) FROM %s WHERE %s=%d;" % (r_table, r_field, rec_id)
-            db_curs.execute(cmd)
-            rs = db_curs.fetchone()
+            cur.execute(cmd)
+            rs = cur.fetchone()
             if rs[0] > 0:
                 try:
                     r_tabname = [ tb[base.TABSETUP_TABLEDESCRIPTION]\
@@ -56,10 +59,9 @@ def CheckRefIntegrity(parent, db_curs, db_constr, rec_id):
         if len(ref) == 0:
             out = True
         else:
-            dlg = RefIntegrityDialog( parent, -1, "X4 :: Cancellazione impossibile" )
+            dlg = RefIntegrityDialog(parent, -1, "X4 :: Cancellazione impossibile" )
             dlg.ref = ref
             dlg.recid = rec_id
-            dlg.db_curs = db_curs
             # creazione intestazioni
             lista = dlg.FindWindowById(wdr.ID_LISTREF)
             ncol = 0
@@ -87,6 +89,8 @@ def CheckRefIntegrity(parent, db_curs, db_constr, rec_id):
             
     except MySQLdb.Error, e:
         MsgDialogDbError(None, e)
+    
+    cur.close()
                 
     return out
 
@@ -112,13 +116,15 @@ class RefIntegrityDialog(wx.Dialog):
         if n >= 1 and n <= len(self.ref):
             tab, _, idf, _ = self.ref[n-1]
             idr = self.recid
+            cur = adb.db.get_cursor()
             try:
                 cmd = "SELECT descriz FROM %s WHERE %s=%d ORDER BY descriz" % ( tab, idf, idr )
-                self.db_curs.execute(cmd)
+                cur.execute(cmd)
             except MySQLdb.Error:
                 cmd = "SELECT * FROM %s WHERE %s=%d" % ( tab, idf, idr )
-                self.db_curs.execute(cmd)
-            rs = self.db_curs.fetchall()
+                cur.execute(cmd)
+            rs = cur.fetchall()
+            cur.close()
             dett.Clear()
             for rec in rs:
                 dett.Append(str(rec[0]))
@@ -126,7 +132,7 @@ class RefIntegrityDialog(wx.Dialog):
     def OnCloseWindow( self, event ):
         self.EndModal(False)
 
-def GetRecordInfo(curs, tab, id, columns):
+def GetRecordInfo(tab, id, columns):
     """
     Effettua la ricerca sulla tabella e con l'id indicati, e restituisce
     una lista contenente i valori delle colonne indicate.
@@ -136,6 +142,7 @@ def GetRecordInfo(curs, tab, id, columns):
         cmd = "SELECT %s FROM %s WHERE id=%%s;"\
               % (",".join(columns), tab)
         try:
+            curs = adb.db.get_cursor()
             nrec = curs.execute(cmd, id)
             if nrec == 0:
                 MsgDialog(None,\
@@ -145,6 +152,7 @@ def GetRecordInfo(curs, tab, id, columns):
             elif nrec == 1:
                 rs = curs.fetchone()
                 info = rs
+            curs.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(None, e)
     return info
