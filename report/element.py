@@ -33,16 +33,31 @@ from reportlab.lib.pagesizes import A4, landscape, portrait
 from reportlab.lib.colors import *
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
 from reportlab.platypus import Paragraph as BaseParagraph
-from reportlab.platypus.paragraph import _handleBulletWidth, ParaLines, ParaParser, _sameFrag, FragLine
+from reportlab.platypus.paragraph import _handleBulletWidth, ParaLines, FragLine
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.styles import ParagraphStyle, PropertySet
 
 from string import *
 
 import os.path
-import Env
 
 import report
+from reportlab.platypus.paraparser import ParaParser
+
+try:
+    from _rl_accel import _sameFrag
+except ImportError:
+    try:
+        from reportlab.lib._rl_accel import _sameFrag
+    except ImportError:
+        #if you modify this you need to modify _rl_accel RGB
+        def _sameFrag(f,g):
+            'returns 1 if two ParaFrags map out the same'
+            if (hasattr(f,'cbDefn') or hasattr(g,'cbDefn')
+                    or hasattr(f,'lineBreak') or hasattr(g,'lineBreak')): return 0
+            for a in ('fontName', 'fontSize', 'textColor', 'rise', 'underline', 'strike', 'link', "backColor"):
+                if getattr(f,a,None)!=getattr(g,a,None): return 0
+            return 1
 
 _debug =0
 
