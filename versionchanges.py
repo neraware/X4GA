@@ -29,9 +29,9 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.6.62', None, (
-         ("BUG1171",
-         """Eliminata doppia connessione al database."""),
+    ('1.7.00', None, (
+         ("BET4206",
+         """Ottimizzata connessione al database."""),
         ),),
     
     ('1.6.61', None, (
