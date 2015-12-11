@@ -128,8 +128,17 @@ class DateCellEditor(gridlib.PyGridCellEditor, CellEditorsMixin):
         Called to create the control, which must derive from wx.Control.
         *Must Override*
         """
-        self._tc = awc.controls.datectrl.DateCtrl(parent, id, "",\
-                                                  pos = (-100, -100))
+        D = awc.controls.datectrl.DateCtrl
+        
+        def calendar_selected():
+            g = self.grid
+            self.editing = True
+            self.startValue = None
+            self.EndEdit(g._edrow, g._edcol, g)
+        
+        self._tc = D(parent, id, "", pos = (-100, -100), 
+                     on_calendar_select=calendar_selected)
+        
         self.SetControl(self._tc)
         
         win = parent
