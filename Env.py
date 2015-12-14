@@ -1006,13 +1006,14 @@ class Azienda(object):
         VALINT_DECIMALS = 2  #numero decimali su valuta interna
         VALUTE_DECIMALS = 6  #numero decimali su valuta estera
         
-        VALINT_INTEGERS = 12 #numero cifre intere su valuta interna
-        VALUTE_INTEGERS = 16 #numero cifre intere su valuta estera
-        MAGPRE_INTEGERS = 12 #numero cifre intere prezzi
-        MAGQTA_INTEGERS = 10 #numero cifre intere prezzi
+        VALINT_INTEGERS = 9  #numero cifre intere su valuta interna
+        VALUTE_INTEGERS = 9  #numero cifre intere su valuta estera
+        MAGPRE_INTEGERS = 9  #numero cifre intere prezzi
+        MAGQTA_INTEGERS = 9  #numero cifre intere prezzi
         
         MAGPRE_DECIMALS = 2  #numero decimali prezzi
         MAGQTA_DECIMALS = 0  #numero decimali quantità
+        
         MAGEAN_PREFIX = '22' #prefisso per generazione codici ean
         MAGSCOCAT = 0        #flag gestione sconti per categoria
         MAGSCORPCOS = None   #flag scorporo iva da costo
@@ -4106,7 +4107,7 @@ class Azienda(object):
         
         @classmethod
         def GetValIntIntegersDisplay(cls):
-            return 9
+            return cls.VALINT_INTEGERS
         
         @classmethod
         def GetValIntMaskInfo(cls, numint=None, numdec=None):
@@ -4130,7 +4131,7 @@ class Azienda(object):
         
         @classmethod
         def GetMagQtaIntegersDisplay(cls):
-            return 9
+            return cls.MAGQTA_INTEGERS
         
         @classmethod
         def GetMagQtaMaskInfo(cls, numint=None, numdec=None):
