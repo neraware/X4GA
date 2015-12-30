@@ -569,6 +569,7 @@ class XFrame(aw.Frame):
             (self.OnIntInvPres,                ID_INTGIAPRE),
             (self.OnIntInvent,                 ID_INTINVENT),
             (self.OnIntSottoSc,                ID_INTSOTTOSC),
+            (self.OnIntSottoScDis,             ID_INTSOTTOSCBK),
             (self.OnIntMagSrcDes,              ID_INTMAGSRCDES),
             (self.OnIntMagProvAge,             ID_PROVAGE),
             (self.OnProdRiPro,                 ID_MAGPRODPRORIC),
@@ -688,6 +689,13 @@ class XFrame(aw.Frame):
             if item:
                 item.GetMenu().Remove(cid)
         
+        #rimozione voce sottoscorta da backorders se non attivo flag visualizza disponibilità
+        if not bt.MAGVISDIS:
+            cid = ID_INTSOTTOSCBK
+            item = menubar.FindItemById(cid)
+            if item:
+                item.GetMenu().Remove(cid)
+            
         #adeguamento voci di chiusura contabile in funzione della sovrapposizione
         #gestita o meno e dello stato di esecuzione delle procedure di generazione
         #movimenti di chiusura/apertura
@@ -1633,6 +1641,10 @@ class XFrame(aw.Frame):
     
     def OnIntSottoSc(self, event):
         from magazz.sottosc import SottoscortaFrame
+        self.LaunchFrame(SottoscortaFrame)
+    
+    def OnIntSottoScDis(self, event):
+        from magazz.sottoscdis import SottoscortaFrame
         self.LaunchFrame(SottoscortaFrame)
     
     def OnIntMagSrcDes(self, event):

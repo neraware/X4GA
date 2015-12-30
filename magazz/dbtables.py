@@ -5237,9 +5237,21 @@ class RiepilogoBackorderClienti(adb.DbMem):
         adb.DbMem.__init__(self, fields='magazz_id,magazz_cod,magazz_des,ordinato,evaso')
         self.Reset()
     
-    def update_data_prodotto(self, id_prod):
+    def update_data_prodotto(self, id_prod, group_by_mag=True, mags=None, datmin=None):
         db = adb.db.__database__
         aggordcol = self._aggordcol
+        if group_by_mag:
+            group_by = 'mag.id, mag.codice, mag.descriz, mov.id_prod'
+        else:
+            group_by = 'mov.id_prod'
+        filters = []
+        if mags is not None:
+            filters.append('doc.id_magazz IN (%s)' % ','.join([str(m) for m in mags]))
+        if datmin is not None:
+            filters.append('doc.datdoc>="%s"' % datmin.strftime('%Y-%m-%d'))
+        filters = ' AND '.join(filters)
+        if filters:
+            filters = ' AND %s' % filters
         cmd = """
             SELECT mag.id, mag.codice, mag.descriz, SUM(mov.qta) 'ordinato', SUM((
                SELECT SUM(eva.qta)
@@ -5253,8 +5265,8 @@ class RiepilogoBackorderClienti(adb.DbMem):
             WHERE mov.id_prod=%(id_prod)s 
                   AND tpm.%(aggordcol)s IN (1,-1) 
                   AND (mov.f_ann IS NULL OR mov.f_ann=0) 
-                  AND (doc.f_ann IS NULL OR doc.f_ann=0)
-            GROUP BY mag.id, mag.codice, mag.descriz, mov.id_prod
+                  AND (doc.f_ann IS NULL OR doc.f_ann=0)  %(filters)s
+            GROUP BY %(group_by)s
             HAVING evaso IS NULL OR ordinato>evaso
         """ % locals()
         db.Retrieve(cmd)
@@ -5265,6 +5277,77 @@ class RiepilogoBackorderFornit(RiepilogoBackorderClienti):
     _aggordcol = 'aggordfor'
 
 
+class OrdiniProdotto(adb.DbMem):
+    
+    def __init__(self):
+        adb.DbMem.__init__(self, fields='mov_id,doc_id,tpd_id,tpd_cod,tpd_des,pdc_id,pdc_cod,pdc_des,dst_ind,dst_cit,numdoc,datdoc,qtaord,qtaeva,qtarim')
+        self.Reset()
+    
+    def update_ordini_prodotto(self, id_prod, mags=None, bkc=True, datbkc=None, bkf=True, datbkf=None):
+        db = adb.db.__database__
+        filters = []
+        if mags is not None:
+            filters.append('doc.id_magazz IN (%s)' % ','.join([str(m) for m in mags]))
+        if bkc and bkf:
+            filters.append('((tpm.aggordcli IN (1, -1) AND doc.datdoc>="%s") OR (tpm.aggordfor IN (1, -1) AND doc.datdoc>="%s"))'\
+                                % (datbkc.strftime('%Y-%m-%d'),
+                                   datbkc.strftime('%Y-%m-%d'),))
+        elif bkc:
+            if datbkc:
+                filters.append('tpm.aggordcli IN (1, -1) AND doc.datdoc>="%s"' % datbkc.strftime('%Y-%m-%d'))
+            else:
+                filters.append('tpm.aggordcli IN (1, -1)')
+        elif bkf:
+            if datbkf:
+                filters.append('tpm.aggordfor IN (1, -1) AND doc.datdoc>="%s"' % datbkf.strftime('%Y-%m-%d'))
+            else:
+                filters.append('tpm.aggordfor IN (1, -1)')
+        else:
+            filters.append('FALSE')
+        filters = ' AND '.join(filters)
+        if filters:
+            filters = ' AND %s' % filters
+        cmd = """
+            SELECT mov.id                   'mov_id', 
+                   doc.id                   'doc_id', 
+                   tpd.id                   'tpd_id',
+                   tpd.codice               'tpd_cod', 
+                   tpd.descriz              'tpd_des',
+                   pdc.id                   'pdc_id', 
+                   pdc.codice               'pdc_cod', 
+                   pdc.descriz              'pdc_des', 
+                   IF(dst.id IS NULL,IF(tpm.aggordcli IN (1,-1), anc.indirizzo, anf.indirizzo), dst.indirizzo) 'dst_ind',
+                   IF(dst.id IS NULL,IF(tpm.aggordcli IN (1,-1), anc.citta, anf.citta), dst.citta)             'dst_cit',
+                   doc.numdoc               'numdoc', 
+                   doc.datdoc               'datdoc', 
+                   mov.qta                  'qtaord',
+              
+              (SELECT COALESCE(SUM(eva.qta), 0)
+                 FROM movmag_b eva
+                WHERE eva.id_moveva=mov.id) 'qtaeva',
+                
+                mov.qta-
+              (SELECT COALESCE(SUM(eva.qta), 0)
+                 FROM movmag_b eva
+                WHERE eva.id_moveva=mov.id) 'qtarim'
+                
+            FROM movmag_b  mov
+            JOIN movmag_h  doc ON doc.id=mov.id_doc
+            JOIN pdc       pdc ON pdc.id=doc.id_pdc
+       LEFT JOIN destin    dst ON dst.id=doc.id_dest
+       LEFT JOIN clienti   anc ON anc.id=pdc.id
+       LEFT JOIN fornit    anf ON anf.id=pdc.id
+            JOIN magazz    mag ON mag.id=doc.id_magazz
+            JOIN cfgmagdoc tpd ON tpd.id=doc.id_tipdoc
+            JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+            WHERE mov.id_prod=%(id_prod)s 
+                  AND (mov.f_ann IS NULL OR mov.f_ann=0) 
+                  AND (doc.f_ann IS NULL OR doc.f_ann=0)  %(filters)s
+            HAVING qtaeva=0 OR qtarim>0
+        """ % locals()
+        db.Retrieve(cmd)
+        self.SetRecordset([]+db.rs)
+
 
 
 class DisponibProdotto(adb.DbMem):
@@ -5272,6 +5355,12 @@ class DisponibProdotto(adb.DbMem):
     def __init__(self):
         adb.DbMem.__init__(self, fields='magazz_id,magazz_cod,magazz_des,giac,bkcli,bkfor,disp')
         self.Reset()
+        
+        class Inventario(InventarioDaMovim):
+            def _MakeGroups(self):
+                self.AddGroupOn('doc.id_magazz', 'magazz_id')
+        
+        self._dbinv = Inventario()
     
     def update_disp(self):
         self.disp = (self.giac or 0) + (self.bkfor or 0) - (self.bkcli or 0)
@@ -5293,13 +5382,9 @@ class DisponibProdotto(adb.DbMem):
             disp.bkfor = 0
             disp.disp = 0
         
-        class Inventario(InventarioDaMovim):
-            def _MakeGroups(self):
-                self.AddGroupOn('doc.id_magazz', 'magazz_id')
-        
         if id_prod is not None:
             
-            giac = Inventario()
+            giac = self._dbinv
             giac.Retrieve('mov.id_prod=%s', id_prod)
             def search_mag(d): return d.magazz_id == giac.mov.doc.id_magazz
             for _ in giac:
@@ -5326,3 +5411,78 @@ class DisponibProdotto(adb.DbMem):
                         disp.update_disp()
         
         return disp
+
+
+class SottoscortaDaDisponib(adb.DbTable):
+    
+    _mags = None
+    def set_mags(self, mags):
+        self._mags = mags
+        self._dbinv.SetMagazz(mags)
+    
+    _datinv = None
+    def set_data_inv(self, datinv):
+        self._datinv = datinv
+        self._dbinv.SetDataInv(datinv)
+    
+    def __init__(self):
+        
+        adb.DbTable.__init__(self, 'prod')
+        _tip = self.AddJoin('tipart', idLeft='id_tipart', join=adb.JOIN_LEFT)
+        _cat = self.AddJoin('catart', idLeft='id_catart', join=adb.JOIN_LEFT)
+        _gru = self.AddJoin('gruart', idLeft='id_gruart', join=adb.JOIN_LEFT)
+        _mar = self.AddJoin('marart', idLeft='id_marart', join=adb.JOIN_LEFT)
+        _for = self.AddJoin('pdc', idLeft='id_fornit', join=adb.JOIN_LEFT)
+        self.AddField('0.0', 'tot_giac')
+        self.AddField('0.0', 'tot_bkcli')
+        self.AddField('0.0', 'tot_bkfor')
+        self.AddField('0.0', 'tot_disp')
+        self.AddField('0.0', 'tot_fabb')
+        self.AddBaseFilter('prod.scomin>0')
+        
+        self.Reset()
+        
+        self._dbinv = InventarioDaMovim()
+    
+    def update_disponib(self, bkcli=True, datbkc=None, bkfor=True, datbkf=None, progress=None):
+        
+        giac, rsnew = self._dbinv, []
+        
+        tgia = tbkc = tbkf = tdis = tfab = 0
+        
+        for _ in self:
+            
+            giac.Retrieve('mov.id_prod=%s', self.id)
+            self.tot_giac = giac.total_giac
+            
+            if bkcli:
+                evas = RiepilogoBackorderClienti()
+                evas.update_data_prodotto(self.id, group_by_mag=False, mags=self._mags, datmin=datbkc)
+                self.tot_bkcli = (evas.ordinato or 0) - (evas.evaso or 0)
+            
+            if bkfor:
+                evas = RiepilogoBackorderFornit()
+                evas.update_data_prodotto(self.id, group_by_mag=False, mags=self._mags, datmin=datbkf)
+                self.tot_bkfor = (evas.ordinato or 0) - (evas.evaso or 0)
+            
+            self.tot_disp = (self.tot_giac or 0) + (self.tot_bkfor or 0) - (self.tot_bkcli or 0)
+            if self.tot_disp < (self.scomin or 0):
+                self.tot_fabb = (self.scomin or 0) - (self.tot_disp or 0)
+            else:
+                self.tot_fabb = 0
+            
+            tgia += (self.tot_giac or 0)
+            tbkc += (self.tot_bkcli or 0)
+            tbkf += (self.tot_bkfor or 0)
+            tdis += (self.tot_disp or 0)
+            tfab += (self.tot_fabb or 0)
+            
+            if self.tot_fabb > 0:
+                rsnew.append([]+self.GetRecordset()[self.RowNumber()])
+            
+            if callable(progress):
+                progress(self)
+        
+        self.SetRecordset(rsnew)
+        
+        return tgia, tbkc, tbkf, tdis, tfab

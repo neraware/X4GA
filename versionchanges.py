@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.02', None, (
+         ("BET4207",
+         """Interrogazione sottoscorta da disponibilità 
+         (giacenze +- backorders)."""),
+        ),),
+    
     ('1.7.00', None, (
          ("BET4206",
          """Ottimizzata connessione al database."""),
