@@ -5439,7 +5439,7 @@ class SottoscortaDaDisponib(adb.DbTable):
         self.AddField('0.0', 'tot_disp')
         self.AddField('0.0', 'tot_fabb')
         self.AddBaseFilter('prod.scomin>0')
-        
+        self.AddOrder('prod.codice')
         self.Reset()
         
         self._dbinv = InventarioDaMovim()

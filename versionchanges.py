@@ -29,6 +29,18 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.04', None, (
+         ("BUG1171",
+         """Fix calcolo provvigioni, con impostazione default non
+         considerava le prorità di agente e cliente."""),
+        ),),
+    
+    ('1.7.03', None, (
+         ("BET4208",
+         """Ordinamento per prodotto in interrogazione 
+         sottoscorta da disponibilità."""),
+        ),),
+    
     ('1.7.02', None, (
          ("BET4207",
          """Interrogazione sottoscorta da disponibilità 
