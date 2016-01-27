@@ -484,6 +484,14 @@ class GeneralSetup(Setup):
             d, _ = os.path.split(plugins[p].__file__)
             report.AppendPathAlt(opj(d, opj('report', 'jrxml')))
         
+        try:
+            # module_path/azienda_<azienda>
+            import custapp  # @UnresolvedImport
+            d, _ = os.path.split(custapp.__file__)
+            report.AppendPathAlt(opj(d, opj('report', 'jrxml')))
+        except Exception:
+            pass
+        
         pathsub = opj(pathsub or pathrpt, sub)
         report.SetPathRpt(pathrpt)
         report.SetPathSub(pathsub)

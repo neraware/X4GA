@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.05', None, (
+         ("BET4209",
+         """Aggiunto percorso della personalizzazione in ricerca report."""),
+        ),),
+    
     ('1.7.04', None, (
          ("BUG1171",
          """Fix calcolo provvigioni, con impostazione default non
