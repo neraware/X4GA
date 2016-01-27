@@ -32,6 +32,8 @@ history = (
     ('1.7.05', None, (
          ("BET4209",
          """Aggiunto percorso della personalizzazione in ricerca report."""),
+         ("BET4210",
+         """Aggiunta statistica fatturato per cliente/destinazione."""),
         ),),
     
     ('1.7.04', None, (
