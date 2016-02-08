@@ -5486,3 +5486,58 @@ class SottoscortaDaDisponib(adb.DbTable):
         self.SetRecordset(rsnew)
         
         return tgia, tbkc, tbkf, tdis, tfab
+
+
+
+class DocumentiPagati(adb.DbMem):
+    
+    def __init__(self):
+        adb.DbMem.__init__(self, fields='doc_id,tpd_cod,tpd_des,numdoc,datdoc,pdc_cod,pdc_des,dst_cod,dst_des,dst_ind,dst_cit,totdare,saldo')
+        self.Reset()
+    
+    def update_data(self, id_tipdoc, datdoc1, datdoc2, paga_si=False, paga_no=True, id_agente=None, id_catcli=None):
+        filt = "doc.id_tipdoc=%s" % id_tipdoc
+        filt += ' AND doc.datdoc>="%s"' % datdoc1.strftime('%Y-%m-%d')
+        filt += ' AND doc.datdoc<="%s"' % datdoc2.strftime('%Y-%m-%d')
+        if id_agente:
+            filt += " AND doc.id_agente=%s" % id_agente
+        if id_catcli:
+            filt += " AND cli.id_categ=%s" % id_catcli
+        if paga_si and paga_no:
+            hav = 'TRUE'
+        elif paga_si:
+            hav = 'saldo=0'
+        elif paga_no:
+            hav = 'saldo<>0'
+        cmd = """
+            SELECT
+             doc.id 'docid',
+             tpd.codice 'tpd_cod',
+             tpd.descriz 'tpd_des',
+             doc.numdoc 'numdoc',
+             doc.datdoc 'datdoc',
+             pdc.codice 'pdc_cod',
+             pdc.descriz 'pdc_des',
+             dst.codice 'dst_cod',
+             dst.descriz 'dst_des',
+             IF(doc.id_dest, dst.indirizzo, cli.indirizzo) 'dst_ind',
+             IF(doc.id_dest, dst.citta, cli.citta) 'dst_cit',
+             doc.totdare 'totdare',
+            (
+               SELECT SUM(imptot-imppar) 
+                 FROM pcf 
+                WHERE pcf.id_pdc=doc.id_pdc AND pcf.datdoc=doc.datdoc AND pcf.numdoc=doc.numdoc
+            ) 'saldo'
+            
+            FROM movmag_h doc
+            JOIN cfgmagdoc tpd ON tpd.id=doc.id_tipdoc
+            JOIN pdc ON pdc.id=doc.id_pdc
+            JOIN clienti cli ON cli.id=pdc.id
+            LEFT JOIN destin dst ON dst.id=doc.id_dest
+            WHERE %(filt)s
+            HAVING %(hav)s
+            ORDER BY doc.datdoc, doc.numdoc
+        """ % locals()
+        db = adb.db.get_db()
+        db.Retrieve(cmd)
+        self.SetRecordset([]+db.rs)

@@ -1159,6 +1159,106 @@ def DocMagSelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
+ID_DATDOC1 = 15100
+ID_DATDOC2 = 15101
+ID_TIPDOC = 15102
+ID_AGENTE = 15103
+ID_DOCPAGA_SI = 15104
+ID_DOCPAGA_NO = 15105
+ID_BUTUPD = 15106
+ID_PANGRIDOCS = 15107
+ID_BUTPRT = 5100
+
+def DocumentiPagatiFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item2 = wx.FlexGridSizer( 0, 6, 0, 0 )
+    
+    item3 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item3, 0, wx.ALIGN_CENTER, 5 )
+
+    item4 = wx.StaticText( parent, ID_TEXT, "Dal:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item4, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item5 = wx.StaticText( parent, ID_TEXT, "Al:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item5, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item6 = wx.StaticText( parent, ID_TEXT, "Causale:", wx.DefaultPosition, [160,-1], 0 )
+    item2.Add( item6, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item7 = wx.StaticText( parent, ID_TEXT, "Agente:", wx.DefaultPosition, [160,-1], 0 )
+    item2.Add( item7, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item8 = wx.StaticText( parent, ID_TEXT, "Cat.Clienti:", wx.DefaultPosition, [160,-1], 0 )
+    item2.Add( item8, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item9 = wx.StaticText( parent, ID_TEXT, "Data documento:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item9, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item10 = DateCtrl( parent, ID_DATDOC1, "", wx.DefaultPosition, [80,-1], 0 )
+    item10.SetName( "datdoc1" )
+    item2.Add( item10, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item11 = DateCtrl( parent, ID_DATDOC2, "", wx.DefaultPosition, [80,-1], 0 )
+    item11.SetName( "datdoc2" )
+    item2.Add( item11, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item12 = alib.LinkTableDocMagazz(parent, ID_TIPDOC, name='id_tipdoc')
+    item2.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item13 = alib.LinkTableAgente(parent, ID_AGENTE, name='id_agente')
+    item2.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item14 = alib.LinkTableCatCli(parent, ID_CATCLI, name='id_catcli')
+    item2.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item15 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item16 = wx.CheckBox( parent, ID_DOCPAGA_SI, "Doc. pagati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item16.SetName( "paga_si" )
+    item15.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item17 = wx.CheckBox( parent, ID_DOCPAGA_NO, "Non pagati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item17.SetValue( True )
+    item17.SetName( "paga_no" )
+    item15.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item1.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item18 = wx.Button( parent, ID_BUTUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.SetDefault()
+    item18.SetName( "butupd" )
+    item1.Add( item18, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
+
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item19 = wx.StaticText( parent, ID_TEXT, "Documenti trovati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item19.SetForegroundColour( wx.BLUE )
+    item0.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item20 = wx.Panel( parent, ID_PANGRIDOCS, wx.DefaultPosition, [1000,300], wx.SUNKEN_BORDER )
+    item20.SetName( "pangridocs" )
+    item0.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item21 = wx.Button( parent, ID_BUTPRT, "Stam&pa", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item21.SetName( "butprt" )
+    item0.Add( item21, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item0.AddGrowableCol( 0 )
+
+    item0.AddGrowableRow( 2 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
 # Menubar functions
 
 # Toolbar functions

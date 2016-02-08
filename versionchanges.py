@@ -29,6 +29,18 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.07', None, (
+         ("BET4212",
+         """Visualizza nel mastro gli estremi del numero e data documento
+         delle registrazioni in saldaconto, cercati sulla prima partita
+         collegata alla registrazione in saldaconti."""),
+        ),),
+    
+    ('1.7.06', None, (
+         ("BET4211",
+         """Aggiunta interrogazione documenti con stato di pagamento."""),
+        ),),
+    
     ('1.7.05', None, (
          ("BET4209",
          """Aggiunto percorso della personalizzazione in ricerca report."""),

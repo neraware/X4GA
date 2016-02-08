@@ -563,6 +563,7 @@ class XFrame(aw.Frame):
             #interrogazioni magazzino prodotto/movimenti
             (self.OnInterrProdotto,            ID_INTPROD),
             (self.OnIntDocMag,                 ID_INTDOCMAG),
+            (self.OnIntDocPag,                 ID_INTDOCPAG),
             (self.OnIntDocVet,                 ID_INTDOCVET),
             (self.OnIntMovMag,                 ID_INTMOVMAG),
             (self.OnIntEvaMag,                 ID_INTEVAMAG),
@@ -1619,6 +1620,10 @@ class XFrame(aw.Frame):
     def OnIntDocMag(self, event):
         from magazz.docint import DocIntFrame
         self.LaunchFrame(DocIntFrame)
+    
+    def OnIntDocPag(self, event):
+        from magazz.docpaga import DocPagaFrame
+        self.LaunchFrame(DocPagaFrame)
     
     def OnIntDocVet(self, event):
         from magazz.vetint import TraVetIntFrame
