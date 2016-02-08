@@ -599,6 +599,18 @@ class PdcMastro(_PdcMovimMixin):
         
         self._AddMovTables()
         
+        cmd = r""" (SELECT %s FROM pcf """ \
+               """    JOIN contab_s s ON s.id_pcf=pcf.id """ \
+               """   WHERE s.id_reg=reg.id LIMIT 1) """
+        
+        self.mov.AddField(""" IF(reg.numdoc IS NULL AND reg.datdoc IS NULL, """+
+                          (cmd % 'numdoc')+
+                          """, reg.numdoc)""", 'cos_numdoc')
+        
+        self.mov.AddField(""" IF(reg.numdoc IS NULL AND reg.datdoc IS NULL, """+
+                          (cmd % 'datdoc')+
+                          """, reg.datdoc)""", 'cos_datdoc')
+        
         for segno, nome in (("D", "dare"),\
                             ("A", "avere")):
             mov.AddField(\
