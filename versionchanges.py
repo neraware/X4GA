@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.08', None, (
+         ("BUG1172",
+         """Corretti criteri di classificazione privato/azienda in
+         estrazione vendite x aliquota."""),
+        ),),
+    
     ('1.7.07', None, (
          ("BET4212",
          """Visualizza nel mastro gli estremi del numero e data documento

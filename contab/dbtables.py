@@ -3165,10 +3165,10 @@ class _Vendite_mixin_(object):
     
     _impexpr = 'mov.imponib*IF(mov.segno="A",1,-1)'
     _ivaexpr = '(mov.imposta+mov.indeduc)*IF(mov.segno="A",1,-1)'
-    _privafilt = 'IF(tipana.tipo="C", cliente.piva IS NULL OR cliente.piva="", fornit.piva IS NULL OR fornit.piva="")'
-    _pivitfilt = 'IF(tipana.tipo="C", stato_cli.codice="IT", stato_for.codice="IT")'
-    _pivcefilt = 'IF(tipana.tipo="C", stato_cli.is_cee=1 AND stato_cli.codice<>"IT", stato_for.is_cee=1 AND stato_for.codice<>"IT")'
-    _pivestfilt = '(IF(tipana.tipo="C", stato_cli.codice != "IT", stato_for.codice != "IT") AND NOT %(_pivcefilt)s)' % locals()
+    _privafilt = 'IF(tipana.tipo="C", (cliente.piva IS NULL OR cliente.piva="") AND LENGTH(cliente.codfisc)=16, (fornit.piva IS NULL OR fornit.piva="") AND LENGTH(fornit.codfisc)=16)'
+    _pivitfilt = 'IF(tipana.tipo="C", stato_cli.codice="IT" AND LENGTH(cliente.piva)=11, stato_for.codice="IT" AND LENGTH(fornit.piva)=11)'
+    _pivcefilt = 'IF(tipana.tipo="C", stato_cli.is_cee=1 AND stato_cli.codice<>"IT" AND LENGTH(cliente.piva)>0, stato_for.is_cee=1 AND stato_for.codice<>"IT"  AND LENGTH(fornit.piva)>0)'
+    _pivestfilt = '(IF(tipana.tipo="C", stato_cli.codice != "IT"  AND LENGTH(cliente.piva)>0, stato_for.codice != "IT"  AND LENGTH(fornit.piva)>0) AND NOT %(_pivcefilt)s)' % locals()
     _ivanull = '(aliq.perciva=0 OR aliq.perciva IS NULL)'
 
 
@@ -3388,7 +3388,11 @@ class VenditeXAliqIVA(adb.DbTable, _Vendite_mixin_):
             f.append(self._pivcefilt)
         if pivest:
             f.append(self._pivestfilt)
-        self.AddBaseFilter(" OR ".join(f))
+        if f:
+            f = " OR ".join(f)
+        else:
+            f = 'FALSE'
+        self.AddBaseFilter(f)
         
         self.Reset()
     
