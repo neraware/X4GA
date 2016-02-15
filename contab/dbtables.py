@@ -603,11 +603,11 @@ class PdcMastro(_PdcMovimMixin):
                """    JOIN contab_s s ON s.id_pcf=pcf.id """ \
                """   WHERE s.id_reg=reg.id LIMIT 1) """
         
-        self.mov.AddField(""" IF(reg.numdoc IS NULL AND reg.datdoc IS NULL, """+
+        self.mov.AddField(""" IF(COALESCE(reg.numdoc, '')='' AND COALESCE(reg.datdoc, '')='', """+
                           (cmd % 'numdoc')+
                           """, reg.numdoc)""", 'cos_numdoc')
         
-        self.mov.AddField(""" IF(reg.numdoc IS NULL AND reg.datdoc IS NULL, """+
+        self.mov.AddField(""" IF(COALESCE(reg.numdoc, '')='' AND COALESCE(reg.datdoc, '')='', """+
                           (cmd % 'datdoc')+
                           """, reg.datdoc)""", 'cos_datdoc')
         
