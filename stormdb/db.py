@@ -1203,7 +1203,7 @@ class DB(object):
         c = BackupFolderContent()
         
         import os, glob, time
-        for r in glob.glob(os.path.join(pathname, '*.*')):
+        for r in glob.glob(os.path.join(pathname, '*.adb')):
             try:
                 db_name, content, comment, tables = self.ADB_GetFileInfo(r, read_tables=read_tables)
                 if not (db_name == database or database is None):
