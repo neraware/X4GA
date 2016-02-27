@@ -3828,7 +3828,7 @@ class Azienda(object):
             return cls.BaseTab
             
         @classmethod
-        def ReadAziendaSetup(cls):
+        def ReadAziendaSetup(cls, manage_plugins=True):
             
             cfg = adb.DbTable(cls.TABNAME_CFGSETUP, 'cfg', writable=False)
             
@@ -3899,9 +3899,10 @@ class Azienda(object):
                                   """dei dati aziendali.""" % err
             clear_plugins()
             cls.defstru()
-            from plib import init_plugins, check_new_plugins, load_plugin, enable_plugin
-            init_plugins()
-            load_new_plugins()
+            if manage_plugins:
+                from plib import init_plugins
+                init_plugins()
+                load_new_plugins()
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()
