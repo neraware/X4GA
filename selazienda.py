@@ -489,6 +489,10 @@ class SelAziendaPanel(aw.Panel):
             
             db = adb.DB()
             db._dbCon = conn
+            db.hostname = Env.Azienda.DB.servername
+            db.username = Env.Azienda.DB.username
+            db.password = ''
+            db.database = nomedb
             db.connected = True
             
         except MySQLdb.Error, e:

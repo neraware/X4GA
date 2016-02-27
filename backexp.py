@@ -153,10 +153,10 @@ class SpecificheBackupPanel(wx.Panel):
             wx.BeginBusyCursor()
             try:
                 db_name, content, comment, tabrows =\
-                        adb.db.__database__.ADB_GetFileInfo(filename, read_tables=True)
+                        adb.db.get_db().ADB_GetFileInfo(filename, read_tables=True)
                 cn('comment').SetValue(comment)
                 t.SetModeRestore(tabrows)
-                if db_name != adb.db.__database__.database:
+                if db_name != adb.db.get_db().database:
                     self.cando = False
                     cn('warning').SetLabel('Il backup è di un\'altra azienda')
                     self.CheckTables()
@@ -386,11 +386,11 @@ class BackupExplorerPanel(wx.Panel):
                 content = 'all'
                 if len(tables) != len(bt.tabelle):
                     content = 'partial'
-                adb.db.__database__.ADB_CreateFile(tables, filename, comment, content=content,
-                                                   tab_classes=tab_classes, 
-                                                   special_encoders=special_encoders,
-                                                   on_table_read=TableRead,
-                                                   on_table_row=TableRecord)
+                adb.db.get_db().ADB_CreateFile(tables, filename, comment, content=content,
+                                               tab_classes=tab_classes, 
+                                               special_encoders=special_encoders,
+                                               on_table_read=TableRead,
+                                               on_table_row=TableRecord)
             finally:
                 wx.EndBusyCursor()
                 del self.timer
@@ -407,11 +407,11 @@ class BackupExplorerPanel(wx.Panel):
         folder = cn('backupdir').GetValue()
         database = None
         if cn('solazi').IsChecked():
-            database = adb.db.__database__.database
+            database = adb.db.get_db().database
         wx.BeginBusyCursor()
         try:
             try:
-                content = adb.db.__database__.ADB_GetBackupFolderContent(folder, database=database, read_tables=False, order_by='datetime', order_reverse=True)
+                content = adb.db.get_db().ADB_GetBackupFolderContent(folder, database=database, read_tables=False, order_by='datetime', order_reverse=True)
             except:
                 content = None
         finally:
@@ -505,7 +505,7 @@ class BackupExplorerPanel(wx.Panel):
                 f.write(stream)
                 f.close()
             
-            db = adb.db.__database__
+            db = adb.db.get_db()
             db.ADB_RestoreFile(filename, db.database,
                                special_decoders={bt.TABNAME_ALLEGATI: {'attach_stream': AttachWriteFile}},
                                on_table_init=TableStart,
@@ -565,7 +565,7 @@ if __name__ == '__main__':
             aziDialog.Destroy()
             
             if do:
-                db = adb.db.__database__
+                db = adb.db.get_db()
                 if not db.Connect(host=Env.Azienda.DB.servername,
                                   user=Env.Azienda.DB.username,
                                   passwd=Env.Azienda.DB.password,

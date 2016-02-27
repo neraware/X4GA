@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.10', None, (
+         ("BUG1173",
+         """Corretto errore in backup explorer relativo a variabile
+         database non trovata."""),
+        ),),
+    
     ('1.7.08', None, (
          ("BUG1172",
          """Corretti criteri di classificazione privato/azienda in
