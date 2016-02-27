@@ -79,9 +79,10 @@ class _MagazzPanel_O_Mixin(object):
         doc.sogritacc = sra
         if not sra:
             doc.totritacc = 0
-            doc.totdare = doc.totimporto
-            if doc.is_split_payment():
-                doc.totdare -= doc.totimposta
+#             doc.totdare = doc.totimporto
+#             if doc.is_split_payment():
+#                 doc.totdare -= doc.totimposta
+            doc.totdare = doc.get_totdare()
         self.UpdateRitAcc()
         event.Skip()
     
@@ -103,9 +104,10 @@ class _MagazzPanel_O_Mixin(object):
         doc = self.dbdoc
         doc.totritacc = round(doc.perritacc*doc.impritacc/100*doc.comritacc/100, 
                               bt.VALINT_DECIMALS)
-        doc.totdare = doc.totimporto-doc.totritacc
-        if doc.is_split_payment():
-            doc.totdare -= doc.totimposta
+#         doc.totdare = doc.totimporto-doc.totritacc
+#         if doc.is_split_payment():
+#             doc.totdare -= doc.totimposta
+        doc.totdare = doc.get_totdare()
     
     def OnRitAccChanged(self, event):
         if hasattr(self, 'stopritacc'):
@@ -171,6 +173,12 @@ class _MagazzPanel_O_Mixin(object):
 #             if c.IsTooBig():
 #                 return False
         self.FindWindowById(wdr.ID_TOTSCTOT).SetValue(doc.totscmce+doc.totscpra)
+        
+        self.FindWindowById(wdr.ID_TOTIVASPL).SetValue(doc.get_iva_splitplayment())
+        io, _, do = doc.get_iva_omaggi_a_carico()
+        if not do:
+            io = 0
+        self.FindWindowById(wdr.ID_TOTIVAOMA).SetValue(io)
         
         for ID, val in ((wdr.ID_SOGRITACC,  doc.sogritacc),\
                         (wdr.ID_PERRITACC,  doc.perritacc),\

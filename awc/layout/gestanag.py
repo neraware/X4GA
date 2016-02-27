@@ -333,7 +333,6 @@ class AnagPanel(aw.Panel):
             aw.Panel.__init__(self, parent, id, pos, size)
             
             self.db_conn = Azienda.DB.connection
-            self.db_curs = None
             
             self.db_schema = ""
             self.db_tabname = ""
@@ -395,16 +394,6 @@ class AnagPanel(aw.Panel):
         
         finally:
             wx.EndBusyCursor()
-        
-        try:
-            self.db_curs = self.db_conn.cursor()
-        
-        except MySQLdb.Error, e:
-            MsgDialog(self,
-                      message="Problema durante l'accesso al database.\n\n%s: %s"
-                      % (e.args[0], e.args[1]),
-                      caption = "X4 :: Errore di accesso",
-                      style=wx.YES_CANCEL|wx.ICON_EXCLAMATION)
         
         self.Bind(EVT_ACCEPTDATACHANGED, self.OnAcceptDataChanged)
 
@@ -1218,18 +1207,15 @@ class AnagPanel(aw.Panel):
         """
         Metodo per la verifica della cancellabilità di un elemento.
         """
-        return CheckRefIntegrity( self,
-                                  self.db_curs, 
-                                  self.db_tabconstr,
-                                  self.db_recid )
+        return CheckRefIntegrity(self, self.db_tabconstr, self.db_recid)
     
     def DeleteDataRecord( self ):
-        out = False
         try:
-            self.db_curs.execute( "DELETE FROM %s%s WHERE id=%d;"  
-                                  % ( self.db_schema,
-                                      self.db_tabname, 
-                                      self.db_recid ) )
+            cur = adb.db.get_cursor()
+            cur.execute( "DELETE FROM %s%s WHERE id=%d;"  
+                          % ( self.db_schema,
+                              self.db_tabname, 
+                              self.db_recid ) )
             self.db_rs = self.db_rs[:self.db_recno] +\
                          self.db_rs[self.db_recno+1:]
             if self.db_recno > len(self.db_rs)-1:
@@ -1243,12 +1229,13 @@ class AnagPanel(aw.Panel):
                 self.db_recid = int(self.db_rs[self.db_recno][pkcol])
             else:
                 self.db_recid = None
-            out = True
+            cur.close()
+            return True
             
         except MySQLdb.Error, e:
             MsgDialogDbError(self, e)
             
-        return out
+        return False
     
     def UpdateDataRecord( self ):
         """
@@ -1310,6 +1297,7 @@ class AnagPanel(aw.Panel):
         
         try:
             #aggiornamento database
+            cur = adb.db.get_cursor()
             if self.db_recno == NEW_RECORD:
                 
                 cmd = "INSERT INTO %s%s (" % (self.db_schema, self.db_tabname)
@@ -1317,9 +1305,9 @@ class AnagPanel(aw.Panel):
                 cmd += ") VALUES ("
                 cmd += (r"%s, " * len(self.db_datalink))[:-2] + ");"
                 
-                self.db_curs.execute( cmd, dbvalues )
-                self.db_curs.execute( "SELECT LAST_INSERT_ID();" )
-                recid = int(self.db_curs.fetchone()[0])
+                cur.execute( cmd, dbvalues )
+                cur.execute( "SELECT LAST_INSERT_ID();" )
+                recid = int(cur.fetchone()[0])
                 
                 #aggiunta record in coda al recordset
                 rec = list()
@@ -1345,7 +1333,9 @@ class AnagPanel(aw.Panel):
                 cmd += ", ".join(
                        [ "%s=%%s" % col for col,ctr in self.db_datalink ] )
                 cmd += " WHERE ID = %s;" % self.db_recid
-                self.db_curs.execute( cmd, dbvalues )
+                cur.execute( cmd, dbvalues )
+            
+            cur.close()
             
             #aggiornamento recordset
             ncol = 0

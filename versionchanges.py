@@ -29,6 +29,195 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.08', None, (
+         ("BUG1172",
+         """Corretti criteri di classificazione privato/azienda in
+         estrazione vendite x aliquota."""),
+        ),),
+    
+    ('1.7.07', None, (
+         ("BET4212",
+         """Visualizza nel mastro gli estremi del numero e data documento
+         delle registrazioni in saldaconto, cercati sulla prima partita
+         collegata alla registrazione in saldaconti."""),
+        ),),
+    
+    ('1.7.06', None, (
+         ("BET4211",
+         """Aggiunta interrogazione documenti con stato di pagamento."""),
+        ),),
+    
+    ('1.7.05', None, (
+         ("BET4209",
+         """Aggiunto percorso della personalizzazione in ricerca report."""),
+         ("BET4210",
+         """Aggiunta statistica fatturato per cliente/destinazione."""),
+        ),),
+    
+    ('1.7.04', None, (
+         ("BUG1171",
+         """Fix calcolo provvigioni, con impostazione default non
+         considerava le prorità di agente e cliente."""),
+        ),),
+    
+    ('1.7.03', None, (
+         ("BET4208",
+         """Ordinamento per prodotto in interrogazione 
+         sottoscorta da disponibilità."""),
+        ),),
+    
+    ('1.7.02', None, (
+         ("BET4207",
+         """Interrogazione sottoscorta da disponibilità 
+         (giacenze +- backorders)."""),
+        ),),
+    
+    ('1.7.00', None, (
+         ("BET4206",
+         """Ottimizzata connessione al database."""),
+        ),),
+    
+    ('1.6.61', None, (
+         ("BET4205",
+         """Passaggio a password di nuovo tipo nella gestione utenti."""),
+        ),),
+    
+    ('1.6.60', None, (
+         ("BET4204",
+         """Aggiornamento della data sulle griglie in inserimento
+         nuova riga da scheda prodotto e scheda cliente ed in
+         manutenzione griglie attive."""),
+        ),),
+    
+    ('1.6.59', None, (
+         ("BET4203",
+         """Implementata possibilità di evadere più volte le righe
+         sprovviste di quantità (solo importo/descrizione) mediante
+         indicazione nel tipo movimento della scritta EVAMULTI sul
+         campo di descrizione del totale."""),
+        ),),
+    
+    ('1.6.58', None, (
+         ("BET4201",
+         """Implementati i dati di riferimento nella griglia di 
+         selezione del documento da evadere."""),
+         ("BET4202",
+         """Implementata possibilità di descrivere il documento evaso
+         mediante i suoi dati di riferimento della testata invece che
+         come causale, numero e data."""),
+        ),),
+    
+    ('1.6.57', None, (
+         ("BET4200",
+         """Implementata possibilità di contabilizzazione degli 
+         effetti in base a data scadenza invece che data distinta."""),
+        ),),
+    
+    ('1.6.56', None, (
+         ("BET4199",
+         """Implementata possibilità di definizione della larghezza
+         della singola barra nei barcode ean13."""),
+        ),),
+    
+    ('1.6.55', None, (
+         ("BUG1170",
+         """Corretto calcolo totali documento in caso di iva su
+         omaggi da non addebitare."""),
+        ),),
+    
+    ('1.6.54', None, (
+         ("BUG1169",
+         """Corretta acquisizione documento, selezionando un documento con
+         destinatario questo non veniva riportato nel documento 
+         acquisente."""),
+        ),),
+    
+    ('1.6.53', None, (
+         ("BET4198",
+         """Gestione in scheda prodotto delle griglie delle giacenze e 
+         disponibilità in base a relativi flag in setup azienda."""),
+        ),),
+    
+    ('1.6.52', None, (
+         ("BET4196",
+         """Aggiunte selezioni di categoria clienti e categoria fornitori
+         in interrogazione documenti."""),
+         ("BET4197",
+         """Aggiunte selezioni di categoria clienti, categoria fornitori,
+         mod.pagamento, qta min/max e importo min/max in interrogazione 
+         movimenti."""),
+        ),),
+    
+    ('1.6.51', None, (
+         ("BET4195",
+         """Aggiunto codice creditore nella videata della banca per
+         emissione rid tracciato arricchito x sepa."""),
+        ),),
+    
+    ('1.6.49', None, (
+         ("BET4194",
+         """Introdotto automatismo per non addebitare al cliente l'iva
+         sugli omaggi, mediante la presenza o meno dell'automatismo di
+         magazzino "Iva su omaggi a carico dell'azienda."""),
+        ),),
+    
+    ('1.6.47', None, (
+         ("BUG1168",
+         """Introdotta griglia di valutazione delle disponibilità a
+         seguito dell'evasione ordini clienti/fornitori nella scheda
+         prodotto."""),
+        ),),
+    
+    ('1.6.46', dt.Date(2015, 7, 13), (
+         ("BUG1167",
+         """Corretta acquisizione listino da file csv, non memorizzava
+         costo/prezzo scheda prodotto."""),
+        ),),
+    
+    ('1.6.44', dt.Date(2015, 7, 2), (
+         ("BET4193",
+         """Aggiunte le note della riga 1 (cliente/fornitore) della 
+         registrazione di incasso/pagamento nella lista di dettaglio
+         delle operazioni in saldaconto."""),
+        ),),
+    
+    ('1.6.43', dt.Date(2015, 6, 30), (
+         ("BUG1166",
+         """Fix aggiornamento totali piede se documento caricato 
+         dall'esterno."""),
+        ),),
+    
+    ('1.6.42', dt.Date(2015, 6, 20), (
+         ("BUG1165",
+         """Dopo la selezione dell'azienda di lavoro, ora viene 
+         controllata la presenza di versioni aggiornate dei plugin 
+         tra quelli già scaricati."""),
+         ("BET4192",
+         """Disponibili funzioni relative alla gestione degli acconti
+         per evidenziazione in stampa documento."""),
+        ),),
+    
+    ('1.6.41', None, (
+         ("BET4191",
+         """Implementata nuova interrogazione di dettaglio degli
+         incassi e pagamenti sui sottoconti movimentati in 
+         operazioni in saldaconto."""),
+        ),),
+    
+    ('1.6.40', None, (
+         ("BUG1164",
+         """Corretto dataentry saldaconto, in alcune circostanze 
+         la modifica della registrazione portava alla cancellazione
+         della partita."""),
+        ),),
+    
+    ('1.6.39', dt.Date(2015, 5, 20), (
+         ("BUG1163",
+         """Corretta la gestione dei tasti acceleratore su bottoni,
+         venivano attivati anche se il bottone era disabilitato o
+         nascosto."""),
+        ),),
+    
     ('1.6.38', dt.Date(2015, 4, 30), (
          ("BUG1162",
          """Corretta spedizione email da stampa differita, in caso di 

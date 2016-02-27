@@ -186,6 +186,7 @@ def GetEffConfig(tipo="R", banca=None):
     cfg.AddFilter("cfg.tipo=%s", tipo)
     cfg.StoreFilters()
     cfg.AddFilter("cfg.id_banca=%s", banca)
+    cfg.AddOrder("cfg.riga")
     cfg.Retrieve()
     if cfg.RowsCount() == 0:
         cfg.ResumeFilters()
@@ -202,13 +203,3 @@ def GetEffConfig(tipo="R", banca=None):
             tr[c.zona].append(c.macro)
     del cfg
     return tr
-    
-    
-if __name__ == "__main__":
-    db = adb.DB()
-    db.Connect()
-    eff = Eff()
-    eff.Retrieve()
-    print eff
-    for e in eff:
-        print e.id, e.datscad, e.numdoc, e.pdc.descriz, e.pdc.cli.indirizzo

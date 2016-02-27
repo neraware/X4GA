@@ -308,6 +308,7 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.MAGPZGRIP,
                    bt.MAGPPROMO,
                    bt.MAGVISGIA,
+                   bt.MAGVISDIS,
                    bt.MAGVISPRE,
                    bt.MAGVISCOS,
                    bt.MAGVISCPF,
@@ -343,7 +344,8 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.MAGREPLIS,
                    bt.MAGSEPLIS,
                    bt.MAGRELLIS,
-                   bt.MAGSELLIS,)
+                   bt.MAGSELLIS,
+                   bt.EFFCONSCA,)
             bt.TIPO_CONTAB = cn('setup_tipo_contab').GetValue()
             bt.CONSOVGES = cn('setup_consovges').GetValue()
             bt.CONBILRICL = cn('setup_conbilricl').GetValue()
@@ -389,6 +391,7 @@ class AziendaSetupPanel(_SetupPanel):
             bt.MAGPZGRIP = bool(cn('setup_magpzgrip').GetValue())
             bt.MAGPPROMO = bool(cn('setup_magppromo').GetValue())
             bt.MAGVISGIA = bool(cn('setup_magvisgia').GetValue())
+            bt.MAGVISDIS = bool(cn('setup_magvisdis').GetValue())
             bt.MAGVISPRE = bool(cn('setup_magvispre').GetValue())
             bt.MAGVISCOS = bool(cn('setup_magviscos').GetValue())
             bt.MAGVISCPF = bool(cn('setup_magviscpf').GetValue())
@@ -425,6 +428,7 @@ class AziendaSetupPanel(_SetupPanel):
             bt.MAGSEPLIS = cn('setup_magseplis').GetValue()
             bt.MAGRELLIS = cn('setup_magrellis').GetValue()
             bt.MAGSELLIS = cn('setup_magsellis').GetValue()
+            bt.EFFCONSCA = cn('setup_effconsca').GetValue()
             bt.defstru()
             out = wx.GetApp().TestDBVers(force=True)
             if not out:
@@ -473,6 +477,7 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.MAGPZGRIP,
                 bt.MAGPPROMO,
                 bt.MAGVISGIA,
+                bt.MAGVISDIS,
                 bt.MAGVISPRE,
                 bt.MAGVISCOS,
                 bt.MAGVISCPF,
@@ -508,7 +513,8 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.MAGREPLIS,
                 bt.MAGSEPLIS,
                 bt.MAGRELLIS,
-                bt.MAGSELLIS = old
+                bt.MAGSELLIS,
+                bt.EFFCONSCA = old
         if out:
             cfg = CfgContab()
             cfg.SetEsercizio(Env.Azienda.Login.dataElab)

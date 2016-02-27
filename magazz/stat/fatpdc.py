@@ -45,6 +45,7 @@ import report as rpt
 
 FRAME_TITLE_FATT = "Fatturato clienti"
 FRAME_TITLE_FATTCC = "Fatturato clienti/categoria prodotto"
+FRAME_TITLE_FATTCD = "Fatturato clienti/destinazione"
 
 
 class _FatturatoVenditeGrid(dbglib.DbGridColoriAlternati):
@@ -343,3 +344,80 @@ class FatturatoCliCatArtFrame(aw.Frame):
         aw.Frame.__init__(self, *args, **kwargs)
         self.AddSizedPanel(FatturatoCliCatArtPanel(self))
         self.CenterOnScreen()
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoCliDesGrid(_FatturatoVenditeGrid):
+    
+    def GetColDef(self):
+        
+        def cn(tab, col):
+            return tab._GetFieldIndex(col, inline=True)
+        
+        _STR = gl.GRID_VALUE_STRING
+        _VAL = bt.GetValIntMaskInfo()
+        
+        mov = self.dbfat
+        pdc = mov.doc.pdc
+        dst = mov.doc.dest
+        cat = mov.prod.catart
+        
+        return (\
+            ( 60, (cn(pdc, 'codice'),           "Cod.",         _STR, False)),
+            (220, (cn(pdc, 'descriz'),          "Cliente",      _STR, False)),
+            ( 60, (cn(dst, 'codice'),           "Cod.",         _STR, False)),
+            (220, (cn(dst, 'descriz'),          "Destinazione", _STR, False)),
+            (110, (cn(mov, 'total_statvalfat'), "Fatturato",    _VAL, False)),
+            (  1, (cn(pdc, 'id'),               "#cli",         _STR, False)),
+            (  1, (cn(cat, 'id'),               "#cat",         _STR, False)),
+        )
+    
+    def SetTotali(self):
+        def cn(col):
+            return self.dbfat._GetFieldIndex(col)
+        self.AddTotalsRow(1, 'Totali', (cn('total_statvalfat'),))
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoCliDesPanel(_FatturatoVenditePanel):
+    
+    rptname = "Fatturato Clienti per Destinazione"
+    
+    def InitControls(self):
+        wdr.SetClienti()
+        wdr.FatturatoPdcFunc(self)
+    
+    def InitTableFatt(self):
+        self.dbfat = dbs.FatturatoCliDes()
+        self.dbfat.ShowDialog(self)
+    
+    def InitGrid(self):
+        self.gridfat = FatturatoCliDesGrid(self.FindWindowByName('pangridfat'), 
+                                           self.dbfat)
+    
+    def OnUpdate(self, event):
+        self.UpdateData(self.dbfat, self.gridfat)
+        event.Skip()
+    
+    def OnPrint(self, event):
+        db = self.dbfat
+        tipord = self.FindWindowByName('tipord').GetSelection()
+        rptname = self.rptname
+        if tipord != 0:
+            rptname += ' - flat'
+        rpt.Report(self, db, rptname)
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoCliDesFrame(aw.Frame):
+    
+    def __init__(self, *args, **kwargs):
+        kwargs['title'] = FRAME_TITLE_FATTCD
+        aw.Frame.__init__(self, *args, **kwargs)
+        self.AddSizedPanel(FatturatoCliDesPanel(self))

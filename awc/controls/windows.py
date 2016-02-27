@@ -623,7 +623,8 @@ class Panel(wx.Panel, mixin):
                         l = l[:n]+'&'+l[n:]
             else:
                 l = ctrl.GetLabel()
-            ctrl.SetLabel(l)
+            if isinstance(ctrl, wx.Button):
+                ctrl.SetLabel(l)
             
             if a.description:
                 ks = ''

@@ -326,21 +326,3 @@ class AllegatiFrame(aw.Frame):
             kwargs['title'] = FRAME_TITLE_ALLEG
         aw.Frame.__init__(self, *args, **kwargs)
         self.AddSizedPanel(AllegatiPanel(self, -1))
-
-
-# ------------------------------------------------------------------------------
-
-
-def runTest(frame, nb, log):
-    win = AllegatiFrame(None, -1)
-    win.Show()
-    return win
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    import sys,os
-    import runtest
-    runtest.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

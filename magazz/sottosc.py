@@ -31,7 +31,6 @@ import magazz.dbtables as dbm
 import magazz.invent_wdr as wdr
 
 import report as rpt
-import magazz.barcodes as bcode
 
 Env = dbm.Env
 bt = Env.Azienda.BaseTab
@@ -72,35 +71,21 @@ class SottoscortaGrid(inv.GridInv):
             (180, (RSINV_DES, "Prodotto", _STR, True))
         ]
         
-        if True:#self.modo == RSINV_MODE_BYPROGR:
-            cols += [\
-                ( qw, (RSINV_GIA, "Giacenza",    _QTA, True)),
-                ( qw, (RSINV_SCO, "Scorta min.", _QTA, True)),
-                ( qw, (RSINV_FAB, "Fabbisogno",  _QTA, True)),
-                (  1, (RSINV_ID,  "#pro",        _STR, True)),
-            ]                                      
-        
-        #else:
-            #for col, mag in enumerate(self.dbmags):
-                #cols.append((qw, (col+4, mag.descriz, _QTA, True)))
+        cols += [\
+            ( qw, (RSINV_GIA, "Giacenza",    _QTA, True)),
+            ( qw, (RSINV_SCO, "Scorta min.", _QTA, True)),
+            ( qw, (RSINV_FAB, "Fabbisogno",  _QTA, True)),
+            (  1, (RSINV_ID,  "#pro",        _STR, True)),
+        ]                                      
         
         colmap  = [c[1] for c in cols]
         colsize = [c[0] for c in cols]
         
         canedit = False
         canins = False
-        afteredit = None
         
         grid = dbglib.DbGrid(self.parent, -1, size=size, style=0)
         grid.SetData(self.rsinv, colmap, canedit, canins)
-        
-        #def GridAttr(row, col, rscol, attr):
-            #if col%2 == 0:
-                #attr.SetBackgroundColour(stdcolor.GetColour("gainsboro"))
-            #else:
-                #attr.SetBackgroundColour(stdcolor.NORMAL_BACKGROUND)
-            #return attr
-        #grid.SetCellDynAttr(GridAttr)
         
         map(lambda c:\
             grid.SetColumnDefaultSize(c[0], c[1]), enumerate(colsize))
@@ -130,62 +115,16 @@ class SottoscortaGrid(inv.GridInv):
         self.rsinv = []
         self.ResetTotals()
         
-        #tipoval = int(parms['tipoval'])
-        #tiplist = parms['id_tiplist']
-        
         for i in dbinv:
-            #vu = i.Valore(tipoval, tiplist)
-            #val = i.total_giac*vu
-            do = True
-            #if   i.total_giac < 0  and not parms['incgianeg']:
-                #do = False
-            #elif i.total_giac == 0 and not parms['incgianul']:
-                #do = False
-            #elif i.total_giac > 0  and not parms['incgiapos']:
-                #do = False
-            #elif val <= 0 and not parms['incvalnul']:
-                #do = False
-            #else:
-                #v1 = parms['valinf']
-                #v2 = parms['valsup']
-                #if v1 or v2:
-                    #if v1 and val<v1 or v2 and val>v2:
-                        #do = False
-            if do:
-                if True:#self.modo == RSINV_MODE_BYPROGR:
-                    gia = i.total_giac or 0
-                    sco = i.scomin or 0
-                    if sco>0 and gia<sco:
-                        self.rsinv.append([i.id,      #RSINV_ID
-                                           i.codice,  #RSINV_COD
-                                           i.descriz, #RSINV_DES
-                                           gia,       #RSINV_GIA
-                                           sco,       #RSINV_SCO
-                                           sco-gia])  #RSINV_VAL
-                    #for t in ('ini', 'car', 'sca'):
-                        #for tipo in ('', 'v'):
-                            #name = "%s%s" % (t, tipo)
-                            #self.totals[name] +=\
-                                #i.__getattr__("total_%s" % name)
-                    #self.totals['giac'] +=  i.total_giac
-                    #self.totals['giacv'] += val
-                    
-                #else:
-                    #p = [i.id,                       #RSINV_ID
-                         #i.codice,                   #RSINV_COD
-                         #i.descriz,                  #RSINV_DES
-                         #i.barcode]                  #RSINV_BCD
-                    #for magid in self.magsid:
-                        #gm = 0
-                        #if self.invdata:
-                            #if i.mov.Locate(lambda x: x.doc.id_magazz == magid):
-                                #gm = i.mov.total_giac
-                        #else:
-                            #if i.pp.Locate(lambda x: x.id_magazz == magid):
-                                #gm = i.pp.total_giac
-                        #p.append(gm)
-                    #self.rsinv.append(p)
-            
+            gia = i.total_giac or 0
+            sco = i.scomin or 0
+            if sco>0 and gia<sco:
+                self.rsinv.append([i.id,      #RSINV_ID
+                                   i.codice,  #RSINV_COD
+                                   i.descriz, #RSINV_DES
+                                   gia,       #RSINV_GIA
+                                   sco,       #RSINV_SCO
+                                   sco-gia])  #RSINV_VAL
             if not wait.SetValue(i.RowNumber()):
                 break
         

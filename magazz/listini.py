@@ -1173,6 +1173,7 @@ class ListiniPanel(aw.Panel, aw.awu.LimitiFiltersMixin):
                                     else:
                                         colw = col
                                     setattr(lis, colw, getattr(acq, col))
+                                    self.gridlis.promod[lis.prod.id] = [lis.p_costo, lis.p_prezzo]
                                     self.gridlis.TestChanges(lis.RowNumber(),
                                                              namecol=colw)
                                     changed = True

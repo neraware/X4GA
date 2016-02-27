@@ -599,6 +599,18 @@ class PdcMastro(_PdcMovimMixin):
         
         self._AddMovTables()
         
+        cmd = r""" (SELECT %s FROM pcf """ \
+               """    JOIN contab_s s ON s.id_pcf=pcf.id """ \
+               """   WHERE s.id_reg=reg.id LIMIT 1) """
+        
+        self.mov.AddField(""" IF(COALESCE(reg.numdoc, '')='' AND COALESCE(reg.datdoc, '')='', """+
+                          (cmd % 'numdoc')+
+                          """, reg.numdoc)""", 'cos_numdoc')
+        
+        self.mov.AddField(""" IF(COALESCE(reg.numdoc, '')='' AND COALESCE(reg.datdoc, '')='', """+
+                          (cmd % 'datdoc')+
+                          """, reg.datdoc)""", 'cos_datdoc')
+        
         for segno, nome in (("D", "dare"),\
                             ("A", "avere")):
             mov.AddField(\
@@ -2809,33 +2821,19 @@ JOIN pdctip tipana ON pdc.id_tipo=tipana.id
 HAVING (saldocont IS NULL AND saldopcf IS NOT NULL AND saldopcf<>0) OR (saldocont IS NOT NULL AND saldocont<>0 AND saldopcf IS NULL) OR saldocont<>saldopcf
 ORDER BY tipana.tipo, pdc.descriz
         """ % filter
-        db = adb.db.__database__
-        dbcon = db._dbCon
+        db = adb.db.get_db()
         try:
-            c = dbcon.cursor()
+            c = adb.db.get_cursor()
             c.execute(cmd, par)
             rs = c.fetchall()
             self.SetRecordset(rs)
+            c.close()
             out = True
         except Exception, e:
             db.dbError.description = repr(e.args)
             self._info.db = db
             out = False
         return out
-
-
-if __name__ == '__main__':
-    db = adb.DB()
-    db.Connect()
-    q = PdcQuadPcfCont()
-    if q.Retrieve():
-        for x in q:
-            print x.tipana_descriz, x.pdc_codice, x.pdc_descriz, x.saldocont, x.saldopcf
-    else:
-        print q.GetError()
-
-
-# ------------------------------------------------------------------------------
 
 
 class QuadReg(adb.DbMem):
@@ -3167,10 +3165,10 @@ class _Vendite_mixin_(object):
     
     _impexpr = 'mov.imponib*IF(mov.segno="A",1,-1)'
     _ivaexpr = '(mov.imposta+mov.indeduc)*IF(mov.segno="A",1,-1)'
-    _privafilt = 'IF(tipana.tipo="C", cliente.piva IS NULL OR cliente.piva="", fornit.piva IS NULL OR fornit.piva="")'
-    _pivitfilt = 'IF(tipana.tipo="C", stato_cli.codice="IT", stato_for.codice="IT")'
-    _pivcefilt = 'IF(tipana.tipo="C", stato_cli.is_cee=1 AND stato_cli.codice<>"IT", stato_for.is_cee=1 AND stato_for.codice<>"IT")'
-    _pivestfilt = '(IF(tipana.tipo="C", stato_cli.codice != "IT", stato_for.codice != "IT") AND NOT %(_pivcefilt)s)' % locals()
+    _privafilt = 'IF(tipana.tipo="C", (cliente.piva IS NULL OR cliente.piva="") AND LENGTH(cliente.codfisc)=16, (fornit.piva IS NULL OR fornit.piva="") AND LENGTH(fornit.codfisc)=16)'
+    _pivitfilt = 'IF(tipana.tipo="C", stato_cli.codice="IT" AND LENGTH(cliente.piva)=11, stato_for.codice="IT" AND LENGTH(fornit.piva)=11)'
+    _pivcefilt = 'IF(tipana.tipo="C", stato_cli.is_cee=1 AND stato_cli.codice<>"IT" AND LENGTH(cliente.piva)>0, stato_for.is_cee=1 AND stato_for.codice<>"IT"  AND LENGTH(fornit.piva)>0)'
+    _pivestfilt = '(IF(tipana.tipo="C", stato_cli.codice != "IT"  AND LENGTH(cliente.piva)>0, stato_for.codice != "IT"  AND LENGTH(fornit.piva)>0) AND NOT %(_pivcefilt)s)' % locals()
     _ivanull = '(aliq.perciva=0 OR aliq.perciva IS NULL)'
 
 
@@ -3390,7 +3388,11 @@ class VenditeXAliqIVA(adb.DbTable, _Vendite_mixin_):
             f.append(self._pivcefilt)
         if pivest:
             f.append(self._pivestfilt)
-        self.AddBaseFilter(" OR ".join(f))
+        if f:
+            f = " OR ".join(f)
+        else:
+            f = 'FALSE'
+        self.AddBaseFilter(f)
         
         self.Reset()
     

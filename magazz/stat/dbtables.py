@@ -183,6 +183,9 @@ class _FatturatoVendite(adb.DbTable):
         cta = ana.AddJoin(bt.TABNAME_CATCLI,      'catana', join=adb.JOIN_LEFT,
                           idLeft='id_categ', idRight='id')
         
+        dst = doc.AddJoin(bt.TABNAME_DESTIN,      'dest',   join=adb.JOIN_LEFT,
+                          idLeft='id_dest', )
+        
         age = doc.AddJoin(bt.TABNAME_AGENTI,      'agente', join=adb.JOIN_LEFT)
         
         pro = self.AddJoin(bt.TABNAME_PROD,       'prod',   join=adb.JOIN_LEFT)
@@ -216,6 +219,16 @@ class FatturatoClienti(_FatturatoVendite):
     
     def AddGroups(self):
         self.AddGroupOn('pdc.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoCliDes(_FatturatoVendite):
+    
+    def AddGroups(self):
+        self.AddGroupOn('pdc.id')
+        self.AddGroupOn('dest.id')
 
 
 # ------------------------------------------------------------------------------

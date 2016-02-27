@@ -152,6 +152,50 @@ class GiacMagGrid(dbglib.DbGridColoriAlternati):
         return attr
     
 
+class DisponibDaOrdiniGrid(dbglib.ADB_Grid):
+    
+    id_prod = None
+    bkcli = True
+    bkfor = True
+    
+    def __init__(self, parent, bkcli=True, bkfor=True):
+        
+        self.dbdisp = dbm.DisponibProdotto()
+        
+        dbglib.ADB_Grid.__init__(self, parent, db_table=self.dbdisp, 
+                                 can_edit=False, can_insert=True)
+        
+        self.id_prod = None
+        
+        dis = self.dbdisp
+        
+        QMI, QMD = 6, bt.MAGQTA_DECIMALS
+        
+        self.AddColumn(dis, 'magazz_cod', 'Cod.', col_width=40)
+        self.AddColumn(dis, 'magazz_des', 'Magazzino', col_width=80, is_fittable=True)
+        self.AddColumn(dis, 'giac', 'Giac.', col_type=self.TypeFloat(QMI, QMD))
+        self.AddColumn(dis, 'bkcli', 'Ord.Cli.', col_type=self.TypeFloat(QMI, QMD))
+        self.AddColumn(dis, 'bkfor', 'Ord.For.', col_type=self.TypeFloat(QMI, QMD))
+        self.AddColumn(dis, 'disp', 'Disponib.', col_type=self.TypeFloat(QMI, QMD))
+        self.AddColumn(dis, 'magazz_id', '#mag', col_width=1)
+        
+        def ci(col):
+            return dis._GetFieldIndex(col, inline=True)
+        
+        self.AddTotalsRow(1, 'Totali:', (ci('giac'),
+                                         ci('bkcli'),
+                                         ci('bkfor'),
+                                         ci('disp'),))
+        
+        self.CreateGrid()
+    
+    def get_disponib_prodotto(self, id_prod, bkcli=True, bkfor=True):
+        if id_prod != self.id_prod or bkcli != self.bkcli or bkfor != self.bkfor:
+            disp = self.dbdisp.get_disponib_prodotto(id_prod, bkcli, bkfor)
+            self.ChangeData(disp.GetRecordset())
+            self.id_prod, self.bkcli, self.bkfor = id_prod, bkcli, bkfor
+
+
 # ------------------------------------------------------------------------------
 
 
@@ -376,8 +420,7 @@ class GrigliaPrezziCliForGrid(dbglib.DbGridColoriAlternati):
         g = self.dbgri
         g.CreateNewRow()
         g.id_prod = self.idprod
-        if bt.MAGDATGRIP:
-            g.data = Env.Azienda.Login.dataElab
+        g.data = Env.Azienda.Login.dataElab
         return True
 
 
@@ -798,6 +841,7 @@ class ProdPanel(ga.AnagPanel):
         self.dbpro = dbm.Prodotti()
         
         self.giacmaggrid = None
+        self.dispmaggrid = None
         self.listattgrid = None
         
         self.ricar = 0
@@ -1029,6 +1073,7 @@ class ProdPanel(ga.AnagPanel):
     
     def OnTestImmagine(self, event):
         self.TestImmagine()
+        self.UpdatePages()
         event.Skip()
     
     def OnGeneraBarcode(self, event):
@@ -1091,7 +1136,12 @@ class ProdPanel(ga.AnagPanel):
         
         ci = lambda x: self.FindWindowById(x)
         ci(wdr.ID_STETIC).SetDataLink('stetic', {True: 1, False: 0})
-        self.giacmaggrid = GiacMagGrid(ci(wdr.ID_PANGRIDGIAC))
+        if bt.MAGVISGIA:
+            self.giacmaggrid = GiacMagGrid(ci(wdr.ID_PANGRIDGIAC))
+        if bt.MAGVISDIS:
+            self.dispmaggrid = DisponibDaOrdiniGrid(ci(wdr.ID_PANGRIDDISP), bkcli=True, bkfor=True)
+            for name in 'bkcli bkfor'.split():
+                self.Bind(wx.EVT_CHECKBOX, lambda *x: self.UpdatePages(), self.FindWindowByName(name))
         if bt.MAGNUMLIS>0:
             self.listattgrid = ListAttGrid(ci(wdr.ID_PANGRIDLATT))
         if bt.MAGATTGRIP:
@@ -1107,7 +1157,7 @@ class ProdPanel(ga.AnagPanel):
         ci(wdr.ID_CTRFORNIT).SetFilter('id_tipo IN (%s)' \
                                        % ','.join([str(x.id) for x in tip]))
         
-        self.UpdateDataControls()
+#         self.UpdateDataControls()
         
         self.Bind(wx.EVT_CHECKBOX, self.OnStEtic, id=wdr.ID_STETIC)
         
@@ -1285,32 +1335,12 @@ class ProdPanel(ga.AnagPanel):
         event.Skip()
 
     def UpdateDataControls(self, *args, **kwargs):
-        #tolgo il filtro dal conto di bilancio
-        #poiché il filtro presente è stato impostato *prima* di aggiornare i
-        #controlli con i valori di questo record, quindi se il mastro del
-        #record attuale differisce da quello del record precedente, il filtro
-        #impostato sul conto è *errato*
+        
         self.FindWindowByName('id_gruart').SetFilter(None)
         ga.AnagPanel.UpdateDataControls(self, *args, **kwargs)
-        if self.giacmaggrid:
-            dbmag, dbppm = self.dbmag, self.dbppm
-            dbppm.Get(self.db_recid)
-            gpm = []
-            for mag in dbmag:
-                if dbppm.Locate(lambda x: x.mov.doc.mag.codice == mag.codice):
-                    g = dbppm.total_giac
-                    u = dbppm.Valore(dbm.VALINV_COSTOULTIMO)
-                    m = dbppm.Valore(dbm.VALINV_COSTOMEDIO)
-                else:
-                    g = u = m = 0
-                gpm.append((mag.codice,  #RSGIAC_CODMAG
-                            mag.descriz, #RSGIAC_DESMAG
-                            g,           #RSGIAC_QTA
-                            u,           #RSGIAC_COSTOU
-                            m,           #RSGIAC_COSTOM
-                            g*u,         #RSGIAC_TOTCSU
-                            g*m))        #RSGIAC_TOTCSM
-            self.giacmaggrid.ChangeData(gpm)
+        
+        self.UpdatePages()
+        
         if bt.MAGPPROMO:
             self.UpdatePromo()
         if self.listattgrid:
@@ -1321,6 +1351,48 @@ class ProdPanel(ga.AnagPanel):
             self.GridGriglieLoad()
         self.TestImmagine()
         self.TestEnable()
+    
+    def UpdatePages(self):
+        
+        cn = self.FindWindowByName
+        nb = cn('_notefotozone')
+        page = nb.GetSelection()
+        text = nb.GetPageText(page)
+        
+        #aggiornamento giacenze
+        if 'giacenze' in text.lower() and self.giacmaggrid:
+            wx.BeginBusyCursor()
+            try:
+                dbmag, dbppm = self.dbmag, self.dbppm
+                dbppm.Get(self.db_recid)
+                gpm = []
+                for mag in dbmag:
+                    if dbppm.Locate(lambda x: x.mov.doc.mag.codice == mag.codice):
+                        g = dbppm.total_giac
+                        u = dbppm.Valore(dbm.VALINV_COSTOULTIMO)
+                        m = dbppm.Valore(dbm.VALINV_COSTOMEDIO)
+                    else:
+                        g = u = m = 0
+                    gpm.append((mag.codice,  #RSGIAC_CODMAG
+                                mag.descriz, #RSGIAC_DESMAG
+                                g,           #RSGIAC_QTA
+                                u,           #RSGIAC_COSTOU
+                                m,           #RSGIAC_COSTOM
+                                g*u,         #RSGIAC_TOTCSU
+                                g*m))        #RSGIAC_TOTCSM
+                self.giacmaggrid.ChangeData(gpm)
+            finally:
+                wx.EndBusyCursor()
+        
+        #aggiornamento disponibilità
+        if 'disponib' in text.lower() and self.dispmaggrid:
+            wx.BeginBusyCursor()
+            try:
+                bkcli = cn('bkcli').IsChecked()
+                bkfor = cn('bkfor').IsChecked()
+                self.dispmaggrid.get_disponib_prodotto(self.db_recid, bkcli, bkfor)
+            finally:
+                wx.EndBusyCursor()
     
     def UpdatePromo(self):
         prm = self.dbpromo
@@ -1408,7 +1480,9 @@ class ProdPanel(ga.AnagPanel):
         if out and recid is not None:
             cmd = "DELETE FROM %s WHERE id_prod=%%s" % bt.TABNAME_LISTINI
             try:
-                self.db_curs.execute(cmd, recid)
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, recid)
+                cur.close()
             except MySQLdb.Error, e:
                 awu.MsgDialogDbError(self, e)
         return out
@@ -1654,7 +1728,6 @@ class ProdPanel(ga.AnagPanel):
         del self._glist_rsdel[:]
 
     def GridListWrite(self):
-        out = False
         dblis = self.dblis
         for recno in range(len(dblis.GetRecordset())):
             dblis.MoveRow(recno)
@@ -1662,11 +1735,13 @@ class ProdPanel(ga.AnagPanel):
         if dblis.SaveAll():
             cmd = "DELETE FROM %s WHERE id=%%s" % bt.TABNAME_LISTINI
             try:
-                self.db_curs.executemany(cmd, self._glist_rsdel)
-                out = True
+                cur = adb.db.get_cursor()
+                cur.executemany(cmd, self._glist_rsdel)
+                cur.close()
+                return True
             except MySQLdb.Error, e:
                 awu.MsgDialogDbError(self, e)
-        return out
+        return False
 
 
 # ------------------------------------------------------------------------------

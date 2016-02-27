@@ -533,6 +533,10 @@ class Report:
         dlg.SetReport(path, name, multi_default)
         dlg.SetPrinter(printer)
         dlg.SetCopies(copies)
+        def on_path_info(event):
+            awu.MsgDialog(dlg, path.replace('\\', '/'), 'Report path', style=wx.ICON_INFORMATION)
+            event.Skip()
+        dlg.FindWindowById(wdr.ID_REPORTNAME).Bind(wx.EVT_RIGHT_DCLICK, on_path_info)
         do = dlg.ShowModal() == wx.ID_OK
         if do:
             rptdef = dlg.GetReportName()
@@ -667,36 +671,3 @@ def get_report(rptdef):
         if os.path.isfile(test):
             return 'report', test
     return None, 'not found'
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-   
-    class TryReport(wx.App):
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            dialog = wx.Dialog( None, -1, "SuperApp", [0,0], [100,76] )
-            return True
-        
-    app = TryReport(True)
-    
-    db = adb.DB()
-    db.Connect()
-    
-    pdc = adb.DbTable("pdc", writable=False)
-    mas = pdc.AddJoin("bilmas")
-    con = pdc.AddJoin("bilcon")
-    tip = pdc.AddJoin("pdctip", "tipana", idLeft="id_tipo")
-    pdc.AddOrder("IF(bilmas.tipo='P',1,IF(bilmas.tipo='E',2,3))")
-    pdc.AddOrder("bilmas.descriz")
-    pdc.AddOrder("bilcon.descriz")
-    pdc.AddOrder("pdc.descriz")
-    pdc.AddFilter("tipana.tipo NOT IN ('C','F')")
-    if pdc.Retrieve():
-        Report(pdc, "test")
-    else:
-        print pdc.GetError()
-        app.MainLoop()
-

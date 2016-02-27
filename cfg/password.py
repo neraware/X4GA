@@ -106,7 +106,7 @@ class PswPanel(aw.Panel):
         elif len(psw1)<PSWD_MIN and psw1==psw2:
             util.MsgDialog(self, "La password deve avere un lunghezza minima di %d caratteri" % PSWD_MIN)
         else:
-            self.x4cursor.execute("select old_password('%s');" % psw1)
+            self.x4cursor.execute("select password('%s');" % psw1)
             e_psw=self.x4cursor.fetchone()[0]
             sql="UPDATE utenti SET psw='%s' WHERE descriz='%s';" % (e_psw, self.username )
             self.x4cursor.execute(sql)

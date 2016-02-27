@@ -242,7 +242,6 @@ class LinkTable(wx.Control,\
         
         self.PreSetVal = None
         
-        self.db_curs = None
         self.cardclass = None
         self.dyncard = None
         self.filter = None
@@ -311,26 +310,7 @@ class LinkTable(wx.Control,\
         self._btncrd.SetName("_lt%d_button_card" % self.GetId())
         self._btnflt.SetName("_lt%d_button_filt" % self.GetId())
         
-        try:
-            self.db_curs = wx.GetApp().dbcon.cursor()
-        except MySQLdb.Error, e:
-            dlg = wx.MessageDialog(parent=self,
-                                   caption="Errore",
-                                   message=repr(e.args),
-                                   style=wx.ICON_ERROR)
-            dlg.Destroy()
-        
-##        wx.CallAfter(self._setDim) 
-#        def InitDim():
-#            s = self._ctrcod.GetSize()
-#            self._ctrcod.SetSize((self._codewidth or  40, s[1]))
-#            s = self._ctrdes.GetSize()
-#            self._ctrdes.SetSize((self._descwidth or 120, s[1]))
-#            self._setDim(firstTime=True)
-#        wx.CallAfter(InitDim)
-        
         awu.GetParentFrame(self).Bind(wx.EVT_MOVE, self.OnFatherMove)
-#        awu.GetParentFrame(self).Bind(wx.EVT_SIZE, self.OnSizeChanged)
         self.Bind(wx.EVT_SIZE, self.OnSizeChanged, awu.GetParentFrame(self))
         
         for control in (self._ctrcod, self._ctrdes):
@@ -1309,7 +1289,7 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
         fl_val = self.filtervalues[num][1]
         if fl_val:
             import awc.tables.util as awtu
-            fl_tit = awtu.GetRecordInfo(self.db_curs, fl_tab, fl_val, (self.codice_fieldname,
+            fl_tit = awtu.GetRecordInfo(fl_tab, fl_val, (self.codice_fieldname,
                                                                        self.descriz_fieldname))
         else:
             fl_tit = None
@@ -1566,8 +1546,10 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
                 par += p
             rs = None
             try:
-                self.db_curs.execute(cmd, par)
-                rs = self.db_curs.fetchone()
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, par)
+                rs = cur.fetchone()
+                cur.close()
             except MySQLdb.Error, e:
                 self.SetErrorValues(e)
                 self.iderror = True

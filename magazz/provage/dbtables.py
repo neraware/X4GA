@@ -39,15 +39,32 @@ class ProvvigAgentiDetTable(adb.DbTable):
         tpd = doc.AddJoin(bt.TABNAME_CFGMAGDOC,  'tipdoc', idLeft='id_tipdoc', fields=None)
         age = doc.AddJoin(bt.TABNAME_AGENTI,     'age', idLeft='id_agente', fields=None)
         pdc = doc.AddJoin(bt.TABNAME_PDC,        'pdc', idLeft='id_pdc', fields=None)
+        ana = pdc.AddJoin(bt.TABNAME_CLIENTI,    'anag', idLeft='id', fields=None)
         dst = doc.AddJoin(bt.TABNAME_DESTIN,     'dest', idLeft='id_dest', fields=None, join=adb.JOIN_LEFT)
         sca = doc.AddJoin(bt.TABNAME_CONTAB_S,   'sca', idLeft='id_reg', idRight='id_reg', fields=None, join=adb.JOIN_LEFT)
         pcf = sca.AddJoin(bt.TABNAME_PCF,        'pcf', idLeft='id_pcf', fields=None, join=adb.JOIN_LEFT)
         
         self._AddGroups()
         
+        perpro = 'IF(mov.perpro IS NULL, X, mov.perpro)'
+        for _prio in (bt.MAGPROVSEQ or ""):
+            try:
+                if _prio == "P":
+                    #prodotto
+                    perpro = perpro.replace('X', "IF(prod.perpro, prod.perpro, X)")
+                elif _prio == "C":
+                    #prodotto
+                    perpro = perpro.replace('X', "IF(anag.perpro, anag.perpro, X)")
+                elif _prio == "A":
+                    #agente
+                    perpro = perpro.replace('X', "IF(age.perpro, age.perpro, X)")
+            except:
+                pass
+        perpro = perpro.replace('X', '0')
+        
         self.AddTotalOf('mov.importo*(tipdoc.provvig)', 'vendita')
-        self.AddAverageOf('IF(mov.perpro IS NULL, prod.perpro, mov.perpro)', 'perpro')
-        self.AddTotalOf('mov.importo*IF(mov.perpro IS NULL, prod.perpro, mov.perpro)*(tipdoc.provvig)/100', 'provvig')
+        self.AddAverageOf(perpro, 'perpro')
+        self.AddTotalOf('mov.importo*%(perpro)s*(tipdoc.provvig)/100' % locals(), 'provvig')
         self.AddTotalOf('pcf.imptot-pcf.imppar', 'saldo')
         
         self.AddBaseFilter('tipdoc.provvig IN (1, -1)')
@@ -56,6 +73,7 @@ class ProvvigAgentiDetTable(adb.DbTable):
         
         self._AddOrders()
         self.Reset()
+        self.SetDebug()
     
     def _AddGroups(self):
         self.AddGroupOn('mov.id',          'mov_id')

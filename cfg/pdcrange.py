@@ -151,24 +151,3 @@ class PcdRangeFrame(aw.Frame):
             kwargs['title'] = FRAME_TITLE
         aw.Frame.__init__(self, *args, **kwargs)
         self.AddSizedPanel(PdcRangePanel(self, -1))
-
-
-# ---------------------------------------------------------------------------
-
-
-def runTest(frame, nb, log):
-    win = PdcRangeDialog()
-    win.Show()
-    return win
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    import sys,os
-    import runtest
-    import stormdb as adb
-    db = adb.DB()
-    db.Connect()
-    runtest.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

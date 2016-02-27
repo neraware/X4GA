@@ -217,6 +217,8 @@ class DocMag(adb.DbTable):
             bt.TABNAME_MOVMAG_B,  "mov",     idRight="id_doc",\
             fields=magazz.movfields, writable=writable)
         
+        dbmov.AddOrder('mov.numriga')
+        
         dbtmov = dbmov.AddJoin(\
             bt.TABNAME_CFGMAGMOV, "config",  idLeft="id_tipmov",\
             join=adb.JOIN_LEFT)
@@ -374,6 +376,11 @@ class DocMag(adb.DbTable):
             pdco = auto.aut_id
         i.id_pdc_omaggi = pdco
         
+        pdco = None
+        if auto.Retrieve("codice=%s", 'magomaiva') and auto.OneRow():
+            pdco = auto.aut_id
+        i.id_pdc_omaiva = pdco
+        
         omar = False
         if auto.Retrieve("codice=%s", 'magomareg') and auto.OneRow():
             omar = (auto.aut_id == 1)
@@ -391,6 +398,9 @@ class DocMag(adb.DbTable):
         self.AddOrder('doc.numdoc')
         
         self.Get(-1)
+    
+    def get_mov_descriz(self):
+        return self.mov.descriz
     
     def get_numdoc_print(self):
         if self.regcon.id:
@@ -872,17 +882,19 @@ class DocMag(adb.DbTable):
                     doc = DocMag()
                     doc.Get(doc_id)
                     cfg = self.config
-                    n = [cfg.id_acqdoc1,
-                         cfg.id_acqdoc2,
-                         cfg.id_acqdoc3,
-                         cfg.id_acqdoc4,].index(doc.id_tipdoc)
-                    ann = [cfg.annacq1,
-                           cfg.annacq2,
-                           cfg.annacq3,
-                           cfg.annacq4,][n]
-                    if ann:
-                        doc.f_ann = 1
-                        doc.Save()
+                    tipdocs = [cfg.id_acqdoc1,
+                               cfg.id_acqdoc2,
+                               cfg.id_acqdoc3,
+                               cfg.id_acqdoc4,]
+                    if doc.id_tipdoc in tipdocs:
+                        n = tipdocs.index(doc.id_tipdoc)
+                        ann = [cfg.annacq1,
+                               cfg.annacq2,
+                               cfg.annacq3,
+                               cfg.annacq4,][n]
+                        if ann:
+                            doc.f_ann = 1
+                            doc.Save()
         return out
     
     def AggiornaProdotti(self, deldoc=False):
@@ -1902,7 +1914,7 @@ class DocMag(adb.DbTable):
                     self.totimponib = RoundImp(self.totimponib+imponib)
                     self.totimporto = RoundImp(self.totimporto+importo)
             
-            self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
+#             self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
         
         # ripartizione sconti su totali x pdc
         if totscrip and totpdc:
@@ -2015,11 +2027,18 @@ class DocMag(adb.DbTable):
                     self.totimponib += imp
                     self.totimporto += mpr
                 
-            self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
+#             self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
         
-        if self.is_split_payment():
-            #adeguamento di totdare x split payment
-            self.totdare = RoundImp(self.totdare - (self.totimposta or 0))
+#         if self.is_split_payment():
+#             #adeguamento di totdare x split payment
+#             self.totdare = RoundImp(self.totdare - (self.totimposta or 0))
+#         
+#         ivaoma_iva, ivaoma_pdc, ivaoma_do = self.get_iva_omaggi_a_carico()
+#         if ivaoma_do:
+#             #adeguamento di totdare x iva omaggi a carico azienda
+#             self.totdare = RoundImp(self.totdare - ivaoma_iva)
+        
+        self.totdare = self.get_totdare()
         
         #ridefinizione dei subtotali
         _t = {}
@@ -2041,6 +2060,23 @@ class DocMag(adb.DbTable):
         if scad and self.config.caucon.pcf == '1':
             self.CalcolaScadenze()
     
+    def get_totdare(self):
+        
+        ND = bt.VALINT_DECIMALS
+        
+        totdare = round(self.totimporto - (self.totritacc or 0), ND)
+        
+        if self.is_split_payment():
+            #adeguamento di totdare x split payment
+            totdare = round(totdare - (self.totimposta or 0), ND)
+        
+        ivaoma_iva, _ivaoma_pdc, ivaoma_do = self.get_iva_omaggi_a_carico()
+        if ivaoma_do:
+            #adeguamento di totdare x iva omaggi a carico azienda
+            totdare = round(totdare - ivaoma_iva, ND)
+        
+        return totdare
+    
     def is_split_payment(self):
         for ti in self._info.totiva:
             if ti[magazz.RSIVA_tipoalq] == "S":
@@ -2057,6 +2093,23 @@ class DocMag(adb.DbTable):
             else:
                 sp['normal'] += 1
         return sp['splitp'] == 0 or sp['normal'] == 0
+    
+    def get_iva_splitplayment(self):
+        ivasplit = 0
+        for ti in self._info.totiva:
+            if ti[magazz.RSIVA_tipoalq] == "S":
+                ivasplit += ti[magazz.RSIVA_IMPOSTA]
+        return ivasplit
+    
+    def get_iva_omaggi_a_carico(self):
+        tio = 0
+        a = adb.DbTable('cfgautom', 'autom')
+        if a.Retrieve('autom.codice=%s', 'magomaiva') and a.OneRow():
+            for ti in self._info.totiva:
+                if ti[magazz.RSIVA_ISOMAGG]:
+                    tio += ti[magazz.RSIVA_IMPOSTA]
+            return tio, a.aut_id, tio != 0 and a.aut_id is not None
+        return 0, None, False
     
     def AddTotalPesoColli(self, mov):
         if mov.config.tqtaxpeso:
@@ -2109,6 +2162,7 @@ class DocMag(adb.DbTable):
             reg.CreateNewRow()
         
         is_split_payment = self.is_split_payment()
+        ivaoma_iva, ivaoma_pdc, ivaoma_do = self.get_iva_omaggi_a_carico()
         
         #testata registrazione
         reg.esercizio = self.datdoc.year
@@ -2142,6 +2196,7 @@ class DocMag(adb.DbTable):
         gestiva = reg.config.tipo == 'I' or reg.config.tipo == 'C' and self.config.noivaprof != 1
         
         pdcivaid = self.GetPdcIva(reg)
+        omaivaid = None
         
         if reg.config.tipo in 'IC':
             #riga 1 - sottoconto relativo al documento
@@ -2229,6 +2284,22 @@ class DocMag(adb.DbTable):
                 else:
                     body.segno = segnocp
                 body.id_pdcpa = pdcivaid
+                body.id_pdccp = self.id_pdc
+                body.solocont = 1
+                numriga += 1
+            
+            if gestiva and ivaoma_do and ivaoma_iva and ivaoma_pdc:
+                #aggiungo riga solo contabile con l'imposta degli omaggi
+                #girocontata su conto automatismo iva omaggi a carico azienda
+                body.CreateNewRow()
+                body.numriga = numriga
+                body.tipriga = "C"
+                body.importo = abs(ivaoma_iva)
+                if self.totimporto >= 0:
+                    body.segno = segnopa
+                else:
+                    body.segno = segnocp
+                body.id_pdcpa = ivaoma_pdc
                 body.id_pdccp = self.id_pdc
                 body.solocont = 1
                 numriga += 1
@@ -2679,6 +2750,37 @@ class DocMag(adb.DbTable):
                 if prv: out += (' (%s)' % prv)
                 return out
         return None
+    
+    def get_info_acconti(self, info_type=None):
+        col_importo = self.mov._GetFieldIndex('importo', inline=True)
+        col_isacconto = self.mov.config._GetFieldIndex('is_acconto', inline=True)
+        col_isaccstor = self.mov.config._GetFieldIndex('is_accstor', inline=True)
+        totale = 0
+        for r in self.mov.GetRecordset():
+            if r[col_importo]:
+                if info_type == 'addebito':
+                    if not r[col_isaccstor]:
+                        totale += (r[col_importo] or 0)
+                elif info_type == 'acconto':
+                    if r[col_isacconto]:
+                        totale += (r[col_importo] or 0)
+                elif info_type == 'stornoacconto':
+                    if r[col_isaccstor]:
+                        totale += (r[col_importo] or 0)
+                elif info_type == 'acconto_o_storno':
+                    if r[col_isacconto] or r[col_isaccstor]:
+                        totale += (r[col_importo] or 0)
+        return totale
+    
+    def get_acconto_disponibile(self):
+        totale = 0
+        if self.id_pdc:
+            sitacc = PdcSituazioneAcconti()
+            sitacc.GetForPdc(self.id_pdc)
+            sitacc.Retrieve()
+            for _ in sitacc:
+                totale += (sitacc.acconto_disponib or 0)
+        return totale
 
 
 # ------------------------------------------------------------------------------
@@ -2941,6 +3043,16 @@ class Movim(adb.DbTable):
         pdc = doc.AddJoin(\
             bt.TABNAME_PDC,       "pdc")
         
+        anc = pdc.AddJoin(\
+            bt.TABNAME_CLIENTI,   "anacli", idLeft='id', join=adb.JOIN_LEFT, fields=None)
+        ctc = anc.AddJoin(\
+            bt.TABNAME_CATCLI,    "catcli", idLeft='id_categ', join=adb.JOIN_LEFT, fields=None)
+        
+        anf = pdc.AddJoin(\
+            bt.TABNAME_FORNIT,    "anafor", idLeft='id', join=adb.JOIN_LEFT, fields=None)
+        ctf = anf.AddJoin(\
+            bt.TABNAME_CATFOR,    "catfor", idLeft='id_categ', join=adb.JOIN_LEFT, fields=None)
+        
         agente = doc.AddJoin(\
             bt.TABNAME_AGENTI,    "agente", join=adb.JOIN_LEFT)
         
@@ -3091,6 +3203,16 @@ class ElencoDocum(adb.DbTable):
         
         pdc = self.AddJoin(\
             bt.TABNAME_PDC,       "pdc")
+        
+        anc = pdc.AddJoin(\
+            bt.TABNAME_CLIENTI,   "anacli", idLeft='id', join=adb.JOIN_LEFT, fields=None)
+        ctc = anc.AddJoin(\
+            bt.TABNAME_CATCLI,    "catcli", idLeft='id_categ', join=adb.JOIN_LEFT, fields=None)
+        
+        anf = pdc.AddJoin(\
+            bt.TABNAME_FORNIT,    "anafor", idLeft='id', join=adb.JOIN_LEFT, fields=None)
+        ctf = anf.AddJoin(\
+            bt.TABNAME_CATFOR,    "catfor", idLeft='id_categ', join=adb.JOIN_LEFT, fields=None)
         
         tipana = pdc.AddJoin(\
             bt.TABNAME_PDCTIP,    "tipana", idLeft='id_tipo')
@@ -4002,12 +4124,12 @@ class RiepDocAcquis(adb.SubDbTable):
         mov = adb.DbTable(\
             bt.TABNAME_MOVMAG_B,  "mov", writable=False,
             fields='id,id_doc,qta,prezzo,sconto1,sconto2,sconto3,sconto4,sconto5,sconto6')
-        mov.AddFilter("mov.f_ann IS NULL or mov.f_ann<>1")
+        mov.AddFilter("(mov.f_ann IS NULL or mov.f_ann<>1)")
+        mov.AddFilter("(doc.f_ann IS NULL or doc.f_ann<>1) AND (doc.f_acq IS NULL or doc.f_acq<>1)")
         
         doc = mov.AddJoin(\
             bt.TABNAME_MOVMAG_H,  "doc", idLeft="id_doc", idRight="id", 
-            fields='id_tipdoc,id_pdc,id_dest,datdoc,numdoc,datreg')
-        mov.AddFilter("(doc.f_ann IS NULL or doc.f_ann<>1) AND (doc.f_acq IS NULL or doc.f_acq<>1)")
+            fields='id_tipdoc,id_pdc,id_dest,datdoc,numdoc,datreg,desrif,numrif,datrif')
         
         pdc = doc.AddJoin(\
             bt.TABNAME_PDC,       "pdc", fields='id,codice,descriz')
@@ -5105,20 +5227,317 @@ class SegnaColli(adb.DbMem):
         self.Reset()
 
 
-# ------------------------------------------------------------------------------
 
 
-if __name__ == '__main__':
-    db = adb.DB()
-    db.Connect()
-    x = ProdEticList()
-    for pid, qta in ((64300, 5),
-                     (64302, 6),
-                     (64304, 4)):
-        x.CreateNewRow()
-        x.id = pid
-        x.qtaetic = qta
-    for pr in x.GetPrintTable(3):
-        print '(%s, %s) (%s, %s) (%s, %s)' % (pr.codice_0, pr.descriz_0,
-                                              pr.codice_1, pr.descriz_1,
-                                              pr.codice_2, pr.descriz_2)
+class RiepilogoBackorderClienti(adb.DbMem):
+    
+    _aggordcol = 'aggordcli'
+    
+    def __init__(self):
+        adb.DbMem.__init__(self, fields='magazz_id,magazz_cod,magazz_des,ordinato,evaso')
+        self.Reset()
+    
+    def update_data_prodotto(self, id_prod, group_by_mag=True, mags=None, datmin=None):
+        db = adb.db.__database__
+        aggordcol = self._aggordcol
+        if group_by_mag:
+            group_by = 'mag.id, mag.codice, mag.descriz, mov.id_prod'
+        else:
+            group_by = 'mov.id_prod'
+        filters = []
+        if mags is not None:
+            filters.append('doc.id_magazz IN (%s)' % ','.join([str(m) for m in mags]))
+        if datmin is not None:
+            filters.append('doc.datdoc>="%s"' % datmin.strftime('%Y-%m-%d'))
+        filters = ' AND '.join(filters)
+        if filters:
+            filters = ' AND %s' % filters
+        cmd = """
+            SELECT mag.id, mag.codice, mag.descriz, SUM(mov.qta) 'ordinato', SUM((
+               SELECT SUM(eva.qta)
+                 FROM movmag_b eva
+                WHERE eva.id_moveva=mov.id
+            )) 'evaso'
+            FROM movmag_b mov
+            JOIN movmag_h doc ON doc.id=mov.id_doc
+            JOIN magazz mag ON mag.id=doc.id_magazz
+            JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+            WHERE mov.id_prod=%(id_prod)s 
+                  AND tpm.%(aggordcol)s IN (1,-1) 
+                  AND (mov.f_ann IS NULL OR mov.f_ann=0) 
+                  AND (doc.f_ann IS NULL OR doc.f_ann=0)  %(filters)s
+            GROUP BY %(group_by)s
+            HAVING evaso IS NULL OR ordinato>evaso
+        """ % locals()
+        db.Retrieve(cmd)
+        self.SetRecordset([]+db.rs)
+
+
+class RiepilogoBackorderFornit(RiepilogoBackorderClienti):
+    _aggordcol = 'aggordfor'
+
+
+class OrdiniProdotto(adb.DbMem):
+    
+    def __init__(self):
+        adb.DbMem.__init__(self, fields='mov_id,doc_id,tpd_id,tpd_cod,tpd_des,pdc_id,pdc_cod,pdc_des,dst_ind,dst_cit,numdoc,datdoc,qtaord,qtaeva,qtarim')
+        self.Reset()
+    
+    def update_ordini_prodotto(self, id_prod, mags=None, bkc=True, datbkc=None, bkf=True, datbkf=None):
+        db = adb.db.__database__
+        filters = []
+        if mags is not None:
+            filters.append('doc.id_magazz IN (%s)' % ','.join([str(m) for m in mags]))
+        if bkc and bkf:
+            filters.append('((tpm.aggordcli IN (1, -1) AND doc.datdoc>="%s") OR (tpm.aggordfor IN (1, -1) AND doc.datdoc>="%s"))'\
+                                % (datbkc.strftime('%Y-%m-%d'),
+                                   datbkc.strftime('%Y-%m-%d'),))
+        elif bkc:
+            if datbkc:
+                filters.append('tpm.aggordcli IN (1, -1) AND doc.datdoc>="%s"' % datbkc.strftime('%Y-%m-%d'))
+            else:
+                filters.append('tpm.aggordcli IN (1, -1)')
+        elif bkf:
+            if datbkf:
+                filters.append('tpm.aggordfor IN (1, -1) AND doc.datdoc>="%s"' % datbkf.strftime('%Y-%m-%d'))
+            else:
+                filters.append('tpm.aggordfor IN (1, -1)')
+        else:
+            filters.append('FALSE')
+        filters = ' AND '.join(filters)
+        if filters:
+            filters = ' AND %s' % filters
+        cmd = """
+            SELECT mov.id                   'mov_id', 
+                   doc.id                   'doc_id', 
+                   tpd.id                   'tpd_id',
+                   tpd.codice               'tpd_cod', 
+                   tpd.descriz              'tpd_des',
+                   pdc.id                   'pdc_id', 
+                   pdc.codice               'pdc_cod', 
+                   pdc.descriz              'pdc_des', 
+                   IF(dst.id IS NULL,IF(tpm.aggordcli IN (1,-1), anc.indirizzo, anf.indirizzo), dst.indirizzo) 'dst_ind',
+                   IF(dst.id IS NULL,IF(tpm.aggordcli IN (1,-1), anc.citta, anf.citta), dst.citta)             'dst_cit',
+                   doc.numdoc               'numdoc', 
+                   doc.datdoc               'datdoc', 
+                   mov.qta                  'qtaord',
+              
+              (SELECT COALESCE(SUM(eva.qta), 0)
+                 FROM movmag_b eva
+                WHERE eva.id_moveva=mov.id) 'qtaeva',
+                
+                mov.qta-
+              (SELECT COALESCE(SUM(eva.qta), 0)
+                 FROM movmag_b eva
+                WHERE eva.id_moveva=mov.id) 'qtarim'
+                
+            FROM movmag_b  mov
+            JOIN movmag_h  doc ON doc.id=mov.id_doc
+            JOIN pdc       pdc ON pdc.id=doc.id_pdc
+       LEFT JOIN destin    dst ON dst.id=doc.id_dest
+       LEFT JOIN clienti   anc ON anc.id=pdc.id
+       LEFT JOIN fornit    anf ON anf.id=pdc.id
+            JOIN magazz    mag ON mag.id=doc.id_magazz
+            JOIN cfgmagdoc tpd ON tpd.id=doc.id_tipdoc
+            JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+            WHERE mov.id_prod=%(id_prod)s 
+                  AND (mov.f_ann IS NULL OR mov.f_ann=0) 
+                  AND (doc.f_ann IS NULL OR doc.f_ann=0)  %(filters)s
+            HAVING qtaeva=0 OR qtarim>0
+        """ % locals()
+        db.Retrieve(cmd)
+        self.SetRecordset([]+db.rs)
+
+
+
+class DisponibProdotto(adb.DbMem):
+    
+    def __init__(self):
+        adb.DbMem.__init__(self, fields='magazz_id,magazz_cod,magazz_des,giac,bkcli,bkfor,disp')
+        self.Reset()
+        
+        class Inventario(InventarioDaMovim):
+            def _MakeGroups(self):
+                self.AddGroupOn('doc.id_magazz', 'magazz_id')
+        
+        self._dbinv = Inventario()
+    
+    def update_disp(self):
+        self.disp = (self.giac or 0) + (self.bkfor or 0) - (self.bkcli or 0)
+    
+    def get_disponib_prodotto(self, id_prod, bkcli=True, bkfor=True):
+        
+        disp = DisponibProdotto()
+        
+        mags = dba.TabMagazz()
+        mags.Retrieve()
+        
+        for mag in mags:
+            disp.CreateNewRow()
+            disp.magazz_id = mag.id
+            disp.magazz_cod = mag.codice
+            disp.magazz_des = mag.descriz
+            disp.giac = 0
+            disp.bkcli = 0
+            disp.bkfor = 0
+            disp.disp = 0
+        
+        if id_prod is not None:
+            
+            giac = self._dbinv
+            giac.Retrieve('mov.id_prod=%s', id_prod)
+            def search_mag(d): return d.magazz_id == giac.mov.doc.id_magazz
+            for _ in giac:
+                if disp.Locate(search_mag):
+                    disp.giac = giac.total_giac
+                    disp.update_disp()
+            
+            if bkcli:
+                evas = RiepilogoBackorderClienti()
+                evas.update_data_prodotto(id_prod)
+                def search_mag(d): return d.magazz_id == evas.magazz_id
+                for _ in evas:
+                    if disp.Locate(search_mag):
+                        disp.bkcli = (evas.ordinato or 0) - (evas.evaso or 0)
+                        disp.update_disp()
+            
+            if bkfor:
+                evas = RiepilogoBackorderFornit()
+                evas.update_data_prodotto(id_prod)
+                def search_mag(d): return d.magazz_id == evas.magazz_id
+                for _ in evas:
+                    if disp.Locate(search_mag):
+                        disp.bkfor = (evas.ordinato or 0) - (evas.evaso or 0)
+                        disp.update_disp()
+        
+        return disp
+
+
+class SottoscortaDaDisponib(adb.DbTable):
+    
+    _mags = None
+    def set_mags(self, mags):
+        self._mags = mags
+        self._dbinv.SetMagazz(mags)
+    
+    _datinv = None
+    def set_data_inv(self, datinv):
+        self._datinv = datinv
+        self._dbinv.SetDataInv(datinv)
+    
+    def __init__(self):
+        
+        adb.DbTable.__init__(self, 'prod')
+        _tip = self.AddJoin('tipart', idLeft='id_tipart', join=adb.JOIN_LEFT)
+        _cat = self.AddJoin('catart', idLeft='id_catart', join=adb.JOIN_LEFT)
+        _gru = self.AddJoin('gruart', idLeft='id_gruart', join=adb.JOIN_LEFT)
+        _mar = self.AddJoin('marart', idLeft='id_marart', join=adb.JOIN_LEFT)
+        _for = self.AddJoin('pdc', idLeft='id_fornit', join=adb.JOIN_LEFT)
+        self.AddField('0.0', 'tot_giac')
+        self.AddField('0.0', 'tot_bkcli')
+        self.AddField('0.0', 'tot_bkfor')
+        self.AddField('0.0', 'tot_disp')
+        self.AddField('0.0', 'tot_fabb')
+        self.AddBaseFilter('prod.scomin>0')
+        self.AddOrder('prod.codice')
+        self.Reset()
+        
+        self._dbinv = InventarioDaMovim()
+    
+    def update_disponib(self, bkcli=True, datbkc=None, bkfor=True, datbkf=None, progress=None):
+        
+        giac, rsnew = self._dbinv, []
+        
+        tgia = tbkc = tbkf = tdis = tfab = 0
+        
+        for _ in self:
+            
+            giac.Retrieve('mov.id_prod=%s', self.id)
+            self.tot_giac = giac.total_giac
+            
+            if bkcli:
+                evas = RiepilogoBackorderClienti()
+                evas.update_data_prodotto(self.id, group_by_mag=False, mags=self._mags, datmin=datbkc)
+                self.tot_bkcli = (evas.ordinato or 0) - (evas.evaso or 0)
+            
+            if bkfor:
+                evas = RiepilogoBackorderFornit()
+                evas.update_data_prodotto(self.id, group_by_mag=False, mags=self._mags, datmin=datbkf)
+                self.tot_bkfor = (evas.ordinato or 0) - (evas.evaso or 0)
+            
+            self.tot_disp = (self.tot_giac or 0) + (self.tot_bkfor or 0) - (self.tot_bkcli or 0)
+            if self.tot_disp < (self.scomin or 0):
+                self.tot_fabb = (self.scomin or 0) - (self.tot_disp or 0)
+            else:
+                self.tot_fabb = 0
+            
+            tgia += (self.tot_giac or 0)
+            tbkc += (self.tot_bkcli or 0)
+            tbkf += (self.tot_bkfor or 0)
+            tdis += (self.tot_disp or 0)
+            tfab += (self.tot_fabb or 0)
+            
+            if self.tot_fabb > 0:
+                rsnew.append([]+self.GetRecordset()[self.RowNumber()])
+            
+            if callable(progress):
+                progress(self)
+        
+        self.SetRecordset(rsnew)
+        
+        return tgia, tbkc, tbkf, tdis, tfab
+
+
+
+class DocumentiPagati(adb.DbMem):
+    
+    def __init__(self):
+        adb.DbMem.__init__(self, fields='doc_id,tpd_cod,tpd_des,numdoc,datdoc,pdc_cod,pdc_des,dst_cod,dst_des,dst_ind,dst_cit,totdare,saldo')
+        self.Reset()
+    
+    def update_data(self, id_tipdoc, datdoc1, datdoc2, paga_si=False, paga_no=True, id_agente=None, id_catcli=None):
+        filt = "doc.id_tipdoc=%s" % id_tipdoc
+        filt += ' AND doc.datdoc>="%s"' % datdoc1.strftime('%Y-%m-%d')
+        filt += ' AND doc.datdoc<="%s"' % datdoc2.strftime('%Y-%m-%d')
+        if id_agente:
+            filt += " AND doc.id_agente=%s" % id_agente
+        if id_catcli:
+            filt += " AND cli.id_categ=%s" % id_catcli
+        if paga_si and paga_no:
+            hav = 'TRUE'
+        elif paga_si:
+            hav = 'saldo=0'
+        elif paga_no:
+            hav = 'saldo<>0'
+        cmd = """
+            SELECT
+             doc.id 'docid',
+             tpd.codice 'tpd_cod',
+             tpd.descriz 'tpd_des',
+             doc.numdoc 'numdoc',
+             doc.datdoc 'datdoc',
+             pdc.codice 'pdc_cod',
+             pdc.descriz 'pdc_des',
+             dst.codice 'dst_cod',
+             dst.descriz 'dst_des',
+             IF(doc.id_dest, dst.indirizzo, cli.indirizzo) 'dst_ind',
+             IF(doc.id_dest, dst.citta, cli.citta) 'dst_cit',
+             doc.totdare 'totdare',
+            (
+               SELECT SUM(imptot-imppar) 
+                 FROM pcf 
+                WHERE pcf.id_pdc=doc.id_pdc AND pcf.datdoc=doc.datdoc AND pcf.numdoc=doc.numdoc
+            ) 'saldo'
+            
+            FROM movmag_h doc
+            JOIN cfgmagdoc tpd ON tpd.id=doc.id_tipdoc
+            JOIN pdc ON pdc.id=doc.id_pdc
+            JOIN clienti cli ON cli.id=pdc.id
+            LEFT JOIN destin dst ON dst.id=doc.id_dest
+            WHERE %(filt)s
+            HAVING %(hav)s
+            ORDER BY doc.datdoc, doc.numdoc
+        """ % locals()
+        db = adb.db.get_db()
+        db.Retrieve(cmd)
+        self.SetRecordset([]+db.rs)

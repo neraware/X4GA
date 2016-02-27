@@ -17,10 +17,12 @@ from awc.controls.linktable import LinkTable
 from awc.controls.datectrl import DateCtrl
 from awc.controls.textctrl import TextCtrl
 from awc.controls.numctrl import NumCtrl
-from awc.controls.checkbox import CheckBox
+from awc.controls.checkbox import CheckBox, RCheckBox
 from awc.controls.notebook import Notebook
 
 from anag.lib import LinkTablePdc, LinkTableDocMagazz, LinkTableModPag, LinkTableZona
+
+import anag.lib as alib
 
 from anag.prod import ProdDialog
 from anag.catart import CatArtDialog
@@ -913,18 +915,20 @@ def FatturatoPrintSelFunc( parent, call_fit = True, set_sizer = True ):
     return item0
 
 ID_DOCFAM = 15085
-ID_LABPDC = 15086
-ID_PDC = 15087
+ID_CATCLI = 15086
+ID_CATFOR = 15087
 ID_LABAGE = 15088
-ID_AGE = 15089
-ID_LABZNA = 15090
+ID_LABZNA = 15089
+ID_AGE = 15090
 ID_MASID_ZONA = 15091
 ID_MODPAG = 15092
 ID_MPTIPO_R = 15093
 ID_MPTIPO_I = 15094
 ID_MPTIPO_X = 15095
-ID_MASBUTUPD = 15096
-ID_MASBUTPRT = 15097
+ID_LABPDC = 15096
+ID_PDC = 15097
+ID_MASBUTUPD = 15098
+ID_MASBUTPRT = 15099
 
 def DocMagSelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -937,203 +941,316 @@ def DocMagSelFunc( parent, call_fit = True, set_sizer = True ):
     item4 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
     item5 = wx.StaticText( parent, ID_LABMAG, "Magazzino:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item4.Add( item5, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item4.Add( item5, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
 
-    item6 = LinkTable(parent, ID_MAG ); item6.SetDataLink( bt.TABNAME_MAGAZZ, "id_magazz", MagazzDialog)
-    item4.Add( item6, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
+    item6 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
     item7 = wx.StaticText( parent, ID_LABDOC, "Documento:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item4.Add( item7, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item6.Add( item7, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
 
-    item8 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item8 = RCheckBox( parent, ID_DOCFAM, "Doc.Fam.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item8.SetName( "docfam" )
+    item8.Enable(False)
+    item6.Add( item8, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item6.AddGrowableCol( 1 )
+
+    item4.Add( item6, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item9 = LinkTable(parent, ID_MAG ); item9.SetDataLink( bt.TABNAME_MAGAZZ, "id_magazz", MagazzDialog)
+    item4.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item10 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item9 = LinkTableDocMagazz(parent, ID_TPD, "id_tipdoc")
-    item8.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item11 = LinkTableDocMagazz(parent, ID_TPD, "id_tipdoc")
+    item10.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item10 = CheckBox( parent, ID_DOCFAM, "Doc.Famiglia", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item10.SetName( "docfam" )
-    item10.Enable(False)
-    item8.Add( item10, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item10.AddGrowableCol( 0 )
 
-    item8.AddGrowableCol( 0 )
+    item4.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item4.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item12 = wx.StaticText( parent, ID_LABMAG, "Categ. Clienti:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.Add( item12, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
 
-    item11 = wx.StaticText( parent, ID_LABPDC, "Sottoconto:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item4.Add( item11, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item13 = wx.StaticText( parent, ID_LABMAG, "Categ. Fornitori:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.Add( item13, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item12 = LinkTablePdc(parent, ID_PDC, "id_pdc")
-    item4.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item14 = alib.LinkTableCatCli(parent, ID_CATCLI, 'id_catcli')
+    item4.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item13 = wx.StaticText( parent, ID_LABAGE, "Agente:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item4.Add( item13, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item15 = alib.LinkTableCatFor(parent, ID_CATFOR, 'id_catfor')
+    item4.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item14 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item16 = wx.StaticText( parent, ID_LABAGE, "Agente:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.Add( item16, 0, wx.GROW|wx.ALIGN_BOTTOM|wx.LEFT, 5 )
+
+    item17 = wx.StaticText( parent, ID_LABZNA, "Zona:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.Add( item17, 0, wx.GROW|wx.ALIGN_BOTTOM|wx.LEFT|wx.RIGHT, 5 )
+
+    item18 = LinkTable(parent, ID_AGE ); item18.SetDataLink( bt.TABNAME_AGENTI, "id_agente", AgentiDialog)
+    item4.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item19 = LinkTableZona(parent, ID_MASID_ZONA, "id_zona")
+    item4.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item20 = wx.StaticText( parent, ID_LABZNA, "Mod.Pag:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item21 = wx.StaticText( parent, ID_LABZNA, "Tipi Mod.Pag:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item22 = LinkTableModPag(parent, ID_MODPAG, 'id_modpag')
+    item4.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item23 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item15 = LinkTable(parent, ID_AGE ); item15.SetDataLink( bt.TABNAME_AGENTI, "id_agente", AgentiDialog)
-    item14.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item24 = wx.CheckBox( parent, ID_MPTIPO_R, "Ri.Ba.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item24.SetName( "mptipo_r" )
+    item23.Add( item24, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item16 = wx.StaticText( parent, ID_LABZNA, "Zona:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item14.Add( item16, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item25 = wx.CheckBox( parent, ID_MPTIPO_I, "RID", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item25.SetName( "mptipo_i" )
+    item23.Add( item25, 0, wx.ALIGN_CENTER|wx.RIGHT|wx.TOP, 5 )
 
-    item17 = LinkTableZona(parent, ID_MASID_ZONA, "id_zona")
-    item14.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item26 = wx.CheckBox( parent, ID_MPTIPO_X, "Altro", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item26.SetName( "mptipo_x" )
+    item23.Add( item26, 0, wx.ALIGN_CENTER|wx.RIGHT|wx.TOP, 5 )
 
-    item14.AddGrowableCol( 0 )
+    item4.Add( item23, 0, 0, 5 )
 
-    item14.AddGrowableCol( 2 )
-
-    item4.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item18 = wx.StaticText( parent, ID_LABZNA, "Mod.Pag:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item4.Add( item18, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item19 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item20 = LinkTableModPag(parent, ID_MODPAG, 'id_modpag')
-    item19.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item21 = wx.CheckBox( parent, ID_MPTIPO_R, "Ri.Ba.", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item21.SetName( "mptipo_r" )
-    item19.Add( item21, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item22 = wx.CheckBox( parent, ID_MPTIPO_I, "RID", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item22.SetName( "mptipo_i" )
-    item19.Add( item22, 0, wx.ALIGN_CENTER|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item23 = wx.CheckBox( parent, ID_MPTIPO_X, "Altro", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item23.SetName( "mptipo_x" )
-    item19.Add( item23, 0, wx.ALIGN_CENTER|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item19.AddGrowableCol( 0 )
-
-    item4.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item4.AddGrowableCol( 0 )
 
     item4.AddGrowableCol( 1 )
 
     item2.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
+    item27 = wx.StaticText( parent, ID_LABPDC, "Sottoconto:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item28 = LinkTablePdc(parent, ID_PDC, "id_pdc")
+    item2.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
     item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item24 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item29 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item26 = wx.StaticBox( parent, -1, "Periodo" )
-    item25 = wx.StaticBoxSizer( item26, wx.VERTICAL )
+    item31 = wx.StaticBox( parent, -1, "Periodo" )
+    item30 = wx.StaticBoxSizer( item31, wx.VERTICAL )
     
-    item27 = wx.FlexGridSizer( 0, 5, 0, 0 )
+    item32 = wx.FlexGridSizer( 0, 5, 0, 0 )
     
-    item28 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item28, 0, wx.ALIGN_CENTER|wx.TOP, 5 )
+    item33 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item32.Add( item33, 0, wx.ALIGN_CENTER|wx.TOP, 5 )
 
-    item29 = wx.StaticText( parent, ID_LABMASNUM1, "Da numero:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item34 = wx.StaticText( parent, ID_LABMASNUM1, "Da numero:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item32.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item30 = wx.StaticText( parent, ID_LABMASDAT1, "Da data:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item35 = wx.StaticText( parent, ID_LABMASDAT1, "Da data:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item32.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item31 = wx.StaticText( parent, ID_LABMASNUM2, "A numero:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item36 = wx.StaticText( parent, ID_LABMASNUM2, "A numero:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item32.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item32 = wx.StaticText( parent, ID_LABMASDAT2, "A data:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item37 = wx.StaticText( parent, ID_LABMASDAT2, "A data:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item32.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item33 = wx.StaticText( parent, ID_LABMASDOC, "Documento", wx.DefaultPosition, wx.DefaultSize, wx.ST_NO_AUTORESIZE|wx.ALIGN_RIGHT )
-    item27.Add( item33, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
+    item38 = wx.StaticText( parent, ID_LABMASDOC, "Documento", wx.DefaultPosition, wx.DefaultSize, wx.ST_NO_AUTORESIZE|wx.ALIGN_RIGHT )
+    item32.Add( item38, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
 
-    item34 = TextCtrl( parent, ID_MASNUMDOC1, "", wx.DefaultPosition, [60,-1], 0 )
-    item34.SetName( "masnumdoc1" )
-    item27.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item39 = TextCtrl( parent, ID_MASNUMDOC1, "", wx.DefaultPosition, [60,-1], 0 )
+    item39.SetName( "masnumdoc1" )
+    item32.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item35 = DateCtrl( parent, ID_MASDATDOC1, "", wx.DefaultPosition, [80,-1], 0 )
-    item35.SetName( "masdatdoc1" )
-    item27.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item40 = DateCtrl( parent, ID_MASDATDOC1, "", wx.DefaultPosition, [80,-1], 0 )
+    item40.SetName( "masdatdoc1" )
+    item32.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item36 = TextCtrl( parent, ID_MASNUMDOC2, "", wx.DefaultPosition, [60,-1], 0 )
-    item36.SetName( "masnumdoc2" )
-    item27.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item41 = TextCtrl( parent, ID_MASNUMDOC2, "", wx.DefaultPosition, [60,-1], 0 )
+    item41.SetName( "masnumdoc2" )
+    item32.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item37 = DateCtrl( parent, ID_MASDATDOC2, "", wx.DefaultPosition, [80,-1], 0 )
-    item37.SetName( "masdatdoc2" )
-    item27.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item42 = DateCtrl( parent, ID_MASDATDOC2, "", wx.DefaultPosition, [80,-1], 0 )
+    item42.SetName( "masdatdoc2" )
+    item32.Add( item42, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item38 = wx.StaticText( parent, ID_LABMASREG, "Registrazione", wx.DefaultPosition, wx.DefaultSize, wx.ST_NO_AUTORESIZE|wx.ALIGN_RIGHT )
-    item27.Add( item38, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
+    item43 = wx.StaticText( parent, ID_LABMASREG, "Registrazione", wx.DefaultPosition, wx.DefaultSize, wx.ST_NO_AUTORESIZE|wx.ALIGN_RIGHT )
+    item32.Add( item43, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
 
-    item39 = TextCtrl( parent, ID_MASNUMREG1, "", wx.DefaultPosition, [60,-1], 0 )
-    item39.SetName( "masnumreg1" )
-    item27.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item44 = TextCtrl( parent, ID_MASNUMREG1, "", wx.DefaultPosition, [60,-1], 0 )
+    item44.SetName( "masnumreg1" )
+    item32.Add( item44, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item40 = DateCtrl( parent, ID_MASDATREG1, "", wx.DefaultPosition, [80,-1], 0 )
-    item40.SetName( "masdatreg1" )
-    item27.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item45 = DateCtrl( parent, ID_MASDATREG1, "", wx.DefaultPosition, [80,-1], 0 )
+    item45.SetName( "masdatreg1" )
+    item32.Add( item45, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item41 = TextCtrl( parent, ID_MASNUMREG2, "", wx.DefaultPosition, [60,-1], 0 )
-    item41.SetName( "masnumreg2" )
-    item27.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item46 = TextCtrl( parent, ID_MASNUMREG2, "", wx.DefaultPosition, [60,-1], 0 )
+    item46.SetName( "masnumreg2" )
+    item32.Add( item46, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item42 = DateCtrl( parent, ID_MASDATREG2, "", wx.DefaultPosition, [80,-1], 0 )
-    item42.SetName( "masdatreg2" )
-    item27.Add( item42, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item47 = DateCtrl( parent, ID_MASDATREG2, "", wx.DefaultPosition, [80,-1], 0 )
+    item47.SetName( "masdatreg2" )
+    item32.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item43 = wx.StaticText( parent, ID_LABMASRIF, "Riferimento", wx.DefaultPosition, wx.DefaultSize, wx.ST_NO_AUTORESIZE|wx.ALIGN_RIGHT )
-    item27.Add( item43, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
+    item48 = wx.StaticText( parent, ID_LABMASRIF, "Riferimento", wx.DefaultPosition, wx.DefaultSize, wx.ST_NO_AUTORESIZE|wx.ALIGN_RIGHT )
+    item32.Add( item48, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
 
-    item44 = TextCtrl( parent, ID_MASNUMRIF1, "", wx.DefaultPosition, [60,-1], 0 )
-    item44.SetName( "masnumrif1" )
-    item27.Add( item44, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item49 = TextCtrl( parent, ID_MASNUMRIF1, "", wx.DefaultPosition, [60,-1], 0 )
+    item49.SetName( "masnumrif1" )
+    item32.Add( item49, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item45 = DateCtrl( parent, ID_MASDATRIF1, "", wx.DefaultPosition, [80,-1], 0 )
-    item45.SetName( "masdatrif1" )
-    item27.Add( item45, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item50 = DateCtrl( parent, ID_MASDATRIF1, "", wx.DefaultPosition, [80,-1], 0 )
+    item50.SetName( "masdatrif1" )
+    item32.Add( item50, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item46 = TextCtrl( parent, ID_MASNUMRIF2, "", wx.DefaultPosition, [60,-1], 0 )
-    item46.SetName( "masnumrif2" )
-    item27.Add( item46, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item51 = TextCtrl( parent, ID_MASNUMRIF2, "", wx.DefaultPosition, [60,-1], 0 )
+    item51.SetName( "masnumrif2" )
+    item32.Add( item51, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item47 = DateCtrl( parent, ID_MASDATRIF2, "", wx.DefaultPosition, [80,-1], 0 )
-    item47.SetName( "masdatrif2" )
-    item27.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item52 = DateCtrl( parent, ID_MASDATRIF2, "", wx.DefaultPosition, [80,-1], 0 )
+    item52.SetName( "masdatrif2" )
+    item32.Add( item52, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item27.AddGrowableCol( 0 )
+    item32.AddGrowableCol( 0 )
 
-    item25.Add( item27, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+    item30.Add( item32, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item48 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item53 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item49 = wx.CheckBox( parent, ID_NODOCANN, "Escludi documenti annullati", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item49.SetValue( True )
-    item49.SetName( "nodocann" )
-    item48.Add( item49, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item54 = wx.CheckBox( parent, ID_NODOCANN, "Escludi documenti annullati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item54.SetValue( True )
+    item54.SetName( "nodocann" )
+    item53.Add( item54, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item50 = wx.CheckBox( parent, ID_NODOCACQ, "Escludi documenti acquisiti", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item50.SetValue( True )
-    item50.SetName( "nodocacq" )
-    item48.Add( item50, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+    item55 = wx.CheckBox( parent, ID_NODOCACQ, "Escludi documenti acquisiti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item55.SetValue( True )
+    item55.SetName( "nodocacq" )
+    item53.Add( item55, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
-    item25.Add( item48, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item30.Add( item53, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item24.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+    item29.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
-    item51 = wx.BoxSizer( wx.HORIZONTAL )
+    item56 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item52 = wx.Button( parent, ID_MASBUTUPD, "Applica", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item52.SetDefault()
-    item51.Add( item52, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item57 = wx.Button( parent, ID_MASBUTUPD, "Applica", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item57.SetDefault()
+    item56.Add( item57, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item53 = wx.Button( parent, ID_MASBUTPRT, "&Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item51.Add( item53, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item58 = wx.Button( parent, ID_MASBUTPRT, "&Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item56.Add( item58, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item24.Add( item51, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item29.Add( item56, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item24.AddGrowableRow( 1 )
+    item29.AddGrowableRow( 1 )
 
-    item1.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item1.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item1.AddGrowableCol( 0 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+ID_DATDOC1 = 15100
+ID_DATDOC2 = 15101
+ID_TIPDOC = 15102
+ID_AGENTE = 15103
+ID_DOCPAGA_SI = 15104
+ID_DOCPAGA_NO = 15105
+ID_BUTUPD = 15106
+ID_PANGRIDOCS = 15107
+ID_BUTPRT = 5100
+
+def DocumentiPagatiFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item2 = wx.FlexGridSizer( 0, 6, 0, 0 )
+    
+    item3 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item3, 0, wx.ALIGN_CENTER, 5 )
+
+    item4 = wx.StaticText( parent, ID_TEXT, "Dal:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item4, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item5 = wx.StaticText( parent, ID_TEXT, "Al:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item5, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item6 = wx.StaticText( parent, ID_TEXT, "Causale:", wx.DefaultPosition, [160,-1], 0 )
+    item2.Add( item6, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item7 = wx.StaticText( parent, ID_TEXT, "Agente:", wx.DefaultPosition, [160,-1], 0 )
+    item2.Add( item7, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item8 = wx.StaticText( parent, ID_TEXT, "Cat.Clienti:", wx.DefaultPosition, [160,-1], 0 )
+    item2.Add( item8, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item9 = wx.StaticText( parent, ID_TEXT, "Data documento:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( item9, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item10 = DateCtrl( parent, ID_DATDOC1, "", wx.DefaultPosition, [80,-1], 0 )
+    item10.SetName( "datdoc1" )
+    item2.Add( item10, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item11 = DateCtrl( parent, ID_DATDOC2, "", wx.DefaultPosition, [80,-1], 0 )
+    item11.SetName( "datdoc2" )
+    item2.Add( item11, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item12 = alib.LinkTableDocMagazz(parent, ID_TIPDOC, name='id_tipdoc')
+    item2.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item13 = alib.LinkTableAgente(parent, ID_AGENTE, name='id_agente')
+    item2.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item14 = alib.LinkTableCatCli(parent, ID_CATCLI, name='id_catcli')
+    item2.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item15 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item16 = wx.CheckBox( parent, ID_DOCPAGA_SI, "Doc. pagati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item16.SetName( "paga_si" )
+    item15.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item17 = wx.CheckBox( parent, ID_DOCPAGA_NO, "Non pagati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item17.SetValue( True )
+    item17.SetName( "paga_no" )
+    item15.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item1.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item18 = wx.Button( parent, ID_BUTUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.SetDefault()
+    item18.SetName( "butupd" )
+    item1.Add( item18, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
+
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item19 = wx.StaticText( parent, ID_TEXT, "Documenti trovati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item19.SetForegroundColour( wx.BLUE )
+    item0.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item20 = wx.Panel( parent, ID_PANGRIDOCS, wx.DefaultPosition, [1000,300], wx.SUNKEN_BORDER )
+    item20.SetName( "pangridocs" )
+    item0.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item21 = wx.Button( parent, ID_BUTPRT, "Stam&pa", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item21.SetName( "butprt" )
+    item0.Add( item21, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item0.AddGrowableCol( 0 )
+
+    item0.AddGrowableRow( 2 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

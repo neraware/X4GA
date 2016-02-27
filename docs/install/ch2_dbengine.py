@@ -142,7 +142,7 @@ come segue.
 Dal menu "Tools" di MySQL Administrator, richiamare la voce 
 "MySQL Command Line Client": si aprira una shell di sistema con i comandi 
 amministrativi del database ed inserire il seguente comando:
-SET PASSWORD FOR 'nome_utente'@'%' = OLD_PASSWORD('password_desiderata');
+SET PASSWORD FOR 'nome_utente'@'%' = PASSWORD('password_desiderata');
 seguito dal comando:
 FLUSH PRIVILEGES;
 Ovviamente bisogna sostituire nome_utente con il nome dell'utente desiderato, 

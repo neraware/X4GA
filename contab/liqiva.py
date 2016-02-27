@@ -1019,24 +1019,3 @@ class LiqIvaDialog(aw.Dialog):
             self.EndModal(1)
         else:
             self.Close()
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    
-    class _testApp(wx.App):
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            Env.Azienda.DB.testdb()
-            db = adb.DB()
-            db.Connect()
-            return True
-    
-    app = _testApp(True)
-    app.MainLoop()
-    Env.InitSettings()
-    test = LiqIvaDialog()
-    test.CenterOnScreen()
-    test.ShowModal()

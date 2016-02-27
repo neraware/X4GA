@@ -21,6 +21,7 @@
 # along with X4GA.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------------
 import plib
+from awc.controls.button import is_pushable
 
 """
 Selezione azienda
@@ -243,6 +244,7 @@ class SelAziendaPanel(aw.Panel):
         event.Skip()
 
     def OnWksSetup(self, event):
+        if not is_pushable(event.GetEventObject()): return
         import os
         def opj(x,y):
             return os.path.join(x,y).replace('\\','/')
@@ -362,13 +364,18 @@ class SelAziendaPanel(aw.Panel):
         c = self.x4conn.cursor()
         if (c.execute("SELECT psw FROM utenti WHERE descriz=%s", user)>0):
             psw_memo = c.fetchone()[0]
-            c.execute("select old_password(%s)", psw)
-            psw_digi=c.fetchone()[0]
+            c.execute("select password(%s)", psw)
+            error = psw_memo != c.fetchone()[0]
+            if error:
+                try:
+                    c.execute("select old_password(%s)", psw)
+                    error = psw_memo != c.fetchone()[0]
+                except:
+                    error = True
         else:
-            psw_memo='1'
-            psw_digi='2'
+            error = True
         
-        if (psw_memo <> psw_digi):
+        if error:
             dlg = wx.MessageDialog(
                 parent=None,
                 message = "Utente non autorizzato!\nVerificare nome utente e password e riprovare.",
@@ -377,8 +384,7 @@ class SelAziendaPanel(aw.Panel):
             dlg.ShowModal()
             dlg.Destroy()
         
-        ok = (psw_memo==psw_digi)
-        if ok:
+        else:
             try:
                 c.execute("SELECT max_sqlrows FROM utenti WHERE descriz=%s", user)
                 maxrows = c.fetchone()[0]
@@ -388,16 +394,13 @@ class SelAziendaPanel(aw.Panel):
             except:
                 pass
             
-        return ok
-
+        return not error
+    
     def OnSelect(self, event):
         self.AziSelect()
         event.Skip()
     
     def AziSelect(self):
-        
-        retVal = 0
-        errMessage = None
         
         def ErrMsg(msg):
             aw.awu.MsgDialog(self, message=msg, style=wx.ICON_EXCLAMATION)
@@ -450,6 +453,10 @@ class SelAziendaPanel(aw.Panel):
                                 aw.awu.MsgDialog(self, "Errore in caricamento plugin:\n%s" % ' - '.join(map(str, e.args)))
                 try:
                     bt.ReadAziendaSetup()
+                    app = wx.GetApp()
+                    test_updates = getattr(app, 'TestUpdates', None)
+                    if callable(test_updates):
+                        test_updates()
                 except bt.AziendaSetupException, e:
                     aw.awu.MsgDialog(self, e.args[0], style=wx.ICON_ERROR)
                 except Exception, e:
@@ -483,7 +490,6 @@ class SelAziendaPanel(aw.Panel):
             db = adb.DB()
             db._dbCon = conn
             db.connected = True
-            wx.GetApp().dbcon = conn
             
         except MySQLdb.Error, e:
             errMessage = "Non è possibile accedere al database\n\n%s: %s" \
@@ -496,6 +502,9 @@ class SelAziendaPanel(aw.Panel):
         """
         Crea una nuova azienda.
         """
+        
+        if not is_pushable(event.GetEventObject()): return
+        
         ctrHost = self.FindWindowById(ID_SERVER)
         ctrUser = self.FindWindowById(ID_USER)
         ctrPswd = self.FindWindowById(ID_PSWD)
@@ -518,7 +527,6 @@ class SelAziendaPanel(aw.Panel):
                 db = adb.DB()
                 db._dbCon = conn
                 db.connected = True
-                wx.GetApp().dbcon = conn
                 
             except MySQLdb.Error, e:
                 errMessage = "Non è possibile accedere al database\n\n%s: %s" \
@@ -557,6 +565,8 @@ class SelAziendaPanel(aw.Panel):
         self.GetParent().EndModal( self.ID_QUIT )
 
     def OnUtenti(self, event):
+        
+        if not is_pushable(event.GetEventObject()): return
         
         Env.Azienda.DB.connection = self.x4conn
         adb.DEFAULT_DATABASE = "x4"
@@ -633,23 +643,24 @@ class SelAziendaPanel(aw.Panel):
         curs = self.x4conn.cursor()
         curs.execute("SELECT psw FROM utenti where nome=" + chr(34) + user + chr(34) + ";")
         memoPsw = curs.fetchone()[0]
-        curs.execute("SELECT old_PASSWORD(" + chr(34) + psw + chr(34) + ");")
-        digiPsw = curs.fetchone()[0]
-        if memoPsw == digiPsw:
-            return True                 
-        else:
-            return False
-        
+        curs.execute("SELECT PASSWORD(%s)" % psw)
+        error = memoPsw != curs.fetchone()[0]
+        if error:
+            try:
+                curs.execute("SELECT old_PASSWORD(%s)" % psw)
+                error = memoPsw != curs.fetchone()[0]
+            except:
+                error = True
+        return not error
     
     def CheckUser( self, user, psw):
-        lOk=False
-        msg=None
-        if self.UserExist(user)==False:
-            msg="Utente non codificato"
-        elif self.CheckUserPassword(user, psw)==False:
-            msg="Password Errata"
+        msg = None
+        if not self.UserExist(user)==False:
+            msg = "Utente non codificato"
+        elif not self.CheckUserPassword(user, psw):
+            msg = "Password Errata"
         return msg
-        
+    
     def OpenX4db(self, hostname, username, password):
         """
         Apre il database delle aziende
@@ -1066,7 +1077,11 @@ class SelAziendaDialog(aw.Dialog):
         self.selazpanel = SelAziendaPanel(self)
         self.AddSizedPanel(self.selazpanel, 'selaziendapanel')
         self.CentreOnScreen()
-
+    
+    def EndModal(self, *args, **kwargs):
+        if self.selazpanel.x4conn:
+            self.selazpanel.x4conn.close()
+        return aw.Dialog.EndModal(self, *args, **kwargs)
 
 # ------------------------------------------------------------------------------
 

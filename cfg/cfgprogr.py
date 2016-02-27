@@ -28,6 +28,8 @@ import MySQLdb
 from Env import Azienda
 bt = Azienda.BaseTab
 
+import stormdb as adb
+
 from awc.util import MsgDialog, MsgDialogDbError, ListSearch
 
 
@@ -42,13 +44,12 @@ class CfgProgr(object):
     Lettura e caricamento progressivi configurati in C{_progrKeys}.
     Vedere L{CfgProgr._Progr_AddKeys()}
     """
-    def __init__(self, db_curs):
+    def __init__(self):
         """
         Costruttore.  Passare l'oggetto cursore di database che verrà
         utilizzato per accedere alla tabella degli automatismi.
         """
         object.__init__(self)
-        self.db_curs = db_curs
         self._progrKeys = []
 
     def ReadProgr(self):
@@ -87,8 +88,10 @@ class CfgProgr(object):
 """FROM %s WHERE %s and codice=%%s;""" % (bt.TABNAME_CFGPROGR, filt)
                 par.append(key)
                 key = "_progr_"+key
-                self.db_curs.execute(cmd, par)
-                rs = self.db_curs.fetchone()
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, par)
+                rs = cur.fetchone()
+                cur.close()
                 if rs:
                     values = [rs[col] for col in range(1,5)]
                 else:
@@ -204,22 +207,3 @@ class CfgProgr(object):
         self._Progr_AddKeys(\
             (( "mag_chiusura",    None, None, TYPE_DATE ),\
              ( "mag_archiv",      None, None, TYPE_DATE )) )
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    app = wx.PySimpleApp()
-    app.MainLoop()
-    Azienda.DB.testdb()
-    
-    test = CfgProgr(Azienda.DB.connection.cursor())
-    test._Progr_AddKeys((("test",None,None,TYPE_NUM|TYPE_DATE),))
-    test._Progr_AddKeysContab("2004")
-    test._Progr_AddKeysContabTipo_I("2004", 58) #reg.iva acquisti
-    test._Progr_AddKeysMagazz()
-    print "%d progressivi caricati: " % test.ReadProgr()
-    for key, val in test.__dict__.iteritems():
-        if key.startswith("_progr_"):
-            print key, val

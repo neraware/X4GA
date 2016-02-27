@@ -73,10 +73,12 @@ class DateCtrl(wx.Control, cmix.TextCtrlMixin):
     _spaces_count = 0
     
     def __init__(self, parent, id, caption = "", pos = wx.DefaultPosition, 
-                 size = wx.DefaultSize, style = 0):
+                 size = wx.DefaultSize, style = 0, on_calendar_select=None):
         
         wx.Control.__init__(self, parent, id, pos, size, style=wx.NO_BORDER)
         cmix.TextCtrlMixin.__init__(self)
+        
+        self.on_calendar_select = on_calendar_select
         
         self.colors['normalBackground'] = wx.TheColourDatabase.Find('white')
         
@@ -310,6 +312,8 @@ class DateCtrl(wx.Control, cmix.TextCtrlMixin):
                 self.SetValue( DateTime.Date( d.GetYear(),
                                               d.GetMonth()+1,
                                               d.GetDay() ) )
+                if callable(self.on_calendar_select):
+                    self.on_calendar_select()
             dlg.Destroy()
         event.Skip()
 

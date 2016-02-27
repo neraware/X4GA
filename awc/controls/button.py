@@ -145,6 +145,9 @@ class Button(wx.Button, cmix.HelpedControl):
     def __init__(self, *arg, **kwargs):
         wx.Button.__init__(self, *arg, **kwargs)
         cmix.HelpedControl.__init__(self)
+    
+def is_pushable(button):
+    return button.IsEnabled() and button.IsShownOnScreen()
 
 
 # ------------------------------------------------------------------------------

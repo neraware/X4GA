@@ -440,26 +440,58 @@ class GeneralSetup(Setup):
         self.set('Updates', 'folder', updatespath)
     
     def setReportSub(self):
+        
         pathrpt = self.get('Report', 'defin')
         pathimg = self.get('Report', 'images')
         try:
             pathsub = self.get('Report', 'dpers')
         except:
             pass
+        
         if not pathsub:
             pathsub = opj(self.get('Site', 'folder'), 'report')
+        
         if Azienda.codice:
             sub = 'azienda_%s' % Azienda.codice
         else:
             sub = ''
+        
         import report
         del report.pathalt[:]
-        for n,p in enumerate(plugins):
+        
+        for p in plugins:
+            
             if pathsub:
-                report.AppendPathAlt(opj(opj(pathsub or pathrpt, sub), 
-                                         'X4GA-plugin.%s' % p))
-            report.AppendPathAlt(opj(pathsub or pathrpt, 
-                                     'X4GA-plugin.%s' % p))
+                
+                # custom_rpt_path/azienda_<azienda>/X4GA-plugin.<plugin>
+                d = pathsub or pathrpt
+                report.AppendPathAlt(opj(opj(d, sub), 'X4GA-plugin.%s' % p))
+            
+            # custom_rpt_path/X4GA-plugin.<plugin>
+            d = pathsub or pathrpt
+            report.AppendPathAlt(opj(d, 'X4GA-plugin.%s' % p))
+            
+            if pathsub:
+                try:
+                    # module_path/azienda_<azienda>
+                    import custapp  # @UnresolvedImport
+                    d, _ = os.path.split(custapp.__file__)
+                    report.AppendPathAlt(opj(d, opj(opj('report', 'jrxml'), 'X4GA-plugin.%s' % p)))
+                except Exception:
+                    pass
+            
+            # module_path/report/jrxml
+            d, _ = os.path.split(plugins[p].__file__)
+            report.AppendPathAlt(opj(d, opj('report', 'jrxml')))
+        
+        try:
+            # module_path/azienda_<azienda>
+            import custapp  # @UnresolvedImport
+            d, _ = os.path.split(custapp.__file__)
+            report.AppendPathAlt(opj(d, opj('report', 'jrxml')))
+        except Exception:
+            pass
+        
         pathsub = opj(pathsub or pathrpt, sub)
         report.SetPathRpt(pathrpt)
         report.SetPathSub(pathsub)
@@ -3828,7 +3860,7 @@ class Azienda(object):
             return cls.BaseTab
             
         @classmethod
-        def ReadAziendaSetup(cls, manage_plugins=True):
+        def ReadAziendaSetup(cls):
             
             cfg = adb.DbTable(cls.TABNAME_CFGSETUP, 'cfg', writable=False)
             
@@ -3899,10 +3931,9 @@ class Azienda(object):
                                   """dei dati aziendali.""" % err
             clear_plugins()
             cls.defstru()
-            if manage_plugins:
-                from plib import init_plugins
-                init_plugins()
-                load_new_plugins()
+            from plib import init_plugins, check_new_plugins, load_plugin, enable_plugin
+            init_plugins()
+            load_new_plugins()
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()

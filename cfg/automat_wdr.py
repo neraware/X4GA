@@ -397,17 +397,18 @@ def _OLD_AutomatPageContabFunc( parent, call_fit = True, set_sizer = True ):
     return item0
 
 ID_MAGOMAGGI = 15025
-ID_MAGOMAREG = 15026
-ID_MAGIVASCM = 15027
-ID_MAGIVACEE = 15028
-ID_MAGIVAEST = 15029
-ID_MAGIVADEF = 15030
-ID_MAGINIDOC = 15031
-ID_MAGINIMOV = 15032
-ID_MAGORDINV = 15033
-ID_MAGINTCLI = 15034
-ID_MAGORDFTA = 15035
-ID_CHECKBOX = 15036
+ID_MAGOMAIVA = 15026
+ID_MAGOMAREG = 15027
+ID_MAGIVASCM = 15028
+ID_MAGIVACEE = 15029
+ID_MAGIVAEST = 15030
+ID_MAGIVADEF = 15031
+ID_MAGINIDOC = 15032
+ID_MAGINIMOV = 15033
+ID_MAGORDINV = 15034
+ID_MAGINTCLI = 15035
+ID_MAGORDFTA = 15036
+ID_CHECKBOX = 15037
 
 def AutomatPageMagazzFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -429,41 +430,53 @@ def AutomatPageMagazzFunc( parent, call_fit = True, set_sizer = True ):
     item7 = LinkTable(parent, ID_MAGOMAGGI ); item7.SetDataLink( bt.TABNAME_PDC, None, PdcDialog); item7.SetName('magomaggi')
     item3.Add( item7, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
+    item8 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+    item3.Add( item8, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item9 = wx.StaticText( parent, ID_TEXT, "Detrai l'IVA degli omaggi dal totale documento e mettila su:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+    item3.Add( item9, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item10 = wx.StaticText( parent, ID_TEXT, "IVA su omaggi:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+    item3.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item11 = LinkTable(parent, ID_MAGOMAIVA ); item11.SetDataLink( bt.TABNAME_PDC, None, PdcDialog); item11.SetName('magomaiva')
+    item3.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
     item3.Add( [ 20, 20 ] , 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item8 = CheckBox( parent, ID_MAGOMAREG, "Evidenzia gli omaggi nella scrittura contabile", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item8.SetName( "magomareg" )
-    item3.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item9 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
-    item3.Add( item9, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
-
-    item10 = wx.StaticText( parent, ID_TEXT, "Aliquota IVA", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
-    item3.Add( item10, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
-
-    item11 = wx.StaticText( parent, ID_TEXT, "Sconto merce:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
-    item3.Add( item11, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item12 = LinkTable(parent, ID_MAGIVASCM ); item12.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item12.SetName('magivascm')
+    item12 = CheckBox( parent, ID_MAGOMAREG, "Evidenzia gli omaggi nella scrittura contabile", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item12.SetName( "magomareg" )
     item3.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item13 = wx.StaticText( parent, ID_TEXT, "Vendite CEE:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
-    item3.Add( item13, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item13 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+    item3.Add( item13, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item14 = LinkTable(parent, ID_MAGIVACEE ); item14.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item14.SetName('magivacee')
-    item3.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item14 = wx.StaticText( parent, ID_TEXT, "Aliquota IVA", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+    item3.Add( item14, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item15 = wx.StaticText( parent, ID_TEXT, "Vendite estero:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item15 = wx.StaticText( parent, ID_TEXT, "Sconto merce:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
     item3.Add( item15, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item16 = LinkTable(parent, ID_MAGIVAEST ); item16.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item16.SetName('magivaest')
+    item16 = LinkTable(parent, ID_MAGIVASCM ); item16.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item16.SetName('magivascm')
     item3.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item17 = wx.StaticText( parent, ID_TEXT, "Aliquota default:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item17 = wx.StaticText( parent, ID_TEXT, "Vendite CEE:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
     item3.Add( item17, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item18 = LinkTable(parent, ID_MAGIVADEF ); item18.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item18.SetName('magivadef')
+    item18 = LinkTable(parent, ID_MAGIVACEE ); item18.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item18.SetName('magivacee')
     item3.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item19 = wx.StaticText( parent, ID_TEXT, "Vendite estero:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item3.Add( item19, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item20 = LinkTable(parent, ID_MAGIVAEST ); item20.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item20.SetName('magivaest')
+    item3.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item21 = wx.StaticText( parent, ID_TEXT, "Aliquota default:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item3.Add( item21, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item22 = LinkTable(parent, ID_MAGIVADEF ); item22.SetDataLink( bt.TABNAME_ALIQIVA, None, AliqIvaDialog ); item22.SetName('magivadef')
+    item3.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item3.AddGrowableCol( 1 )
 
@@ -471,84 +484,84 @@ def AutomatPageMagazzFunc( parent, call_fit = True, set_sizer = True ):
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item20 = wx.StaticBox( parent, -1, "Automatismi per le aperture delle giacenze" )
-    item19 = wx.StaticBoxSizer( item20, wx.VERTICAL )
+    item24 = wx.StaticBox( parent, -1, "Automatismi per le aperture delle giacenze" )
+    item23 = wx.StaticBoxSizer( item24, wx.VERTICAL )
     
-    item21 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item25 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item22 = wx.StaticText( parent, ID_TEXT, "Documento:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
-    item21.Add( item22, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item26 = wx.StaticText( parent, ID_TEXT, "Documento:", wx.DefaultPosition, [80,-1], wx.ALIGN_RIGHT )
+    item25.Add( item26, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item23 = LinkTable(parent, ID_MAGINIDOC ); item23.SetDataLink( bt.TABNAME_CFGMAGDOC, None, CfgTipDocDialog); item23.SetName('maginidoc')
-    item21.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item27 = LinkTable(parent, ID_MAGINIDOC ); item27.SetDataLink( bt.TABNAME_CFGMAGDOC, None, CfgTipDocDialog); item27.SetName('maginidoc')
+    item25.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item24 = wx.StaticText( parent, ID_TEXT, "Movimento:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item21.Add( item24, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item28 = wx.StaticText( parent, ID_TEXT, "Movimento:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item25.Add( item28, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item25 = LinkTable(parent, ID_MAGINIMOV ); item25.SetDataLink( bt.TABNAME_CFGMAGMOV, None, None); item25.SetName('maginimov')
-    item21.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item29 = LinkTable(parent, ID_MAGINIMOV ); item29.SetDataLink( bt.TABNAME_CFGMAGMOV, None, None); item29.SetName('maginimov')
+    item25.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item21.AddGrowableCol( 1 )
+    item25.AddGrowableCol( 1 )
 
-    item21.AddGrowableCol( 3 )
+    item25.AddGrowableCol( 3 )
 
-    item19.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item23.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item0.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item0.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item26 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item30 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item27 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item31 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item29 = wx.StaticBox( parent, -1, "Interrogazioni" )
-    item28 = wx.StaticBoxSizer( item29, wx.VERTICAL )
+    item33 = wx.StaticBox( parent, -1, "Interrogazioni" )
+    item32 = wx.StaticBoxSizer( item33, wx.VERTICAL )
     
-    item30 = CheckBox( parent, ID_MAGORDINV, "Ordine inverso su interrogazioni", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item30.SetName( "magordinv" )
-    item28.Add( item30, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+    item34 = CheckBox( parent, ID_MAGORDINV, "Ordine inverso su interrogazioni", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item34.SetName( "magordinv" )
+    item32.Add( item34, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
-    item27.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item31.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item31 = RadioBox( parent, ID_MAGINTCLI, "Visualizzazione scheda cliente/fornitore", wx.DefaultPosition, wx.DefaultSize, 
+    item35 = RadioBox( parent, ID_MAGINTCLI, "Visualizzazione scheda cliente/fornitore", wx.DefaultPosition, wx.DefaultSize, 
         ["Documenti","Movimenti","Prodotti"] , 1, wx.RA_SPECIFY_ROWS )
-    item31.SetName( "magintcli" )
-    item27.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item35.SetName( "magintcli" )
+    item31.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item27.AddGrowableCol( 0 )
+    item31.AddGrowableCol( 0 )
 
-    item26.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item30.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item32 = RadioBox( parent, ID_MAGORDFTA, "Ordinamento prodotti fatturati", wx.DefaultPosition, wx.DefaultSize, 
+    item36 = RadioBox( parent, ID_MAGORDFTA, "Ordinamento prodotti fatturati", wx.DefaultPosition, wx.DefaultSize, 
         ["Prodotto","Data vendita"] , 1, wx.RA_SPECIFY_COLS )
-    item32.SetName( "magordfta" )
-    item26.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+    item36.SetName( "magordfta" )
+    item30.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
-    item34 = wx.StaticBox( parent, -1, "Filtri cerca prodotti" )
-    item33 = wx.StaticBoxSizer( item34, wx.VERTICAL )
+    item38 = wx.StaticBox( parent, -1, "Filtri cerca prodotti" )
+    item37 = wx.StaticBoxSizer( item38, wx.VERTICAL )
     
-    item35 = CheckBox( parent, ID_CHECKBOX, "Tipo articolo", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item35.SetName( "magfiltip" )
-    item33.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item39 = CheckBox( parent, ID_CHECKBOX, "Tipo articolo", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item39.SetName( "magfiltip" )
+    item37.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item36 = CheckBox( parent, ID_CHECKBOX, "Categoria merce", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item36.SetName( "magfilcat" )
-    item33.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item40 = CheckBox( parent, ID_CHECKBOX, "Categoria merce", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item40.SetName( "magfilcat" )
+    item37.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item37 = CheckBox( parent, ID_CHECKBOX, "Fornitore", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item37.SetName( "magfilfor" )
-    item33.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item41 = CheckBox( parent, ID_CHECKBOX, "Fornitore", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item41.SetName( "magfilfor" )
+    item37.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item38 = CheckBox( parent, ID_CHECKBOX, "Marca", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item38.SetName( "magfilmar" )
-    item33.Add( item38, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item42 = CheckBox( parent, ID_CHECKBOX, "Marca", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item42.SetName( "magfilmar" )
+    item37.Add( item42, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item26.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+    item30.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
-    item26.AddGrowableCol( 0 )
+    item30.AddGrowableCol( 0 )
 
-    item26.AddGrowableCol( 1 )
+    item30.AddGrowableCol( 1 )
 
-    item0.Add( item26, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )
@@ -557,8 +570,8 @@ def AutomatPageMagazzFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_NOTEBOOK = 15037
-ID_BTNOK = 15038
+ID_NOTEBOOK = 15038
+ID_BTNOK = 15039
 
 def AutomatContabFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -599,7 +612,7 @@ def AutomatContabFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BTNQUIT = 15039
+ID_BTNQUIT = 15040
 
 def AutomatMagazzFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -635,11 +648,11 @@ def AutomatMagazzFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_CTRTIPCAS = 15040
-ID_CTRTIPBAN = 15041
-ID_CTRTIPCLI = 15042
-ID_CTRTIPFOR = 15043
-ID_CTRTIPEFF = 15044
+ID_CTRTIPCAS = 15041
+ID_CTRTIPBAN = 15042
+ID_CTRTIPCLI = 15043
+ID_CTRTIPFOR = 15044
+ID_CTRTIPEFF = 15045
 
 def AutomatPageContabPdcTipFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -701,16 +714,16 @@ def AutomatPageContabPdcTipFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_CTRMASCAS = 15045
-ID_CTRCONCAS = 15046
-ID_CTRMASBAN = 15047
-ID_CTRCONBAN = 15048
-ID_CTRMASCLI = 15049
-ID_CTRCONCLI = 15050
-ID_CTRMASFOR = 15051
-ID_CTRCONFOR = 15052
-ID_CTRMASEFF = 15053
-ID_CTRCONEFF = 15054
+ID_CTRMASCAS = 15046
+ID_CTRCONCAS = 15047
+ID_CTRMASBAN = 15048
+ID_CTRCONBAN = 15049
+ID_CTRMASCLI = 15050
+ID_CTRCONCLI = 15051
+ID_CTRMASFOR = 15052
+ID_CTRCONFOR = 15053
+ID_CTRMASEFF = 15054
+ID_CTRCONEFF = 15055
 
 def AutomatPageContabBilIntFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -774,11 +787,11 @@ def AutomatPageContabBilIntFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_CTRCEECAS = 15055
-ID_CTRCEEBAN = 15056
-ID_CTRCEECLI = 15057
-ID_CTRCEEFOR = 15058
-ID_CTRCEEEFF = 15059
+ID_CTRCEECAS = 15056
+ID_CTRCEEBAN = 15057
+ID_CTRCEECLI = 15058
+ID_CTRCEEFOR = 15059
+ID_CTRCEEEFF = 15060
 
 def AutomatPageContabBilCeeFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )

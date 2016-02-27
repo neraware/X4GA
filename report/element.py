@@ -40,7 +40,6 @@ from reportlab.lib.styles import ParagraphStyle
 from string import *
 
 import os.path
-import Env
 
 import report
 from reportlab.platypus.paraparser import ParaParser
@@ -916,10 +915,13 @@ class immagine(rettangolo):
             
         elif n.startswith('$ean13$'):
             try:
-                e = Expression(n[7:])
+                parts = n[7:].split(':')
+                e = Expression(parts[0])
                 c = e.evaluate(oCanvas)
                 if len(c) == 13 and c[-1] == Ean13Barcode._checkdigit(c[:12]):
                     bc = Ean13Barcode(c, barHeight=dy)#, ratio=2)#, xdim=1*units.inch)
+                    if len(parts) >= 2:
+                        bc.barWidth = float(parts[1])
                     self.set_foreground()
                     self.set_background()
                     self.set_lineColor(oCanvas)

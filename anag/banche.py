@@ -100,24 +100,3 @@ class BancheDialog(pdcrel.ga._AnagDialog):
             kwargs['title'] = FRAME_TITLE
         pdcrel.ga._AnagDialog.__init__(self, *args, **kwargs)
         self.LoadAnagPanel(BanchePanel(self, -1))
-
-
-# ------------------------------------------------------------------------------
-
-
-def runTest(frame, nb, log):
-    win = BancheDialog()
-    win.Show()
-    return win
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    import sys,os
-    import runtest
-    import stormdb as adb
-    db = adb.DB()
-    db.Connect()
-    runtest.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

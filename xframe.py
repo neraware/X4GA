@@ -512,6 +512,7 @@ class XFrame(aw.Frame):
             (self.OnPdcInterrCli,              ID_INTCONCLI),
             (self.OnPdcInterrFor,              ID_INTCONFOR),
             (self.OnPdcInterrCas,              ID_INTCONCAS),
+            (self.OnIncPagDet,                 ID_INCPAGDET),
             (self.OnQuadRegCont,               ID_CTR_QUADCON),
             (self.OnPdcInterrBan,              ID_INTCONBAN),
             (self.OnPdcInterrEff,              ID_INTCONEFF),
@@ -562,12 +563,14 @@ class XFrame(aw.Frame):
             #interrogazioni magazzino prodotto/movimenti
             (self.OnInterrProdotto,            ID_INTPROD),
             (self.OnIntDocMag,                 ID_INTDOCMAG),
+            (self.OnIntDocPag,                 ID_INTDOCPAG),
             (self.OnIntDocVet,                 ID_INTDOCVET),
             (self.OnIntMovMag,                 ID_INTMOVMAG),
             (self.OnIntEvaMag,                 ID_INTEVAMAG),
             (self.OnIntInvPres,                ID_INTGIAPRE),
             (self.OnIntInvent,                 ID_INTINVENT),
             (self.OnIntSottoSc,                ID_INTSOTTOSC),
+            (self.OnIntSottoScDis,             ID_INTSOTTOSCBK),
             (self.OnIntMagSrcDes,              ID_INTMAGSRCDES),
             (self.OnIntMagProvAge,             ID_PROVAGE),
             (self.OnProdRiPro,                 ID_MAGPRODPRORIC),
@@ -580,6 +583,7 @@ class XFrame(aw.Frame):
             #statistiche magazzino
             (self.OnPdcFtProd,                 ID_PDCSINTART),
             (self.OnStatFatCli,                ID_STATFATCLI),
+            (self.OnStatFatCliDes,             ID_STATFATCLIDES),
             (self.OnStatFatCliCatArt,          ID_STATFATCLICAT),
             (self.OnStatFatPro,                ID_STATFATPRO),
             (self.OnStatFatProCli,             ID_STATFATPROCLI),
@@ -687,6 +691,13 @@ class XFrame(aw.Frame):
             if item:
                 item.GetMenu().Remove(cid)
         
+        #rimozione voce sottoscorta da backorders se non attivo flag visualizza disponibilità
+        if not bt.MAGVISDIS:
+            cid = ID_INTSOTTOSCBK
+            item = menubar.FindItemById(cid)
+            if item:
+                item.GetMenu().Remove(cid)
+            
         #adeguamento voci di chiusura contabile in funzione della sovrapposizione
         #gestita o meno e dello stato di esecuzione delle procedure di generazione
         #movimenti di chiusura/apertura
@@ -1301,6 +1312,10 @@ class XFrame(aw.Frame):
         from contab.pdcint import CasseInterrFrame
         self.PdcRelShowInterrFrame(CasseInterrFrame)
     
+    def OnIncPagDet(self, event):
+        from contab.incpagdet import DettaglioIncassiPagamentiFrame
+        self.PdcRelShowInterrFrame(DettaglioIncassiPagamentiFrame)
+    
     def OnPdcInterrBan(self, event):
         from contab.pdcint import BancheInterrFrame
         self.PdcRelShowInterrFrame(BancheInterrFrame)
@@ -1606,6 +1621,10 @@ class XFrame(aw.Frame):
         from magazz.docint import DocIntFrame
         self.LaunchFrame(DocIntFrame)
     
+    def OnIntDocPag(self, event):
+        from magazz.docpaga import DocPagaFrame
+        self.LaunchFrame(DocPagaFrame)
+    
     def OnIntDocVet(self, event):
         from magazz.vetint import TraVetIntFrame
         self.LaunchFrame(TraVetIntFrame)
@@ -1628,6 +1647,10 @@ class XFrame(aw.Frame):
     
     def OnIntSottoSc(self, event):
         from magazz.sottosc import SottoscortaFrame
+        self.LaunchFrame(SottoscortaFrame)
+    
+    def OnIntSottoScDis(self, event):
+        from magazz.sottoscdis import SottoscortaFrame
         self.LaunchFrame(SottoscortaFrame)
     
     def OnIntMagSrcDes(self, event):
@@ -1653,6 +1676,10 @@ class XFrame(aw.Frame):
     def OnStatFatCli(self, event):
         from magazz.stat.fatpdc import FatturatoClientiFrame
         self.LaunchFrame(FatturatoClientiFrame)
+    
+    def OnStatFatCliDes(self, event):
+        from magazz.stat.fatpdc import FatturatoCliDesFrame
+        self.LaunchFrame(FatturatoCliDesFrame)
     
     def OnStatFatCliCatArt(self, event):
         from magazz.stat.fatpdc import FatturatoCliCatArtFrame

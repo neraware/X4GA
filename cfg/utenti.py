@@ -340,8 +340,10 @@ class UtentiPanel(ga.AnagPanel):
         
         psw=self.FindWindowById(wdr.ID_PSW).GetValue()
         if self.oldPassword<>psw:
-            self.db_curs.execute("select old_password('%s');" % psw)
-            ecrypt_psw=self.db_curs.fetchone()[0]
+            cur = adb.db.get_cursor()
+            cur.execute("select password('%s');" % psw)
+            ecrypt_psw = cur.fetchone()[0]
+            cur.close()
             self.FindWindowById(wdr.ID_PSW).SetValue(ecrypt_psw)
         out = ga.AnagPanel.TransferDataFromWindow(self, *args, **kwargs)
         

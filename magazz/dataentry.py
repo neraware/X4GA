@@ -33,6 +33,8 @@ import awc.controls.windows as aw
 from awc.controls.linktable import LinkTable
 from awc.controls import EVT_DATECHANGED
 from awc.controls.linktable import EVT_LINKTABCHANGED
+from awc.controls.button import is_pushable
+
 import awc.controls.mixin as cmix
 
 import Env
@@ -339,11 +341,9 @@ class MagazzPanel(aw.Panel,\
         self.dbevas = dbm.ElencoMovimEva()
         self.dbevas.AddLimit(1)
         
-        db_curs = adb.db.__database__.GetConnection().cursor()
-        
-        cfgcon.CfgCausale.__init__(self, db_curs)
-        auto.CfgAutomat.__init__(self, db_curs)
-        progr.CfgProgr.__init__(self, db_curs)
+        cfgcon.CfgCausale.__init__(self)
+        auto.CfgAutomat.__init__(self)
+        progr.CfgProgr.__init__(self)
         
         self.gridbodyclass.__init__(self)
         
@@ -782,6 +782,7 @@ class MagazzPanel(aw.Panel,\
         self.UpdateAnagAutoNotes()
         self.IsHeadValid()
         self.MakeTotals(False)
+        self.UpdatePanelFoot()
         if self.interrpdc:
             self.InterrPdc()
         return out
@@ -1001,6 +1002,7 @@ class MagazzPanel(aw.Panel,\
         return out
     
     def OnButPrint(self, event):
+        if not is_pushable(event.GetEventObject()): return
         if self.PrintDoc():
             if self.status == STATUS_EDITING:
                 if self.onedoconly_id:
@@ -1009,6 +1011,7 @@ class MagazzPanel(aw.Panel,\
                     self.SetRegStatus(STATUS_SELCAUS)
     
     def OnButModify(self, event):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_DISPLAY and self.canedit:
             if self.TestCanModify():
                 if self.TestPcf():
@@ -1051,6 +1054,7 @@ class MagazzPanel(aw.Panel,\
         return out
     
     def OnButAcquis(self, event):
+        if not is_pushable(event.GetEventObject()): return
         self.AcqDoc()
         self.gridbody.ResetView()
         event.Skip()
@@ -1622,12 +1626,14 @@ class MagazzPanel(aw.Panel,\
             rpt.ReportLabels(self, dbsc, 'Etichette Segnacollo')
     
     def OnDocNew( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_SELCAUS:
             if self.TestConfig():
                 self.DocNew()
         event.Skip()
     
     def OnDocSearch( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.status == STATUS_SELCAUS:
             if self.TestConfig():
                 self.DocSearch()
@@ -1666,6 +1672,7 @@ class MagazzPanel(aw.Panel,\
             event.Skip()
         
     def OnDocEnd( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.DocSave():
             if self.onedoconly_id:
                 event.Skip()
@@ -1845,6 +1852,7 @@ class MagazzPanel(aw.Panel,\
         return saved
 
     def OnDocQuit( self, event ):
+        if not is_pushable(event.GetEventObject()): return
         if self.TestQuit():
             if self.onedoconly_id:
                 event.Skip()
@@ -1852,6 +1860,7 @@ class MagazzPanel(aw.Panel,\
                 self.SetRegStatus(STATUS_SELCAUS)
 
     def OnDocDelete(self, event):
+        if not is_pushable(event.GetEventObject()): return
         action = MsgDialog(self,\
 """Sei sicuro di voler cancellare il documento?  Confermando, non sarà """\
 """più recuperabile in alcun modo.  """\
@@ -1928,7 +1937,23 @@ class MagazzPanel(aw.Panel,\
                 flt += " AND "
             flt = "id IN (%s)" % ','.join([str(p.id_rel) for p in p])
         ctrcau.SetFilter(flt)
+        
+        self.Freeze()
+        try:
+            cfg.Reset()
+            c = self.FindWindowByName('panritaccdati')
+            c.Show(bool(bt.CONATTRITACC and cfg.sogritacc))
+            self.FindWindowByName('panmargine').Show(bool(cfg.vismargine == 1))
+            a = (bt.MAGGESACC == 1)
+            if a:
+                a = cfg.HasMovAcconto() or cfg.HasMovStornoAcconto()
+            self.FindWindowByName('panacconti').Show(a)
+            self.Layout_()
+        finally:
+            self.Thaw()
+        
         self.Bind(EVT_LINKTABCHANGED, self.OnCauChanged, ctrcau)
+        
         return out
     
     def OnCauChanged(self, event):
@@ -1942,6 +1967,12 @@ class MagazzPanel(aw.Panel,\
         """
         if self.FindWindowById(wdr.ID_CAUSALE).GetValue():
             self.SetCausale()
+        else:
+            for name in 'panmargine panritaccdati'.split():
+                c = self.FindWindowByName(name)
+                if c:
+                    c.Hide()
+            self._Layout()
         wx.CallAfter(self.SetProdZoneSize)
         event.Skip()
     
@@ -1975,7 +2006,7 @@ class MagazzPanel(aw.Panel,\
         if cfg.askmpnoeff:
             _filt.append('tipo<>"R"')
         if not cfg.colcg:
-            _filt.append('modocalc<>"N"')
+            _filt.append('(modocalc<>"N" OR tipo="Y")')
         filt = ' AND '.join(_filt) or '1'
         mp.SetFilter(filt)
         self.GridBodySetTipMovFilter()
@@ -1984,9 +2015,8 @@ class MagazzPanel(aw.Panel,\
             p.Enable(cfg.askdatiacc == "X")
         self.Freeze()
         try:
-            for name in 'dati tot'.split():
-                c = self.FindWindowByName('panritacc%s'%name)
-                c.Show(bool(bt.CONATTRITACC and cfg.sogritacc))
+            c = self.FindWindowByName('panritaccdati')
+            c.Show(bool(bt.CONATTRITACC and cfg.sogritacc))
             cn('panmargine').Show(bool(cfg.vismargine == 1))
             a = (bt.MAGGESACC == 1)
             if a:
@@ -2446,8 +2476,7 @@ class MagazzPanel(aw.Panel,\
         def cn(x):
             return self.FindWindowByName(x)
         enable = enable and bool(bt.CONATTRITACC and self.dbdoc.cfgdoc.sogritacc)
-        for name in 'dati tot'.split():
-            cn('panritacc%s'%name).Enable(enable)
+        cn('panritaccdati').Enable(enable)
         enable = enable and cn('sogritacc').GetValue()
         for name in 'per com imp'.split():
             cn('%sritacc'%name).Enable(enable)
@@ -2622,11 +2651,6 @@ class MagazzPanel(aw.Panel,\
             if srccls is not None:
                 dlg = srccls(self, self.cauid, self.caudes, 
                              self.dbdoc.cfgdoc.numdoc)
-                dlg.db_curs = self.db_curs
-                #if self.dbdoc.cfgdoc.ctrnum:
-                    #dlg.SetOrderDocOut()
-                #else:
-                    #dlg.SetOrderDocIn()
                 idreg = dlg.ShowModal()
                 dlg.Destroy()
                 if idreg >= 0:
@@ -2659,6 +2683,8 @@ class MagazzPanel(aw.Panel,\
             if doc.mov.IsEmpty():
                 daq = dbm.DocMag()
                 daq.Get(acqdocid)
+                if doc.id_dest is None and daq.id_dest is not None:
+                    self.FindWindowByName('id_dest').SetValue(daq.id_dest)
                 headfields = []
                 for field, desc in (('id_modpag',  'Mod.Pagamento'),
                                     ('id_bancf',   'Banca'),
@@ -2723,9 +2749,17 @@ class MagazzPanel(aw.Panel,\
                 mov.CreateNewRow()
                 mov.id_tipmov = movdesid
                 acq = dlgacq.dbacq
-                mov.descriz = """Rif.to %s n. %s del %s"""\
-                   % (acq.doc.tipdoc.descriz, acq.doc.numdoc,\
-                      lib.dtoc(acq.doc.datdoc))
+                if acq.doc.tipdoc.desevarif:
+                    desrif = acq.doc.desrif or ''
+                    numrif = acq.doc.numrif or ''
+                    try: datrif = lib.dtoc(acq.doc.datrif)
+                    except: datrif = ''
+                else:
+                    desrif = acq.doc.tipdoc.descriz
+                    numrif = acq.doc.numdoc
+                    try: datrif = lib.dtoc(acq.doc.datdoc)
+                    except: datrif = ''
+                mov.descriz = """Rif.to %s n. %s del %s""" % (desrif, numrif, datrif)
                 mov.numriga = riga
                 riga += 1
             for acq in dlgacq.dbacq:
@@ -2937,7 +2971,6 @@ class DocSearch(wx.Dialog):
     Ricerca registrazioni.
     Dialog per la ricerca di registrazioni della causale selezionata.
     """
-    db_curs = None
     _idreg = None
     _ctrlist = None
     

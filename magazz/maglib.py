@@ -150,6 +150,7 @@ class GridMov(object):
                           ("doc", "id_tipdoc"),\
                           ("doc", "id_pdc"),\
                           ("doc", "id_agente"),\
+                          ("doc", "id_modpag"),\
                           ("mov", "id_prod"),\
                           ("mov", "id_tipmov"),\
                           ("mov", "id_aliqiva"),\
@@ -161,6 +162,24 @@ class GridMov(object):
                     if tab:
                         name = "%s.%s" % (tab, name)
                     mov.AddFilter("%s=%%s" % name, val)
+        
+        for name in 'catcli catfor'.split():
+            ctr = cn("masid_%s" % name)
+            if ctr:
+                val = ctr.GetValue()
+                if val is not None:
+                    mov.AddFilter("%s.id=%%s" % name, val)
+        
+        for key, col in (('masqta', 'qta'),
+                         ('masimp', 'importo'),):
+            for mm, op in (('min', '>='),
+                           ('max', '<='),):
+                name = key+mm
+                ctr = cn(name)
+                if ctr:
+                    val = ctr.GetValue()
+                    if val:
+                        mov.AddFilter('mov.%s%s%%s' % (col, op), val)
         
         #filtro descrizione
         c = cn('masdescriz')

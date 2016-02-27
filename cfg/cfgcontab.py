@@ -107,15 +107,11 @@ class CfgCausale(object):
     """
     Configurazione causale contabile.
     """
-    def __init__(self, curs):
+    def __init__(self):
         """
         Costruttore.
-        C{CfgCausale.__init__(self, curs)}
-        
-        @param curs: cursore db
-        @type curs: L{MySQLdb.Cursor}
+        C{CfgCausale.__init__(self)}
         """
-        self.db_curs = curs
         self.keys = ("id",           #Id causale
                      "codice",       #Codice causale
                      "descriz",      #Descrizione causale
@@ -183,8 +179,10 @@ class CfgCausale(object):
                             bt.TABNAME_PDCTIP,\
                             bt.TABNAME_PDCTIP )
         try:
-            self.db_curs.execute(cmd, idcau)
-            rs = self.db_curs.fetchone()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, idcau)
+            rs = cur.fetchone()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(None, e)
             self.ResetConfig()
@@ -203,8 +201,10 @@ class CfgCausale(object):
 """WHERE ambito=1 AND key_id=%%s """\
 """ORDER BY pdcord""" % (bt.TABNAME_CFGPDCP,)
         try:
-            self.db_curs.execute(cmd, idcau)
-            rs = self.db_curs.fetchall()
+            cur = adb.db.get_cursor()
+            cur.execute(cmd, idcau)
+            rs = cur.fetchall()
+            cur.close()
         except MySQLdb.Error, e:
             MsgDialogDbError(None, e)
             self.ResetConfig()
@@ -212,26 +212,3 @@ class CfgCausale(object):
             for r in rs:
                 self._cfg_pdcpref.append(r[0])
                 self._cfg_pdcpref_da[r[0]] = r[1] #segno
-
-
-# ------------------------------------------------------------------------------
-
-
-if __name__ == "__main__":
-    
-    class _testApp(wx.App):
-        
-        def OnInit(self):
-            wx.InitAllImageHandlers()
-            Azienda.DB.testdb()
-            return True
-    
-    app = _testApp(True)
-    app.MainLoop()
-    con = Azienda.DB.connection
-    cur = con.cursor()
-    cfg = CfgCausale(cur)
-    cfg.CfgCausale_Read(14)
-    for key,val in cfg.__dict__.iteritems():
-        if key.startswith("_cfg_"):
-            print "%s=%s" % (key, repr(val))
