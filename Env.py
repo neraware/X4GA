@@ -1014,14 +1014,13 @@ class Azienda(object):
         VALINT_DECIMALS = 2  #numero decimali su valuta interna
         VALUTE_DECIMALS = 6  #numero decimali su valuta estera
         
-        VALINT_INTEGERS = 9  #numero cifre intere su valuta interna
-        VALUTE_INTEGERS = 9  #numero cifre intere su valuta estera
-        MAGPRE_INTEGERS = 9  #numero cifre intere prezzi
-        MAGQTA_INTEGERS = 9  #numero cifre intere prezzi
+        VALINT_INTEGERS = 12 #numero cifre intere su valuta interna
+        VALUTE_INTEGERS = 16 #numero cifre intere su valuta estera
+        MAGPRE_INTEGERS = 12 #numero cifre intere prezzi
+        MAGQTA_INTEGERS = 10 #numero cifre intere prezzi
         
         MAGPRE_DECIMALS = 2  #numero decimali prezzi
         MAGQTA_DECIMALS = 0  #numero decimali quantità
-        
         MAGEAN_PREFIX = '22' #prefisso per generazione codici ean
         MAGSCOCAT = 0        #flag gestione sconti per categoria
         MAGSCORPCOS = None   #flag scorporo iva da costo
@@ -1042,7 +1041,6 @@ class Azienda(object):
         MAGPZGRIP = False    #flag gestione confezioni su griglie prezzi
         MAGPPROMO = False    #flag gestione condizioni promozionali di vendita
         MAGVISGIA = False    #flag visualizzazione giacenza prodotti in ricerca e gestione
-        MAGVISDIS = False    #flag visualizzazione disponibilità prodotti in ricerca e gestione
         MAGVISPRE = False    #flag visualizzazione prezzo prodotti in ricerca e gestione
         MAGVISCOS = False    #flag visualizzazione costo prodotti in ricerca e gestione
         MAGVISCPF = False    #flag visualizzazione codice prodotto del fornitore prodotti in ricerca e gestione
@@ -1062,8 +1060,6 @@ class Azienda(object):
         MAGNOCDEFDES = False #flag attivazione di default destinatari non codificati su ogni nuovo doc.
         MAGNOCDEFVET = False #flag attivazione di default vettori non codificati su ogni nuovo doc.
         MAGEXTRAVET = False  #flag attivazione campi extra sui vettori
-        
-        EFFCONSCA = False    #flag contabilizzazione effetti in base a data di scadenza
         
         #variabili per la gestione dei listini
         MAGNUMSCO = 3        #numero di sconti gestiti
@@ -2070,7 +2066,7 @@ class Azienda(object):
                 [ "numfax2",        "VARCHAR", 60, None, "Num. FAX aggiuntivo", None ],
                 [ "email",          "VARCHAR",120, None, "Email", None ],
                 [ "docsemail",      "VARCHAR",120, None, "Email spedizione fatture e documenti", None ],
-                [ "noexemail",      "TINYINT",  1, None, "Flag stampa comunque carta anche se ha email documenti", None ],
+                [ "noexemail",      "VARCHAR",120, None, "Flag stampa comunque carta anche se ha email documenti", None ],
                 [ "siteurl",        "VARCHAR",120, None, "Url sito internet", None ],
                 [ "ctt1nome",       "VARCHAR",255, None, "Contatto1: nome", None ],
                 [ "ctt1email",      "VARCHAR",255, None, "Contatto1: email", None ],
@@ -2311,8 +2307,7 @@ class Azienda(object):
                 [ "firmariba",  "VARCHAR", 20, None, "Firma x disco riba", None ],
                 [ "provfin",    "VARCHAR", 15, None, "Prov. Finanza", None],
                 [ "aubanum",    "VARCHAR", 10, None, "Num. autorizz. banca", None],
-                [ "aubadat",    "DATE",  None, None, "Data autorizz. banca", None],
-                [ "ridccred",   "CHAR",    23, None, "Cod.creditore x rid/sepa", None] ]
+                [ "aubadat",    "DATE",  None, None, "Data autorizz. banca", None] ]
             
             cls.banche_indexes = [ ["PRIMARY KEY", "id"], ]
             
@@ -2805,7 +2800,6 @@ class Azienda(object):
                 [ "noivaprof",  "TINYINT",  1, None, "Flag accorpamento iva su c/partita se causale non iva in reg. contabile", None ],
                 [ "rptcolli",   "TINYINT",  1, None, "Flag stampa segnacolli", None ],
                 [ "aanotedoc",  "TINYINT",  1, None, "Flag inibizione note documento da anagrafica", None ],
-                [ "desevarif",  "TINYINT",  1, None, "Flag descrizione riga documento evaso basata su dati riferimento", None ]
             ]
             
             cls.set_constraints(cls.TABNAME_CFGMAGDOC,
@@ -3866,7 +3860,7 @@ class Azienda(object):
             return cls.BaseTab
             
         @classmethod
-        def ReadAziendaSetup(cls, load_plugins=True):
+        def ReadAziendaSetup(cls):
             
             cfg = adb.DbTable(cls.TABNAME_CFGSETUP, 'cfg', writable=False)
             
@@ -3937,10 +3931,9 @@ class Azienda(object):
                                   """dei dati aziendali.""" % err
             clear_plugins()
             cls.defstru()
-            if load_plugins:
-                from plib import init_plugins
-                init_plugins()
-                load_new_plugins()
+            from plib import init_plugins, check_new_plugins, load_plugin, enable_plugin
+            init_plugins()
+            load_new_plugins()
             cls.SetMailParams()
             cls.SetXmppParams()
             cls.SetNotifyClass()
@@ -4009,7 +4002,6 @@ class Azienda(object):
                 ('MAGPZGRIP',       'magpzgrip',          f, _int, None),
                 ('MAGPPROMO',       'magppromo',          f, _int, None),
                 ('MAGVISGIA',       'magvisgia',          f, _int, None),
-                ('MAGVISDIS',       'magvisdis',          f, _int, None),
                 ('MAGVISPRE',       'magvispre',          f, _int, None),
                 ('MAGVISCOS',       'magviscos',          f, _int, None),
                 ('MAGVISCPF',       'magviscpf',          f, _int, None),
@@ -4050,7 +4042,6 @@ class Azienda(object):
                 ('MAGSEPLIS',       'magseplis',          f, _flt, None),
                 ('MAGRELLIS',       'magrellis',          f, _flt, None),
                 ('MAGSELLIS',       'magsellis',          f, _flt, None),
-                ('EFFCONSCA',       'effconsca',          f, _flt, None),
             ]
         
         
@@ -4115,7 +4106,7 @@ class Azienda(object):
         
         @classmethod
         def GetValIntIntegersDisplay(cls):
-            return cls.VALINT_INTEGERS
+            return 9
         
         @classmethod
         def GetValIntMaskInfo(cls, numint=None, numdec=None):
@@ -4139,7 +4130,7 @@ class Azienda(object):
         
         @classmethod
         def GetMagQtaIntegersDisplay(cls):
-            return cls.MAGQTA_INTEGERS
+            return 9
         
         @classmethod
         def GetMagQtaMaskInfo(cls, numint=None, numdec=None):

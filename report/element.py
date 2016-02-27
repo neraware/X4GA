@@ -35,7 +35,7 @@ from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
 from reportlab.platypus import Paragraph as BaseParagraph
 from reportlab.platypus.paragraph import _handleBulletWidth, ParaLines, FragLine
 from reportlab.pdfbase.pdfmetrics import stringWidth
-from reportlab.lib.styles import ParagraphStyle, PropertySet
+from reportlab.lib.styles import ParagraphStyle
 
 from string import *
 
@@ -928,6 +928,21 @@ class immagine(rettangolo):
                     bc.drawOn(oCanvas, x0-6, y0)
             except:
                 pass
+            return
+            
+        elif n.startswith('$img_stream$'):
+            import StringIO
+            expr = Expression(n[12:])
+            image = expr.evaluate(oCanvas, object)
+            width, height = image.size
+            s = StringIO.StringIO()
+            image.save(s, 'jpeg')
+            s.seek(0)
+            
+            from reportlab.lib.utils import ImageReader
+            img = ImageReader(image)
+            oCanvas.drawImage(img, x0, y0, dx, dy, mask=(0,0,0,0,0,0))
+            
             return
         
         rettangolo.output(self, oCanvas, y)
