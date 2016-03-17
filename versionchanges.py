@@ -29,6 +29,25 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.13', None, (
+         ("INT4011",
+         """Introdotta possibilità di indirizzamento della cartella
+         di configurazione in base al nome utente di sistema 
+         (__username__)."""),
+        ),),
+    
+    ('1.7.12', None, (
+         ("BUG1175",
+         """Corretto ordinamento righe nella finestra di acquisizione 
+         documento."""),
+        ),),
+    
+    ('1.7.11', None, (
+         ("BUG1174",
+         """Corretti filtri su estrazione inventario da backorders, non
+         considerava correttamente il fornitore impostato nei limiti."""),
+        ),),
+    
     ('1.7.10', None, (
          ("BUG1173",
          """Corretto errore in backup explorer relativo a variabile
