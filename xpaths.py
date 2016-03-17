@@ -30,7 +30,14 @@ def GetConfigPath(_appdesc=None, _appcode=None):
     _appcode = _appcode or appcode
     _appdesc = _appdesc or appdesc
     config_base_path = os.getenv("X4_CONFIG_PATH")
-    if not config_base_path:
+    if config_base_path:
+        config_base_path = config_base_path.replace('__username__', os.getenv('username'))
+        if not os.path.exists(config_base_path):
+            try:
+                os.mkdir(config_base_path)
+            except:
+                pass
+    else:
         if sys.platform.startswith('linux'):
             config_base_path = os.path.expanduser('~/.%s' % _appcode)
         elif sys.platform.startswith('win32'):
