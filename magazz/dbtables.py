@@ -4157,6 +4157,7 @@ class RiepDocAcquis(adb.SubDbTable):
                        """*(100-eva.sconto5)/100"""\
                        """*(100-eva.sconto6)/100""", "valeva")
         mov.AddOrder("doc.numdoc")
+        mov.AddOrder("mov.numriga")
         mov.Reset()
         
         adb.SubDbTable.__init__(self, mov, "totacq")#, debug=True)
@@ -5432,7 +5433,7 @@ class SottoscortaDaDisponib(adb.DbTable):
         _cat = self.AddJoin('catart', idLeft='id_catart', join=adb.JOIN_LEFT)
         _gru = self.AddJoin('gruart', idLeft='id_gruart', join=adb.JOIN_LEFT)
         _mar = self.AddJoin('marart', idLeft='id_marart', join=adb.JOIN_LEFT)
-        _for = self.AddJoin('pdc', idLeft='id_fornit', join=adb.JOIN_LEFT)
+        _for = self.AddJoin('pdc', 'fornit', idLeft='id_fornit', join=adb.JOIN_LEFT)
         self.AddField('0.0', 'tot_giac')
         self.AddField('0.0', 'tot_bkcli')
         self.AddField('0.0', 'tot_bkfor')
