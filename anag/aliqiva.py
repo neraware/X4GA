@@ -41,14 +41,16 @@ class AliqIvaSearchResultsGrid(ga.SearchResultsGrid):
         _NUM = gl.GRID_VALUE_NUMBER
         _STR = gl.GRID_VALUE_STRING
         _DAT = gl.GRID_VALUE_DATETIME
+        _CHK = gl.GRID_VALUE_CHOICE+":1,0"
         _PRC = bt.GetPerGenMaskInfo()
         cn = lambda x: self.db._GetFieldIndex(x)
-        return (( 35, (cn('aliqiva_codice'),  "Cod.",     _STR, True)),
-                (240, (cn('aliqiva_descriz'), "Aliquota", _STR, True)),
-                ( 50, (cn('aliqiva_perciva'), "%IVA",     _PRC, True)),
-                ( 50, (cn('aliqiva_tipo'),    "Tipo",     _STR, True)),
-                ( 50, (cn('aliqiva_modo'),    "Modo",     _STR, True)),
-                (  1, (cn('aliqiva_id'),      "#aliq",    _STR, True)),
+        return (( 35, (cn('aliqiva_codice'),  "Cod.",       _STR, True)),
+                (240, (cn('aliqiva_descriz'), "Aliquota",   _STR, True)),
+                ( 50, (cn('aliqiva_perciva'), "%IVA",       _PRC, True)),
+                ( 50, (cn('aliqiva_tipo'),    "Tipo",       _STR, True)),
+                ( 50, (cn('aliqiva_modo'),    "Modo",       _STR, True)),
+                ( 70, (cn('aliqiva_sm11_no'), "No spesom.", _CHK, True)),
+                (  1, (cn('aliqiva_id'),      "#aliq",      _STR, True)),
             )
     
     def SetColumn2Fit(self):
