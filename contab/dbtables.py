@@ -3646,17 +3646,17 @@ SELECT reg.id              'Reg_Id',
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, -1)) 'IVA_AllImpo',
            
        SUM(bodycri.imponib
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, -1)
            *IF(aliq.modo="I",1,0))                                              'IVA_Imponib',
        
-       SUM(bodycri.imposta
+       SUM((bodycri.imposta+IF(bodycri.indeduc IS NULL, 0, bodycri.indeduc))
            *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, -1)
            *IF(aliq.modo="I",1,0))                                              'IVA_Imposta',
            
-       SUM((bodycri.imponib+bodycri.imposta+bodycri.indeduc)
-           *IF(bodycri.tipriga="I", 1, 0)
+       SUM((bodycri.imponib+bodycri.imposta+IF(bodycri.indeduc IS NULL, 0, bodycri.indeduc))
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, -1)) 'IVA_Totale',
            
        SUM(bodycri.imponib
@@ -3681,14 +3681,14 @@ SELECT reg.id              'Reg_Id',
              OR(regiva.tipo="A" AND causale.pralcf=-1), 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0))                                      'fa_att_cnt',
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0))                            'fa_att_cnt',
        
        SUM(bodycri.imponib
            *causale.pralcf
            *IF(regiva.tipo="V", 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(reg.tipreg="E",0,
                IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, 0)))  'fa_att_tot',
        
@@ -3708,7 +3708,7 @@ SELECT reg.id              'Reg_Id',
            *IF(regiva.tipo="A", 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 0, 1))  'fa_att_vim',
        
        SUM((bodycri.imposta+IF(bodycri.indeduc IS NULL, 0, bodycri.indeduc))
@@ -3716,7 +3716,7 @@ SELECT reg.id              'Reg_Id',
            *IF(regiva.tipo="A", 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 0, 1))  'fa_att_viv',
        
        SUM(1
@@ -3724,14 +3724,14 @@ SELECT reg.id              'Reg_Id',
              OR(regiva.tipo="V" AND causale.pralcf=-1), 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0))                                      'fa_pas_cnt',
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0))                            'fa_pas_cnt',
        
        SUM(bodycri.imponib
            *causale.pralcf
            *IF(regiva.tipo="A", 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, 0))  'fa_pas_tot',
        
        SUM((bodycri.imposta+IF(bodycri.indeduc IS NULL, 0, bodycri.indeduc))
@@ -3749,7 +3749,7 @@ SELECT reg.id              'Reg_Id',
            *IF(regiva.tipo="V", 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 0, 1))  'fa_pas_vim',
        
        SUM((bodycri.imposta+IF(bodycri.indeduc IS NULL, 0, bodycri.indeduc))
@@ -3757,7 +3757,7 @@ SELECT reg.id              'Reg_Id',
            *IF(regiva.tipo="V", 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 0, 1))  'fa_pas_viv',
            
        SUM(1
@@ -3765,14 +3765,14 @@ SELECT reg.id              'Reg_Id',
              OR(regiva.tipo="A" AND causale.pralcf=-1), 1, 0)
            *IF((tipana.tipo="C" AND statocli.codice != "IT")
              OR(tipana.tipo="F" AND statofor.codice != "IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0))                                      'bl_att_cnt',
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0))                            'bl_att_cnt',
        
        SUM(bodycri.imponib
            *causale.pralcf
            *IF(regiva.tipo="V", 1, 0)
            *IF((tipana.tipo="C" AND statocli.codice != "IT")
              OR(tipana.tipo="F" AND statofor.codice != "IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, 0))  'bl_att_tot',
        
        SUM((bodycri.imposta+IF(bodycri.indeduc IS NULL, 0, bodycri.indeduc))
@@ -3788,14 +3788,14 @@ SELECT reg.id              'Reg_Id',
              OR(regiva.tipo="V" AND causale.pralcf=-1), 1, 0)
            *IF((tipana.tipo="C" AND statocli.codice != "IT")
              OR(tipana.tipo="F" AND statofor.codice != "IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0))                                      'bl_pas_cnt',
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0))                            'bl_pas_cnt',
        
        SUM(bodycri.imponib
            *causale.pralcf
            *IF(regiva.tipo="A", 1, 0)
            *IF((tipana.tipo="C" AND statocli.codice != "IT")
              OR(tipana.tipo="F" AND statofor.codice != "IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, 0))  'bl_pas_tot',
        
        SUM((bodycri.imposta+IF(bodycri.indeduc IS NULL, 0, bodycri.indeduc))
@@ -3810,14 +3810,14 @@ SELECT reg.id              'Reg_Id',
            *IF((regiva.tipo="C" AND causale.pralcf= 1), 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0))                                      'sa_att_cnt',
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0))                            'sa_att_cnt',
        
        SUM(bodycri.importo
            *causale.pralcf
            *IF((regiva.tipo="C" AND causale.pralcf= 1), 1, 0)
            *IF((tipana.tipo="C" AND statocli.id IS NULL or statocli.codice="IT")
              OR(tipana.tipo="F" AND statofor.id IS NULL or statofor.codice="IT"), 1, 0)
-           *IF(bodycri.tipriga="I", 1, 0)
+           *IF(bodycri.tipriga IN ("I", "O"), 1, 0)
            *IF(CONCAT(regiva.tipo,bodycri.segno) IN ("VA", "CA", "AD"), 1, 0))  'sa_att_tot'
 
 FROM contab_b bodyanag
