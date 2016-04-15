@@ -29,6 +29,20 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.15', dt.Date(2016, 4, 15), (
+         ("BUG1176",
+         """Corretta determinazione variabile di ambiente per nome
+         utente in percorso configurazione."""),
+        ),),
+    
+    ('1.7.14', None, (
+         ("BET4213",
+         """Aggiunta colonna relativa al flag di esclusione dal
+         calcolo dello spesometro nella gestione delle aliquote iva."""),
+         ("BET4214",
+         """Esteso il calcolo dello spesometro alle righe di omaggio."""),
+        ),),
+    
     ('1.7.13', None, (
          ("INT4011",
          """Introdotta possibilità di indirizzamento della cartella
