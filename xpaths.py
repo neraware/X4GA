@@ -31,7 +31,8 @@ def GetConfigPath(_appdesc=None, _appcode=None):
     _appdesc = _appdesc or appdesc
     config_base_path = os.getenv("X4_CONFIG_PATH")
     if config_base_path:
-        config_base_path = config_base_path.replace('__username__', os.getenv('username'))
+        config_base_path = config_base_path.replace('__username__', 
+                                                    os.getenv('username') or '')
         if not os.path.exists(config_base_path):
             try:
                 os.mkdir(config_base_path)
