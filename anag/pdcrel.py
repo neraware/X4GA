@@ -27,6 +27,7 @@ from wx.lib import masked
 import MySQLdb
 
 import awc
+from awc.controls.entries import MailEntryCtrl, PhoneEntryCtrl
 MsgDialog = awc.util.MsgDialog
 
 import awc.controls.linktable as lt
@@ -1653,13 +1654,19 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
                 n = aw.awu.ListSearch(t, lambda x: x[bt.TABSETUP_COLUMNNAME] == name)
                 if hasattr(c, 'SetMaxLength'):
                     c.SetMaxLength(t[n][bt.TABSETUP_COLUMNLENGTH])
-                self.Bind(wx.EVT_TEXT, self._GridDes_OnDestinChanged, c)
+                if hasattr(c, 'address'):
+                    self.Bind(wx.EVT_TEXT, self._GridDes_OnDestinChanged, c.address)
+                else:
+                    self.Bind(wx.EVT_TEXT, self._GridDes_OnDestinChanged, c)
 
     def _GridDes_OnDestinChanged(self, event):
         row = self._grid_des.GetSelectedRows()[0]
         if self._des_updating or not 0 <= row < len(self.rsdes):
             return
         obj = event.GetEventObject()
+        if isinstance(obj.GetParent(), (MailEntryCtrl,
+                                        PhoneEntryCtrl,)):
+            obj = obj.GetParent()
         name = obj.GetName()
         if name.startswith('des_'):
             name = name[4:]
