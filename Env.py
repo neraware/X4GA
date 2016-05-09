@@ -839,38 +839,33 @@ class Azienda(object):
         
         connection = None
         
-        def testdb(*args):
-            #Azienda.DB.connection = MySQLdb.connect( host = "localhost",\
-            #user = "jfc",\
-            #passwd = "jfc",\
-            #db = "astra" )
-            servername = "localhost"
-            username =   "root"
-            password =   "root"
-            schema =     "astra"
+        @staticmethod
+        def get_azienda_db(hostname=None, username=None, password=None, schema=None):
             
-            Azienda.DB.servername = servername
-            Azienda.DB.username =   username
-            Azienda.DB.password =   password
-            Azienda.DB.schema =     schema
+            if hostname:
+                Azienda.DB.servername = hostname
             
-            Azienda.DB.connection = MySQLdb.connect(\
-                host =   Azienda.DB.servername,\
-                user =   Azienda.DB.username,\
-                passwd = Azienda.DB.password,\
-                db =     Azienda.DB.schema)
+            if username:
+                Azienda.DB.username = username
+                Azienda.DB.password = password
             
-            adb.DEFAULT_DATABASE = servername
-            adb.DEFAULT_USERNAME = username
-            adb.DEFAULT_PASSWORD = password
-            adb.DEFAULT_DATABASE = schema
+            if schema:
+                Azienda.DB.schema = schema
+            
+            if not Azienda.DB.schema:
+                raise Exception, "Definire lo schema"
+            
+            adb.DEFAULT_HOSTNAME = Azienda.DB.servername
+            adb.DEFAULT_USERNAME = Azienda.DB.username
+            adb.DEFAULT_PASSWORD = Azienda.DB.password
+            adb.DEFAULT_DATABASE = Azienda.DB.schema
             
             db = adb.DB()
             db.Connect()
             
             Azienda.Login.username = username
             
-        testdb = staticmethod(testdb)
+            return db
     
     # --------------------------------------------------------------------------
     
