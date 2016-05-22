@@ -1340,10 +1340,10 @@ class GridBody(object):
                         if not mov.perpro == old_perpro:
                             self.gridbody.ForceResetView()
                             self.gridbody.ResetView()
-                    else:
+#                     else:
 #                         if self.dbprod.perpro:
 #                             mov.perpro = self.dbprod.perpro
-                        mov.perpro = None
+#                         mov.perpro = None
                     DefImporto()
                 elif mov.config.askvalori == 'V':
                     mov.importo, _, _, _, _, _, _ = self.GridBodyDefPrezzoSconti6()
