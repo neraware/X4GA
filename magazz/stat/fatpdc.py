@@ -43,9 +43,12 @@ import magazz.stat.fatpdc_wdr as wdr
 import report as rpt
 
 
-FRAME_TITLE_FATT = "Fatturato clienti"
-FRAME_TITLE_FATTCC = "Fatturato clienti/categoria prodotto"
-FRAME_TITLE_FATTCD = "Fatturato clienti/destinazione"
+FRAME_TITLE_FATT_C = "Fatturato clienti"
+FRAME_TITLE_FATTCC = "Fatturato clienti/categorie prodotto"
+FRAME_TITLE_FATTCD = "Fatturato clienti/destinazioni"
+
+FRAME_TITLE_FATT_F = "Fatturato fornitori"
+FRAME_TITLE_FATTFC = "Fatturato fornitori/categorie prodotto"
 
 
 class _FatturatoVenditeGrid(dbglib.DbGridColoriAlternati):
@@ -185,7 +188,11 @@ class _FatturatoVenditePanel(aw.Panel):
         if fatmax:
             f.AddHaving('total_statvalfat<=%s', fatmax)
         self.SetOrder()
-        f.Retrieve()
+        wx.BeginBusyCursor()
+        try:
+            f.Retrieve()
+        finally:
+            wx.EndBusyCursor()
         grid.ResetView()
     
     def SetOrder(self):
@@ -209,6 +216,8 @@ class _FatturatoVenditePanel(aw.Panel):
 
 class FatturatoClientiGrid(_FatturatoVenditeGrid):
     
+    desc_tipana = 'Cliente'
+    
     def GetColDef(self):
         
         def cn(tab, col):
@@ -221,10 +230,10 @@ class FatturatoClientiGrid(_FatturatoVenditeGrid):
         pdc = mov.doc.pdc
         
         return (\
-            ( 60, (cn(pdc, 'codice'),           "Cod.",      _STR, False)),
-            (220, (cn(pdc, 'descriz'),          "Cliente",   _STR, False)),
-            (110, (cn(mov, 'total_statvalfat'), "Fatturato", _VAL, False)),
-            (  1, (cn(pdc, 'id'),               "#cli",      _STR, False)),
+            ( 60, (cn(pdc, 'codice'),           "Cod.",           _STR, False)),
+            (220, (cn(pdc, 'descriz'),          self.desc_tipana, _STR, False)),
+            (110, (cn(mov, 'total_statvalfat'), "Fatturato",      _VAL, False)),
+            (  1, (cn(pdc, 'id'),               "#cli",           _STR, False)),
         )
     
     def SetTotali(self):
@@ -239,13 +248,14 @@ class FatturatoClientiGrid(_FatturatoVenditeGrid):
 class FatturatoClientiPanel(_FatturatoVenditePanel):
     
     rptname = "Fatturato Clienti"
+    FatturatoTable = dbs.FatturatoClienti
     
     def InitControls(self):
         wdr.SetClienti()
         wdr.FatturatoPdcFunc(self)
     
     def InitTableFatt(self):
-        self.dbfat = dbs.FatturatoClienti()
+        self.dbfat = self.FatturatoTable()
         self.dbfat.ShowDialog(self)
     
     def InitGrid(self):
@@ -262,10 +272,13 @@ class FatturatoClientiPanel(_FatturatoVenditePanel):
 
 class FatturatoClientiFrame(aw.Frame):
     
+    Panel = FatturatoClientiPanel
+    FRAME_TITLE = FRAME_TITLE_FATT_C
+    
     def __init__(self, *args, **kwargs):
-        kwargs['title'] = FRAME_TITLE_FATT
+        kwargs['title'] = self.FRAME_TITLE
         aw.Frame.__init__(self, *args, **kwargs)
-        self.AddSizedPanel(FatturatoClientiPanel(self))
+        self.AddSizedPanel(self.Panel(self))
         self.CenterOnScreen()
 
 
@@ -273,6 +286,8 @@ class FatturatoClientiFrame(aw.Frame):
 
 
 class FatturatoCliCatArtGrid(_FatturatoVenditeGrid):
+    
+    desc_anag = 'Cliente'
     
     def GetColDef(self):
         
@@ -287,13 +302,13 @@ class FatturatoCliCatArtGrid(_FatturatoVenditeGrid):
         cat = mov.prod.catart
         
         return (\
-            ( 60, (cn(pdc, 'codice'),           "Cod.",      _STR, False)),
-            (220, (cn(pdc, 'descriz'),          "Cliente",   _STR, False)),
-            ( 60, (cn(cat, 'codice'),           "Cod.",      _STR, False)),
-            (220, (cn(cat, 'descriz'),          "Categoria", _STR, False)),
-            (110, (cn(mov, 'total_statvalfat'), "Fatturato", _VAL, False)),
-            (  1, (cn(pdc, 'id'),               "#cli",      _STR, False)),
-            (  1, (cn(cat, 'id'),               "#cat",      _STR, False)),
+            ( 60, (cn(pdc, 'codice'),           "Cod.",         _STR, False)),
+            (220, (cn(pdc, 'descriz'),          self.desc_anag, _STR, False)),
+            ( 60, (cn(cat, 'codice'),           "Cod.",         _STR, False)),
+            (220, (cn(cat, 'descriz'),          "Categoria",    _STR, False)),
+            (110, (cn(mov, 'total_statvalfat'), "Fatturato",    _VAL, False)),
+            (  1, (cn(pdc, 'id'),               "#cli",         _STR, False)),
+            (  1, (cn(cat, 'id'),               "#cat",         _STR, False)),
         )
     
     def SetTotali(self):
@@ -308,18 +323,19 @@ class FatturatoCliCatArtGrid(_FatturatoVenditeGrid):
 class FatturatoCliCatArtPanel(_FatturatoVenditePanel):
     
     rptname = "Fatturato Clienti per Categoria prodotto"
+    FatturatoTable = dbs.FatturatoCliCatArt
+    Grid = FatturatoCliCatArtGrid
     
     def InitControls(self):
         wdr.SetClienti()
         wdr.FatturatoPdcFunc(self)
     
     def InitTableFatt(self):
-        self.dbfat = dbs.FatturatoCliCatArt()
+        self.dbfat = self.FatturatoTable()
         self.dbfat.ShowDialog(self)
     
     def InitGrid(self):
-        self.gridfat = FatturatoCliCatArtGrid(self.FindWindowByName('pangridfat'), 
-                                              self.dbfat)
+        self.gridfat = self.Grid(self.FindWindowByName('pangridfat'), self.dbfat)
     
     def OnUpdate(self, event):
         self.UpdateData(self.dbfat, self.gridfat)
@@ -339,10 +355,13 @@ class FatturatoCliCatArtPanel(_FatturatoVenditePanel):
 
 class FatturatoCliCatArtFrame(aw.Frame):
     
+    FRAME_TITLE = FRAME_TITLE_FATTCC
+    Panel = FatturatoCliCatArtPanel
+    
     def __init__(self, *args, **kwargs):
-        kwargs['title'] = FRAME_TITLE_FATTCC
+        kwargs['title'] = self.FRAME_TITLE
         aw.Frame.__init__(self, *args, **kwargs)
-        self.AddSizedPanel(FatturatoCliCatArtPanel(self))
+        self.AddSizedPanel(self.Panel(self))
         self.CenterOnScreen()
 
 
@@ -421,3 +440,46 @@ class FatturatoCliDesFrame(aw.Frame):
         kwargs['title'] = FRAME_TITLE_FATTCD
         aw.Frame.__init__(self, *args, **kwargs)
         self.AddSizedPanel(FatturatoCliDesPanel(self))
+
+
+
+
+
+
+
+
+
+
+
+
+class FatturatoFornitGrid(FatturatoClientiGrid):
+    desc_tipana = 'Fornitore'
+
+class FatturatoFornitPanel(FatturatoClientiPanel):
+    rptname = "Fatturato Fornitori"
+    FatturatoTable = dbs.FatturatoFornitori
+    def InitControls(self):
+        wdr.SetFornit()
+        wdr.FatturatoPdcFunc(self)
+
+class FatturatoFornitFrame(FatturatoClientiFrame):
+    Panel = FatturatoFornitPanel
+    FRAME_TITLE = FRAME_TITLE_FATT_F
+
+
+
+
+class FatturatoForCatArtGrid(FatturatoCliCatArtGrid):
+    desc_anag = 'Fornitore'
+
+class FatturatoForCatArtPanel(FatturatoCliCatArtPanel):
+    rptname = "Fatturato Fornitori per Categoria prodotto"
+    FatturatoTable = dbs.FatturatoForCatArt
+    Grid = FatturatoForCatArtGrid
+    def InitControls(self):
+        wdr.SetFornit()
+        wdr.FatturatoPdcFunc(self)
+
+class FatturatoForCatArtFrame(FatturatoCliCatArtFrame):
+    FRAME_TITLE = FRAME_TITLE_FATTFC
+    Panel = FatturatoForCatArtPanel

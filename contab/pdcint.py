@@ -840,8 +840,9 @@ class _PdcCliForInterrMixin(_PdcInterrMixin):
                 wx.BeginBusyCursor()
                 try:
                     iscli = isinstance(self, ClientiInterrPanel)
+                    isfor = isinstance(self, FornitInterrPanel)
                     parent = nb.GetPage(ntab)
-                    self.panmag = magint.PdcIntMagPanel(parent, self, iscli=iscli)
+                    self.panmag = magint.PdcIntMagPanel(parent, self, iscli=iscli, isfor=isfor)
                     self.panmag.UpdateFilters()
                     parent.AddSizedPanel(self.panmag)
                     nb.ReSize()

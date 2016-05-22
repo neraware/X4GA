@@ -447,7 +447,7 @@ class PdcIntMagPanel(aw.Panel):
     ftalastpdc = None
     fatlastpdc = None
     
-    def __init__(self, parent, cfm, iscli=False):
+    def __init__(self, parent, cfm, iscli=False, isfor=False):
         
         aw.Panel.__init__(self, parent)
         self.Freeze()
@@ -473,32 +473,37 @@ class PdcIntMagPanel(aw.Panel):
             self.dbfta = None
             self.pdcid = None
             
-            if iscli:
+            if iscli or isfor:
+                cn = self.FindWindowByName
                 wz = ci(wdr.ID_WORKZONE)
-                #riepilogo prodotti fatturati
-                p = wx.Panel(wz, -1)
-                wdr.AnagIntMagFtProdFunc(p, False)
-                wz.AddPage(p, "Prodotti venduti")
-                self.dbfta = dbs.SintesiProVenCli()
-                self.gridfta = PdcIntMagFtProdGrid(ci(wdr.ID_FTA_PANGRID), self.dbfta)
-                ci(wdr.ID_FTAORDER).SetSelection(Env.Azienda.GetAutom('magordfta', 0))
-                #statistica fatturato
-                def cn(x):
-                    return self.FindWindowByName(x)
-                p = wx.Panel(wz, -1)
-                wdr.AnagIntMagFatturatoFunc(p, False)
-                wz.AddPage(p, "Fatturato")
-                self.dbfatcat = dbs.FatturatoCliCatArt()
-                self.gridfatcat = PdcIntMagFatCatArtGrid(cn('_pangridfatcat'),
-                                                         self.dbfatcat)
-                self.gridfatcat.SetToolTipString("""Doppio click su una categoria\n"""
-                                                 """per visualizzare solo i prodotti\n"""
-                                                 """che le appartengono.""")
-                self.Bind(gl.EVT_GRID_CELL_LEFT_DCLICK, self.OnIntMagFatCatDClick,
-                          self.gridfatcat)
-                self.dbfatpro = dbs.FatturatoCliPro()
-                self.gridfatpro = PdcIntMagFatProGrid(cn('_pangridfatpro'),
-                                                      self.dbfatpro)
+                if iscli:
+                    #riepilogo prodotti fatturati
+                    p = wx.Panel(wz, -1)
+                    wdr.AnagIntMagFtProdFunc(p, False)
+                    wz.AddPage(p, "Prodotti venduti")
+                    self.dbfta = dbs.SintesiProVenCli()
+                    self.gridfta = PdcIntMagFtProdGrid(ci(wdr.ID_FTA_PANGRID), self.dbfta)
+                    ci(wdr.ID_FTAORDER).SetSelection(Env.Azienda.GetAutom('magordfta', 0))
+                if iscli or isfor:
+                    #statistica fatturato
+                    p = wx.Panel(wz, -1)
+                    wdr.AnagIntMagFatturatoFunc(p, False)
+                    wz.AddPage(p, "Fatturato")
+                    if iscli:
+                        self.dbfatcat = dbs.FatturatoCliCatArt()
+                        self.dbfatpro = dbs.FatturatoCliPro()
+                    else:
+                        self.dbfatcat = dbs.FatturatoForCatArt()
+                        self.dbfatpro = dbs.FatturatoForPro()
+                    self.gridfatcat = PdcIntMagFatCatArtGrid(cn('_pangridfatcat'),
+                                                             self.dbfatcat)
+                    self.gridfatpro = PdcIntMagFatProGrid(cn('_pangridfatpro'),
+                                                          self.dbfatpro)
+                    self.gridfatcat.SetToolTipString("""Doppio click su una categoria\n"""
+                                                     """per visualizzare solo i prodotti\n"""
+                                                     """che le appartengono.""")
+                    self.Bind(gl.EVT_GRID_CELL_LEFT_DCLICK, self.OnIntMagFatCatDClick,
+                              self.gridfatcat)
             
             tabmax = ci(wdr.ID_WORKZONE).GetPageCount()-1
             

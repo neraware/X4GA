@@ -93,13 +93,13 @@ def PdcFtProdFunc( parent, call_fit = True, set_sizer = True ):
     item9 = wx.StaticText( parent, ID_TEXT, "A:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item6.Add( item9, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item10 = wx.StaticText( parent, ID_TEXT, "Cliente:", wx.DefaultPosition, [50,-1], wx.ALIGN_RIGHT )
+    item10 = wx.StaticText( parent, ID_TEXT, "Anagrafica:", wx.DefaultPosition, [70,-1], wx.ALIGN_RIGHT )
     item6.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item11 = LinkTable(parent, ID_PDC1); item11.SetDataLink(bt.TABNAME_PDC, "pdc1", ClientiDialog)
+    item11 = alib.LinkTableCliFor(parent, ID_PDC1, name="pdc1")
     item6.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item12 = LinkTable(parent, ID_PDC2); item12.SetDataLink(bt.TABNAME_PDC, "pdc2", ClientiDialog)
+    item12 = alib.LinkTableCliFor(parent, ID_PDC2, name="pdc2")
     item6.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 
     item13 = wx.StaticText( parent, ID_TEXT, "Agente:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
@@ -144,7 +144,7 @@ def PdcFtProdFunc( parent, call_fit = True, set_sizer = True ):
     item25 = wx.StaticText( parent, ID_TEXT, "A:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item22.Add( item25, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item26 = wx.StaticText( parent, ID_TEXT, "Data:", wx.DefaultPosition, [50,-1], wx.ALIGN_RIGHT )
+    item26 = wx.StaticText( parent, ID_TEXT, "Data:", wx.DefaultPosition, [70,-1], wx.ALIGN_RIGHT )
     item22.Add( item26, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
     item27 = DateCtrl( parent, ID_DATA1, "", wx.DefaultPosition, [80,-1], 0 )

@@ -29,7 +29,18 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.7.15', dt.Date(2016, 4, 15), (
+    ('1.7.20', None, (
+         ("BET4215",
+         """Statistiche sul fatturato acquisti fornitori."""),
+        ),),
+    
+    ('1.7.18', None, (
+         ("BUG1177",
+         """Corretto inserimento dati destinazioni su clienti/fornitori,
+         non gestiva correttamente l'email e i numeri di tel/fax/cell."""),
+        ),),
+    
+    ('1.7.15', None, (
          ("BUG1176",
          """Corretta determinazione variabile di ambiente per nome
          utente in percorso configurazione."""),

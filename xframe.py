@@ -580,7 +580,7 @@ class XFrame(aw.Frame):
             (self.OnPdcIntMagFor,              ID_INTMAGFOR),
             (self.OnBarCodesSpot,              ID_BARCODESPOT),
             
-            #statistiche magazzino
+            #statistiche magazzino - vendite
             (self.OnPdcFtProd,                 ID_PDCSINTART),
             (self.OnStatFatCli,                ID_STATFATCLI),
             (self.OnStatFatCliDes,             ID_STATFATCLIDES),
@@ -589,9 +589,13 @@ class XFrame(aw.Frame):
             (self.OnStatFatProCli,             ID_STATFATPROCLI),
             (self.OnStatFatAge,                ID_STATFATAGE),
             (self.OnStatFatCatArt,             ID_STATFATCATART),
-            (self.OnStatValCosAcq,             ID_STATCOSACQ),
             (self.OnStatValPreApp,             ID_STATPREAPP),
             (self.OnStatReddVend,              ID_STATREDDVEND),
+            
+            #statistiche magazzino - acquisti
+            (self.OnStatFatFor,                ID_STATFATFOR),
+            (self.OnStatFatForCatArt,          ID_STATFATFORCAT),
+            (self.OnStatValCosAcq,             ID_STATCOSACQ),
             
             #setup
             (self.OnCfgLicense,                ID_CFGLICENSE),
@@ -1677,6 +1681,10 @@ class XFrame(aw.Frame):
         from magazz.stat.fatpdc import FatturatoClientiFrame
         self.LaunchFrame(FatturatoClientiFrame)
     
+    def OnStatFatFor(self, event):
+        from magazz.stat.fatpdc import FatturatoFornitFrame
+        self.LaunchFrame(FatturatoFornitFrame)
+    
     def OnStatFatCliDes(self, event):
         from magazz.stat.fatpdc import FatturatoCliDesFrame
         self.LaunchFrame(FatturatoCliDesFrame)
@@ -1684,6 +1692,10 @@ class XFrame(aw.Frame):
     def OnStatFatCliCatArt(self, event):
         from magazz.stat.fatpdc import FatturatoCliCatArtFrame
         self.LaunchFrame(FatturatoCliCatArtFrame)
+    
+    def OnStatFatForCatArt(self, event):
+        from magazz.stat.fatpdc import FatturatoForCatArtFrame
+        self.LaunchFrame(FatturatoForCatArtFrame)
     
     def OnStatFatPro(self, event):
         from magazz.stat.fatpro import FatturatoProdottiFrame

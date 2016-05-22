@@ -301,6 +301,91 @@ class FatturatoProCatCli(_FatturatoVendite):
 # ------------------------------------------------------------------------------
 
 
+class _FatturatoAcquisti(_FatturatoVendite):
+    _pdctab = bt.TABNAME_FORNIT
+    _statcol = 'statftfor'
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoFornitori(_FatturatoAcquisti):
+    
+    def AddGroups(self):
+        self.AddGroupOn('pdc.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoForDes(_FatturatoAcquisti):
+    
+    def AddGroups(self):
+        self.AddGroupOn('pdc.id')
+        self.AddGroupOn('dest.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoForPro(_FatturatoAcquisti):
+    
+    def AddGroups(self):
+        self.AddGroupOn('pdc.id')
+        self.AddGroupOn('prod.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoForCatArt(_FatturatoAcquisti):
+    
+    def AddGroups(self):
+        self.AddGroupOn('pdc.id')
+        self.AddGroupOn('catart.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoAcqCatArt(_FatturatoAcquisti):
+    
+    def AddGroups(self):
+        self.AddGroupOn('catart.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoProdottiAcquisti(_FatturatoAcquisti):
+
+    def AddGroups(self):
+        self.AddGroupOn('prod.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoProFor(_FatturatoAcquisti):
+
+    def AddGroups(self):
+        self.AddGroupOn('prod.id')
+        self.AddGroupOn('pdc.id')
+
+
+# ------------------------------------------------------------------------------
+
+
+class FatturatoProCatFor(_FatturatoAcquisti):
+
+    def AddGroups(self):
+        self.AddGroupOn('prod.id')
+        self.AddGroupOn('catana.id')
+
+
+# ------------------------------------------------------------------------------
+
+
 class ValutaPrezziVendita(adb.DbTable):
     
     statftcol = 'statftcli'
