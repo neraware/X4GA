@@ -4271,6 +4271,9 @@ class RiepMovAcquis(adb.DbTable):
         self.AddTotalOf("eva.qta", "qtaeva")
         self.AddCountOf("eva.id",  "numovi")
 #        
+        self.AddOrder('mov.id_doc')
+        self.AddOrder('mov.numriga')
+        
         self.Get(-1)
 
     def CalcQtaAcq(self):
