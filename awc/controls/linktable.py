@@ -1504,6 +1504,7 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
         @type id: int
         """
         self.HideFilterLinksTitle()
+        old_id = self.currentid
         self.currentid = id
         if id is not None and type(id) not in (int, long, float):
             raise Exception,\
@@ -1592,7 +1593,7 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
         if id is None:
             self.ShowFilterLinksTitle()
         
-        if self.notifyChanges:
+        if self.notifyChanges and self.currentid != old_id:
             self._PostEventChanged(id)
 
     def SetValueCod(self, val):
