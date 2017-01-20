@@ -922,6 +922,8 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
                     p.sconto6 = value
                 p.Save()
                 self.ForceResetView()
+        if self.autolistino and gridcol in (self.COL_COSTO, self.COL_PREZZO):
+            self.RicalcolaListini(row)
         return True
     
     def TestChanges(self, row, gridcol=None, namecol=None):

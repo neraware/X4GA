@@ -201,6 +201,7 @@ class LongDescrizPanel(wx.Panel):
 class LongDescrizDialog(aw.Dialog):
     
     def __init__(self, *args, **kwargs):
+        kwargs['title'] = 'Editazione testo riga'
         aw.Dialog.__init__(self, *args, **kwargs)
         self.AddSizedPanel(LongDescrizPanel(self))
         self.Bind(wx.EVT_BUTTON, self.OnConfirm, self.FindWindowByName('butoklongdes'))

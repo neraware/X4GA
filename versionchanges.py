@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.23', dt.Date(2017, 1, 20), (
+         ("BUG1179",
+         """Risolto problema di mancato aggiornamento automatico dei listini al variare di costo/prezzo con spunta attivata su apposito checkbox di ricalcolo automatico."""),
+        ),),
+    
     ('1.7.22', dt.Date(2016, 6, 29), (
          ("BUG1178",
          """Correzione ordinamento righe in evasione documento."""),
