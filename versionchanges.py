@@ -32,6 +32,10 @@ history = (
     ('1.7.24', dt.Date(2017, 1, 30), (
          ("BUG1180",
          """Risolto problema di modifica della scheda anagrafica in inserimento documenti."""),
+         ("BUG1181",
+         """Risolto problema che impediva la cancellazione delle partite clienti/fornitori."""),
+         ("BUG1182",
+         """L'eliminazione di una registrazione contabile ora aggiorna subito l'elenco delle registrazioni e/o del mastro di partenza."""),
         ),),
     
     ('1.7.23', dt.Date(2017, 1, 20), (
