@@ -387,7 +387,7 @@ UPDATE %s SET %s WHERE id=%s"""\
         if pcf_id is None: return False
         curs = adb.db.get_cursor()
         constr = bt.TABSETUP_CONSTR_PCF
-        do = CheckRefIntegrity(self, curs, constr, pcf_id)
+        do = CheckRefIntegrity(self, constr, pcf_id)
         curs.close()
         if not do:
             return False
