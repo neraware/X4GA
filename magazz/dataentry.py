@@ -380,7 +380,8 @@ class MagazzPanel(aw.Panel,\
         
         self.controls = awc.util.DictNamedChildrens(self)
         
-        def ResetPdc(*x):
+#         def ResetPdc(*x):
+        def ResetPdc(id_pdc):
             """
             Quando viene confermato il dialog modale della scheda anagrafica,
             provvede a resettare il campo id_pdc sul dbdoc onde far riaggiornare
@@ -391,6 +392,10 @@ class MagazzPanel(aw.Panel,\
             """
             if self.dbdoc.id is None:
                 self.dbdoc.id_pdc = None
+                cn('id_pdc').SetValue(None)
+                def update_pdc():
+                    cn('id_pdc').SetValue(id_pdc)
+                wx.CallAfter(update_pdc)
         self.controls['id_pdc'].SetPreSetVal(ResetPdc)
         
         btnat = self.controls["butattach"]
