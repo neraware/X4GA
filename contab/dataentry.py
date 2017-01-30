@@ -320,9 +320,16 @@ class ContabPanel(aw.Panel,\
 """Confermi l'operazione di eliminazione ?""",\
                   style = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT)
         if action == wx.ID_YES:
+            oneregonly_id = self.oneregonly_id
             if self.RegDelete():
-                self.SetRegStatus(STATUS_SELCAUS)
-                event.Skip()
+                if oneregonly_id:
+                    try:
+                        if self.GetParent().IsModal():
+                            self.GetParent().EndModal(REG_DELETED)
+                    except:
+                        self.Destroy()
+                else:
+                    self.SetRegStatus(STATUS_SELCAUS)
 
     def OnResize(self, event):
         self.UpdatePanelBody()
