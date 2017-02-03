@@ -2545,12 +2545,14 @@ class LiqIva(adb.DbTable):
         def R(val):
             return round(val, Env.Azienda.BaseTab.VALINT_DECIMALS)
         le.Reset()
-        le.CreateNewRow()
-        le.anno =    self._year
+        le.Retrieve('anno=%s AND periodo=%s', self._year, self._periodo)
+        if le.IsEmpty():
+            le.CreateNewRow()
+            le.anno =    self._year
+            le.periodo = self._periodo
         le.datmin =  self._datmin
         le.datmax =  self._datmax
         le.datliq =  Env.Azienda.Esercizio.dataElab
-        le.periodo = self._periodo
         for key, val in self._totali.iteritems():
             if key in le._info.fieldNames:
                 if type(val) is float:
