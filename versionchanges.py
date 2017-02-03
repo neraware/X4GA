@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.25', dt.Date(2017, 2, 3), (
+         ("BUG1183",
+         """Corretto controllo congruenza dati testata documento."""),
+        ),),
+    
     ('1.7.24', dt.Date(2017, 1, 30), (
          ("BUG1180",
          """Risolto problema di modifica della scheda anagrafica in inserimento documenti."""),
