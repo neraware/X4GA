@@ -780,6 +780,8 @@ class MagazzPanel(aw.Panel,\
             self.controls['causale'].SetValue(doc.id_tipdoc)
             self.SetCausale()
         self.UpdateDocIdControls()
+        for name in 'id_bancf id_dest'.split():
+            self.FindWindowByName(name).SetFilter(None)
         self.UpdatePanelHead()
         self.UpdateDatiScad()
         self.UpdateDatiAcconto()
