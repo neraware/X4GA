@@ -922,14 +922,14 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
                     p.sconto6 = value
                 p.Save()
                 self.ForceResetView()
-        if self.autolistino and gridcol in (self.COL_COSTO, self.COL_PREZZO):
-            self.RicalcolaListini(row)
         return True
     
     def TestChanges(self, row, gridcol=None, namecol=None):
         assert gridcol is not None or namecol is not None
         if gridcol is None:
             gridcol = self.colnames.index(namecol)
+            if namecol == 'p_prezzo':
+                gridcol = self.COL_PREZZO
         try:
             c = self.listcols[gridcol]
             if c in 'p_costo p_prezzo'.split() or c.startswith('riclis') or c.startswith('scolis'):
@@ -937,7 +937,7 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
                 self.promod[lis.prod.id] = [lis.p_costo, lis.p_prezzo]
                 if self.autoricalc and c in 'p_costo p_prezzo'.split():
                     self.RicalcolaPC(row, exclude=self.listcols[gridcol])
-                if self.autolistino and (c.startswith('riclis') or c.startswith('scolis')):
+                if self.autolistino and (c in 'p_costo p_prezzo'.split() or c.startswith('riclis') or c.startswith('scolis')):
                     self.RicalcolaListini(row)
             else:
                 lis = self.dblis
@@ -1100,7 +1100,7 @@ class ListiniPanel(aw.Panel, aw.awu.LimitiFiltersMixin):
         if filename is None:
             return
         try:
-            h = open(filename)
+            h = open(filename, 'rb')
         except IOError, e:
             aw.awu.MsgDialog(self, message="Problema in apertura file csv:\n%s"\
                              % repr(e.args))
@@ -1127,6 +1127,7 @@ class ListiniPanel(aw.Panel, aw.awu.LimitiFiltersMixin):
                                      maximum=csvtab.RowsCount()*2)
             do = False
             try:
+                pro = self.dbpro
                 try:
                     csvtab.epura(lambda n: wait.SetValue(n))
                     do = True
