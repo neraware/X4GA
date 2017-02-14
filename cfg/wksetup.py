@@ -90,6 +90,7 @@ class ConfigPanel(aw.Panel):
                 cfg.set(sec, opt, self.GetValue(sec, opt))
         cfg.write()
         cfg.read()
+        Env.config = Env.GeneralSetup()
 
 
 # ------------------------------------------------------------------------------
