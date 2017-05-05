@@ -748,6 +748,19 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
                     if do:
                         self.Navigate(wx.NavigationKeyEvent.IsForward)
             
+        elif event.GetKeyCode() == 10:
+            #LF controllo prossimo focus
+            if obj == self._ctrcod:
+                do = True
+                if self.tabsearch_oncode:
+                    if self._ctrcod.GetValue():
+                        self._fromtab = True
+                        do = self.HelpChoice(obj, exact=False, resetFields=False)
+                        if hasattr(self, '_fromtab'):
+                            del self._fromtab
+                if do:
+                    self._ctrdes.SetFocus()
+            
         elif event.GetKeyCode() == wx.WXK_RETURN:# and not event.ControlDown():
             if obj == self._ctrcod:
                 if self.retsearch_oncode:
