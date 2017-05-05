@@ -565,6 +565,13 @@ class AnagPanel(aw.Panel):
                         self.UpdateSearch()
                     event.Skip()
                 sv.Bind(wx.EVT_KILL_FOCUS, kill_focus)
+                
+                def on_char(event):
+                    if event.GetKeyCode() == 10:
+                        if sv.GetValue() != sv._initial_value_:
+                            self.UpdateSearch()
+                    event.Skip()
+                sv.Bind(wx.EVT_CHAR, on_char)
         
         if not self._hasfilters:
             c = self.FindWindowById(ID_BTNFILTERS)
