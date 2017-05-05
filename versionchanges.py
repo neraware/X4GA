@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.33', None, (
+         ("BET4223",
+         """Introdotto possibilità di ricerca movimenti magazzino tramite contenuto delle note di riga."""),
+         ("BET4224",
+         """Introdotto strumento di modifica dell'agente e delle percentuali di provvigione senza entrare in modifica del documento."""),
+        ),),
+    
     ('1.7.31', None, (
          ("BET4221",
          """Introdotta possibilità di impostare un cliente fisso nel raggruppamento documenti, utile per autofatturazione dei ddt omaggio."""),

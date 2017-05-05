@@ -39,6 +39,8 @@ from anag.lib import LinkTableFornit
 from Env import Azienda
 bt = Azienda.BaseTab
 
+import anag.lib as alib
+
 
 
 # Window functions
@@ -152,6 +154,115 @@ def ProvvigAgentiFunc( parent, call_fit = True, set_sizer = True ):
     item0.AddGrowableCol( 0 )
 
     item0.AddGrowableRow( 2 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+ID_TIPDOC = 14013
+ID_PANGRIDDOC = 14014
+
+def ModificaProvvigioniFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item2 = wx.StaticBox( parent, -1, "Selezioni" )
+    item1 = wx.StaticBoxSizer( item2, wx.VERTICAL )
+    
+    item3 = wx.FlexGridSizer( 0, 3, 0, 0 )
+    
+    item4 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item5 = wx.StaticText( parent, ID_TEXT, "Da:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item6 = wx.StaticText( parent, ID_TEXT, "A:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item6, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+
+    item7 = wx.StaticText( parent, ID_LABCOD, "Agente:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item7, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item8 = LinkTable(parent, ID_AGENTE1); item8.SetDataLink(bt.TABNAME_AGENTI, "agente1", AgentiDialog)
+    item3.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item9 = LinkTable(parent, ID_AGENTE2); item9.SetDataLink(bt.TABNAME_AGENTI, "agente2", AgentiDialog)
+    item3.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
+
+    item10 = wx.StaticText( parent, ID_LABCOD, "Data:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item11 = DateCtrl( parent, ID_DATDOC1, "", wx.DefaultPosition, [80,-1], 0 )
+    item11.SetName( "datdoc1" )
+    item3.Add( item11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item12 = DateCtrl( parent, ID_DATDOC2, "", wx.DefaultPosition, [80,-1], 0 )
+    item12.SetName( "datdoc2" )
+    item3.Add( item12, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+
+    item13 = wx.StaticText( parent, ID_LABCOD, "Tipo documento:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item13, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item14 = alib.LinkTableDocMagazz(parent, ID_TIPDOC, 'id_tipdoc')
+    item3.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item3.AddGrowableCol( 1 )
+
+    item3.AddGrowableCol( 2 )
+
+    item1.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item15 = wx.StaticLine( parent, ID_LINE, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+    item1.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item16 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item17 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item16.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item18 = wx.Button( parent, ID_BUTUPDATE, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.SetDefault()
+    item18.SetName( "butupdate" )
+    item16.Add( item18, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item16.AddGrowableCol( 1 )
+
+    item1.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item19 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item20 = wx.StaticText( parent, ID_TEXT, "Elenco documenti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item20.SetForegroundColour( wx.BLUE )
+    item19.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item21 = wx.StaticText( parent, ID_TEXT, "Dettaglio del documento", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item21.SetForegroundColour( wx.BLUE )
+    item19.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
+
+    item22 = wx.Panel( parent, ID_PANGRIDDOC, wx.DefaultPosition, [400,400], wx.SUNKEN_BORDER )
+    item22.SetName( "pangriddoc" )
+    item19.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item23 = wx.Panel( parent, ID_PANGRIDMOV, wx.DefaultPosition, [600,400], wx.SUNKEN_BORDER )
+    item23.SetName( "pangridmov" )
+    item19.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item19.AddGrowableCol( 0 )
+
+    item19.AddGrowableCol( 1 )
+
+    item19.AddGrowableRow( 1 )
+
+    item0.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item0.AddGrowableCol( 0 )
+
+    item0.AddGrowableRow( 1 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

@@ -277,3 +277,212 @@ class ProvvigAgentiFrame(aw.Frame):
         aw.Frame.__init__(self, *args, **kwargs)
         self.panel = ProvvigAgentiPanel(self)
         self.AddSizedPanel(self.panel)
+
+
+
+import anag.lib as alib
+
+_evtDOC_CHANGED = wx.NewEventType()
+EVT_DOC_CHANGED = wx.PyEventBinder(_evtDOC_CHANGED, 0)
+class DocChangedEvent(wx.PyCommandEvent):
+    def __init__(self, id_doc):
+        wx.PyCommandEvent.__init__(self, _evtDOC_CHANGED)
+        self.id_doc = id_doc
+
+class ModificaProvvigAgentiDocGrid(dbglib.ADB_Grid):
+    
+    def __init__(self, parent, dbdoc):
+        
+        dbglib.ADB_Grid.__init__(self, parent, db_table=dbdoc, can_edit=True, can_insert=False)
+        
+        self.dbdoc = dbdoc
+        doc = dbdoc
+        tpd = doc.tipdoc
+        age = doc.agente
+        pdc = doc.pdc
+        
+        def ci(tab, col):
+            return tab._GetFieldIndex(col, inline=True)
+        
+        self.COL_CODCAU = self.AddColumn(tpd, 'codice', 'Cod.', col_width=35)
+        self.COL_DESCAU = self.AddColumn(tpd, 'descriz', 'Documento', col_width=120)
+        self.COL_NUMDOC = self.AddColumn(doc, 'numdoc', 'Num.', col_type=self.TypeInteger(5))
+        self.COL_DATDOC = self.AddColumn(doc, 'datdoc', 'Data', col_type=self.TypeDate())
+        self.COL_CODPDC = self.AddColumn(pdc, 'codice', 'Cod.', col_width=50)
+        self.COL_DESPDC = self.AddColumn(pdc, 'descriz', 'Cliente', col_width=200, is_fittable=True)
+        
+        self.COL_CODAGE = self.AddColumn(age, 'codice',  'Cod.', col_width=40, is_editable=True, 
+                                           linktable_info={'class':   alib.LinkTableAgente,
+                                                           'col_id':  ci(doc, 'id_agente'),
+                                                           'col_cod': ci(age, 'codice'),
+                                                           'col_des': ci(age, 'descriz')})
+        
+        self.COL_DESAGE = self.AddColumn(age, 'descriz', 'Agente', col_width=120)
+        
+        self.COL_ID_DOC = self.AddColumn(doc, 'id', '#doc', col_width=1)
+        self.COL_ID_AGE = self.AddColumn(age, 'id', '#age', col_width=1)
+        
+        self.CreateGrid()
+        
+        self._last_row = -1
+    
+    def OnCellSelect(self, event):
+        dbglib.ADB_Grid.OnCellSelect(self, event)
+        row = event.GetRow()
+        if row != self._last_row:
+            self._last_row = row
+            doc = self.dbdoc
+            doc.MoveRow(row)
+            e = DocChangedEvent(doc.id)
+            self.GetEventHandler().AddPendingEvent(e)
+            self.SelectRow(row)
+    
+    def ChangeData(self, *args, **kwargs):
+        dbglib.ADB_Grid.ChangeData(self, *args, **kwargs)
+        self._last_row = -1
+    
+    def CellEditAfterUpdate(self, row, gridcol, col, value):
+        if gridcol == self.COL_CODAGE:
+            doc = self.dbdoc
+            doc.MoveRow(row)
+            db = dbp.adb.db.get_db()
+            if not db.Execute("UPDATE movmag_h SET id_agente=%d WHERE id=%d" % (value, doc.id)):
+                aw.awu.MsgDialog(self, repr(db.dbError.description), style=wx.ICON_ERROR)
+        return dbglib.ADB_Grid.CellEditAfterUpdate(self, row, gridcol, col, value)
+
+
+class ModificaProvvigAgentiMovGrid(dbglib.ADB_Grid):
+    
+    def __init__(self, parent, dbmov):
+        
+        dbglib.ADB_Grid.__init__(self, parent, db_table=dbmov, can_edit=True, can_insert=False)
+        
+        self.dbmov = dbmov
+        mov = dbmov
+        tpm = mov.tipmov
+        pro = mov.prod
+        iva = mov.aliqiva
+        
+        def ci(tab, col):
+            return tab._GetFieldIndex(col, inline=True)
+        
+        IQM, DQM = bt.MAGQTA_INTEGERS, bt.MAGQTA_DECIMALS
+        IPM, DPM = bt.MAGPRE_INTEGERS, bt.MAGPRE_DECIMALS
+        IVI, DVI = bt.VALINT_INTEGERS, bt.VALINT_DECIMALS
+        
+        self.COL_CODTPM = self.AddColumn(tpm, 'codice', 'TPM', col_width=35)
+        self.COL_CODART = self.AddColumn(pro, 'codice', 'Cod.', col_width=90)
+        self.COL_DESCRI = self.AddColumn(mov, 'descriz', 'Descrizione', col_width=150, is_fittable=True)
+        self.COL_QTA =    self.AddColumn(mov, 'qta', 'Qta', col_type=self.TypeFloat(IQM, DQM))
+        self.COL_PREZZO = self.AddColumn(mov, 'prezzo', 'Prezzo', col_type=self.TypeFloat(IPM, DPM))
+        
+        if bt.MAGNUMSCO >= 1:
+            self.COL_SCONTO1 = self.AddColumn(mov, 'sconto1', 'Sc.%1', col_type=self.TypeFloat(2, 2))
+        else:
+            self.COL_SCONTO1 = -1
+        
+        if bt.MAGNUMSCO >= 2:
+            self.COL_SCONTO2 = self.AddColumn(mov, 'sconto2', 'Sc.%2', col_type=self.TypeFloat(2, 2))
+        else:
+            self.COL_SCONTO2 = -1
+        
+        if bt.MAGNUMSCO >= 3:
+            self.COL_SCONTO3 = self.AddColumn(mov, 'sconto3', 'Sc.%3', col_type=self.TypeFloat(2, 2))
+        else:
+            self.COL_SCONTO3 = -1
+        
+        if bt.MAGNUMSCO >= 4:
+            self.COL_SCONTO4 = self.AddColumn(mov, 'sconto4', 'Sc.%4', col_type=self.TypeFloat(2, 2))
+        else:
+            self.COL_SCONTO4 = -1
+        
+        if bt.MAGNUMSCO >= 5:
+            self.COL_SCONTO5 = self.AddColumn(mov, 'sconto5', 'Sc.%5', col_type=self.TypeFloat(2, 2))
+        else:
+            self.COL_SCONTO5 = -1
+        
+        if bt.MAGNUMSCO >= 6:
+            self.COL_SCONTO6 = self.AddColumn(mov, 'sconto6', 'Sc.%6', col_type=self.TypeFloat(2, 2))
+        else:
+            self.COL_SCONTO6 = -1
+        
+        self.COL_CODIVA = self.AddColumn(iva, 'codice', 'IVA', col_width=35)
+        self.COL_PERPRO = self.AddColumn(mov, 'perpro', 'Prov.%', col_type=self.TypeFloat(2, 2), is_editable=True)
+        
+        self.COL_ID_MOV = self.AddColumn(mov, 'id', '#mov', col_width=1)
+        self.COL_ID_PRO = self.AddColumn(pro, 'id', '#pro', col_width=1)
+        
+        self.CreateGrid()
+    
+    def CellEditAfterUpdate(self, row, gridcol, col, value):
+        if gridcol == self.COL_PERPRO:
+            mov = self.dbmov
+            mov.MoveRow(row)
+            db = dbp.adb.db.get_db()
+            if not db.Execute("UPDATE movmag_b SET perpro=%s WHERE id=%d" % (value, mov.id)):
+                aw.awu.MsgDialog(self, repr(db.dbError.description), style=wx.ICON_ERROR)
+        return dbglib.ADB_Grid.CellEditAfterUpdate(self, row, gridcol, col, value)
+
+
+class ModificaProvvigAgentiPanel(wx.Panel):
+    
+    def __init__(self, *args, **kwargs):
+        
+        wx.Panel.__init__(self, *args, **kwargs)
+        wdr.ModificaProvvigioniFunc(self)
+        cn = self.FindWindowByName
+        
+        self.dbdoc = dbp.ModificaProvvigAgentiDocTable()
+        self.griddoc = ModificaProvvigAgentiDocGrid(cn('pangriddoc'), self.dbdoc)
+        
+        self.dbmov = dbp.ModificaProvvigAgentiMovTable()
+        self.gridmov = ModificaProvvigAgentiMovGrid(cn('pangridmov'), self.dbmov)
+        
+        self.Bind(EVT_DOC_CHANGED, self.OnDocChanged)
+        for name, func in (('butupdate', self.OnUpdateData),):
+            self.Bind(wx.EVT_BUTTON, func, cn(name))
+    
+    def OnDocChanged(self, event):
+        mov = self.dbmov
+        mov.Retrieve('mov.id_doc=%s' % event.id_doc)
+        self.gridmov.ChangeData(mov.GetRecordset())
+    
+    def OnUpdateData(self, event):
+        self.UpdateData()
+        event.Skip()
+    
+    def UpdateData(self):
+        doc = self.dbdoc
+        doc.ClearFilters()
+        cn = self.FindWindowByName
+        v = cn('agente1').GetValueCod()
+        if v:
+            doc.AddFilter('agente.codice>=%s', v)
+        v = cn('agente2').GetValueCod()
+        if v:
+            doc.AddFilter('agente.codice<=%s', v)
+        v = cn('datdoc1').GetValue()
+        if v:
+            doc.AddFilter('doc.datdoc>=%s', v)
+        v = cn('datdoc2').GetValue()
+        if v:
+            doc.AddFilter('doc.datdoc<=%s', v)
+        td = cn('id_tipdoc').GetValue()
+        if td:
+            doc.AddFilter('doc.id_tipdoc=%s' % td)
+        wx.BeginBusyCursor()
+        try:
+            doc.Retrieve()
+        finally:
+            wx.EndBusyCursor()
+        self.griddoc.ChangeData(doc.GetRecordset())
+
+
+class ModificaProvvigAgentiFrame(aw.Frame):
+    
+    def __init__(self, *args, **kwargs):
+        if not 'title' in kwargs:
+            kwargs['title'] = "Modifica %s" % FRAME_TITLE
+        aw.Frame.__init__(self, *args, **kwargs)
+        self.panel = ModificaProvvigAgentiPanel(self)
+        self.AddSizedPanel(self.panel)

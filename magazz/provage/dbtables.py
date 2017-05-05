@@ -142,3 +142,31 @@ class ProvvigAgentiTotTable(ProvvigAgentiDetTable):
         self.AddOrder('doc.datdoc')
         self.AddOrder('tipdoc.codice')
         self.AddOrder('doc.numdoc')
+
+
+
+class ModificaProvvigAgentiDocTable(adb.DbTable):
+    
+    def __init__(self, **kwargs):
+        adb.DbTable.__init__(self, 'movmag_h', 'doc', **kwargs)
+        _tpd = self.AddJoin('cfgmagdoc', 'tipdoc', idLeft='id_tipdoc')
+        _age = self.AddJoin('agenti', 'agente', idLeft='id_agente')
+        _pdc = self.AddJoin('pdc', idLeft='id_pdc')
+        _cli = _pdc.AddJoin('clienti', 'anag', idLeft='id')
+        self.AddOrder('doc.datdoc')
+        self.AddOrder('tipdoc.codice')
+        self.AddOrder('doc.numdoc')
+        self.Reset()
+
+
+class ModificaProvvigAgentiMovTable(adb.DbTable):
+    
+    def __init__(self, **kwargs):
+        adb.DbTable.__init__(self, 'movmag_b', 'mov', **kwargs)
+        _tpm = self.AddJoin('cfgmagmov', 'tipmov', idLeft='id_tipmov')
+        _pro = self.AddJoin('prod', idLeft='id_prod', join=adb.JOIN_LEFT)
+        _iva = self.AddJoin('aliqiva', idLeft='id_aliqiva')
+        self.AddOrder('mov.id_doc')
+        self.AddOrder('mov.numriga')
+        self.AddOrder('mov.id')
+        self.Reset()

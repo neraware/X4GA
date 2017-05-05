@@ -573,6 +573,7 @@ class XFrame(aw.Frame):
             (self.OnIntSottoScDis,             ID_INTSOTTOSCBK),
             (self.OnIntMagSrcDes,              ID_INTMAGSRCDES),
             (self.OnIntMagProvAge,             ID_PROVAGE),
+            (self.OnModMagProvAge,             ID_MODPROVAGE),
             (self.OnProdRiPro,                 ID_MAGPRODPRORIC),
             (self.OnProdRiCos,                 ID_MAGPRODCOSTIZERO),
             (self.OnPdcIntMagCli,              ID_INTMAGCLI),
@@ -1664,6 +1665,10 @@ class XFrame(aw.Frame):
     def OnIntMagProvAge(self, event):
         from magazz.provage.provvig import ProvvigAgentiFrame
         self.LaunchFrame(ProvvigAgentiFrame)
+        
+    def OnModMagProvAge(self, event):
+        from magazz.provage.provvig import ModificaProvvigAgentiFrame
+        self.LaunchFrame(ModificaProvvigAgentiFrame)
         
     def OnProdRiPro(self, event):
         from magazz.prodripro import ProdRiProFrame
