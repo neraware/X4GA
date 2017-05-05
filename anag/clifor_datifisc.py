@@ -121,7 +121,7 @@ class _CliFor_DatiFiscaliGrid(dbgrid.ADB_Grid):
             return tab._GetFieldIndex(colname, inline=True)
         
         if col == cc(anag, 'aziper'):
-            valid = (value in 'AP')
+            valid = (value in 'APCZE')
             if not valid:
                 aw.awu.MsgDialog(self, 'Valori contentiti: A, P', style=wx.ICON_ERROR)
             return valid
@@ -163,11 +163,46 @@ class _CliFor_DatiFiscaliPanel(aw.Panel):
         self.dbana.AddJoin(bt.TABNAME_PDC, 'pdc', idLeft='id')
         self.dbana.AddJoin('x4.stati', 'stato', join=adb.JOIN_LEFT)
         self.dbana.AddOrder('pdc.descriz')
-        self.dbana.Retrieve()
+        self.dbana.Reset()
         
         self.gridpdc = self._GridClass(cn('pangridpdc'), self.dbana)
         
-        self.Bind(wx.EVT_BUTTON, self.OnSaveData)
+        self.Bind(wx.EVT_BUTTON, self.OnUpdateData, cn('butupd'))
+        self.Bind(wx.EVT_BUTTON, self.OnSaveData, cn('butsave'))
+    
+    def OnUpdateData(self, event):
+        self.UpdateData()
+        event.Skip()
+    
+    def UpdateData(self):
+        cn = self.FindWindowByName
+        ana = self.dbana
+        ana.ClearFilters()
+        checks = map(lambda x: cn(x), 'is_pri is_azi is_con is_ass is_ent'.split())
+        pri, azi, con, ass, ent = map(lambda x: x.IsChecked(), checks)
+        if not (pri and azi and con and ass and ent):
+            tipi = ''
+            if pri: tipi += 'P'
+            if azi: tipi += 'A'
+            if con: tipi += 'C'
+            if ass: tipi += 'Z'
+            if ent: tipi += 'E'
+            if tipi:
+                ana.AddFilter('anag.aziper IN (%s)' % ','.join(['"%s"' % t for t in tipi]))
+            else:
+                ana.AddFilter('0')
+        d1, d2 = cn('datreg1').GetValue(), cn('datreg2').GetValue()
+        if d1 or d2:
+            if d1 and d2:
+                flt = 'reg.datreg>="%s" AND reg.datreg<="%s"' % (d1.FormatANSI(),
+                                                                 d2.FormatANSI(),)
+            elif d1:
+                flt = 'reg.datreg>="%s"' % d1.FormatANSI()
+            elif d2:
+                flt = 'reg.datreg<="%s"' % d1.FormatANSI()
+            ana.AddFilter("(SELECT COUNT(*) FROM contab_b mov JOIN contab_h reg ON reg.id=mov.id_reg WHERE mov.id_pdcpa=anag.id AND %s)>0" % flt)
+        self.dbana.Retrieve()
+        self.gridpdc.ChangeData(self.dbana.GetRecordset())
     
     def OnSaveData(self, event):
         anag = self.dbana

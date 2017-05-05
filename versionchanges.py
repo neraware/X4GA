@@ -29,6 +29,37 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.7.31', None, (
+         ("BET4221",
+         """Introdotta possibilità di impostare un cliente fisso nel raggruppamento documenti, utile per autofatturazione dei ddt omaggio."""),
+         ("BET4222",
+         """Introdotta possibilità di specificare una descrizione aggiuntiva per le etichette dei prodotti in fase di stampa."""),
+        ),),
+    
+    ('1.7.30', None, (
+         ("BET4220",
+         """Aggiunte collonne cod.prodotto del fornitore e barcode nella griglia di evasione documenti, visualizzate in base ai relativi flag in setup azienda, sezione ricerca prodotti."""),
+        ),),
+    
+    ('1.7.29', None, (
+         ("BUG1185",
+         """Risolto problema di inserimento nuovi fornitori."""),
+        ),),
+    
+    ('1.7.28', None, (
+         ("BET4219",
+         """Attivato il carattere ascii 10 come terminatore codice a barre per ricerca prodotti."""),
+        ),),
+    
+    ('1.7.27', None, (
+         ("BET4216",
+         """Integrata la gestione della fattura elettronica dal plugin fatturapa."""),
+         ("BET4217",
+         """Modificata la scheda anagrafica dei clienti/fornitori per nuova classificazione della tipologia anagrafica (aggiunti condominio, associazione, ente pubblico) ed integrazione del codice univoco ufficio per la fattura elettronica."""),
+         ("BET4218",
+         """Aggiunta pagina di riepilogo totali iva per tipo soggetto nella finestra della liquidazione iva."""),
+        ),),
+    
     ('1.7.26', dt.Date(2017, 2, 14), (
          ("BUG1184",
          """Risolto problema di acquisizione listini da file csv."""),

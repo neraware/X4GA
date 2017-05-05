@@ -73,24 +73,33 @@ class VendAziPrivGrid(dbglib.DbGridColoriAlternati):
         
         w = self.valwidth
         
-        cols = (( 60, (cn('pdc_codice'),     "Cod.",             _STR, True)),
-                (240, (cn('pdc_descriz'),    "Anagrafica",       _STR, True)),
-                ( 40, (cn('anag_stato'),     "Stato",            _STR, True)),
-                (110, (cn('anag_piva'),      "P.IVA",            _STR, True)),
-                (140, (cn('anag_codfisc'),   "Cod.Fiscale",      _STR, True)),
-                (  w, (ct('imponib_priv'),   "Imponib.Privati",  _VAL, True)),
-                (  w, (ct('imposta_priv'),   "Imposta Privati",  _VAL, True)),
-                (  w, (ct('noimpes_priv'),   "NoImp/Es.Privati", _VAL, True)),
-                (  w, (ct('imponib_aziita'), "Imponib.Az.ITA",   _VAL, True)),
-                (  w, (ct('imposta_aziita'), "Imposta Az.ITA",   _VAL, True)),
-                (  w, (ct('noimpes_aziita'), "NoImp/Es.Az.ITA",  _VAL, True)),
-                (  w, (ct('imponib_azicee'), "Imponib.Az.CEE",   _VAL, True)),
-                (  w, (ct('imposta_azicee'), "Imposta Az.CEE",   _VAL, True)),
-                (  w, (ct('noimpes_azicee'), "NoImp/Es.Az.CEE",  _VAL, True)),
-                (  w, (ct('imponib_estero'), "Imponib Estero",   _VAL, True)),
-                (  w, (ct('imposta_estero'), "Imposta Estero",   _VAL, True)),
-                (  w, (ct('noimpes_estero'), "NoImp/Es.Estero",  _VAL, True)),
-                (  1, (cn('pdc_id'),         "#pdc",             _STR, True)),)
+        cols = (( 60, (cn('pdc_codice'),     "Cod.",                          _STR, True)),
+                (240, (cn('pdc_descriz'),    "Anagrafica",                    _STR, True)),
+                ( 40, (cn('anag_stato'),     "Stato",                         _STR, True)),
+                (110, (cn('anag_piva'),      "P.IVA",                         _STR, True)),
+                (140, (cn('anag_codfisc'),   "Cod.Fiscale",                   _STR, True)),
+                (  w, (ct('imponib_aziita'), "Az.ITA\nImponib.",              _VAL, True)),
+                (  w, (ct('imposta_aziita'), "Az.ITA\nImposta",               _VAL, True)),
+                (  w, (ct('noimpes_aziita'), "Az.ITA\nNonImp./Es.",           _VAL, True)),
+                (  w, (ct('imponib_priv'),   "Privati\nImponibile",           _VAL, True)),
+                (  w, (ct('imposta_priv'),   "Privati\nImposta",              _VAL, True)),
+                (  w, (ct('noimpes_priv'),   "Privati\nNonImp./Esente",       _VAL, True)),
+                (  w, (ct('imponib_cond'),   "Condominii\nImponibile",        _VAL, True)),
+                (  w, (ct('imposta_cond'),   "Condominii\nImposta",           _VAL, True)),
+                (  w, (ct('noimpes_cond'),   "Condominii\nNonImp./Esente",    _VAL, True)),
+                (  w, (ct('imponib_asso'),   "Associazioni\nImponibile",      _VAL, True)),
+                (  w, (ct('imposta_asso'),   "Associazioni\nImposta",         _VAL, True)),
+                (  w, (ct('noimpes_asso'),   "Associazioni\nNonImp./Esente",  _VAL, True)),
+                (  w, (ct('imponib_enti'),   "Enti Pubblici\nImponibile",     _VAL, True)),
+                (  w, (ct('imposta_enti'),   "Enti Pubblici\nImposta",        _VAL, True)),
+                (  w, (ct('noimpes_enti'),   "Enti Pubblici\nNonImp./Esente", _VAL, True)),
+                (  w, (ct('imponib_azicee'), "Az.CEE\nImponib.",              _VAL, True)),
+                (  w, (ct('imposta_azicee'), "Az.CEE\nImposta",               _VAL, True)),
+                (  w, (ct('noimpes_azicee'), "Az.CEE\nNonImp./Es.",           _VAL, True)),
+                (  w, (ct('imponib_estero'), "Estero\nImponib",               _VAL, True)),
+                (  w, (ct('imposta_estero'), "Estero\nImposta",               _VAL, True)),
+                (  w, (ct('noimpes_estero'), "Estero\nNonImp./Es.",           _VAL, True)),
+                (  1, (cn('pdc_id'),         "#pdc",                          _STR, True)),)
         
         self._col_codfisc = cn('anag_codfisc')
         self._col_piva = cn('anag_piva')
@@ -104,6 +113,15 @@ class VendAziPrivGrid(dbglib.DbGridColoriAlternati):
         self.AddTotalsRow(1,'Totali:',(ct('imponib_priv'),
                                        ct('imposta_priv'),
                                        ct('noimpes_priv'),
+                                       ct('imponib_cond'),
+                                       ct('imposta_cond'),
+                                       ct('noimpes_cond'),
+                                       ct('imponib_asso'),
+                                       ct('imposta_asso'),
+                                       ct('noimpes_asso'),
+                                       ct('imponib_enti'),
+                                       ct('imposta_enti'),
+                                       ct('noimpes_enti'),
                                        ct('imponib_aziita'),
                                        ct('imposta_aziita'),
                                        ct('noimpes_aziita'),
@@ -117,6 +135,7 @@ class VendAziPrivGrid(dbglib.DbGridColoriAlternati):
         map(lambda c:\
             self.SetColumnDefaultSize(c[0], c[1]), enumerate(colsize))
         
+        self.SetColLabelSize(32)
         self.SetFitColumn(1)
         self.AutoSizeColumns()
         sz = wx.FlexGridSizer(1,0,0,0)
@@ -171,7 +190,7 @@ class VendAziPrivPanel(aw.Panel):
     Pannello sintesi vendite privati/aziende
     """
     
-    tipi = 'priv aziita azicee estero'.split()
+    tipi = 'aziita cond asso enti priv azicee estero'.split()
     rptname = 'Vendite aziende-privati'
     
     def __init__(self, *args, **kwargs):
@@ -188,6 +207,9 @@ class VendAziPrivPanel(aw.Panel):
         self.totnoimpes = None
         self.totvaloper = None
         self.colpriv =\
+        self.colcond =\
+        self.colasso =\
+        self.colenti =\
         self.colaziita =\
         self.colazicee =\
         self.colestero = None

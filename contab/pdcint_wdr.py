@@ -375,7 +375,7 @@ def PdcMastroFunc( parent, call_fit = True, set_sizer = True ):
     item55.SetForegroundColour( wx.BLUE )
     item0.Add( item55, 0, wx.GROW|wx.ALIGN_BOTTOM|wx.LEFT, 5 )
 
-    item56 = wx.Panel( parent, ID_MASPANGRID, wx.DefaultPosition, [-1,120], wx.SUNKEN_BORDER )
+    item56 = wx.Panel( parent, ID_MASPANGRID, wx.DefaultPosition, [900,120], wx.SUNKEN_BORDER )
     item0.Add( item56, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item57 = wx.FlexGridSizer( 1, 0, 0, 0 )

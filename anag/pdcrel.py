@@ -1124,18 +1124,18 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         
         cn = self.FindWindowByName
         
-        id, cf, pi = map(lambda x: cn(x).GetValue(), 'id codfisc piva'.split())
+        id, cf, pi, ta = map(lambda x: cn(x).GetValue(), 'id codfisc piva aziper'.split())
         
         do = True
         for ctr in range(3):
             err = ''
             if ctr == 0:
                 #controllo presenza
-                if not cf and not pi:
+                if not cf and not pi and ta == 'A':
                     err = 'Mancano sia il Codice Fiscale che la Partita IVA'
                 elif not cf:
                     err = 'Manca il Codice Fiscale'
-                elif not pi:
+                elif not pi and ta == 'A':
                     err = 'Manca la Partita IVA'
             elif ctr == 1:
                 #controllo di forma

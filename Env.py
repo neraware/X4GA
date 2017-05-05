@@ -92,7 +92,7 @@ def SetConfigBasePath(appdesc=None, pathprefix=''):
 
 
 from __builtin__ import round as round_bi
-def _round(n,d):
+def _round(n,d=0):
     return round_bi(n+0.0000001,d)
 
 import __builtin__
@@ -2036,6 +2036,7 @@ class Azienda(object):
                 [ "id_bricon",  "INT",    idw, None, "ID conto bilancio ricl.", None ],
                 [ "id_bilcee",  "INT",    idw, None, "ID bilancio CEE", None ], 
                 [ "id_statpdc", "INT",    idw, None, "ID status p.d.c.", None ], 
+                [ "ftel_codice","VARCHAR", 10, None, "Fattura elettronica: codice destinatario pa", None]
             ]
             
             cls.set_constraints(cls.TABNAME_PDC,
@@ -3243,7 +3244,8 @@ class Azienda(object):
                 [ "f_setgen",   "TINYINT",   1, None, "Setta flag documento generato da raggruppamento su doc.generato", "UNSIGNED NOT NULL DEFAULT '1'" ],
                 [ "f_nodesrif", "TINYINT",   1, None, "Non genera riga di riferimento al documento raggruppato", "UNSIGNED NOT NULL DEFAULT '0'" ],
                 [ "f_chgmag",   "TINYINT",   1, None, "Flag cambio magazzino su documenti generati", "UNSIGNED NOT NULL DEFAULT '0'" ],
-                [ "id_chgmag",  "TINYINT", idw, None, "Id magazzino da sostituire su documenti generati", None ], ]
+                [ "id_chgmag",  "INT",     idw, None, "Id magazzino da sostituire su documenti generati", None ], 
+                [ "id_chgpdc",  "INT",     idw, None, "Id sottoconto documenti generati", None ], ]
             
             cls.set_constraints(cls.TABNAME_CFGFTDIF,
                                 ((cls.TABSETUP_CONSTR_CFGMAGDOC, 'id_docgen', cls.TABCONSTRAINT_TYPE_NOACTION),

@@ -215,6 +215,93 @@ class GridRiepAliq(dbglib.DbGrid):
 # ------------------------------------------------------------------------------
 
 
+class GridTotaliPerTipoSoggetto(dbglib.DbGrid):
+    """
+    Griglia riepilogo per tipologia di soggetto.
+    """
+    
+    def __init__(self, parent, dbsog):
+        
+        self.dbsog = sog = dbsog
+        
+        def ci(col):
+            return sog._GetFieldIndex(col, inline=True)
+        
+        _NUM = gl.GRID_VALUE_NUMBER
+        _PRC = bt.GetPerGenMaskInfo()
+        _FLT = bt.GetValIntMaskInfo()
+        _STR = gl.GRID_VALUE_STRING
+        _DAT = gl.GRID_VALUE_DATETIME
+        
+        cols = (\
+            ( 80, (ci('tipo_stato'),                       "Stato",      _STR, True )),\
+            (200, (ci('tipo_soggetto'),                    "Tipologia",  _STR, True )),\
+            (110, (ci('total_imponib_acq'),      "Acquisti\nImponibile", _FLT, True )),\
+            (110, (ci('total_imposta_acq'),      "Acquisti\nImposta",    _FLT, True )),\
+            (110, (ci('total_imponib_ven'),       "Vendite\nImponibile", _FLT, True )),\
+            (110, (ci('total_imposta_ven'),       "Vendite\nImposta",    _FLT, True )),\
+            (110, (ci('total_imponib_cor'), "Corrispettivi\nImponibile", _FLT, True )),\
+            (110, (ci('total_imposta_cor'), "Corrispettivi\nImposta",    _FLT, True )),\
+            )
+        
+        colmap  = [c[1] for c in cols]
+        colsize = [c[0] for c in cols]
+        canedit = False
+        canins = False
+        
+        size = parent.GetClientSizeTuple()
+        dbglib.DbGrid.__init__(self, parent, -1, size=size, style=0)
+        
+        links = None
+        
+        afteredit = None
+        self.SetData((), colmap, canedit, canins, links, afteredit)
+        self.SetColLabelSize(50)
+        self._fitColumn = 0
+        
+        self.AddTotalsRow(0, 'Totali', (ci('total_imponib_acq'),
+                                        ci('total_imposta_acq'),
+                                        ci('total_imponib_ven'),
+                                        ci('total_imposta_ven'),
+                                        ci('total_imponib_cor'),
+                                        ci('total_imposta_cor'),))
+        
+        #self.SetRowLabelSize(100)
+        #self.SetRowLabelAlignment(wx.ALIGN_RIGHT, wx.ALIGN_BOTTOM)
+        #self.SetRowDynLabel(self.GetRowLabel)
+        self.SetCellDynAttr(self.GetAttr)
+        
+        map(lambda c:\
+            self.SetColumnDefaultSize(c[0], c[1]), enumerate(colsize))
+        
+        self.AutoSizeColumns()
+        sz = wx.FlexGridSizer(1,0,0,0)
+        sz.AddGrowableCol( 0 )
+        sz.AddGrowableRow( 0 )
+        sz.Add(self, 0, wx.GROW|wx.ALL, 0)
+        parent.SetSizer(sz)
+        sz.SetSizeHints(parent)
+        
+    def GetAttr(self, row, col, rscol, attr=gl.GridCellAttr):
+        if   col in (0, 1): bgcol = 'grey95' #stato/tipo soggetto
+        elif col in (2, 3): bgcol = 'grey90' #imponibile/imposta acquisti
+        elif col in (4, 5): bgcol = 'grey80' #imponibile/imposta vendite
+        elif col in (6, 7): bgcol = 'grey75' #imponibile/imposta corrispettivi
+        if self.IsOnTotalRow(row):
+            if self.CurrentTotalRow(row) == 0:
+                fgcol = 'blue'
+            else:
+                fgcol = 'blueviolet'
+        else:
+            fgcol = stdcolor.NORMAL_FOREGROUND
+        attr.SetBackgroundColour(bgcol)
+        attr.SetTextColour(fgcol)
+        return attr
+
+
+# ------------------------------------------------------------------------------
+
+
 class GridUtiCIC(dbglib.DbGrid):
     """
     Griglia utilizzi precedenti del credito compensabile
@@ -316,6 +403,7 @@ class LiqIvaPanel(aw.Panel):
         
         self.dbstatus = dbc.RegIvaStatus()
         self.dbliq = dbc.LiqIva()
+        self.dbsog = dbc.LiqIva_TotaliPerTipoSoggetto()
         
         anno = Env.Azienda.Esercizio.dataElab.year
         mese = Env.Azienda.Esercizio.dataElab.month
@@ -381,6 +469,9 @@ class LiqIvaPanel(aw.Panel):
         
         g = GridRiepAliq(cn('panel_riepaliqxreg'))
         self.gridaliqxreg = g
+        
+        g = GridTotaliPerTipoSoggetto(cn('panel_gridtsog'), dbsog=self.dbsog)
+        self.gridriepsog = g
         
         cn('splitriep').SetSashPosition(180)
         cn('splitriep').SetSashGravity(.5)
@@ -703,6 +794,9 @@ class LiqIvaPanel(aw.Panel):
             else:
                 #prospetto di liquidazione
                 rn = 'Liquidazione IVA - Prospetto di Liquidazione'
+        elif wz == 4:
+            rpt.Report(self, self.dbsog, 'Totali IVA per tipo soggetto')
+            return
         if db is None or db.IsEmpty():
             aw.awu.MsgDialog(self, "Non c'è nulla da stampare", style=wx.ICON_INFORMATION)
             return
@@ -820,12 +914,18 @@ class LiqIvaPanel(aw.Panel):
                                    """Estrazione dati dai registri """
                                    """iva in corso...""",\
                                    maximum=0)
+        datmin = cn('datmin').GetValue()
+        datmax = cn('datmax').GetValue()
         
         r = self.dbliq
-        r.SetPeriodo(self.GetPeriodo(),
-                     cn('datmin').GetValue(),
-                     cn('datmax').GetValue())
+        r.SetPeriodo(self.GetPeriodo(), datmin, datmax)
         r.Retrieve()
+        
+        s = self.dbsog
+        s.ClearFilters()
+        s.AddFilter('reg.datreg>=%s AND reg.datreg<=%s', datmin, datmax)
+        s.Retrieve()
+        self.gridriepsog.ChangeData(s.GetRecordset())
         
         wait.progress.SetRange(r.RowsCount())
         def UpdateBar(reg):

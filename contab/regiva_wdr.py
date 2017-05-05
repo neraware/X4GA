@@ -469,6 +469,10 @@ def LiqIvaFunc( parent, call_fit = True, set_sizer = True ):
     LiqIvaTot2Func(item8, False)
     item4.AddPage( item8, "Prospetto di liquidazione" )
 
+    item9 = wx.Panel( item4, -1 )
+    LiqIvaTotTipiSoggettiFunc(item9, False)
+    item4.AddPage( item9, "Totali per tipo soggetto" )
+
     item0.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
     item0.AddGrowableCol( 0 )
@@ -1484,13 +1488,16 @@ def LiqEffFunc( parent, call_fit = True, set_sizer = True ):
 
 ID_REGISTRI = 10106
 ID_GETPRIV = 10107
-ID_GETAZIITA = 10108
-ID_GETAZICEE = 10109
-ID_GETESTERO = 10110
-ID_PANGRIDVEN = 10111
-ID_TOTVALOPER = 10112
-ID_TOTIMPOSTA = 10113
-ID_BUTPRT = 10114
+ID_GETCOND = 10108
+ID_GETASSO = 10109
+ID_GETENTI = 10110
+ID_GETAZIITA = 10111
+ID_GETAZICEE = 10112
+ID_GETESTERO = 10113
+ID_PANGRIDVEN = 10114
+ID_TOTVALOPER = 10115
+ID_TOTIMPOSTA = 10116
+ID_BUTPRT = 10117
 
 def VendAziPrivFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1538,65 +1545,80 @@ def VendAziPrivFunc( parent, call_fit = True, set_sizer = True ):
     item15 = wx.CheckBox( parent, ID_GETPRIV, "Privati", wx.DefaultPosition, wx.DefaultSize, 0 )
     item15.SetValue( True )
     item15.SetName( "getpriv" )
-    item12.Add( item15, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item12.Add( item15, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item16 = wx.CheckBox( parent, ID_GETAZIITA, "Aziende Italia", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item16 = wx.CheckBox( parent, ID_GETCOND, "Condominii", wx.DefaultPosition, wx.DefaultSize, 0 )
     item16.SetValue( True )
-    item16.SetName( "getaziita" )
-    item12.Add( item16, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item16.SetName( "getcond" )
+    item12.Add( item16, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item17 = wx.CheckBox( parent, ID_GETAZICEE, "Aziende CEE", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item17 = wx.CheckBox( parent, ID_GETASSO, "Associazioni", wx.DefaultPosition, wx.DefaultSize, 0 )
     item17.SetValue( True )
-    item17.SetName( "getazicee" )
-    item12.Add( item17, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item17.SetName( "getasso" )
+    item12.Add( item17, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item18 = wx.CheckBox( parent, ID_GETESTERO, "Soggetti fuori CEE", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18 = wx.CheckBox( parent, ID_GETENTI, "Enti pubblici", wx.DefaultPosition, wx.DefaultSize, 0 )
     item18.SetValue( True )
-    item18.SetName( "getestero" )
-    item12.Add( item18, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item18.SetName( "getenti" )
+    item12.Add( item18, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item19 = wx.CheckBox( parent, ID_GETAZIITA, "Aziende Italia", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item19.SetValue( True )
+    item19.SetName( "getaziita" )
+    item12.Add( item19, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item20 = wx.CheckBox( parent, ID_GETAZICEE, "Aziende CEE", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item20.SetValue( True )
+    item20.SetName( "getazicee" )
+    item12.Add( item20, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item21 = wx.CheckBox( parent, ID_GETESTERO, "Soggetti fuori CEE", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item21.SetValue( True )
+    item21.SetName( "getestero" )
+    item12.Add( item21, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
     item1.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item19 = wx.Button( parent, ID_BUTUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item19.SetDefault()
-    item19.SetName( "butupd" )
-    item1.Add( item19, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.TOP, 5 )
+    item22 = wx.Button( parent, ID_BUTUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item22.SetDefault()
+    item22.SetName( "butupd" )
+    item1.Add( item22, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.RIGHT|wx.TOP, 5 )
 
     item0.Add( item1, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item20 = wx.StaticText( parent, ID_TEXT, "Elenco clienti", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item20.SetForegroundColour( wx.BLUE )
-    item0.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item23 = wx.StaticText( parent, ID_TEXT, "Elenco clienti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item23.SetForegroundColour( wx.BLUE )
+    item0.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item21 = wx.Panel( parent, ID_PANGRIDVEN, wx.DefaultPosition, [1000,460], wx.SUNKEN_BORDER )
-    item21.SetName( "pangridven" )
-    item0.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item24 = wx.Panel( parent, ID_PANGRIDVEN, wx.DefaultPosition, [1000,460], wx.SUNKEN_BORDER )
+    item24.SetName( "pangridven" )
+    item0.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item22 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item25 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item23 = wx.BoxSizer( wx.HORIZONTAL )
+    item26 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item24 = wx.StaticText( parent, ID_TEXT, "Tot.Operazioni:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item23.Add( item24, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item27 = wx.StaticText( parent, ID_TEXT, "Tot.Operazioni:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item26.Add( item27, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item25 = NumCtrl(parent, ID_TOTVALOPER, integerWidth=12, fractionWidth=Env.Azienda.BaseTab.VALINT_DECIMALS, groupDigits=True); item25.SetName("totvaloper"); item25.SetEditable(False)
-    item23.Add( item25, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item28 = NumCtrl(parent, ID_TOTVALOPER, integerWidth=12, fractionWidth=Env.Azienda.BaseTab.VALINT_DECIMALS, groupDigits=True); item28.SetName("totvaloper"); item28.SetEditable(False)
+    item26.Add( item28, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item26 = wx.StaticText( parent, ID_TEXT, "Tot.Imposta:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item23.Add( item26, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item29 = wx.StaticText( parent, ID_TEXT, "Tot.Imposta:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item26.Add( item29, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item27 = NumCtrl(parent, ID_TOTIMPOSTA, integerWidth=12, fractionWidth=Env.Azienda.BaseTab.VALINT_DECIMALS, groupDigits=True); item27.SetName("totimposta"); item27.SetEditable(False)
-    item23.Add( item27, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item30 = NumCtrl(parent, ID_TOTIMPOSTA, integerWidth=12, fractionWidth=Env.Azienda.BaseTab.VALINT_DECIMALS, groupDigits=True); item30.SetName("totimposta"); item30.SetEditable(False)
+    item26.Add( item30, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item22.Add( item23, 0, wx.ALIGN_CENTER, 5 )
+    item25.Add( item26, 0, wx.ALIGN_CENTER, 5 )
 
-    item28 = wx.Button( parent, ID_BUTPRT, "&Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item28.SetName( "butprt" )
-    item22.Add( item28, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item31 = wx.Button( parent, ID_BUTPRT, "&Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item31.SetName( "butprt" )
+    item25.Add( item31, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item22.AddGrowableCol( 1 )
+    item25.AddGrowableCol( 1 )
 
-    item0.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 
@@ -1609,15 +1631,15 @@ def VendAziPrivFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_ACQVEN = 10115
-ID_DETAIL = 10116
-ID_STATI_ITA = 10117
-ID_STATI_CEE = 10118
-ID_STATI_EXT = 10119
-ID_STATO = 10120
-ID_QUALIANAG = 10121
-ID_CONGR_TIPANA = 10122
-ID_PANGRIDFAT = 10123
+ID_ACQVEN = 10118
+ID_DETAIL = 10119
+ID_STATI_ITA = 10120
+ID_STATI_CEE = 10121
+ID_STATI_EXT = 10122
+ID_STATO = 10123
+ID_QUALIANAG = 10124
+ID_CONGR_TIPANA = 10125
+ID_PANGRIDFAT = 10126
 
 def FatturatoContabileClientiFornitFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1754,6 +1776,36 @@ def FatturatoContabileClientiFornitFunc( parent, call_fit = True, set_sizer = Tr
     item0.AddGrowableCol( 0 )
 
     item0.AddGrowableRow( 2 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+ID_PANGRIDTSOG = 10127
+
+def LiqIvaTotTipiSoggettiFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item1 = wx.Panel( parent, ID_PANGRIDTSOG, wx.DefaultPosition, [200,160], wx.SUNKEN_BORDER )
+    item1.SetName( "panel_gridtsog" )
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item2 = wx.StaticText( parent, ID_TEXT, "N.B.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.SetForegroundColour( wx.BLUE )
+    item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item3 = wx.StaticText( parent, ID_TEXT, 
+        "L'imposta sugli acquisti è comprensiva di parte indeducibile\n"
+        "L'imposta sulle vendite è comprensiva di imposta in split payment",
+        wx.DefaultPosition, wx.DefaultSize, 0 )
+    item0.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item0.AddGrowableCol( 0 )
+
+    item0.AddGrowableRow( 0 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

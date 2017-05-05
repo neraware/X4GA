@@ -2597,6 +2597,59 @@ class LiqIva(adb.DbTable):
         return out
 
 
+class LiqIva_TotaliPerTipoSoggetto(adb.DbTable):
+    
+    def __init__(self, **kwargs):
+        
+        adb.DbTable.__init__(self, 'contab_b', 'mov', fields=None)
+        _reg = self.AddJoin('contab_h', 'reg', idLeft='id_reg', fields=None)
+        _riv = _reg.AddJoin('regiva', idLeft='id_regiva', fields=None)
+        _pdc = self.AddJoin('pdc', idLeft='id_pdcpa', fields=None)
+        _cli = _pdc.AddJoin('clienti', 'anacli', idLeft='id', fields=None, join=adb.JOIN_LEFT)
+        _for = _pdc.AddJoin('fornit', 'anafor', idLeft='id', fields=None, join=adb.JOIN_LEFT)
+        _stc = _cli.AddJoin('x4.stati', 'sttcli', idLeft='id_stato', fields=None, join=adb.JOIN_LEFT)
+        _stf = _for.AddJoin('x4.stati', 'sttfor', idLeft='id_stato', fields=None, join=adb.JOIN_LEFT)
+        
+        stato_group = 'IF(regiva.tipo="C", "I", IF(anacli.id IS NOT NULL, IF(sttcli.id IS NULL OR sttcli.codice="IT", "I", IF(sttcli.is_cee=1, "C", "E")), IF(anafor.id IS NOT NULL, IF(sttfor.id IS NULL OR sttfor.codice="IT", "I", IF(sttfor.is_cee=1, "C", "E")), "X")))'
+        stato_order = 'IF(regiva.tipo="C",  1,  IF(anacli.id IS NOT NULL, IF(sttcli.id IS NULL OR sttcli.codice="IT",  1,  IF(sttcli.is_cee=1,  2,   3 )), IF(anafor.id IS NOT NULL, IF(sttfor.id IS NULL OR sttfor.codice="IT",  1,  IF(sttfor.is_cee=1,  2,   3)),   9)))'
+        
+        tiposog_group = 'IF(regiva.tipo="C", "P", IF(anacli.id IS NOT NULL, IF(anacli.aziper IN ("P", "A", "C", "Z", "E"), anacli.aziper, CONCAT("? cliente ", pdc.codice)), IF(anafor.id IS NOT NULL, IF(anafor.aziper IN ("P", "A", "C", "Z", "E"), anafor.aziper, CONCAT("? fornit. ", pdc.codice)), CONCAT("? reg.", reg.id))))'
+        tiposog_order = 'IF(regiva.tipo="C",  2,  IF(anacli.id IS NOT NULL, IF(anacli.aziper IN ("P", "A", "C", "Z", "E"), anacli.aziper, CONCAT("? cliente ", pdc.codice)), IF(anafor.id IS NOT NULL, IF(anafor.aziper IN ("P", "A", "C", "Z", "E"), anafor.aziper, CONCAT("? fornit. ", pdc.codice)), reg.id)))'
+        
+        self.AddGroupOn(stato_group, 'tipo_stato')
+        self.AddGroupOn(tiposog_group, 'tipo_soggetto')
+        
+        self.AddOrder(stato_order)
+        self.AddOrder(tiposog_order)
+        
+        #imponibile
+        self.AddTotalOf('IF(regiva.tipo="A" AND tipriga="I", mov.imponib*IF(mov.segno="D",1,-1), 0)', 'imponib_acq')
+        self.AddTotalOf('IF(regiva.tipo="V" AND tipriga="I", mov.imponib*IF(mov.segno="A",1,-1), 0)', 'imponib_ven')
+        self.AddTotalOf('IF(regiva.tipo="C" AND tipriga="I", mov.imponib*IF(mov.segno="A",1,-1), 0)', 'imponib_cor')
+        
+        #imposta
+        self.AddTotalOf('IF(regiva.tipo="A" AND tipriga IN ("I", "O"), (mov.imposta+COALESCE(mov.indeduc, 0))*IF(mov.segno="D",1,-1), 0)', 'imposta_acq')
+        self.AddTotalOf('IF(regiva.tipo="V" AND tipriga IN ("I", "O"), (mov.imposta+COALESCE(mov.indeduc, 0))*IF(mov.segno="A",1,-1), 0)', 'imposta_ven')
+        self.AddTotalOf('IF(regiva.tipo="C" AND tipriga IN ("I", "O"), (mov.imposta+COALESCE(mov.indeduc, 0))*IF(mov.segno="A",1,-1), 0)', 'imposta_cor')
+        
+        self.AddBaseFilter('mov.tipriga IN ("I", "O")')
+        self.Reset()
+    
+    def Retrieve(self, *args, **kwargs):
+        out = adb.DbTable.Retrieve(self, *args, **kwargs)
+        if out:
+            for _ in self:
+                if   self.tipo_soggetto == 'P': self.tipo_soggetto = 'PRIVATI'
+                elif self.tipo_soggetto == 'A': self.tipo_soggetto = 'AZIENDE'
+                elif self.tipo_soggetto == 'C': self.tipo_soggetto = 'CONDOMINII'
+                elif self.tipo_soggetto == 'Z': self.tipo_soggetto = 'ASSOCIAZIONI'
+                elif self.tipo_soggetto == 'E': self.tipo_soggetto = 'ENTI PUBBLICI'
+                if   self.tipo_stato == 'I': self.tipo_stato = 'ITALIA'
+                elif self.tipo_stato == 'C': self.tipo_stato = 'CEE'
+                elif self.tipo_stato == 'E': self.tipo_stato = 'EXTRACEE'
+        return out
+
+
 # ------------------------------------------------------------------------------
 
 
@@ -3165,12 +3218,22 @@ class CtrIvaSeqCheck(adb.DbTable):
 
 class _Vendite_mixin_(object):
     
+#     _impexpr = 'mov.imponib*IF(mov.segno="A",1,-1)'
+#     _ivaexpr = '(mov.imposta+mov.indeduc)*IF(mov.segno="A",1,-1)'
+#     _privafilt = 'IF(tipana.tipo="C", (cliente.piva IS NULL OR cliente.piva="") AND LENGTH(cliente.codfisc)=16, (fornit.piva IS NULL OR fornit.piva="") AND LENGTH(fornit.codfisc)=16)'
+#     _pivitfilt = 'IF(tipana.tipo="C", stato_cli.codice="IT" AND LENGTH(cliente.piva)=11, stato_for.codice="IT" AND LENGTH(fornit.piva)=11)'
+#     _pivcefilt = 'IF(tipana.tipo="C", stato_cli.is_cee=1 AND stato_cli.codice<>"IT" AND LENGTH(cliente.piva)>0, stato_for.is_cee=1 AND stato_for.codice<>"IT"  AND LENGTH(fornit.piva)>0)'
+#     _pivestfilt = '(IF(tipana.tipo="C", stato_cli.codice != "IT"  AND LENGTH(cliente.piva)>0, stato_for.codice != "IT"  AND LENGTH(fornit.piva)>0) AND NOT %(_pivcefilt)s)' % locals()
+#     _ivanull = '(aliq.perciva=0 OR aliq.perciva IS NULL)'
     _impexpr = 'mov.imponib*IF(mov.segno="A",1,-1)'
     _ivaexpr = '(mov.imposta+mov.indeduc)*IF(mov.segno="A",1,-1)'
-    _privafilt = 'IF(tipana.tipo="C", (cliente.piva IS NULL OR cliente.piva="") AND LENGTH(cliente.codfisc)=16, (fornit.piva IS NULL OR fornit.piva="") AND LENGTH(fornit.codfisc)=16)'
-    _pivitfilt = 'IF(tipana.tipo="C", stato_cli.codice="IT" AND LENGTH(cliente.piva)=11, stato_for.codice="IT" AND LENGTH(fornit.piva)=11)'
-    _pivcefilt = 'IF(tipana.tipo="C", stato_cli.is_cee=1 AND stato_cli.codice<>"IT" AND LENGTH(cliente.piva)>0, stato_for.is_cee=1 AND stato_for.codice<>"IT"  AND LENGTH(fornit.piva)>0)'
-    _pivestfilt = '(IF(tipana.tipo="C", stato_cli.codice != "IT"  AND LENGTH(cliente.piva)>0, stato_for.codice != "IT"  AND LENGTH(fornit.piva)>0) AND NOT %(_pivcefilt)s)' % locals()
+    _privafilt = 'IF(tipana.tipo="C", cliente.aziper="P", fornit.aziper="P")'
+    _condofilt = 'IF(tipana.tipo="C", cliente.aziper="C", fornit.aziper="C")'
+    _assocfilt = 'IF(tipana.tipo="C", cliente.aziper="Z", fornit.aziper="Z")'
+    _entipfilt = 'IF(tipana.tipo="C", cliente.aziper="E", fornit.aziper="E")'
+    _pivitfilt = 'IF(tipana.tipo="C", stato_cli.codice="IT" AND cliente.aziper="A", stato_for.codice="IT" AND fornit.aziper="A")'
+    _pivcefilt = 'IF(tipana.tipo="C", stato_cli.is_cee=1 AND stato_cli.codice<>"IT" AND cliente.aziper="A", stato_for.is_cee=1 AND stato_for.codice<>"IT"  AND fornit.aziper="A")'
+    _pivestfilt = '(IF(tipana.tipo="C", stato_cli.codice != "IT"  AND cliente.aziper="A", stato_for.codice != "IT"  AND fornit.aziper="A") AND NOT %(_pivcefilt)s)' % locals()
     _ivanull = '(aliq.perciva=0 OR aliq.perciva IS NULL)'
 
 
@@ -3205,6 +3268,9 @@ class VendAziPriv(adb.DbTable, _Vendite_mixin_):
         impexpr = self._impexpr
         ivaexpr = self._ivaexpr
         privafilt = self._privafilt
+        condofilt = self._condofilt
+        assocfilt = self._assocfilt
+        entipfilt = self._entipfilt
         pivitfilt = self._pivitfilt
         pivcefilt = self._pivcefilt
         ivanull = self._ivanull
@@ -3214,6 +3280,21 @@ class VendAziPriv(adb.DbTable, _Vendite_mixin_):
         self.AddTotalOf('IF(NOT %(ivanull)s AND     %(privafilt)s, %(impexpr)s, 0)' % locals(),                       'imponib_priv')
         self.AddTotalOf('IF(NOT %(ivanull)s AND     %(privafilt)s, %(ivaexpr)s, 0)' % locals(),                       'imposta_priv')
         self.AddTotalOf('IF(    %(ivanull)s AND     %(privafilt)s, %(impexpr)s, 0)' % locals(),                       'noimpes_priv')
+        
+        #condominii
+        self.AddTotalOf('IF(NOT %(ivanull)s AND     %(condofilt)s, %(impexpr)s, 0)' % locals(),                       'imponib_cond')
+        self.AddTotalOf('IF(NOT %(ivanull)s AND     %(condofilt)s, %(ivaexpr)s, 0)' % locals(),                       'imposta_cond')
+        self.AddTotalOf('IF(    %(ivanull)s AND     %(condofilt)s, %(impexpr)s, 0)' % locals(),                       'noimpes_cond')
+        
+        #associazioni
+        self.AddTotalOf('IF(NOT %(ivanull)s AND     %(assocfilt)s, %(impexpr)s, 0)' % locals(),                       'imponib_asso')
+        self.AddTotalOf('IF(NOT %(ivanull)s AND     %(assocfilt)s, %(ivaexpr)s, 0)' % locals(),                       'imposta_asso')
+        self.AddTotalOf('IF(    %(ivanull)s AND     %(assocfilt)s, %(impexpr)s, 0)' % locals(),                       'noimpes_asso')
+        
+        #enti pubblici
+        self.AddTotalOf('IF(NOT %(ivanull)s AND     %(entipfilt)s, %(impexpr)s, 0)' % locals(),                       'imponib_enti')
+        self.AddTotalOf('IF(NOT %(ivanull)s AND     %(entipfilt)s, %(ivaexpr)s, 0)' % locals(),                       'imposta_enti')
+        self.AddTotalOf('IF(    %(ivanull)s AND     %(entipfilt)s, %(impexpr)s, 0)' % locals(),                       'noimpes_enti')
         
         #aziende italia
         self.AddTotalOf('IF(NOT %(ivanull)s AND NOT %(privafilt)s AND %(pivitfilt)s, %(impexpr)s, 0)' % locals(),     'imponib_aziita')
@@ -3226,33 +3307,42 @@ class VendAziPriv(adb.DbTable, _Vendite_mixin_):
         self.AddTotalOf('IF(    %(ivanull)s AND NOT %(privafilt)s AND     %(pivcefilt)s, %(impexpr)s, 0)' % locals(), 'noimpes_azicee')
         
         #soggetti fuori cee
-        self.AddTotalOf('IF(NOT %(ivanull)s AND %(pivestfilt)s, %(impexpr)s, 0)' % locals(), 'imponib_estero')
-        self.AddTotalOf('IF(NOT %(ivanull)s AND %(pivestfilt)s, %(ivaexpr)s, 0)' % locals(), 'imposta_estero')
-        self.AddTotalOf('IF(    %(ivanull)s AND %(pivestfilt)s, %(impexpr)s, 0)' % locals(), 'noimpes_estero')
+        self.AddTotalOf('IF(NOT %(ivanull)s AND %(pivestfilt)s, %(impexpr)s, 0)' % locals(),                          'imponib_estero')
+        self.AddTotalOf('IF(NOT %(ivanull)s AND %(pivestfilt)s, %(ivaexpr)s, 0)' % locals(),                          'imposta_estero')
+        self.AddTotalOf('IF(    %(ivanull)s AND %(pivestfilt)s, %(impexpr)s, 0)' % locals(),                          'noimpes_estero')
         
         self.AddBaseFilter('mov.tipriga IN ("I", "E", "O") AND regiva.tipo IN ("V", "C")')
         
         self.AddOrder('pdc.descriz')
         
         self._info.colpriv =\
+        self._info.colcond =\
+        self._info.colasso =\
+        self._info.colenti =\
         self._info.colaziita =\
         self._info.colazicee =\
         self._info.colestero = None
         
         self.Reset()
     
-    def SetSpecs(self, priv=False, aziita=False, azicee=False, estero=False):
+    def SetSpecs(self, priv=False, cond=False, asso=False, enti=False, aziita=False, azicee=False, estero=False):
         self._info.colpriv =   priv
+        self._info.colcond =   cond
+        self._info.colasso =   asso
+        self._info.colenti =   enti
         self._info.colaziita = aziita
         self._info.colazicee = azicee
         self._info.colestero = estero
         
     def _Get_Specs(self):
         i = self._info
-        return [['Privati',     i.colpriv,   self.total_imponib_priv,   self.total_imposta_priv,   self.total_noimpes_priv],
-                ['Aziende ITA', i.colaziita, self.total_imponib_aziita, self.total_imposta_aziita, self.total_noimpes_aziita],
-                ['Aziende CEE', i.colazicee, self.total_imponib_azicee, self.total_imposta_azicee, self.total_noimpes_azicee],
-                ['Fuori CEE',   i.colestero, self.total_imponib_estero, self.total_imposta_estero, self.total_noimpes_estero],]
+        return [['Privati',       i.colpriv,   self.total_imponib_priv,   self.total_imposta_priv,   self.total_noimpes_priv],
+                ['Condominii',    i.colcond,   self.total_imponib_cond,   self.total_imposta_cond,   self.total_noimpes_cond],
+                ['Associazioni',  i.colasso,   self.total_imponib_asso,   self.total_imposta_asso,   self.total_noimpes_asso],
+                ['Enti Pubblici', i.colenti,   self.total_imponib_enti,   self.total_imposta_enti,   self.total_noimpes_enti],
+                ['Aziende ITA',   i.colaziita, self.total_imponib_aziita, self.total_imposta_aziita, self.total_noimpes_aziita],
+                ['Aziende CEE',   i.colazicee, self.total_imponib_azicee, self.total_imposta_azicee, self.total_noimpes_azicee],
+                ['Fuori CEE',     i.colestero, self.total_imponib_estero, self.total_imposta_estero, self.total_noimpes_estero],]
         
     def GetColumnTitle(self, n):
         t = []
