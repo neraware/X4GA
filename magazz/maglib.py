@@ -191,6 +191,16 @@ class GridMov(object):
                     val = val.replace(' ', r'%')
                 mov.AddFilter("mov.descriz LIKE %s", val)
         
+        #filtro note
+        c = cn('masnote')
+        if c:
+            val = c.GetValue()
+            if val:
+                val = '%%%s%%' % val.replace('..', r'%')
+                if bt.OPTSPASEARCH:
+                    val = val.replace(' ', r'%')
+                mov.AddFilter("mov.note LIKE %s", val)
+        
         if cn('escdocacq').GetValue():
             mov.AddFilter('doc.f_acq IS NULL OR doc.f_acq<>1')
         if cn('escdocann').GetValue():
