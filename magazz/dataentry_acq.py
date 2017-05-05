@@ -80,10 +80,10 @@ class SelDocGrid(dbglib.DbGrid):
         ( 80, (ncdatreg, "Data reg.",      _DAT, True )),\
         ( 50, (ncnumdoc, "Num.",           _NUM, True )),\
         ( 80, (ncdatdoc, "Data doc.",      _DAT, True )),\
-        ( 60, (nccodana, "Cod.",           _STR, True )),\
         ( 90, (ncdesrif, "Rif.",           _STR, True )),\
         ( 50, (ncnumrif, "Num.",           _STR, True )),\
         ( 80, (ncdatrif, "Data",           _DAT, True )),\
+        ( 60, (nccodana, "Cod.",           _STR, True )),\
         (180, (ncdesana, "Anagrafica",     _STR, True )),\
         ( 50, (nccoddes, "Cod.",           _STR, True )),\
         (180, (ncdesdes, "Destinazione",   _STR, True )),\
@@ -271,34 +271,45 @@ class AcqDocGrid(dbglib.DbGrid):
         _CHK = gl.GRID_VALUE_BOOL+":1,0"
         
         colcodart = pro._GetFieldIndex("codice", inline=True)
+        colcodfor = pro._GetFieldIndex("codfor", inline=True)
+        colbarcod = pro._GetFieldIndex("barcode", inline=True)
         
         cols = []
-        a = cols.append
-        a(( 40, (cn(mov, 'numriga'),      "Riga",        _NUM, True )))
-        a(( 80, (colcodart,               "Codice",      _STR, True )))
-        a((140, (cn(mov, 'descriz'),      "Descrizione", _STR, True )))
-        a(( 30, (cn(mov, 'um'),           "U.M.",        _STR, True )))
-        a(( -1, (cn(mov, 'qta'),          "Qta orig.",   _QTA, True )))
-        a(( -1, (cn(mov, 'total_qtaeva'), "Evaso",       _QTA, True )))
-        a(( -1, (   -1,                   "Residuo",     _QTA, True )))
-        a(( -1, (cn(mov, 'qtaacq'),       "Quantità",    _QTA, True )))
-        a(( -1, (cn(mov, 'prezzo'),       "Prezzo",      _PRE, True )))
+        def a(x):
+            cols.append(x)
+            return len(cols)-1
+        
+        self.COL_NUMRIGA =     a(( 40, (cn(mov, 'numriga'),      "Riga",        _NUM, True )))
+        self.COL_CODART =      a(( 80, (colcodart,               "Codice",      _STR, True )))
+        if bt.MAGVISCPF:
+            self.COL_CODFOR =  a(( 80, (colcodfor,               "Cod.Forn.",   _STR, True )))
+        if bt.MAGVISBCD:
+            self.COL_BARCODE = a((120, (colbarcod,               "Bacode",      _STR, True )))
+        self.COL_DESCRIZ =     a((200, (cn(mov, 'descriz'),      "Descrizione", _STR, True )))
+        self.COL_UM =          a(( 30, (cn(mov, 'um'),           "U.M.",        _STR, True )))
+        self.COL_QTAORIG =     a((  1, (cn(mov, 'qta'),          "Qta orig.",   _QTA, True )))
+        self.COL_QTAEVAS =     a((  1, (cn(mov, 'total_qtaeva'), "Evaso",       _QTA, True )))
+        self.COL_QTARESD =     a((  1, (   -1,                   "Residuo",     _QTA, True )))
+        self.COL_QTA_ACQ =     a((  1, (cn(mov, 'qtaacq'),       "Quantità",    _QTA, True )))
+        self.COL_PREZZO =      a((  1, (cn(mov, 'prezzo'),       "Prezzo",      _PRE, True )))
+        self.COL_SCONTO1 = self.COL_SCONTO2 = self.COL_SCONTO3 = self.COL_SCONTO4 = self.COL_SCONTO5 = self.COL_SCONTO6 = -1 
         if bt.MAGNUMSCO >= 1:
-            a(( -1, (cn(mov, 'sconto1'),  "Sc.%"+'1'*int(bt.MAGNUMSCO>1), _SCO, True )))
+            self.COL_SCONTO1 = a((  1, (cn(mov, 'sconto1'),      "Sc.%"+'1'*int(bt.MAGNUMSCO>1), 
+                                                                                _SCO, True )))
         if bt.MAGNUMSCO >= 2:
-            a(( -1, (cn(mov, 'sconto2'),  "Sc.%2",       _SCO, True )))
+            self.COL_SCONTO2 = a((  1, (cn(mov, 'sconto2'),      "Sc.%2",       _SCO, True )))
         if bt.MAGNUMSCO >= 3:
-            a(( -1, (cn(mov, 'sconto3'),  "Sc.%3",       _SCO, True )))
+            self.COL_SCONTO3 = a((  1, (cn(mov, 'sconto3'),      "Sc.%3",       _SCO, True )))
         if bt.MAGNUMSCO >= 4:
-            a(( -1, (cn(mov, 'sconto4'),  "Sc.%4",       _SCO, True )))
+            self.COL_SCONTO4 = a((  1, (cn(mov, 'sconto4'),      "Sc.%4",       _SCO, True )))
         if bt.MAGNUMSCO >= 5:
-            a(( -1, (cn(mov, 'sconto5'),  "Sc.%5",       _SCO, True )))
+            self.COL_SCONTO5 = a((  1, (cn(mov, 'sconto5'),      "Sc.%5",       _SCO, True )))
         if bt.MAGNUMSCO >= 6:
-            a(( -1, (cn(mov, 'sconto6'),  "Sc.%6",       _SCO, True )))
-        a(( -1, (cn(mov, 'impacq'),       "Importo",     _IMP, True )))
-        a(( -1, (cn(mov, 'annacq'),       "Annulla",     _CHK, True )))
-        a(( -1, (cn(mov, 'importo'),      "Imp.Orig.",   _IMP, True )))
-        a(( 80, (cn(iva, 'descriz'),      "Aliq.IVA",    _STR, True )))
+            self.COL_SCONTO6 = a((  1, (cn(mov, 'sconto6'),      "Sc.%6",       _SCO, True )))
+        self.COL_IMP_ACQ =     a((  1, (cn(mov, 'impacq'),       "Importo",     _IMP, True )))
+        self.COL_FLAG_ANN =    a(( -1, (cn(mov, 'annacq'),       "Annulla",     _CHK, True )))
+        self.COL_IMP_ORIG =    a((  1, (cn(mov, 'importo'),      "Imp.Orig.",   _IMP, True )))
+        self.COL_DES_ALIQ =    a(( 80, (cn(iva, 'descriz'),      "Aliq.IVA",    _STR, True )))
         
         colmap  = [c[1] for c in cols]
         colsize = [c[0] for c in cols]
@@ -402,10 +413,22 @@ class AcqDocGrid(dbglib.DbGrid):
         if 0 <= row < len(rs):
             askvcol = self.dbacq.tipmov._GetFieldIndex("askvalori", inline=True)
             askv = self.dbacq.GetRecordset()[row][askvcol]
-            if   askv == "T": cols = [7,8,9,10,11,13]
-            elif askv == "Q": cols = [7,13]
-            elif askv == "V": cols = [12,13]
-            elif askv == "D": cols = [2,13]
+            if   askv == "T": cols = [self.COL_QTA_ACQ, 
+                                      self.COL_PREZZO,
+                                      self.COL_SCONTO1,
+                                      self.COL_SCONTO2,
+                                      self.COL_SCONTO3,
+                                      self.COL_SCONTO4,
+                                      self.COL_SCONTO5,
+                                      self.COL_SCONTO6,
+                                      self.COL_IMP_ACQ,
+                                      self.COL_FLAG_ANN,]
+            elif askv == "Q": cols = [self.COL_QTA_ACQ,
+                                      self.COL_FLAG_ANN,]
+            elif askv == "V": cols = [self.COL_IMP_ACQ,
+                                      self.COL_FLAG_ANN,]
+            elif askv == "D": cols = [self.COL_DESCRIZ,
+                                      self.COL_FLAG_ANN,]
             else:             cols = []
             readonly = not col in cols
             acqcol = self.dbacq._GetFieldIndex("acquis", inline=True)
@@ -535,9 +558,9 @@ class AcqDocDialog(wx.Dialog):
     
     def CanEvas(self, row):
         acq = self.dbacq
-        acq.MoveRow(row)
         canevas = False
         if row<acq.RowsCount():
+            acq.MoveRow(row)
             if acq.f_ann or acq.doc.f_ann:
                 canevas = False
             elif acq.tipmov.askvalori in "QT":
