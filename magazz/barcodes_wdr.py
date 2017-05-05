@@ -44,7 +44,8 @@ bt = Azienda.BaseTab
 ID_TEXT = 14000
 ID_PANGRIDBC = 14001
 ID_RESET = 14002
-ID_PRINT = 14003
+ID_DESCAGG = 14003
+ID_PRINT = 14004
 
 def EtichetteProdottiPanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -63,14 +64,21 @@ def EtichetteProdottiPanelFunc( parent, call_fit = True, set_sizer = True ):
     item5 = wx.Button( parent, ID_RESET, "S&vuota", wx.DefaultPosition, wx.DefaultSize, 0 )
     item4.Add( item5, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
+    item6 = wx.StaticText( parent, ID_TEXT, "Descrizione aggiuntiva:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.Add( item6, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item7 = TextCtrl( parent, ID_DESCAGG, "", wx.DefaultPosition, [150,-1], 0 )
+    item7.SetName( "descagg" )
+    item4.Add( item7, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
     item3.Add( item4, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item6 = wx.BoxSizer( wx.HORIZONTAL )
+    item8 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item7 = wx.Button( parent, ID_PRINT, "Sta&mpa", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item6.Add( item7, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item9 = wx.Button( parent, ID_PRINT, "Sta&mpa", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item8.Add( item9, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item3.Add( item6, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item3.Add( item8, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item3.AddGrowableCol( 1 )
 
@@ -87,10 +95,10 @@ def EtichetteProdottiPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_QTAETIC = 14004
-ID_NUMETIC = 14005
-ID_SOLOINT = 14006
-ID_PRINTETIC = 14007
+ID_QTAETIC = 14005
+ID_NUMETIC = 14006
+ID_SOLOINT = 14007
+ID_PRINTETIC = 14008
 
 def SelQtaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )

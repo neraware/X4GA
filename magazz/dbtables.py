@@ -4974,6 +4974,8 @@ class AcqListino(adb.DbMem):
 
 class ProdEticList(adb.DbMem):
     
+    _descagg = ''
+    
     def __init__(self, colonne=1):
         p = adb.DbTable(bt.TABNAME_PROD, 'prod')
         p.AddField('0.0', 'qtaetic')
@@ -5004,6 +5006,7 @@ class ProdEticList(adb.DbMem):
                 self.SetRecordset(rs+rsp)
             pt = adb.SplittedTable(self, 'qtaetic', self._info.colonne, 
                                    lambda n: wait.SetValue(n), qtadefault=1)
+            pt._descagg = self._descagg
         finally:
             wait.Destroy()
         self.SetRecordset(rsp)

@@ -235,7 +235,9 @@ class EtichetteProdottiPanel(wx.Panel):
                     rows, cols = map(int,x.split('x'))
             row0 = _rpt.GetLabelOffsetRow()
             col0 = _rpt.GetLabelOffsetCol()
-            return self.dbpro.GetPrintTable(rptdef, rows, cols, row0, col0)
+            pt = self.dbpro.GetPrintTable(rptdef, rows, cols, row0, col0)
+            pt._descagg = self.FindWindowByName('descagg').GetValue()
+            return pt
         rpt.ReportLabels(self, None, 'Etichette prodotti', dbfunc=GetPrintTable)
 
 
