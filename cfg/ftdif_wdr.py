@@ -21,6 +21,8 @@ from awc.controls.linktable import LinkTable
 
 from cfg.caumagazz import CauMagazzDialog as CfgCauMagDialog
 
+import anag.lib as alib
+
 import Env
 bt = Env.Azienda.BaseTab
 
@@ -41,6 +43,7 @@ ID_DOCS = 16010
 ID_SOLOSTA = 16011
 ID_F_CHGMAG = 16012
 ID_CHGMAG = 16013
+ID_CHGPDC = 16014
 
 def FtDifCardFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -162,18 +165,22 @@ def FtDifCardFunc( parent, call_fit = True, set_sizer = True ):
     item28.SetName( "f_chgmag" )
     item27.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item30 = wx.StaticBox( parent, -1, "Tutti i documenti generati confluiranno indistintamente sul magazzino:" )
+    item30 = wx.StaticBox( parent, -1, "Tutti i documenti generati confluiranno indistintamente:" )
     item29 = wx.StaticBoxSizer( item30, wx.VERTICAL )
     
-    item29.Add( [ 20, 15 ] , 0, wx.ALIGN_CENTER, 5 )
-
-    item31 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item31 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item32 = wx.StaticText( parent, ID_TEXT, "Documenti generati sul magazzino:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item31.Add( item32, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item32 = wx.StaticText( parent, ID_TEXT, "Sul magazzino:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item31.Add( item32, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
     item33 = LinkTable(parent, ID_CHGMAG); item33.SetDataLink(bt.TABNAME_MAGAZZ, "id_chgmag")
     item31.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item34 = wx.StaticText( parent, ID_TEXT, "Sul sottoconto:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item31.Add( item34, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item35 = alib.LinkTablePdc(parent, ID_CHGPDC, "id_chgpdc")
+    item31.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item31.AddGrowableCol( 1 )
 

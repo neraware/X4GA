@@ -404,8 +404,13 @@ class FtDif(adb.DbTable):
             else:
                 idmag = d.id_magazz
             
+            id_pdc = d.id_pdc
+            if self.id_chgpdc is not None:
+                id_pdc = self.id_chgpdc
+            
             #test necessità di nuovo documento
-            if idmag != lastmag or d.id_pdc != lastpdc or sepall or\
+#             if idmag != lastmag or d.id_pdc != lastpdc or sepall or\
+            if idmag != lastmag or id_pdc != lastpdc or sepall or\
                (sepmp and d.id_modpag != lastmp) or \
                (sepdest and d.id_dest != lastdest):
                 
@@ -427,6 +432,7 @@ class FtDif(adb.DbTable):
                 for field in dr.GetFieldNames():
                     if field != 'id' and not field in headfields:
                         dg.__setattr__(field, dr.__getattr__(field))
+                dg.id_pdc = id_pdc
                 
                 #cambio magazzino se necessario, da configurazione ftdif
                 if self.f_chgmag and self.id_chgmag:
@@ -450,7 +456,9 @@ class FtDif(adb.DbTable):
                 if tipo in pdcanags:
                     pdc = pdcanags[tipo]
                 if pdc is not None:
-                    pdc.Get(dr.id_pdc)
+#                     pdc.Get(dr.id_pdc)
+                    pdc.Get(id_pdc)
+                
                 for field, needed in (('id_modpag', cfg.askmodpag == 'X' or False),
                                       ('id_agente', cfg.askagente == 'X' or False),
                                       ('id_zona',   cfg.askzona   == 'X' or False),
@@ -458,7 +466,8 @@ class FtDif(adb.DbTable):
                     if needed and not dg.__getattr__(field):
                         if pdc is not None:
                             if field in pdc.anag.GetFieldNames():
-                                if pdc.id == d.id_pdc or pdc.Get(dg.id_pdc):
+#                                 if pdc.id == d.id_pdc or pdc.Get(dg.id_pdc):
+                                if pdc.id == id_pdc or pdc.Get(id_pdc):
                                     dg.__setattr__(field, 
                                                    pdc.anag.__getattr__(field))
                 
@@ -494,7 +503,8 @@ class FtDif(adb.DbTable):
                 lastrig = 0
                 
                 lastmag =  dg.id_magazz
-                lastpdc =  dr.id_pdc
+#                 lastpdc =  dr.id_pdc
+                lastpdc =  id_pdc
                 lastmp =   dr.id_modpag
                 lastdest = dr.id_dest
                 
