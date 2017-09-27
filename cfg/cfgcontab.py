@@ -147,7 +147,8 @@ class CfgCausale(object):
                      "quaivanob",    #Flag quadr. iva/dare-avere non bloccante
                      "davscorp",     #Flag colonna scorporo su dare/avere
                      "id_tipevent",  #ID Tipo evento
-                     "event_msg",)   #Messaggio evento
+                     "event_msg",    #Messaggio evento
+                     "id_cau_si",)   #ID Causale di sola iva da generare autom.
         self.ResetConfig()
 
     def ResetConfig(self):
@@ -169,7 +170,7 @@ class CfgCausale(object):
 """cau.pcfsgn, cau.pcfabb, cau.pcfspe, cau.pcfins, cau.pades, """\
 """cau.id_pdctippa, pdcpa.codice, pdcpa.descriz, cau.pasegno, cau.cpdes, """\
 """cau.id_pdctipcp, pdccp.codice, pdccp.descriz, cau.id_pdcrow1, """\
-"""cau.camsegr1, cau.quaivanob, cau.davscorp, cau.id_tipevent, cau.event_msg """\
+"""cau.camsegr1, cau.quaivanob, cau.davscorp, cau.id_tipevent, cau.event_msg, cau.id_cau_si """\
 """FROM %s AS cau """\
 """LEFT JOIN %s AS riv ON cau.id_regiva=riv.id """\
 """LEFT JOIN %s AS pdcpa ON cau.id_pdctippa=pdcpa.id """\

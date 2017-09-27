@@ -2491,9 +2491,12 @@ class DocMag(adb.DbTable):
                     cod = "ivaacqcee"
                     break
                 elif mov.iva.tipo == 'S':
-                    if not regivatip in ("V", "C"):
-                        raise Exception, "Impossibile usare l'aliquota %s, riservata alle vendite in split payment, se il registro non e' di tipo Vendite" % mov.iva.codice
-                    cod = "ivavensos"
+                    if regivatip == "V":
+                        cod = "ivavensos"
+                    elif regivatip == "A":
+                        cod = "ivaacqsos"
+                    else:
+                        raise Exception, "Impossibile usare l'aliquota %s, riservata alle operazioni in split payment, se il registro non e' di tipo Vendite o Acquisti" % mov.iva.codice
                     break
         if cod is None:
             if (regivatip or ' ') in "AVC":
@@ -4715,6 +4718,7 @@ class Listino(adb.DbTable):
         frn = pro.AddJoin(bt.TABNAME_PDC,     'fornit', join=adb.JOIN_LEFT, fields='id,codice,descriz', idLeft='id_fornit', idRight='id')
         self.AddField('prod.costo',  'p_costo')
         self.AddField('prod.prezzo', 'p_prezzo')
+        self.AddField('prod.scaffale', 'p_scaffa')
         self.AddOrder('prod.codice')
         self.AddOrder('lis.data', adb.ORDER_DESCENDING)
         self.Reset()

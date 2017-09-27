@@ -1288,27 +1288,27 @@ ID_INCPAGDET = 10144
 ID_FATCONACQVEN = 10145
 ID_VENDAZIPRIV = 10146
 ID_VENDXALIQIVA = 10147
-ID_CONTAB_SPESOM = 10148
-ID_MENUCONTINT = 10149
-ID_CTR_CASSA = 10150
-ID_CTR_QUADCON = 10151
-ID_CONTAB_GIORNALE = 10152
-ID_CONTAB_MASTRI = 10153
-ID_MENUSTAFIS = 10154
-ID_CONTABIL_VERIF = 10155
-ID_CONTABIL_GEST = 10156
-ID_CONTABIL_CONTR = 10157
-ID_MENUBIL = 10158
-ID_CONTABRI_VERIF = 10159
-ID_CONTABRI_GEST = 10160
-ID_CONTABRI_CONTR = 10161
-ID_BILRICL = 10162
-ID_CONTABIL_CEE = 10163
-ID_BILCEE = 10164
-ID_REGIVA = 10165
-ID_LIQIVA = 10166
-ID_IVASEQ = 10167
-ID_MENUIVA = 10168
+ID_MENUCONTINT = 10148
+ID_CTR_CASSA = 10149
+ID_CTR_QUADCON = 10150
+ID_CONTAB_GIORNALE = 10151
+ID_CONTAB_MASTRI = 10152
+ID_MENUSTAFIS = 10153
+ID_CONTABIL_VERIF = 10154
+ID_CONTABIL_GEST = 10155
+ID_CONTABIL_CONTR = 10156
+ID_MENUBIL = 10157
+ID_CONTABRI_VERIF = 10158
+ID_CONTABRI_GEST = 10159
+ID_CONTABRI_CONTR = 10160
+ID_BILRICL = 10161
+ID_CONTABIL_CEE = 10162
+ID_BILCEE = 10163
+ID_REGIVA = 10164
+ID_LIQIVA = 10165
+ID_IVASEQ = 10166
+ID_MENUIVA = 10167
+ID_CONTAB_SPESOM = 10168
 ID_MENUCONTGES = 10169
 ID_MENUCONT = 10170
 ID_MAGAZZINS = 10171
@@ -1354,70 +1354,74 @@ ID_MAGOPEDIF = 10210
 ID_MAGPRODPRORIC = 10211
 ID_MAGPRODCOSTIZERO = 10212
 ID_MENUMAGELAB = 10213
-ID_MENUMAG = 10214
-ID_SCADINS = 10215
-ID_INTPCFCLI = 10216
-ID_INTPCFFOR = 10217
-ID_SCAD_SCAD = 10218
-ID_SCAD_SCADGRP = 10219
-ID_SCAD_CTRQUAD = 10220
-ID_SCAD_CALCINT = 10221
-ID_SCAD_SITFIDO = 10222
-ID_SCAD_GLOBAL = 10223
-ID_SCAD_GLOBAL_INCASSI = 10224
-ID_SCAD_GLOBAL_PAGAMENTI = 10225
-ID_SCAD_GLOBAL_EFFETTIDAEMETTERE = 10226
-ID_SCAD_GLOBAL_EFFETTIEMESSI = 10227
-ID_SCAD_GLOBAL_EFFETTIINSOLUTI = 10228
-ID_MENUSCAD = 10229
-ID_EMIEFF = 10230
-ID_RAGGRPCF = 10231
-ID_MENUEFF = 10232
-ID_CFGCONCAU = 10233
-ID_CFGAUTCON = 10234
-ID_CFGPDCRANGE = 10235
-ID_CFGPROGRCON = 10236
-ID_CFGSPESOM = 10237
-ID_CFGREGIVA = 10238
-ID_CFGLIQIVA = 10239
-ID_MENUSETUP_CONTAB = 10240
-ID_CFGMAGCAU = 10241
-ID_CFGMAGAZZ = 10242
-ID_CFGAUTMAG = 10243
-ID_CFGFTDIF = 10244
-ID_MENUSETUP_MAGAZZ = 10245
-ID_CFGAZIENDA = 10246
-ID_CFGWKS = 10247
-ID_CFGUPDATES = 10248
-ID_CFGLICENSE = 10249
-ID_CFGACTIVATIONCODES = 10250
-ID_MENUSETUP_IMPOSTAZIONI = 10251
-ID_CFGEMAIL = 10252
-ID_CFGXMPP = 10253
-ID_CFGDOCSEMAIL = 10254
-ID_MENUSETUP_COMM = 10255
-ID_CFGTIPEVENT = 10256
-ID_CFGEVENTMGR = 10257
-ID_MENUEVENTI = 10258
-ID_MENUSETUP_OPZIONI = 10259
-ID_MENUSETUP = 10260
-ID_CHIUSCONT_SOVRAPP = 10261
-ID_CHIUSCONT_GENMOV = 10262
-ID_CHIUSCONT_ANNUALE = 10263
-ID_MENUCHIUSCONTAB = 10264
-ID_CHIUSIVA_CHIUSIVA = 10265
-ID_MENUCHIUSIVA = 10266
-ID_CHIUSMAGAZZ_CREACOSTI = 10267
-ID_CHIUSMAGAZZ_EDITGIAC = 10268
-ID_CHIUSMAGAZZ_GENMOVINI = 10269
-ID_MENUCHIUSMAGAZZ = 10270
-ID_MENUCHIUSURE = 10271
-ID_BACKUPEXPLORER = 10272
-ID_CHANGEIVA = 10273
-ID_UTILITY = 10274
-ID_MENUSTRUMENTI = 10275
-ID_ABOUT = 10276
-ID_UPDATES = 10277
+ID_FATTURAPA_GENERA = 10214
+ID_FATTURAPA_FOLDER = 10215
+ID_FATTURAPA_ELENCO = 10216
+ID_MENUFTEL = 10217
+ID_MENUMAG = 10218
+ID_SCADINS = 10219
+ID_INTPCFCLI = 10220
+ID_INTPCFFOR = 10221
+ID_SCAD_SCAD = 10222
+ID_SCAD_SCADGRP = 10223
+ID_SCAD_CTRQUAD = 10224
+ID_SCAD_CALCINT = 10225
+ID_SCAD_SITFIDO = 10226
+ID_SCAD_GLOBAL = 10227
+ID_SCAD_GLOBAL_INCASSI = 10228
+ID_SCAD_GLOBAL_PAGAMENTI = 10229
+ID_SCAD_GLOBAL_EFFETTIDAEMETTERE = 10230
+ID_SCAD_GLOBAL_EFFETTIEMESSI = 10231
+ID_SCAD_GLOBAL_EFFETTIINSOLUTI = 10232
+ID_MENUSCAD = 10233
+ID_EMIEFF = 10234
+ID_RAGGRPCF = 10235
+ID_MENUEFF = 10236
+ID_CFGCONCAU = 10237
+ID_CFGAUTCON = 10238
+ID_CFGPDCRANGE = 10239
+ID_CFGPROGRCON = 10240
+ID_CFGSPESOM = 10241
+ID_CFGREGIVA = 10242
+ID_CFGLIQIVA = 10243
+ID_MENUSETUP_CONTAB = 10244
+ID_CFGMAGCAU = 10245
+ID_CFGMAGAZZ = 10246
+ID_CFGAUTMAG = 10247
+ID_CFGFTDIF = 10248
+ID_MENUSETUP_MAGAZZ = 10249
+ID_CFGAZIENDA = 10250
+ID_CFGWKS = 10251
+ID_CFGUPDATES = 10252
+ID_CFGLICENSE = 10253
+ID_CFGACTIVATIONCODES = 10254
+ID_MENUSETUP_IMPOSTAZIONI = 10255
+ID_CFGEMAIL = 10256
+ID_CFGXMPP = 10257
+ID_CFGDOCSEMAIL = 10258
+ID_MENUSETUP_COMM = 10259
+ID_CFGTIPEVENT = 10260
+ID_CFGEVENTMGR = 10261
+ID_MENUEVENTI = 10262
+ID_MENUSETUP_OPZIONI = 10263
+ID_MENUSETUP = 10264
+ID_CHIUSCONT_SOVRAPP = 10265
+ID_CHIUSCONT_GENMOV = 10266
+ID_CHIUSCONT_ANNUALE = 10267
+ID_MENUCHIUSCONTAB = 10268
+ID_CHIUSIVA_CHIUSIVA = 10269
+ID_MENUCHIUSIVA = 10270
+ID_CHIUSMAGAZZ_CREACOSTI = 10271
+ID_CHIUSMAGAZZ_EDITGIAC = 10272
+ID_CHIUSMAGAZZ_GENMOVINI = 10273
+ID_MENUCHIUSMAGAZZ = 10274
+ID_MENUCHIUSURE = 10275
+ID_BACKUPEXPLORER = 10276
+ID_CHANGEIVA = 10277
+ID_UTILITY = 10278
+ID_MENUSTRUMENTI = 10279
+ID_ABOUT = 10280
+ID_UPDATES = 10281
 
 def XMenuBarFunc():
     item0 = wx.MenuBar(wx.MB_DOCKABLE)
@@ -1580,7 +1584,6 @@ def XMenuBarFunc():
     item18.Append( ID_FATCONACQVEN, "Analisi fatturato acquisti/vendite", "Analizza le vendite di un periodo e ne evidenzia imponibile ed imposta per anagrafica" )
     item18.Append( ID_VENDAZIPRIV, "Sintesi vendite privati/aziende", "Analizza le vendite di un periodo e ne evidenzia imponibile ed imposta per anagrafica" )
     item18.Append( ID_VENDXALIQIVA, "Riepilogo vendite per aliquova iva", "" )
-    item18.Append( ID_CONTAB_SPESOM, "Spesometro", "Analisi operazioni di acquisto/vendita per compilazione spesometro" )
     item16.AppendMenu( ID_MENUCONTINT, "Interroga", item18 )
 
     
@@ -1621,6 +1624,8 @@ def XMenuBarFunc():
     item25.Append( ID_IVASEQ, "Controllo sequenza protocolli", "Controllo corretta sequenza protocolli IVA di un registro" )
     item20.AppendMenu( ID_MENUIVA, "IVA", item25 )
 
+    item20.AppendSeparator()
+    item20.Append( ID_CONTAB_SPESOM, "Spesometro", "Analisi operazioni di acquisto/vendita per compilazione spesometro" )
     item16.AppendMenu( ID_MENUCONTGES, "Gestione", item20 )
 
     item0.Append( item16, "Contabilità" )
@@ -1711,146 +1716,153 @@ def XMenuBarFunc():
     item36.Append( ID_MAGPRODCOSTIZERO, "Aggiornamento costi nulli sui movimenti", "" )
     item26.AppendMenu( ID_MENUMAGELAB, "Elaborazioni", item36 )
 
-    item0.Append( item26, "Magazzino" )
     
     item37 = wx.Menu()
-    item37.Append( ID_SCADINS, "Inserisci", "" )
+    item37.Append( ID_FATTURAPA_GENERA, "Genera file per la trasmissione\tShift-Ctrl-F", "Genera file da trasmettere a SDI" )
+    item37.Append( ID_FATTURAPA_FOLDER, "Apri cartella files generati", "Apre la cartella dei files generati" )
+    item37.Append( ID_FATTURAPA_ELENCO, "Documenti trasmessi/da trasmettere", "Visualizza l'elenco dei documenti fattura elettronica" )
+    item26.AppendMenu( ID_MENUFTEL, "Fattura PA", item37 )
+
+    item0.Append( item26, "Magazzino" )
     
     item38 = wx.Menu()
-    item38.Append( ID_INTPCFCLI, "Clienti", "Interrogazione Scadenzario Clienti con dati anagrafici completi" )
-    item38.Append( ID_INTPCFFOR, "Fornitori", "Interrogazione Scadenzario Fornitori con dati anagrafici completi" )
-    item37.AppendMenu( ID_MENU, "Interroga", item38 )
-
+    item38.Append( ID_SCADINS, "Inserisci", "" )
     
     item39 = wx.Menu()
-    item39.Append( ID_SCAD_SCAD, "Scadenzario Clienti/Fornitori", "Interrogazione Scadenzari Clienti/Fornitori" )
-    item39.Append( ID_SCAD_SCADGRP, "Scadenzario Clienti/Fornitori di gruppo", "Interrogazione Scadenzari Clienti/Fornitori di gruppo" )
-    item39.Append( ID_SCAD_CTRQUAD, "Controllo quadratura con mastri", "" )
-    item39.Append( ID_SCAD_CALCINT, "Calcolo interessi partite clienti scadute", "" )
-    item39.Append( ID_SCAD_SITFIDO, "Situazione affidamenti clienti", "" )
+    item39.Append( ID_INTPCFCLI, "Clienti", "Interrogazione Scadenzario Clienti con dati anagrafici completi" )
+    item39.Append( ID_INTPCFFOR, "Fornitori", "Interrogazione Scadenzario Fornitori con dati anagrafici completi" )
+    item38.AppendMenu( ID_MENU, "Interroga", item39 )
+
     
     item40 = wx.Menu()
-    item40.Append( ID_SCAD_GLOBAL, "Analisi scadenzario globale (cash-flow)", "Analisi dinamica delle scadenze Clienti/Fornitori" )
-    item40.AppendSeparator()
-    item40.Append( ID_SCAD_GLOBAL_INCASSI, "Previsione generale incassi", "Analizza le partite dei clienti e ne sintetizza le scadenze" )
-    item40.Append( ID_SCAD_GLOBAL_PAGAMENTI, "Previsione generale pagamenti", "Analizza le partite dei fornitori e ne sintetizza le scadenze" )
-    item40.AppendSeparator()
-    item40.Append( ID_SCAD_GLOBAL_EFFETTIDAEMETTERE, "Portafoglio effetti da emettere", "Analizza gli effetti da emettere e ne sintetizza le scadenze" )
-    item40.Append( ID_SCAD_GLOBAL_EFFETTIEMESSI, "Scadenzario effetti", "Analizza gli effetti emessi e ne sintetizza le scadenze" )
-    item40.AppendSeparator()
-    item40.Append( ID_SCAD_GLOBAL_EFFETTIINSOLUTI, "Effetti insoluti", "Analizza gli effetti insoluti e ne sintetizza le scadenze" )
-    item39.AppendMenu( ID_MENU, "Cash flow", item40 )
-
-    item37.AppendMenu( ID_MENU, "Gestione", item39 )
-
-    item0.Append( item37, "Scadenzari" )
+    item40.Append( ID_SCAD_SCAD, "Scadenzario Clienti/Fornitori", "Interrogazione Scadenzari Clienti/Fornitori" )
+    item40.Append( ID_SCAD_SCADGRP, "Scadenzario Clienti/Fornitori di gruppo", "Interrogazione Scadenzari Clienti/Fornitori di gruppo" )
+    item40.Append( ID_SCAD_CTRQUAD, "Controllo quadratura con mastri", "" )
+    item40.Append( ID_SCAD_CALCINT, "Calcolo interessi partite clienti scadute", "" )
+    item40.Append( ID_SCAD_SITFIDO, "Situazione affidamenti clienti", "" )
     
     item41 = wx.Menu()
-    item41.Append( ID_EMIEFF, "Gestione ed emissione effetti", "Manutenzione e Gestione Effetti" )
-    item41.Append( ID_RAGGRPCF, "Accorpamento scadenze", "" )
+    item41.Append( ID_SCAD_GLOBAL, "Analisi scadenzario globale (cash-flow)", "Analisi dinamica delle scadenze Clienti/Fornitori" )
+    item41.AppendSeparator()
+    item41.Append( ID_SCAD_GLOBAL_INCASSI, "Previsione generale incassi", "Analizza le partite dei clienti e ne sintetizza le scadenze" )
+    item41.Append( ID_SCAD_GLOBAL_PAGAMENTI, "Previsione generale pagamenti", "Analizza le partite dei fornitori e ne sintetizza le scadenze" )
     item41.AppendSeparator()
     item41.Append( ID_SCAD_GLOBAL_EFFETTIDAEMETTERE, "Portafoglio effetti da emettere", "Analizza gli effetti da emettere e ne sintetizza le scadenze" )
     item41.Append( ID_SCAD_GLOBAL_EFFETTIEMESSI, "Scadenzario effetti", "Analizza gli effetti emessi e ne sintetizza le scadenze" )
     item41.AppendSeparator()
     item41.Append( ID_SCAD_GLOBAL_EFFETTIINSOLUTI, "Effetti insoluti", "Analizza gli effetti insoluti e ne sintetizza le scadenze" )
-    item0.Append( item41, "Effetti" )
+    item40.AppendMenu( ID_MENU, "Cash flow", item41 )
+
+    item38.AppendMenu( ID_MENU, "Gestione", item40 )
+
+    item0.Append( item38, "Scadenzari" )
     
     item42 = wx.Menu()
+    item42.Append( ID_EMIEFF, "Gestione ed emissione effetti", "Manutenzione e Gestione Effetti" )
+    item42.Append( ID_RAGGRPCF, "Accorpamento scadenze", "" )
+    item42.AppendSeparator()
+    item42.Append( ID_SCAD_GLOBAL_EFFETTIDAEMETTERE, "Portafoglio effetti da emettere", "Analizza gli effetti da emettere e ne sintetizza le scadenze" )
+    item42.Append( ID_SCAD_GLOBAL_EFFETTIEMESSI, "Scadenzario effetti", "Analizza gli effetti emessi e ne sintetizza le scadenze" )
+    item42.AppendSeparator()
+    item42.Append( ID_SCAD_GLOBAL_EFFETTIINSOLUTI, "Effetti insoluti", "Analizza gli effetti insoluti e ne sintetizza le scadenze" )
+    item0.Append( item42, "Effetti" )
     
     item43 = wx.Menu()
     
     item44 = wx.Menu()
-    item44.Append( ID_CFGCONCAU, "Causali", "Manutenzione tabella Causali contabili" )
-    item44.Append( ID_CFGAUTCON, "Automatismi", "Impostazione automatismi contaibili" )
-    item44.Append( ID_CFGPDCRANGE, "Range sottoconti", "" )
-    item44.AppendSeparator()
-    item44.Append( ID_CFGPROGRCON, "Progressivi", "Manutenzione dei progressivi contabili" )
-    item44.Append( ID_CFGSPESOM, "Massimali spesometro", "Imposta i massimali per anno di aziende/privati per lo spesometro" )
-    item44.AppendSeparator()
     
     item45 = wx.Menu()
-    item45.Append( ID_CFGREGIVA, "Registri", "Manutenzione tabella Registri IVA" )
-    item45.Append( ID_CFGLIQIVA, "Progressivi liquidazioni", "Manutenzione progressivi IVA" )
-    item44.AppendMenu( ID_MENU, "IVA", item45 )
-
-    item43.AppendMenu( ID_MENUSETUP_CONTAB, "Contabilità", item44 )
-
+    item45.Append( ID_CFGCONCAU, "Causali", "Manutenzione tabella Causali contabili" )
+    item45.Append( ID_CFGAUTCON, "Automatismi", "Impostazione automatismi contaibili" )
+    item45.Append( ID_CFGPDCRANGE, "Range sottoconti", "" )
+    item45.AppendSeparator()
+    item45.Append( ID_CFGPROGRCON, "Progressivi", "Manutenzione dei progressivi contabili" )
+    item45.Append( ID_CFGSPESOM, "Massimali spesometro", "Imposta i massimali per anno di aziende/privati per lo spesometro" )
+    item45.AppendSeparator()
     
     item46 = wx.Menu()
-    item46.Append( ID_CFGMAGCAU, "Causali", "Manutenzione tabella Causali Magazzino (Documenti/Movimenti)" )
-    item46.Append( ID_CFGMAGAZZ, "Magazzini", "Gestione tabella Magazzini" )
-    item46.Append( ID_CFGAUTMAG, "Automatismi", "Impostazione Automatismi Magazzino" )
-    item46.Append( ID_CFGFTDIF, "Fatturazione differita", "Impostazione tipi di fatturazione e/o raggruppamento documenti" )
-    item43.AppendMenu( ID_MENUSETUP_MAGAZZ, "Magazzino", item46 )
+    item46.Append( ID_CFGREGIVA, "Registri", "Manutenzione tabella Registri IVA" )
+    item46.Append( ID_CFGLIQIVA, "Progressivi liquidazioni", "Manutenzione progressivi IVA" )
+    item45.AppendMenu( ID_MENU, "IVA", item46 )
 
-    item43.AppendSeparator()
+    item44.AppendMenu( ID_MENUSETUP_CONTAB, "Contabilità", item45 )
+
     
     item47 = wx.Menu()
-    item47.Append( ID_CFGAZIENDA, "Setup Azienda", "Imposta i dati aziendali e le caratteristiche di base della sua gestione" )
-    item47.Append( ID_CFGWKS, "Setup Workstation", "Impostazione caratteristiche del posto di lavoro" )
-    item47.Append( ID_CFGUPDATES, "Setup Aggiornamenti", "Impostazio il download e la distribuzione degli aggiornamenti" )
-    item47.AppendSeparator()
-    item47.Append( ID_CFGLICENSE, "Licenza d'uso", "Imposta il tipo di licenza d'so del programma" )
-    item47.Append( ID_CFGACTIVATIONCODES, "Codici di attivazione", "" )
-    item43.AppendMenu( ID_MENUSETUP_IMPOSTAZIONI, "Impostazioni", item47 )
+    item47.Append( ID_CFGMAGCAU, "Causali", "Manutenzione tabella Causali Magazzino (Documenti/Movimenti)" )
+    item47.Append( ID_CFGMAGAZZ, "Magazzini", "Gestione tabella Magazzini" )
+    item47.Append( ID_CFGAUTMAG, "Automatismi", "Impostazione Automatismi Magazzino" )
+    item47.Append( ID_CFGFTDIF, "Fatturazione differita", "Impostazione tipi di fatturazione e/o raggruppamento documenti" )
+    item44.AppendMenu( ID_MENUSETUP_MAGAZZ, "Magazzino", item47 )
 
+    item44.AppendSeparator()
     
     item48 = wx.Menu()
+    item48.Append( ID_CFGAZIENDA, "Setup Azienda", "Imposta i dati aziendali e le caratteristiche di base della sua gestione" )
+    item48.Append( ID_CFGWKS, "Setup Workstation", "Impostazione caratteristiche del posto di lavoro" )
+    item48.Append( ID_CFGUPDATES, "Setup Aggiornamenti", "Impostazio il download e la distribuzione degli aggiornamenti" )
+    item48.AppendSeparator()
+    item48.Append( ID_CFGLICENSE, "Licenza d'uso", "Imposta il tipo di licenza d'so del programma" )
+    item48.Append( ID_CFGACTIVATIONCODES, "Codici di attivazione", "" )
+    item44.AppendMenu( ID_MENUSETUP_IMPOSTAZIONI, "Impostazioni", item48 )
+
     
     item49 = wx.Menu()
-    item49.Append( ID_CFGEMAIL, "Setup Posta elettronica", "Imposta i parametri occorrenti alla spedizione di messaggi email" )
-    item49.Append( ID_CFGXMPP, "Setup Messaggistica immediata", "Imposta i parametri occorrenti alla spedizione di messaggi XMPP" )
-    item49.AppendSeparator()
-    item49.Append( ID_CFGDOCSEMAIL, "Setup invio documenti per posta elettronica", "Imposta i parametri occorrenti alla spedizione di documenti via email" )
-    item48.AppendMenu( ID_MENUSETUP_COMM, "Comunicazioni", item49 )
-
     
     item50 = wx.Menu()
-    item50.Append( ID_CFGTIPEVENT, "Tipi evento", "Gestione tabella Tipi evento" )
+    item50.Append( ID_CFGEMAIL, "Setup Posta elettronica", "Imposta i parametri occorrenti alla spedizione di messaggi email" )
+    item50.Append( ID_CFGXMPP, "Setup Messaggistica immediata", "Imposta i parametri occorrenti alla spedizione di messaggi XMPP" )
     item50.AppendSeparator()
-    item50.Append( ID_CFGEVENTMGR, "Eventi", "Gestione tabella Eventi" )
-    item48.AppendMenu( ID_MENUEVENTI, "Eventi", item50 )
-
-    item43.AppendMenu( ID_MENUSETUP_OPZIONI, "Opzioni", item48 )
-
-    item42.AppendMenu( ID_MENUSETUP, "Setup", item43 )
+    item50.Append( ID_CFGDOCSEMAIL, "Setup invio documenti per posta elettronica", "Imposta i parametri occorrenti alla spedizione di documenti via email" )
+    item49.AppendMenu( ID_MENUSETUP_COMM, "Comunicazioni", item50 )
 
     
     item51 = wx.Menu()
-    
-    item52 = wx.Menu()
-    item52.Append( ID_CHIUSCONT_SOVRAPP, "Attiva sovrapposizione di esercizi", "Attiva la sovrapposizione d'esercizio" )
-    item52.Append( ID_CHIUSCONT_GENMOV, "Genera movimenti di chiusura/apertura", "Genera i movimenti di chiusura/apertura" )
-    item52.Append( ID_CHIUSCONT_ANNUALE, "Chiusura contabile", "Chiude definitivamente l'esercizio in corso" )
-    item51.AppendMenu( ID_MENUCHIUSCONTAB, "Contabilità", item52 )
+    item51.Append( ID_CFGTIPEVENT, "Tipi evento", "Gestione tabella Tipi evento" )
+    item51.AppendSeparator()
+    item51.Append( ID_CFGEVENTMGR, "Eventi", "Gestione tabella Eventi" )
+    item49.AppendMenu( ID_MENUEVENTI, "Eventi", item51 )
+
+    item44.AppendMenu( ID_MENUSETUP_OPZIONI, "Opzioni", item49 )
+
+    item43.AppendMenu( ID_MENUSETUP, "Setup", item44 )
 
     
+    item52 = wx.Menu()
+    
     item53 = wx.Menu()
-    item53.Append( ID_CHIUSIVA_CHIUSIVA, "Chiusura IVA", "Riporta il credito di fine anno come credito IVA compensabile per l'anno successivo" )
-    item51.AppendMenu( ID_MENUCHIUSIVA, "IVA", item53 )
+    item53.Append( ID_CHIUSCONT_SOVRAPP, "Attiva sovrapposizione di esercizi", "Attiva la sovrapposizione d'esercizio" )
+    item53.Append( ID_CHIUSCONT_GENMOV, "Genera movimenti di chiusura/apertura", "Genera i movimenti di chiusura/apertura" )
+    item53.Append( ID_CHIUSCONT_ANNUALE, "Chiusura contabile", "Chiude definitivamente l'esercizio in corso" )
+    item52.AppendMenu( ID_MENUCHIUSCONTAB, "Contabilità", item53 )
 
     
     item54 = wx.Menu()
-    item54.Append( ID_CHIUSMAGAZZ_CREACOSTI, "Consolidamento costi", "Consolida i costi e le giacenze alla data di chiusura" )
-    item54.Append( ID_CHIUSMAGAZZ_EDITGIAC, "Manutenzione giacenze rilevate", "Edita le giacenze rilevate ed i costi dei prodotti" )
-    item54.Append( ID_CHIUSMAGAZZ_GENMOVINI, "Genera movimenti giacenza iniziale", "Genera i movimenti di giacenza iniziale" )
-    item51.AppendMenu( ID_MENUCHIUSMAGAZZ, "Magazzino", item54 )
+    item54.Append( ID_CHIUSIVA_CHIUSIVA, "Chiusura IVA", "Riporta il credito di fine anno come credito IVA compensabile per l'anno successivo" )
+    item52.AppendMenu( ID_MENUCHIUSIVA, "IVA", item54 )
 
-    item42.AppendMenu( ID_MENUCHIUSURE, "Chiusure", item51 )
-
-    item42.Append( ID_BACKUPEXPLORER, "Backup Explorer\tAlt-Ctrl-B", "Backup e Restore del database dell'azienda" )
-    item42.AppendSeparator()
     
     item55 = wx.Menu()
-    item55.Append( ID_CHANGEIVA, "Modifica Cod.Iva su prodotti", "" )
-    item42.AppendMenu( ID_UTILITY, "Utilità", item55 )
+    item55.Append( ID_CHIUSMAGAZZ_CREACOSTI, "Consolidamento costi", "Consolida i costi e le giacenze alla data di chiusura" )
+    item55.Append( ID_CHIUSMAGAZZ_EDITGIAC, "Manutenzione giacenze rilevate", "Edita le giacenze rilevate ed i costi dei prodotti" )
+    item55.Append( ID_CHIUSMAGAZZ_GENMOVINI, "Genera movimenti giacenza iniziale", "Genera i movimenti di giacenza iniziale" )
+    item52.AppendMenu( ID_MENUCHIUSMAGAZZ, "Magazzino", item55 )
 
-    item0.Append( item42, "Strumenti" )
+    item43.AppendMenu( ID_MENUCHIUSURE, "Chiusure", item52 )
+
+    item43.Append( ID_BACKUPEXPLORER, "Backup Explorer\tAlt-Ctrl-B", "Backup e Restore del database dell'azienda" )
+    item43.AppendSeparator()
     
     item56 = wx.Menu()
-    item56.Append( ID_ABOUT, "Informazioni sulla versione\tCtrl-?", "" )
-    item56.Append( ID_UPDATES, "Verifica disponibilità aggiornamenti", "" )
-    item0.Append( item56, "?" )
+    item56.Append( ID_CHANGEIVA, "Modifica Cod.Iva su prodotti", "" )
+    item43.AppendMenu( ID_UTILITY, "Utilità", item56 )
+
+    item0.Append( item43, "Strumenti" )
+    
+    item57 = wx.Menu()
+    item57.Append( ID_ABOUT, "Informazioni sulla versione\tCtrl-?", "" )
+    item57.Append( ID_UPDATES, "Verifica disponibilità aggiornamenti", "" )
+    item0.Append( item57, "?" )
     
     return item0
 

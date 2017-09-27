@@ -351,7 +351,7 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
         wr = 40 #larghezza wx delle colonne percentuale intera
         
         cols = []
-        self.colnames = ['codice','descriz','p_costo','p_prezzo']
+        self.colnames = ['codice','descriz','p_costo','p_prezzo','p_scaffa']
         self.edcols = []
         def c(col, ed=False):
             n = len(cols)
@@ -377,6 +377,8 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
         if bt.MAGBCOLIS:
             self.barcodecol = cn(pro, "barcode")
             self.COL_BARCODE = C(( 100, None,   (self.barcodecol,    "Barcode",       _STR, True )))
+        
+        self.COL_scaffa =  C(( 50, None,       (cn(lis, "p_scaffa"), "Scaffale",    _STR, False)))
         
         self.COL_grupre =  C(( 30, None,       (cn(gpr, "codice"),   "GP",            _STR, False)))
         self.COL_cpc =     c(( 10, None,       (cn(gpr, "calcpc"),   "CPC",           _STR, False)))
@@ -493,6 +495,7 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
         self._colcoslis = cn(lis, 'p_costo')
         self._colprepro = cn(pro, 'prezzo')
         self._colprelis = cn(lis, 'p_prezzo')
+        self._colscaffa = cn(lis, 'p_scaffa')
         self._col_prelis1 = cn(lis, 'prezzo1')
         self._col_prelis2 = cn(lis, 'prezzo2')
         self._col_prelis3 = cn(lis, 'prezzo3')
@@ -891,7 +894,7 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
         if gridcol in self.listcols:
             setattr(lis, self.listcols[gridcol], value)
             self.TestChanges(row, gridcol)
-        elif gridcol in (self.COL_grupre, self.COL_P_ERP1, self.COL_P_ERP2, self.COL_P_ERP3, self.COL_P_ESP1, self.COL_P_ESP2, self.COL_P_ESP3):
+        elif gridcol in (self.COL_grupre, self.COL_P_ERP1, self.COL_P_ERP2, self.COL_P_ERP3, self.COL_P_ESP1, self.COL_P_ESP2, self.COL_P_ESP3, self.COL_scaffa):
             p = self.dbpro
             if p.Get(lis.prod.id) and p.OneRow():
                 if gridcol == self.COL_grupre:
@@ -920,6 +923,8 @@ class ListiniGrid(dbglib.DbGridColoriAlternati):
                     p.sconto5 = value
                 elif gridcol == self.COL_P_ESP6:
                     p.sconto6 = value
+                elif gridcol == self.COL_scaffa:
+                    p.scaffale = value
                 p.Save()
                 self.ForceResetView()
         return True
@@ -1621,6 +1626,7 @@ class ListiniPanel(aw.Panel, aw.awu.LimitiFiltersMixin):
             lis._info.deletedRecords += di
             lis.SetRecordset(rs)
             out = lis.Save()
+            self.OnWrittenListini(lis)
         finally:
             wx.EndBusyCursor()
         if out:
@@ -1639,6 +1645,7 @@ class ListiniPanel(aw.Panel, aw.awu.LimitiFiltersMixin):
                                 setattr(pro, col, lv)
                                 w = True
                         if w:
+                            self.OnWrittenProdotto(pro)
                             pro.Save()
             finally:
                 wx.EndBusyCursor()
@@ -1648,6 +1655,18 @@ class ListiniPanel(aw.Panel, aw.awu.LimitiFiltersMixin):
             MsgBox(self, message=repr(lis.GetError()))
         return out
     
+    def OnWriteListini(self, lis):
+        pass
+    
+    def OnWriteProdotto(self, pro):
+        pass
+    
+    def OnWrittenListini(self, lis):
+        pass
+    
+    def OnWrittenProdotto(self, pro):
+        pass
+
 
 # ------------------------------------------------------------------------------
 

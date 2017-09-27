@@ -27,6 +27,16 @@ import Env
 bt = Env.Azienda.BaseTab
 
 
+class QualiClientiRadioBox(RadioBox):
+
+    def __init__(self, *args, **kwargs):
+        RadioBox.__init__(self, *args, **kwargs)
+        self.SetDataLink(values=("T",  #tutti
+                                 "E",  #normali
+                                 "A")) #fatturapa
+
+
+
 # Window functions
 
 ID_ANAGMAIN = 16000
@@ -44,6 +54,7 @@ ID_SOLOSTA = 16011
 ID_F_CHGMAG = 16012
 ID_CHGMAG = 16013
 ID_CHGPDC = 16014
+ID_RADIOBOX = 16015
 
 def FtDifCardFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -191,6 +202,11 @@ def FtDifCardFunc( parent, call_fit = True, set_sizer = True ):
     item27.AddGrowableCol( 1 )
 
     item0.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item36 = QualiClientiRadioBox( parent, ID_RADIOBOX, "Tipo anagrafiche", wx.DefaultPosition, wx.DefaultSize, 
+        ["Tutti i clienti","Solo clienti fattura elettronica","Escludi clienti con fattura elettronica"] , 1, wx.RA_SPECIFY_ROWS )
+    item36.SetName( "f_tipopdc" )
+    item0.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item0.AddGrowableCol( 0 )
 

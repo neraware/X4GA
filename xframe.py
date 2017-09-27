@@ -631,6 +631,11 @@ class XFrame(aw.Frame):
             (self.OnDataEntryMagazz,           ID_MAGAZZINS),
             (self.OnStaDif,                    ID_STADIFF),
             
+            #fatturapa
+            (self._FatturaPA_OnGenera,         ID_FATTURAPA_GENERA),
+            (self._FatturaPA_OnFolder,         ID_FATTURAPA_FOLDER),
+            (self._FatturaPA_OnElenco,         ID_FATTURAPA_ELENCO),
+            
             #chiusure contabili
             (self.OnChiusContabGenMov,         ID_CHIUSCONT_GENMOV),
             (self.OnChiusContabSovrapp,        ID_CHIUSCONT_SOVRAPP),
@@ -1480,7 +1485,7 @@ class XFrame(aw.Frame):
         self.LaunchFrame(VenditeXAliqIVAFrame)
     
     def OnSpesometro(self, event):
-        from contab.spesometro_2013 import SpesometroFrame
+        from contab.spesometro_2017 import SpesometroFrame
         self.LaunchFrame(SpesometroFrame)
     
     def OnCfgAutoContab( self, event ):
@@ -1617,6 +1622,21 @@ class XFrame(aw.Frame):
     def OnDataEntryMagazz(self, event):
         from magazz.dataentry_o import MagazzFrame_O as DocMagazzFrame
         self.LaunchFrame(DocMagazzFrame)
+    
+    def _FatturaPA_OnGenera(self, event):
+        
+        from magazz.fatturapa.fatturapa import FatturaElettronicaFrame
+        self.LaunchFrame(FatturaElettronicaFrame)
+    
+    def _FatturaPA_OnFolder(self, event):
+        
+        from magazz.fatturapa.fatturapa import apri_cartella_files
+        apri_cartella_files()
+    
+    def _FatturaPA_OnElenco(self, event):
+        
+        from magazz.fatturapa.fatturapa import ElencoFattureElettronicheFrame
+        self.LaunchFrame(ElencoFattureElettronicheFrame)
     
     def OnInterrProdotto(self, event):
         from magazz.prodint import ProdInterrFrame

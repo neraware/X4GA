@@ -29,6 +29,53 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.24', dt.Date(2017, 9, 27), (
+         ("BUG1187",
+         """Corretta generazione file fatture, in caso di nota credito venivano messi gli importi negativi."""),
+         ("BUG1188",
+         """Corretta visualizzazione totali per esportazione file fatture, non riportava la parte indeducibile dell'imposta."""),
+        ),),
+    
+    ('1.8.21', None, (
+         ("BUG1186",
+         """Corretta generazione file fatture, il campo "natura" dell'aliquota iva veniva messo solo in caso di imposta nulla."""),
+        ),),
+    
+    ('1.8.20', None, (
+         ("BET4231",
+         """Integrata funzionalità di fattura elettronica da relativo plugin, ora non più necessario."""),
+        ),),
+    
+    ('1.8.14', None, (
+         ("BET4230",
+         """Integrata esportazione dati fatture ex spesometro."""),
+        ),),
+    
+    ('1.8.06', None, (
+         ("BET4229",
+         """IVA split payment in acquisto su liquodazione."""),
+        ),),
+    
+    ('1.8.05', None, (
+         ("BET4228",
+         """Giacenze e disponibilità in ricerca prodotti da movimentazione."""),
+        ),),
+    
+    ('1.8.02', None, (
+         ("BET4227",
+         """Giacenze in ricerca prodotti da movimentazione."""),
+        ),),
+    
+    ('1.8.01', None, (
+         ("BET4226",
+         """Gestione scaffale prodotto in manutenzione listini."""),
+        ),),
+    
+    ('1.8.00', None, (
+         ("BET4225",
+         """Gestione split payment in acquisto."""),
+        ),),
+    
     ('1.7.33', None, (
          ("BET4223",
          """Introdotto possibilità di ricerca movimenti magazzino tramite contenuto delle note di riga."""),

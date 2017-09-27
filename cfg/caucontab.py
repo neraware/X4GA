@@ -228,14 +228,25 @@ class CauContabSearchResultsGrid(ga.SearchResultsGrid):
         cn = lambda x: self.db._GetFieldIndex(x)
         
         self.COL_PRALCF = 4
+        self._col_all = cn('cfgcontab_pralcf')
+        self._col_tpd = cn('cfgcontab_ftel_tipdoc')
         
-        return (( 35, (cn('cfgcontab_codice'),  "Cod.",          _STR, True)),
-                (240, (cn('cfgcontab_descriz'), "Causale",       _STR, True)),
-                ( 35, (cn('regiva_codice'),     "Cod.",          _STR, True)),
-                (240, (cn('regiva_descriz'),    "Registro IVA",  _STR, True)),
-                (150, (cn('cfgcontab_pralcf'),  "Segno Spesom.", _STR, True)),
-                (  1, (cn('cfgcontab_id'),      "#cau",          _STR, True)),
+        return (( 35, (cn('cfgcontab_codice'),      "Cod.",          _STR, True)),
+                (240, (cn('cfgcontab_descriz'),     "Causale",       _STR, True)),
+                ( 35, (cn('regiva_codice'),         "Cod.",          _STR, True)),
+                (240, (cn('regiva_descriz'),        "Registro IVA",  _STR, True)),
+                (150, (cn('cfgcontab_pralcf'),      "Segno Spesom.", _STR, True)),
+                ( 40, (cn('cfgcontab_ftel_tipdoc'), "TD xml",        _STR, True)),
+                (  1, (cn('cfgcontab_id'),          "#cau",          _STR, True)),
             )
+    
+    def GetAttr(self, row, col, rscol, attr=dbglib.gridlib.GridCellAttr):
+        attr = ga.SearchResultsGrid.GetAttr(self, row, col, rscol, attr=attr)
+        data = self.GetTable().data
+        if 0 <= row < len(data):
+            if data[row][self._col_all] in (1, -1) and not (data[row][self._col_tpd] or 'x').startswith('TD'):
+                attr.SetBackgroundColour('red')
+        return attr
     
     def SetColumn2Fit(self):
         self.SetFitColumn(1)

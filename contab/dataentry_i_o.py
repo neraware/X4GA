@@ -447,7 +447,40 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
     def RegReset(self):
         ctbi.ContabPanelTipo_I.RegReset(self)
         del self.regrsi[:]
-
+    
+    def WriteRegSolaIvaAutomatica(self):
+        import contab.dbtables as dbc
+        reg = dbc.DbRegCon()
+        reg.CreateNewRow()
+        reg.esercizio = self.reg_esercizio
+        reg.id_caus = self._cfg_id_cau_si
+        reg.tipreg = reg.config.tipo
+        reg.datreg = self.reg_datreg
+        reg.datdoc = self.reg_datdoc
+        reg.numdoc = self.reg_numdoc
+        reg.numiva = self.reg_numiva
+        reg.st_regiva = 0
+        reg.st_giobol = 0
+        reg.id_regiva = reg.config.id_regiva
+        reg.id_reg_by = self.reg_id
+        body = reg.body
+        for n, rsi in enumerate(self.regrsi):
+            body.CreateNewRow()
+            body.numriga = n+1
+            body.tipriga = "I"
+            body.importo = rsi[RSIVA_TTIVATO]
+            body.imponib = rsi[RSIVA_IMPONIB]
+            body.imposta = rsi[RSIVA_IMPOSTA]
+            body.indeduc = rsi[RSIVA_INDEDUC]
+            body.id_aliqiva = rsi[RSIVA_ID_ALIQIVA]
+            body.segno = "DA"[1-"DA".index(reg.config.pasegno)]
+            body.id_pdcpa = self.id_pdcpa
+            body.id_pdccp = rsi[RSIVA_ID_PDCIVA]
+            body.id_pdciva = rsi[RSIVA_ID_PDCIVA]
+            body.ivaman = 0
+        if not reg.Save():
+            aw.awu.MsgDialog(self, repr(reg.GetError()), style=wx.ICON_ERROR)
+    
     def _GridEdit_Iva__Init__(self):
         parent = self.FindWindowById(ctbw.ID_PANGRID_IVA)
         parent.SetSize((0,0))

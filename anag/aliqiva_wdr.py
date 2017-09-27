@@ -14,6 +14,7 @@ import wx.animate
 from awc.controls.radiobox import RadioBox
 from awc.controls.numctrl import NumCtrl
 from awc.controls.datectrl import DateCtrl
+from awc.controls.textctrl import TextCtrl, TextCtrl_LC
 
 from anag.basetab import AnagCardPanel, WorkZoneNotebook, UnoZeroCheckBox
 
@@ -24,6 +25,12 @@ class ModoIvaRadioBox(RadioBox):
         RadioBox.__init__(self, *args, **kwargs)
         self.SetDataLink(values=["I", "N", "E", "F"])
 
+
+class NaturaIvaRadioBox(RadioBox):
+
+    def __init__(self, *args, **kwargs):
+        RadioBox.__init__(self, *args, **kwargs)
+        self.SetDataLink(values=["", "N1", "N2", "N3", "N4", "N5", "N6", "N7"])
 
 
 
@@ -46,8 +53,12 @@ def AliqIvaCardFunc( parent, call_fit = True, set_sizer = True ):
     item3.AddPage( item4, "Dati" )
 
     item5 = wx.Panel( item3, -1 )
-    AliqIvaCardAllegFunc(item5, False)
-    item3.AddPage( item5, "Allegati" )
+    AliqIvaCardFatturaPaFunc(item5, False)
+    item3.AddPage( item5, "Fattura PA" )
+
+    item6 = wx.Panel( item3, -1 )
+    AliqIvaCardAllegFunc(item6, False)
+    item3.AddPage( item6, "Allegati" )
 
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
@@ -223,6 +234,49 @@ def AliqIvaCardAllegFunc( parent, call_fit = True, set_sizer = True ):
     item2.AddGrowableCol( 4 )
 
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+ID_TEXTCTRL = 16011
+
+def AliqIvaCardFatturaPaFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item2 = NaturaIvaRadioBox( parent, ID_RADIOBOX, "Natura", wx.DefaultPosition, wx.DefaultSize, 
+        ["-","N1 - Escluso ex Art.15","N2 - Non soggetto","N3 - Non imponibile","N4 - Esente","N5 - Regime del margine","N6 - Inversione contabile (reverse chanrge)","N7 - Assolta in altro paese UE"] , 1, wx.RA_SPECIFY_COLS )
+    item2.SetName( "ftel_natura" )
+    item1.Add( item2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item3 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item4 = wx.StaticText( parent, ID_TEXT, "Riferimento normativo", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item4.SetForegroundColour( wx.BLUE )
+    item3.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
+
+    item5 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
+    item5.SetName( "ftel_rifnorm" )
+    item3.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item3.AddGrowableCol( 0 )
+
+    item3.AddGrowableRow( 1 )
+
+    item1.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item1.AddGrowableCol( 1 )
+
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item0.AddGrowableCol( 0 )
+
+    item0.AddGrowableRow( 0 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

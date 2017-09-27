@@ -410,8 +410,11 @@ class CauMagazzPanel(ga.AnagPanel):
                            ("desevarif",  { True: 1,   False: 0  } ),
                            ):
             ctr = cn(name)
-            ctr.SetDataLink(name, val)
-            self.Bind(wx.EVT_CHECKBOX, self.OnChanged, ctr)
+            if ctr:
+                ctr.SetDataLink(name, val)
+                self.Bind(wx.EVT_CHECKBOX, self.OnChanged, ctr)
+        
+        cn('ftel_tipdoc').Disable()
         
 #        cn('lendescriz').Bind(wx.EVT_KILL_FOCUS, self.OnChanged)
         for name in 'lendescriz prtdestot'.split():
@@ -624,6 +627,15 @@ class CauMagazzPanel(ga.AnagPanel):
             pu[n][PERM_LEGGI] = l
             pu[n][PERM_SCRIVI] = s
         self.gridperm.ResetView()
+        
+        id_caucg = cn('id_caucg').GetValue()
+        if id_caucg is None:
+            td = ' '
+        else:
+            dbcau = adb.DbTable('cfgcontab', 'cau')
+            dbcau.Get(id_caucg)
+            td = dbcau.ftel_tipdoc
+        cn('ftel_tipdoc').SetValue(td)
     
     def CopyFrom_DoCopy(self, idcopy):
         ga.AnagPanel.CopyFrom_DoCopy(self, idcopy)

@@ -2298,7 +2298,8 @@ class LiqIva(adb.DbTable):
                     'acqnor1', 'acqnor2', #acquisti
                     'acqcee1', 'acqcee2', #acquisti cee
                     'tivper1', 'tivper2', #totale iva periodo
-                    'vensos1', 'vensos2', #vendite sospensione
+                    'vensos1', 'vensos2', #vendite in split payment
+                    'acqsos1', 'acqsos2', #acquisti in split payment
                     'ivaind1', 'ivaind2', #iva indeducibile
                     'docper1', 'docper2', #debito/credito periodo
                     
@@ -2434,8 +2435,14 @@ class LiqIva(adb.DbTable):
                             #iva cee
                             mt['acqcee'+col] += imposta
                         elif aliq.iva.tipo == "S":
-                            #iva sosp.
-                            mt['vensos'+col] += imposta
+                            if self.tipo == "V":
+                                #iva vendite split payment
+                                mt['vensos'+col] += imposta
+                            elif self.tipo == "A":
+                                #iva vendite split payment
+                                mt['acqsos'+col] += imposta
+                                #incremento iva split.paym.acq. su tot.acq.
+                                mt['acqnor'+col] += imposta
             if cbf is not None:
                 cbf(r)
         
@@ -4862,3 +4869,722 @@ class Spesometro2013_AcquistiVendite(Spesometro2011_AcquistiVendite):
             h.write(stream)
         finally:
             h.close()
+
+
+import os
+
+class Spesometro2017_Exception(Exception):
+    pass
+
+class Spesometro2017_AcquistiVendite(adb.DbTable):
+    
+    _acqven = _data1 = _data2 = _solo_anag_all = _solo_caus_all = None
+    _numprogr = None
+    
+    def __init__(self, acqven=None):
+        adb.DbTable.__init__(self, 'contab_b', 'mov', fields=None)
+        _iva = self.AddJoin('aliqiva', 'iva', idLeft='id_aliqiva', fields=None)
+        _reg = self.AddJoin('contab_h', 'reg', idLeft='id_reg', fields=None)
+        _riv = _reg.AddJoin('regiva', 'riv', idLeft='id_regiva', fields=None)
+        _cau = _reg.AddJoin('cfgcontab', 'cau', idLeft='id_caus', fields=None)
+        _rg1 = _reg.AddJoin('contab_b', 'rg1', fields=None, relexpr="rg1.id_reg=reg.id AND rg1.numriga=1")
+        _pdc = _rg1.AddJoin('pdc', fields=None, relexpr="pdc.id=rg1.id_pdcpa")
+        _ana = None
+        if acqven is not None:
+            if acqven == "V":
+                _ana = _pdc.AddJoin('clienti', 'anag', idLeft='id', fields=None)
+            elif acqven == "A":
+                _ana = _pdc.AddJoin('fornit', 'anag', idLeft='id', fields=None)
+            else:
+                raise Exception, "Tipo registro errato"
+        self.AddGroupOn('riv.id', 'riv_id')
+        self.AddGroupOn('riv.tipo', 'riv_tipo')
+        self.AddGroupOn('riv.codice', 'riv_codice')
+        self.AddGroupOn('riv.descriz', 'riv_descriz')
+        self.AddGroupOn('pdc.id', 'pdc_id')
+        self.AddGroupOn('pdc.codice', 'pdc_codice')
+        self.AddGroupOn('pdc.descriz', 'pdc_descriz')
+        self.AddGroupOn('cau.ftel_tipdoc', 'cau_tipdoc')
+        self.AddGroupOn('reg.id', 'reg_id')
+        self.AddGroupOn('reg.datreg', 'reg_datreg')
+        self.AddGroupOn('reg.datdoc', 'reg_datdoc')
+        self.AddGroupOn('reg.numdoc', 'reg_numdoc')
+        self.AddGroupOn('reg.numiva', 'reg_numiva')
+        self.AddGroupOn('iva.perciva', 'iva_perciva')
+        self.AddGroupOn('iva.ftel_natura', 'iva_natura')
+        self.AddGroupOn('iva.id', 'iva_id')
+        self.AddGroupOn('iva.codice', 'iva_codice')
+        self.AddGroupOn('iva.descriz', 'iva_descriz')
+        self.AddGroupOn('iva.tipo', 'iva_tipo')
+        if _ana is not None:
+            self.AddGroupOn('anag.indirizzo', 'anag_indirizzo')
+            self.AddGroupOn('anag.cap', 'anag_cap')
+            self.AddGroupOn('anag.citta', 'anag_citta')
+            self.AddGroupOn('anag.prov', 'anag_prov')
+            self.AddGroupOn('anag.codfisc', 'anag_codfisc')
+            self.AddGroupOn('anag.nazione', 'anag_nazione')
+            self.AddGroupOn('anag.piva', 'anag_piva')
+        self.AddGroupOn('mov.id')
+        self.AddTotalOf('mov.imponib', 'imponib')
+        self.AddTotalOf('mov.imposta', 'imposta')
+        self.AddTotalOf('mov.indeduc', 'indeduc')
+        self.AddTotalOf('mov.imponib*IF(riv.tipo="A" AND mov.segno="D" OR riv.tipo IN ("V", "C") AND mov.segno="A", 1, -1)', 'imponib_algebric')
+        self.AddTotalOf('mov.imposta*IF(riv.tipo="A" AND mov.segno="D" OR riv.tipo IN ("V", "C") AND mov.segno="A", 1, -1)', 'imposta_algebric')
+        self.AddTotalOf('mov.indeduc*IF(riv.tipo="A" AND mov.segno="D" OR riv.tipo IN ("V", "C") AND mov.segno="A", 1, -1)', 'indeduc_algebric')
+        self.AddBaseFilter('cau.tipo="I" AND mov.tipriga="I" AND COALESCE(mov.imponib, 0) != 0')
+        self.AddOrder('pdc.descriz')
+        self.AddOrder('reg.datdoc')
+        self.AddOrder('cau.ftel_tipdoc')
+        self.AddOrder('reg.numdoc')
+        self.AddOrder('reg.id')
+        self.Reset()
+    
+    def GetData(self, acqven, data1, data2, solo_anag_all, solo_caus_all):
+        if not (acqven or ' ') in 'AV':
+            raise Exception, "Tipo registri non valido"
+        if data1 is None or data2 is None or data2.year != data1.year:
+            raise Exception, "Date errate"
+        self.ClearFilters()
+        if acqven == "V":
+            self.AddFilter('riv.tipo in ("V", "C") AND reg.tipreg="I"')
+        elif acqven == "A":
+            self.AddFilter('riv.tipo="A" OR (riv.tipo="V" AND reg.tipreg="E")')
+        self.AddFilter('reg.datreg>=%s AND reg.datreg<=%s', data1, data2)
+        if solo_anag_all:
+            try:
+                self.AddFilter('anag.allegcf=1')
+            except:
+                pass
+        if solo_caus_all:
+            self.AddFilter('cau.pralcf IN (1, -1)')
+        self.Retrieve()
+        self._acqven = acqven
+        self._data1 = data1
+        self._data2 = data2
+        self._solo_anag_all = solo_anag_all
+        self._solo_caus_all = solo_caus_all
+        totimp = totiva = totind = 0
+        _id_reg = []
+        _id_pdc = []
+        for _ in self:
+            if not self.reg_id in _id_reg:
+                _id_reg.append(self.reg_id)
+            if not self.pdc_id in _id_pdc:
+                _id_pdc.append(self.pdc_id)
+            totimp += (self.total_imponib_algebric or 0)
+            totiva += (self.total_imposta_algebric or 0)
+            totind += (self.total_indeduc_algebric or 0)
+        return len(_id_reg), len(_id_pdc), totimp, totiva, totind
+    
+    @classmethod
+    def xmlfile_get_name(cls, numprogr):
+        return 'IT%s_DF_%s' % (Env.Azienda.codfisc, str(numprogr).zfill(5))
+    
+    @classmethod
+    def xmlfile_get_basepath(cls):
+        try:
+            path = Env.Azienda.config.get('Site', 'folder')  # @UndefinedVariable
+        except:
+            path = None
+        if not path:
+            path = Env.xpaths.GetConfigPath()
+        path = os.path.join(path, 'spesometro_xml')
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        path = os.path.join(path, 'azienda_%s' % Env.Azienda.codice)
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        return path
+    
+    @classmethod
+    def xmlfile_get_pathname(cls, numprogr):
+        path = cls.ftel_get_basepath()
+        path = os.path.join(path, 'IT%s_DF_%s' % (Env.Azienda.codfisc, str(numprogr).zfill(5)))
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        return path
+    
+    def ftel_get_filename(self, numprogr, ext='xml'):
+        self._numprogr = numprogr
+        path = self.xmlfile_get_pathname(numprogr)
+        name = self.xmlfile_get_name(numprogr)
+        self._numprogr = numprogr
+        return os.path.join(path, '%s.%s' % (name, ext))
+    
+#     def xmlfile_get_datiazienda(self):
+#         cfg = adb.DbTable('cfgsetup', 'setup')
+#         dataz = {}
+#         for name in """cognome nome regfisc reanum reauff """\
+#                     """soind socap socit sopro capsoc socuni socliq """\
+#                     """rfnome rfcognome rfdes rfind rfcap rfcit rfpro rfcodfis rfpiva """\
+#                     """trcodfis trstato """\
+#                     """senome secognome sedes secodfis sepiva sestato setit seeori sesogemi """\
+#                     """cassaprev""".split():
+#             cfg.Retrieve('setup.chiave=%s', 'azienda_ftel_%s' % name)
+#             if name == 'sesogemi':
+#                 if cfg.flag == "C":
+#                     dataz[name] = "CC"
+#                 elif cfg.flag == "T":
+#                     dataz[name] = "TZ"
+#                 else:
+#                     dataz[name] = ""
+#             else:
+#                 if cfg.importo:
+#                     dataz[name] = cfg.importo
+#                 else:
+#                     dataz[name] = cfg.descriz
+#         return dataz
+#     
+    def xmlfile_make_file(self, filename, numprogr, progress=None):
+        
+        if self.IsEmpty():
+            raise Spesometro2017_Exception, "Il documento è vuoto"
+        
+        def si_no(test, v1="SI", v2="NO"):
+            if test:
+                return v1
+            return v2
+        
+        def data(data):
+            try:
+                return data.strftime('%Y-%m-%d')
+            except:
+                return ''
+        
+        def text(data):
+            return (data or '').strip()
+        
+        def importo(data):
+            return text('%.2f' % float(data))
+        
+        xmldoc = Spesometro2017_XML_Document()
+        self._numprogr = numprogr
+        
+        fat = xmldoc.createRoot()
+        
+        # 1 <DatiFatturaHeader>
+        dfh = xmldoc.appendElement(fat, 'DatiFatturaHeader')
+        xmldoc.appendItems(dfh, (('ProgressivoInvio', str(self._numprogr)),))
+        
+        if self._acqven == "V":
+            
+            # VENDITE
+            
+            _desana = 'cliente'
+            
+            _pdc = adb.DbTable('pdc')
+            _ana = _pdc.AddJoin('clienti', 'anag', idLeft='id')
+            _stt = _ana.AddJoin('x4.stati', 'stato', idLeft='id_stato', join=adb.JOIN_LEFT)
+            _pdc.Reset()
+        
+            cf = text(Env.Azienda.codfisc)
+            piva = text(Env.Azienda.piva)
+            stato = "IT"
+            
+            # 2 <DTE>
+            nodo_dte = xmldoc.appendElement(fat, 'DTE')
+            
+            # 2.1 <CedentePrestatoreDTE>
+            nodo_cedpre = xmldoc.appendElement(nodo_dte, 'CedentePrestatoreDTE')
+            
+            # 2.1.1 <IdentificativiFiscali>
+            nodo_idefisc = xmldoc.appendElement(nodo_cedpre, 'IdentificativiFiscali')
+            
+            # 2.1.1.1 <IdFiscaleIVA>
+            nodo_idfisciva = xmldoc.appendElement(nodo_idefisc, 'IdFiscaleIVA')
+            xmldoc.appendItems(nodo_idfisciva, (('IdPaese', stato),             # 2.1.1.1.1 <IdPaese>
+                                                ('IdCodice', piva),))           # 2.1.1.1.2 <IdCodice>
+                
+            if cf:
+                # 2.1.1.2 <CodiceFiscale>
+                _codfisc = xmldoc.appendItems(nodo_idefisc, (('CodiceFiscale', cf),))
+            
+            # 2.1.2 <AltriDatiIdentificativi>
+            altridi = xmldoc.appendElement(nodo_cedpre, 'AltriDatiIdentificativi')
+            altridi_items = []
+            nome, cognome = None, None
+            if nome and cognome:
+                altridi_items.append(('Nome', nome))                             # 2.1.2.2 <Nome>
+                altridi_items.append(('Cognome', cognome))                       # 2.1.2.3 <Cognome>
+            else:
+                altridi_items.append(('Denominazione', Env.Azienda.descrizione)) # 2.1.2.1 <Denominazione>
+            xmldoc.appendItems(altridi, altridi_items)
+            
+            # 2.1.2.4 <Sede>
+            sede = xmldoc.appendElement(altridi, 'Sede')
+            sede_items = []
+            cap = text(Env.Azienda.cap)
+            prov = text(Env.Azienda.prov)
+            comune = text(Env.Azienda.citta)
+            indirizzo = text(Env.Azienda.indirizzo)
+            
+            if len(indirizzo) == 0:
+                raise Spesometro2017_Exception, "Indirizzo mancante su dati azienda"
+            if len(comune) == 0:
+                raise Spesometro2017_Exception, "Citta' mancante su dati azienda"
+            if len(cap) == 0:
+                raise Spesometro2017_Exception, "CAP mancante su dati azienda"
+            if len(prov) == 0:
+                raise Spesometro2017_Exception, "Provincia mancante dati azienda"
+
+            sede_items.append(('Indirizzo', indirizzo)) # 2.1.2.4.1 <Indirizzo>
+            sede_items.append(('CAP', cap))             # 2.1.2.4.3 <CAP>
+            sede_items.append(('Comune', comune))       # 2.1.2.4.4 <Comune>
+            sede_items.append(('Provincia', prov))      # 2.1.2.4.5 <Provincia>
+            sede_items.append(('Nazione', stato))       # 2.1.2.4.6 <Nazione>
+            
+            xmldoc.appendItems(sede, sede_items)
+            
+            xmldoc.appendItems(nodo_idefisc, ())
+            xmldoc.appendItems(nodo_cedpre, ())
+            
+            self.MoveFirst()
+            
+            loop = True
+            while loop:
+                
+                # 2.2 <CessionarioCommittenteDTE>
+                nodo_cescom = xmldoc.appendElement(nodo_dte, 'CessionarioCommittenteDTE')
+                
+                _pdc.Get(self.pdc_id)
+                if not _pdc.OneRow():
+                    raise Spesometro2017_Exception, "%s non trovato %s" % (_desana, self.pdc_id)
+                
+                cf = text(_pdc.anag.codfisc)
+                piva = text(_pdc.anag.piva)
+                stato = text(_pdc.anag.nazione)
+                if not stato or stato == "I":
+                    stato = "IT"
+                
+                docs = []
+                last_pdc = self.pdc_id
+                while self.pdc_id == last_pdc and loop:
+                    tiva = []
+                    tdoc, ddoc, ndoc = self.cau_tipdoc, self.reg_datdoc, self.reg_numdoc
+                    if not (tdoc or 'x').startswith('TD'):
+                        raise Exception, "Causale non riconosciuta sulla registrazione %s %s n. %s del %s" \
+                                            % (self.cau_codice, self.cau_descriz, self.reg_numdoc, self.dita(self.reg_datdoc))
+                    last_reg_id = self.reg_id
+                    while self.pdc_id == last_pdc and self.reg_id == last_reg_id and loop:
+                        tiva.append({'imponibile': self.total_imponib,
+                                        'imposta': (self.total_imposta or 0) + (self.total_indeduc or 0),
+                                        'perciva': self.iva_perciva,
+                                         'natura': self.iva_natura or '',
+                                         'codice': self.iva_codice,
+                                       'is_split': self.iva_tipo == "S",})
+                        if self.MoveNext():
+                            if callable(progress):
+                                progress(self.RowNumber())
+                        else:
+                            loop = False
+                    docs.append({'tipdoc': tdoc,
+                                 'datdoc': data(ddoc),
+                                 'numdoc': ndoc,
+                                 'totiva': tiva,})
+                
+                # 2.2.1 <IdentificativiFiscali>
+                nodo_idefisc = xmldoc.appendElement(nodo_cescom, 'IdentificativiFiscali')
+                
+                # 2.2.1.1 <IdFiscaleIVA>
+                if piva:
+                    nodo_idfisciva = xmldoc.appendElement(nodo_idefisc, 'IdFiscaleIVA')
+                    xmldoc.appendItems(nodo_idfisciva, (('IdPaese', stato),             # 2.2.1.1.1 <IdPaese>
+                                                        ('IdCodice', piva),))           # 2.2.1.1.2 <IdCodice>
+                    
+                elif cf:
+                    # 2.2.1.2 <CodiceFiscale>
+                    _codfisc = xmldoc.appendItems(nodo_idefisc, (('CodiceFiscale', cf),))
+                    
+#                 else:
+#                     raise Exception, "Manca C.F. e P.IVA su cliente %s - %s" % (_pdc.codice,
+#                                                                                 _pdc.descriz)
+                
+                # 2.2.2 <AltriDatiIdentificativi>
+                altridi = xmldoc.appendElement(nodo_cescom, 'AltriDatiIdentificativi')
+                altridi_items = []
+                nome, cognome = text(_pdc.anag.sm11_nome), text(_pdc.anag.sm11_cognome)
+                if nome and cognome:
+                    altridi_items.append(('Nome', nome))                       # 2.2.2.2 <Nome>
+                    altridi_items.append(('Cognome', cognome))                 # 2.2.2.3 <Cognome>
+                else:
+                    altridi_items.append(('Denominazione', _pdc.descriz))      # 2.2.2.1 <Denominazione>
+                xmldoc.appendItems(altridi, altridi_items)
+                
+                # 2.2.2.4 <Sede>
+                sede = xmldoc.appendElement(altridi, 'Sede')
+                sede_items = []
+                cap = text(_pdc.anag.cap)
+                prov = text(_pdc.anag.prov)
+                comune = text(_pdc.anag.citta)
+                
+                if len(comune) == 0:
+                    raise Spesometro2017_Exception, \
+                            "Citta' mancante su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                       text(_pdc.descriz))
+                if stato == "IT":
+                    
+                    if len(cap) == 0:
+                        raise Spesometro2017_Exception, \
+                                "CAP mancante su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                        text(_pdc.descriz))
+                    if len(prov) == 0:
+                        raise Spesometro2017_Exception, \
+                                "Provincia mancante su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                              text(_pdc.descriz))
+                    
+                    if len(cf) == 0 and len(piva) == 0:
+                        raise Spesometro2017_Exception, \
+                                "P.IVA e Cod.Fiscale mancanti su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                                        text(_pdc.descriz))
+                
+                sede_items.append(('Indirizzo', text(_pdc.anag.indirizzo))) # 2.2.2.4.1 <Indirizzo>
+                if cap:
+                    sede_items.append(('CAP', cap))                         # 2.2.2.4.3 <CAP>
+                sede_items.append(('Comune', comune))                       # 2.2.2.4.4 <Comune>
+                if prov:
+                    sede_items.append(('Provincia', prov))                  # 2.2.2.4.5 <Provincia>
+                sede_items.append(('Nazione', stato))                       # 2.2.2.4.6 <Nazione>
+                
+                xmldoc.appendItems(sede, sede_items)
+                
+                xmldoc.appendItems(nodo_idefisc, ())
+                xmldoc.appendItems(nodo_cescom, ())
+                
+                for docinfo in docs:
+                    
+                    # 2.2.3 <DatiFatturaBodyDTE>
+                    nodo_datifatt = xmldoc.appendElement(nodo_cescom, 'DatiFatturaBodyDTE')
+                    
+                    # 2.2.3.1 <DatiGenerali>
+                    nodo_datifatt_datigen = xmldoc.appendElement(nodo_datifatt, 'DatiGenerali')
+                    xmldoc.appendItems(nodo_datifatt_datigen, (('TipoDocumento', docinfo['tipdoc']), # 2.2.3.1.1 <TipoDocumento>
+                                                               ('Data', docinfo['datdoc']),          # 2.2.3.1.2 <Data>
+                                                               ('Numero', docinfo['numdoc']),))      # 2.2.3.1.3 <Numero>
+                    
+                    for ivainfo in docinfo['totiva']:
+                        
+                        # 2.2.3.2 <DatiRiepilogo>
+                        nodo_datifatt_riep = xmldoc.appendElement(nodo_datifatt, 'DatiRiepilogo')
+                        
+                        xmldoc.appendItems(nodo_datifatt_riep, (('ImponibileImporto', 
+                                                                 importo(ivainfo['imponibile'])),))  # 2.2.3.2.1 <ImponibileImporto>
+                        # 2.2.3.2.2 <DatiIVA>
+                        nodo_datifatt_riep_dativa = xmldoc.appendElement(nodo_datifatt_riep, 'DatiIVA')
+                        dativa_items = []
+                        dativa_items.append(('Imposta', importo(ivainfo['imposta'])))                # 2.2.3.2.2.1 <Imposta>
+                        dativa_items.append(('Aliquota', importo(ivainfo['perciva'])))               # 2.2.3.2.2.2 <Aliquota>
+                        xmldoc.appendItems(nodo_datifatt_riep_dativa, dativa_items)
+                        if ivainfo['natura']:
+                            xmldoc.appendItems(nodo_datifatt_riep, (('Natura', ivainfo['natura']),)) # 2.2.3.2.3 <Natura>
+                        elif not ivainfo['perciva']:
+                            raise Exception, "Natura mancante su aliquota iva %s" % ivainfo['codice']
+                        if ivainfo['is_split']:
+                            esig = "S"
+                        else:
+                            esig = "I"
+                        xmldoc.appendItems(nodo_datifatt_riep, (('EsigibilitaIVA', esig),))          # 2.2.3.2.6 <Natura>
+            
+            xmldoc.appendItems(nodo_dte, ())
+        
+        elif self._acqven == "A":
+            
+            # ACQUISTI
+            
+            _desana = 'fornitore'
+            
+            _pdc = adb.DbTable('pdc')
+            _ana = _pdc.AddJoin('fornit', 'anag', idLeft='id')
+            _stt = _ana.AddJoin('x4.stati', 'stato', idLeft='id_stato', join=adb.JOIN_LEFT)
+            _pdc.Reset()
+            
+            cf = text(Env.Azienda.codfisc)
+            piva = text(Env.Azienda.piva)
+            stato = "IT"
+            
+            # 3 <DTR>
+            nodo_dtr = xmldoc.appendElement(fat, 'DTR')
+            
+            # 3.1 <CessionarioCommittenteDTR>
+            nodo_cescom = xmldoc.appendElement(nodo_dtr, 'CessionarioCommittenteDTR')
+            
+            # 3.1.1 <IdentificativiFiscali>
+            nodo_idefisc = xmldoc.appendElement(nodo_cescom, 'IdentificativiFiscali')
+            
+            # 3.1.1.1 <IdFiscaleIVA>
+            nodo_idfisciva = xmldoc.appendElement(nodo_idefisc, 'IdFiscaleIVA')
+            xmldoc.appendItems(nodo_idfisciva, (('IdPaese', stato),             # 3.1.1.1.1 <IdPaese>
+                                                ('IdCodice', piva),))           # 3.1.1.1.2 <IdCodice>
+            
+            if cf:
+                # 3.1.1.2 <CodiceFiscale>
+                _codfisc = xmldoc.appendItems(nodo_idefisc, (('CodiceFiscale', cf),))
+            
+            # 3.1.2 <AltriDatiIdentificativi>
+            altridi = xmldoc.appendElement(nodo_cescom, 'AltriDatiIdentificativi')
+            altridi_items = []
+            nome, cognome = None, None
+            if nome and cognome:
+                altridi_items.append(('Nome', nome))                             # 3.1.2.2 <Nome>
+                altridi_items.append(('Cognome', cognome))                       # 3.1.2.3 <Cognome>
+            else:
+                altridi_items.append(('Denominazione', Env.Azienda.descrizione)) # 3.1.2.1 <Denominazione>
+            xmldoc.appendItems(altridi, altridi_items)
+            
+            # 3.1.2.4 <Sede>
+            sede = xmldoc.appendElement(altridi, 'Sede')
+            sede_items = []
+            cap = text(Env.Azienda.cap)
+            prov = text(Env.Azienda.prov)
+            comune = text(Env.Azienda.citta)
+            indirizzo = text(Env.Azienda.indirizzo)
+            
+            if len(indirizzo) == 0:
+                raise Spesometro2017_Exception, "Indirizzo mancante su dati azienda"
+            if len(comune) == 0:
+                raise Spesometro2017_Exception, "Citta' mancante su dati azienda"
+            if len(cap) == 0:
+                raise Spesometro2017_Exception, "CAP mancante su dati azienda"
+            if len(prov) == 0:
+                raise Spesometro2017_Exception, "Provincia mancante dati azienda"
+
+            sede_items.append(('Indirizzo', indirizzo)) # 3.2.2.4.1 <Indirizzo>
+            if cap:
+                sede_items.append(('CAP', cap))         # 3.2.2.4.3 <CAP>
+            sede_items.append(('Comune', comune))       # 3.2.2.4.4 <Comune>
+            if prov:
+                sede_items.append(('Provincia', prov))  # 3.2.2.4.5 <Provincia>
+            sede_items.append(('Nazione', stato))       # 3.2.2.4.6 <Nazione>
+            
+            xmldoc.appendItems(sede, sede_items)
+            
+            xmldoc.appendItems(nodo_idefisc, ())
+            xmldoc.appendItems(nodo_cescom, ())
+            
+            self.MoveFirst()
+            
+            loop = True
+            while loop:
+                
+                # 3.2 <CedentePrestatoreDTR>
+                nodo_cedpre = xmldoc.appendElement(nodo_dtr, 'CedentePrestatoreDTR')
+                
+                _pdc.Get(self.pdc_id)
+                if not _pdc.OneRow():
+                    raise Spesometro2017_Exception, "Sottoconto non trovato %s" % self.pdc_id
+                
+                cf = text(_pdc.anag.codfisc)
+                piva = text(_pdc.anag.piva)
+                stato = text(_pdc.anag.stato.codice)
+                if stato == "" or stato == "I":
+                    stato = "IT"
+                
+                docs = []
+                last_pdc = self.pdc_id
+                while self.pdc_id == last_pdc and loop:
+                    tiva = []
+                    tdoc, ddoc, ndoc, dreg = self.cau_tipdoc, self.reg_datdoc, self.reg_numdoc, self.reg_datreg
+                    if not (tdoc or 'x').startswith('TD'):
+                        raise Exception, "Causale non riconosciuta sulla registrazione %s %s n. %s del %s" \
+                                            % (self.cau_codice, self.cau_descriz, self.reg_numdoc, self.dita(self.reg_datdoc))
+                    last_reg_id = self.reg_id
+                    while self.pdc_id == last_pdc and self.reg_id == last_reg_id and loop:
+                        tiva.append({'imponibile': self.total_imponib,
+                                        'imposta': (self.total_imposta or 0) + (self.total_indeduc or 0),
+                                        'perciva': self.iva_perciva,
+                                         'natura': self.iva_natura or '',
+                                         'codice': self.iva_codice,
+                                       'is_split': self.iva_tipo == "S",})
+                        if self.MoveNext():
+                            if callable(progress):
+                                progress(self.RowNumber())
+                        else:
+                            loop = False
+                    docs.append({'tipdoc': tdoc,
+                                 'datdoc': data(ddoc),
+                                 'numdoc': ndoc,
+                                 'datreg': data(dreg),
+                                 'totiva': tiva,})
+                
+                # 3.2.1 <IdentificativiFiscali>
+                nodo_idefisc = xmldoc.appendElement(nodo_cedpre, 'IdentificativiFiscali')
+                
+                # 3.2.1.1 <IdFiscaleIVA>
+                if piva:
+                    idfisciva = xmldoc.appendElement(nodo_idefisc, 'IdFiscaleIVA')
+                    xmldoc.appendItems(idfisciva, (('IdPaese', stato),             # 3.2.1.1.1 <IdPaese>
+                                                   ('IdCodice', piva),))           # 3.2.1.1.2 <IdCodice>
+                
+#                 if stato == "IT" and not cf:
+#                     raise Exception, "Manca cod.fiscale su fornitore %s - %s" % (_pdc.codice,
+#                                                                                  _pdc.descriz,)
+                if cf:
+                    # 3.2.1.2 <CodiceFiscale>
+                    _codfisc = xmldoc.appendItems(nodo_idefisc, (('CodiceFiscale', cf),))
+                
+                # 3.2.2 <AltriDatiIdentificativi>
+                altridi = xmldoc.appendElement(nodo_cedpre, 'AltriDatiIdentificativi')
+                altridi_items = []
+                nome, cognome = text(_pdc.anag.sm11_nome), text(_pdc.anag.sm11_cognome)
+                if nome and cognome:
+                    altridi_items.append(('Nome', nome))                       # 3.2.2.2 <Nome>
+                    altridi_items.append(('Cognome', cognome))                 # 3.2.2.3 <Cognome>
+                else:
+                    altridi_items.append(('Denominazione', _pdc.descriz))      # 3.2.2.1 <Denominazione>
+                xmldoc.appendItems(altridi, altridi_items)
+                
+                # 3.2.2.4 <Sede>
+                sede = xmldoc.appendElement(altridi, 'Sede')
+                sede_items = []
+                cap = text(_pdc.anag.cap)
+                prov = text(_pdc.anag.prov)
+                comune = text(_pdc.anag.citta)
+                if len(comune) == 0:
+                    raise Spesometro2017_Exception, \
+                            "Citta' mancante su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                       text(_pdc.descriz))
+                if stato == "IT":
+                    
+                    if len(cap) == 0:
+                        raise Spesometro2017_Exception, \
+                                "CAP mancante su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                        text(_pdc.descriz))
+                    
+                    if len(prov) == 0:
+                        raise Spesometro2017_Exception, \
+                                "Provincia mancante su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                              text(_pdc.descriz))
+                    
+                    if len(cf) == 0 and len(piva) == 0:
+                        raise Spesometro2017_Exception, \
+                                "P.IVA e Cod.Fiscale mancanti su anagrafica %s - %s" % (text(_pdc.codice),
+                                                                                        text(_pdc.descriz))
+                
+                sede_items.append(('Indirizzo', text(_pdc.anag.indirizzo)))    # 3.2.2.4.1 <Indirizzo>
+                if cap:                                                        
+                    sede_items.append(('CAP', cap))                            # 3.2.2.4.3 <CAP>
+                sede_items.append(('Comune', comune))                          # 3.2.2.4.4 <Comune>
+                if prov:                                                       
+                    sede_items.append(('Provincia', prov))                     # 3.2.2.4.5 <Provincia>
+                sede_items.append(('Nazione', stato))                          # 3.2.2.4.6 <Nazione>
+                
+                xmldoc.appendItems(sede, sede_items)
+                xmldoc.appendItems(nodo_idefisc, ())
+                xmldoc.appendItems(nodo_cedpre, ())
+                
+                for docinfo in docs:
+                    
+                    # 3.2.3 <DatiFatturaBodyDTR>
+                    nodo_datifatt = xmldoc.appendElement(nodo_cedpre, 'DatiFatturaBodyDTR')
+                    
+                    # 3.2.3.1 <DatiGenerali>
+                    nodo_datifatt_datigen = xmldoc.appendElement(nodo_datifatt, 'DatiGenerali')
+                    tipdoc = docinfo['tipdoc']
+                    datdoc = docinfo['datdoc']
+                    numdoc = docinfo['numdoc']
+                    datreg = docinfo['datreg']
+                    xmldoc.appendItems(nodo_datifatt_datigen, (('TipoDocumento', tipdoc),            # 3.2.3.1.1 <TipoDocumento>
+                                                               ('Data', datdoc),                     # 3.2.3.1.2 <Data>
+                                                               ('Numero', numdoc),                   # 3.2.3.1.3 <Numero>
+                                                               ('DataRegistrazione', datreg),))      # 3.2.3.1.4 <DataRegistrazione>
+                    
+                    for ivainfo in docinfo['totiva']:
+                        
+                        # 3.2.3.2 <DatiRiepilogo>
+                        nodo_datifatt_riep = xmldoc.appendElement(nodo_datifatt, 'DatiRiepilogo')
+                        
+                        xmldoc.appendItems(nodo_datifatt_riep, (('ImponibileImporto', 
+                                                                 importo(ivainfo['imponibile'])),))  # 3.2.3.2.1 <ImponibileImporto>
+                        # 3.2.3.2.2 <DatiIVA>
+                        nodo_datifatt_riep_dativa = xmldoc.appendElement(nodo_datifatt_riep, 'DatiIVA')
+                        dativa_items = []
+                        dativa_items.append(('Imposta', importo(ivainfo['imposta'])))                # 3.2.3.2.2.1 <Imposta>
+                        dativa_items.append(('Aliquota', importo(ivainfo['perciva'])))               # 3.2.3.2.2.2 <Aliquota>
+                        xmldoc.appendItems(nodo_datifatt_riep_dativa, dativa_items)
+                        if ivainfo['natura']:
+                            xmldoc.appendItems(nodo_datifatt_riep, (('Natura', ivainfo['natura']),)) # 3.2.3.2.3 <Natura>
+                        elif not ivainfo['perciva']:
+                            raise Exception, "Natura mancante su aliquota iva %s" % ivainfo['codice']
+                        if ivainfo['is_split']:
+                            esig = "S"
+                        else:
+                            esig = "I"
+                        xmldoc.appendItems(nodo_datifatt_riep, (('EsigibilitaIVA', esig),))          # 3.2.3.2.6 <Natura>
+            
+            xmldoc.appendItems(nodo_dtr, ())
+        
+        stream = xmldoc.toprettyxml(indent="  ", encoding="UTF-8")
+        text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)    
+        stream = text_re.sub('>\g<1></', stream)
+#         n = stream.index('>')+1
+# #         stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.0.xsl"?>' + stream[n:]
+#         stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.2.xsl"?>' + stream[n:]
+#         filename = self.xmlfile_get_filename(numprogr)
+        h = open(filename, 'w')
+        h.write(stream)
+        h.close()
+        
+#         self.xmlfile_make_style(numprogr)
+        
+        return os.path.split(filename)
+
+
+from xml.dom.minidom import Document as XmlDocumentBase
+import re
+
+class XmlDocument(XmlDocumentBase):
+    
+    def writexml(self, writer, indent="", addindent="", newl="",
+                 encoding = None):
+#         if encoding is None:
+#             writer.write('<?xml version="1.0" ?>'+newl)
+#         else:
+#             writer.write('<?xml version="1.0" encoding="%s"?>%s' % (encoding, newl))
+        for node in self.childNodes:
+            node.writexml(writer, indent, addindent, newl)
+
+def normalize(x, upper=False):
+    c = True
+    x = x.encode('ascii', 'xmlcharrefreplace')
+    if upper:
+        x = x.upper()
+    y = ''
+    for n in range(len(x)):
+        if x[n] == '.':
+            c = True
+        if c and x[n].isalpha():
+            y += x[n].upper()
+            c = False
+        elif x[n].isalnum() or x[n].isspace():
+            y += x[n]
+    return y
+
+
+
+class Spesometro2017_XML_Document(XmlDocument):
+    
+    version = 'DAT20'
+    
+    def createRoot(self):
+        
+        doc = self.appendElement(self, "ns2:DatiFattura")
+        doc.setAttribute('xmlns:ns2', "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0")
+        if True:#self.version <= '1.1':
+            doc.setAttribute('versione', self.version)
+        else:
+            pass
+#             fat.setAttribute('xsi:schemaLocation', "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 fatturaordinaria_v1.2.xsd")
+#             fat.setAttribute('versione', self.sdicver)
+        return doc
+    
+    def appendElement(self, parent, tagName):
+        element = self.createElement(tagName)
+        parent.appendChild(element)
+        return element
+    
+    def appendItems(self, node, key_values):
+        for name, val in key_values:
+            item = self.createElement(name)
+            item_content = self.createTextNode(val)
+            item.appendChild(item_content)
+            node.appendChild(item)
+        return node

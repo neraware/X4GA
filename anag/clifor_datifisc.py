@@ -59,6 +59,9 @@ class _CliFor_DatiFiscaliGrid(dbgrid.ADB_Grid):
         AC = self.AddColumn
         self.COL_DESCRIZ = AC(pdc,   'descriz', label='Descrizione', col_width=300, is_fittable=True)
         self.COL_STATO =   AC(stato, 'codice', label='Stato', col_width=60)
+        self.COL_CAP =     AC(anag,  'cap', label='CAP', col_width=60, is_editable=True)
+        self.COL_CITTA =   AC(anag,  'citta', label='Città', col_width=120, is_editable=True)
+        self.COL_PROV =    AC(anag,  'prov', label='Prov.', col_width=50, is_editable=True)
         self.COL_NAZIONE = AC(anag,  'nazione', label='St.PI', col_width=60)
         self.COL_PIVA =    AC(anag,  'piva', label='P.IVA', col_width=100, is_editable=True)
         self.COL_CODFISC = AC(anag,  'codfisc', label='Cod.Fiscale', col_width=140, is_editable=True)
@@ -69,6 +72,9 @@ class _CliFor_DatiFiscaliGrid(dbgrid.ADB_Grid):
         def gfi(tab, col):
             return tab._GetFieldIndex(col, inline=True)
         
+        self._col_cap =     gfi(anag, 'cap')
+        self._col_citta =   gfi(anag, 'citta')
+        self._col_prov =    gfi(anag, 'prov')
         self._col_aziper =  gfi(anag, 'aziper')
         self._col_nazione = gfi(anag, 'nazione')
         self._col_piva =    gfi(anag, 'piva')
@@ -85,6 +91,8 @@ class _CliFor_DatiFiscaliGrid(dbgrid.ADB_Grid):
                 if (r[self._col_aziper] == "A" and len(r[self._col_piva] or '') == 0) or \
                    (r[self._col_aziper] == "P" and len(r[self._col_codfisc] or '') == 0):
                     attr.SetBackgroundColour('red')
+                elif not r[self._col_cap] or not r[self._col_citta] or not r[self._col_prov]:
+                    attr.SetBackgroundColour('yellow')
         return attr
     
     def ApriScheda(self, row):
@@ -141,6 +149,15 @@ class _CliFor_DatiFiscaliGrid(dbgrid.ADB_Grid):
             if not valid:
                 aw.awu.MsgDialog(self, ctr.GetStatus(), style=wx.ICON_ERROR)
             return valid
+            
+        elif col == cc(anag, 'cap') and len(value)>0:
+            return True
+            
+        elif col == cc(anag, 'citta') and len(value)>0:
+            return True
+            
+        elif col == cc(anag, 'prov') and len(value)>0:
+            return True
         
         return True
 
@@ -158,6 +175,9 @@ class _CliFor_DatiFiscaliPanel(aw.Panel):
         aw.Panel.__init__(self, *args, **kwargs)
         wdr.CliFor_DatiFiscaliFunc(self)
         cn = self.FindWindowByName
+        
+        cn('panlegerr1').SetBackgroundColour('red')
+        cn('panlegerr2').SetBackgroundColour('yellow')
         
         self.dbana = adb.DbTable(self.tabanag, 'anag')
         self.dbana.AddJoin(bt.TABNAME_PDC, 'pdc', idLeft='id')

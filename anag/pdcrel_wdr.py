@@ -2906,7 +2906,8 @@ def CliForAnagFunc( parent, call_fit = True, set_sizer = True ):
     item34 = wx.StaticText( parent, ID_TEXT, "Codice univoco ufficio:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item33.Add( item34, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
 
-    item35 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item35 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item35.SetName( "ftel_codice" )
     item33.Add( item35, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 5 )
 
     item31.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -3542,7 +3543,9 @@ ID_IS_ASS = 14203
 ID_IS_ENT = 14204
 ID_BUTUPD = 14205
 ID_PANGRIDPDC = 14206
-ID_BUTSAVE = 14207
+ID_PANLEGERR1 = 14207
+ID_PANLEGERR2 = 14208
+ID_BUTSAVE = 14209
 
 def CliFor_DatiFiscaliFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -3613,9 +3616,33 @@ def CliFor_DatiFiscaliFunc( parent, call_fit = True, set_sizer = True ):
     item16.SetName( "pangridpdc" )
     item0.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item17 = wx.Button( parent, ID_BUTSAVE, "Salva", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item17.SetName( "butsave" )
-    item0.Add( item17, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item17 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item18 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item19 = wx.Panel( parent, ID_PANLEGERR1, wx.DefaultPosition, [20,20], wx.SUNKEN_BORDER )
+    item19.SetName( "panlegerr1" )
+    item18.Add( item19, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item20 = wx.StaticText( parent, ID_TEXT, "Manca P.IVA / C.Fisc.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.Add( item20, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item21 = wx.Panel( parent, ID_PANLEGERR2, wx.DefaultPosition, [20,20], wx.SUNKEN_BORDER )
+    item21.SetName( "panlegerr2" )
+    item18.Add( item21, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item22 = wx.StaticText( parent, ID_TEXT, "Manca CAP / Città / Prov.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.Add( item22, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item17.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item23 = wx.Button( parent, ID_BUTSAVE, "Salva", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item23.SetName( "butsave" )
+    item17.Add( item23, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item17.AddGrowableCol( 0 )
+
+    item0.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 

@@ -294,6 +294,12 @@ class FtDif(adb.DbTable):
             if value:
                 dr.AddFilter('docrag.%s<>1' % field)
         
+        if self.f_tipopdc in ['A', 'E']:
+            if self.f_tipopdc=='A':
+                dr.AddFilter('pdc.ftel_codice is null or LENGTH(pdc.ftel_codice)=0')
+            else:
+                dr.AddFilter('not pdc.ftel_codice is null and LENGTH(pdc.ftel_codice)>0')
+        
         if not dr.Retrieve():
             raise Exception, repr(dr.GetError())
     

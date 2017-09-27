@@ -1166,9 +1166,14 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             out = self.ScadStorno()
             if out:
                 out = self.ScadWrite()
+        if out and self._cfg_id_cau_si is not None:
+            self.WriteRegSolaIvaAutomatica()
         if out:
             self.ReportFineReg()
         return out
+    
+    def WriteRegSolaIvaAutomatica(self):
+        pass
     
     def RegDelete(self):
         out = self.ScadStorno()

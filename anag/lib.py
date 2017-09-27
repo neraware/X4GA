@@ -115,7 +115,8 @@ class LinkTableProd(LinkTable, LinkTableHideSearchMixin):
         if bt.MAGVISCOS:
             w += 110
         if bt.MAGVISGIA:
-            w += 120
+            w += 120 # x giac.
+            w += 120 # x disp.
         self.SetMinWidth(w)
         from anag.prod import ProdDialog
         self.cardclass = ProdDialog
@@ -188,16 +189,82 @@ class LinkTableProd(LinkTable, LinkTableHideSearchMixin):
                         prod.prezzo"""
                     
         if bt.MAGVISGIA:
-            tabprogr = bt.TABNAME_PRODPRO
+#             tabprogr = bt.TABNAME_PRODPRO
+#             if self.ppmag:
+#                 testmag = ' AND pp.id_magazz=%d' % self.ppmag
+#             else:
+#                 testmag = ''
+#             out += ',\n'
+#             out += ("""(SELECT SUM(IF(pp.ini IS NULL,0,pp.ini)+IF(pp.car IS NULL,0,pp.car)-IF(pp.sca IS NULL,0,pp.sca)) 
+#                           FROM %(tabprogr)s pp
+#                          WHERE pp.id_prod=prod.id %(testmag)s) 'giac', 
+#                         NULL AS magid""" % locals()).replace('\n', ' ')        
+            
+            setup = adb.DbTable('cfgsetup')
+            setup.Retrieve('chiave="magdatchi"')
+            
+            flt = 'doc.datdoc>"%s"' % setup.data.Format('%Y-%m-%d')
             if self.ppmag:
-                testmag = ' AND pp.id_magazz=%d' % self.ppmag
-            else:
-                testmag = ''
+                flt += ' AND doc.id_magazz=%d' % self.ppmag
+            
+            #determino giacenza
             out += ',\n'
-            out += ("""(SELECT SUM(IF(pp.ini IS NULL,0,pp.ini)+IF(pp.car IS NULL,0,pp.car)-IF(pp.sca IS NULL,0,pp.sca)) 
-                          FROM %(tabprogr)s pp
-                         WHERE pp.id_prod=prod.id %(testmag)s) 'giac', 
-                        NULL AS magid""" % locals()).replace('\n', ' ')        
+            out += ("""(
+SELECT SUM(COALESCE(mov.qta*tpm.aggini, 0) +  COALESCE(mov.qta*tpm.aggcar, 0) - COALESCE(mov.qta*tpm.aggsca, 0)) 
+  FROM movmag_b mov
+  JOIN movmag_h doc ON doc.id=mov.id_doc
+  JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+ WHERE mov.id_prod=prod.id AND %(flt)s AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1)
+)""" % locals()).replace('\n', ' ')        
+            
+            #determino disponibilità
+            out += ',\n'
+            out += ("""(
+(
+SELECT COALESCE(SUM(COALESCE(mov.qta*tpm.aggini, 0) +  COALESCE(mov.qta*tpm.aggcar, 0) - COALESCE(mov.qta*tpm.aggsca, 0)), 0) 
+  FROM movmag_b mov
+  JOIN movmag_h doc ON doc.id=mov.id_doc
+  JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+ WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND %(flt)s
+)
+
+-
+
+(
+SELECT COALESCE(SUM(mov.qta-COALESCE(
+
+    (SELECT SUM(eva.qta)
+       FROM movmag_b eva
+      WHERE eva.id_moveva=mov.id
+    )
+    
+    , 0)), 0)
+      FROM movmag_b mov
+      JOIN movmag_h doc ON doc.id=mov.id_doc
+      JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordcli=1
+)
+
+
++
+
+(
+SELECT COALESCE(SUM(mov.qta-COALESCE(
+
+    (SELECT SUM(eva.qta)
+       FROM movmag_b eva
+      WHERE eva.id_moveva=mov.id
+    )
+    
+    , 0)), 0)
+      FROM movmag_b mov
+      JOIN movmag_h doc ON doc.id=mov.id_doc
+      JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordfor=1
+)
+
+)""" % locals()).replace('\n', ' ')
+        
         return out
     
     def GetSqlFrom(self):
@@ -255,6 +322,7 @@ class LinkTableProd(LinkTable, LinkTableHideSearchMixin):
         
         if bt.MAGVISGIA:
             out.append((120, ( 7, "Giacenza",  _QTA, False)))
+            out.append((120, ( 8, "Disponib",  _QTA, False)))
         
         return out
     

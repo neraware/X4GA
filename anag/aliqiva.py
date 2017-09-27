@@ -24,6 +24,8 @@
 import wx
 
 import awc.layout.gestanag as ga
+import awc.controls.windows as aw
+import awc.controls.dbgrid as dbglib
 import anag.aliqiva_wdr as wdr
 
 from Env import Azienda
@@ -44,14 +46,25 @@ class AliqIvaSearchResultsGrid(ga.SearchResultsGrid):
         _CHK = gl.GRID_VALUE_CHOICE+":1,0"
         _PRC = bt.GetPerGenMaskInfo()
         cn = lambda x: self.db._GetFieldIndex(x)
-        return (( 35, (cn('aliqiva_codice'),  "Cod.",       _STR, True)),
-                (240, (cn('aliqiva_descriz'), "Aliquota",   _STR, True)),
-                ( 50, (cn('aliqiva_perciva'), "%IVA",       _PRC, True)),
-                ( 50, (cn('aliqiva_tipo'),    "Tipo",       _STR, True)),
-                ( 50, (cn('aliqiva_modo'),    "Modo",       _STR, True)),
-                ( 70, (cn('aliqiva_sm11_no'), "No spesom.", _CHK, True)),
-                (  1, (cn('aliqiva_id'),      "#aliq",      _STR, True)),
+        self._col_perciva = cn('aliqiva_perciva')
+        self._col_natura = cn('aliqiva_ftel_natura')
+        return (( 35, (cn('aliqiva_codice'),      "Cod.",       _STR, True)),
+                (240, (cn('aliqiva_descriz'),     "Aliquota",   _STR, True)),
+                ( 50, (cn('aliqiva_perciva'),     "%IVA",       _PRC, True)),
+                ( 50, (cn('aliqiva_tipo'),        "Tipo",       _STR, True)),
+                ( 50, (cn('aliqiva_modo'),        "Modo",       _STR, True)),
+                ( 70, (cn('aliqiva_sm11_no'),     "No spesom.", _CHK, True)),
+                ( 40, (cn('aliqiva_ftel_natura'), "Nat.",       _STR, True)),
+                (  1, (cn('aliqiva_id'),          "#aliq",      _STR, True)),
             )
+    
+    def GetAttr(self, row, col, rscol, attr=dbglib.gridlib.GridCellAttr):
+        attr = ga.SearchResultsGrid.GetAttr(self, row, col, rscol, attr=attr)
+        data = self.GetTable().data
+        if 0 <= row < len(data):
+            if not data[row][self._col_perciva] and not data[row][self._col_natura]:
+                attr.SetBackgroundColour('red')
+        return attr
     
     def SetColumn2Fit(self):
         self.SetFitColumn(1)
@@ -90,6 +103,13 @@ class AliqIvaPanel(ga.AnagPanel):
         grid = AliqIvaSearchResultsGrid(parent, ga.ID_SEARCHGRID, 
                                         self.db_tabname, self.GetSqlColumns())
         return grid
+    
+    def TransferDataFromWindow(self):
+        cn = self.FindWindowByName
+        if not cn('perciva').GetValue() and cn('ftel_natura').GetValue() == "":
+            aw.awu.MsgDialog(self, "Specificare la natura")
+            return False
+        return ga.AnagPanel.TransferDataFromWindow(self)
 
 
 # ------------------------------------------------------------------------------

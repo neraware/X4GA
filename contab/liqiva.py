@@ -183,7 +183,7 @@ class GridRiepAliq(dbglib.DbGrid):
              lambda rs, row: not rs[row][dbc.LIQIVA_ALIQ_TIPO]),
             ("Acquisti CEE:",
              lambda rs, row: rs[row][dbc.LIQIVA_ALIQ_TIPO] == "C"),
-            ("Vendite in split payment:",
+            ("Operazioni in split payment:",
              lambda rs, row: rs[row][dbc.LIQIVA_ALIQ_TIPO] == "S")):
             self.AddTotalsRow(1, label, (dbc.LIQIVA_TOTIMPONIB,
                                          dbc.LIQIVA_TOTIMPOSTA,
@@ -382,13 +382,6 @@ class LiqIvaPanel(aw.Panel):
         wdr.LiqIvaFunc(self)
         cn = self.FindWindowByName
         
-        for c in aw.awu.GetAllChildrens(self):
-            if hasattr(c, 'SetLabel'):
-                l = c.GetLabel()
-                if l.startswith('IVA a deducib') and l.endswith('differita:'):
-                    c.SetLabel('IVA in split payment:')
-                    break
-        
         tipi = {'P': ("Stampa Provvisoria",\
                       """Vengono estratte solo le registrazioni IVA non """
                       """ancora stampate in modo definitivo.\nL'elaborazione"""
@@ -496,7 +489,8 @@ class LiqIvaPanel(aw.Panel):
         
         self.calcdigit = ('vennor1', 'vennor2', 'vencor1', 'vencor2',
                           'venven1', 'venven2', 'acqnor1', 'acqnor2',
-                          'vensos1', 'vensos2', 'ivaind1', 'ivaind2')
+                          'vensos1', 'vensos2', 'ivaind1', 'ivaind2',
+                          'acqsos1', 'acqsos2')
         
         self.calccalc = ('tivper1', 'tivper2', 'docper1', 'docper2')
         
@@ -969,6 +963,8 @@ class LiqIvaPanel(aw.Panel):
         if reg.id in liq._totxreg:
             g.ChangeData(liq._totxreg[reg.id])
             g.SetGridCursor(0,0)
+        else:
+            g.ChangeData([])
     
     def OnTipRegChanged(self, event):
         self.UpdateGridAliqxTip(event.GetSelection())

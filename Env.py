@@ -107,6 +107,8 @@ def LoadPlugin(plugin_name):
     global plugins
     plugin_name = plugin_name.replace('_plugin', '')
     plugin_func = plugin_name
+    if 'fatturapa' in plugin_name:
+        return True
     if not plugin_func.endswith('_plugin'):
         plugin_func += '_plugin'
     m = __import__(plugin_func, {}, {}, False)
@@ -1769,24 +1771,26 @@ class Azienda(object):
             
             
             cls.aliqiva =\
-              [ [ "id",         "INT",    idw, None, "ID Aliquota", "AUTO_INCREMENT" ],
-                [ "codice",     "CHAR",    10, None, "Codice", None ],
-                [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ],
-                [ "tipo",       "CHAR",     1, None, "Tipo aliquota", None ],
-                [ "modo",       "CHAR",     1, None, "Modo applicazione iva (imponibile, non imponibile, esente, fuori campo)", None ],
-                [ "perciva",    "DECIMAL",  5,    2, "Perc.IVA", None ],
-                [ "percind",    "DECIMAL",  5,    2, "Perc.Indeducibilità", None ],
-                [ "pralcc1",    "TINYINT",  1, None, "Flag allegati clienti col.1", None ],
-                [ "pralcc2",    "TINYINT",  1, None, "Flag allegati clienti col.2", None ],
-                [ "pralcc3",    "TINYINT",  1, None, "Flag allegati clienti col.3", None ],
-                [ "pralcc4",    "TINYINT",  1, None, "Flag allegati clienti col.4", None ],
-                [ "pralfc1",    "TINYINT",  1, None, "Flag allegati fornitori col.1", None ],
-                [ "pralfc2",    "TINYINT",  1, None, "Flag allegati fornitori col.2", None ],
-                [ "pralfc3",    "TINYINT",  1, None, "Flag allegati fornitori col.3", None ],
-                [ "pralfc4",    "TINYINT",  1, None, "Flag allegati fornitori col.4", None ],
-                [ "sm11_no",    "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], 
-                [ "datamin",    "DATE",  None, None, "Data di validità minima", None ], 
-                [ "datamax",    "DATE",  None, None, "Data di validità massima", None ], ]
+              [ [ "id",           "INT",    idw, None, "ID Aliquota", "AUTO_INCREMENT" ],
+                [ "codice",       "CHAR",    10, None, "Codice", None ],
+                [ "descriz",      "VARCHAR", 60, None, "Descrizione", None ],
+                [ "tipo",         "CHAR",     1, None, "Tipo aliquota", None ],
+                [ "modo",         "CHAR",     1, None, "Modo applicazione iva (imponibile, non imponibile, esente, fuori campo)", None ],
+                [ "perciva",      "DECIMAL",  5,    2, "Perc.IVA", None ],
+                [ "percind",      "DECIMAL",  5,    2, "Perc.Indeducibilità", None ],
+                [ "pralcc1",      "TINYINT",  1, None, "Flag allegati clienti col.1", None ],
+                [ "pralcc2",      "TINYINT",  1, None, "Flag allegati clienti col.2", None ],
+                [ "pralcc3",      "TINYINT",  1, None, "Flag allegati clienti col.3", None ],
+                [ "pralcc4",      "TINYINT",  1, None, "Flag allegati clienti col.4", None ],
+                [ "pralfc1",      "TINYINT",  1, None, "Flag allegati fornitori col.1", None ],
+                [ "pralfc2",      "TINYINT",  1, None, "Flag allegati fornitori col.2", None ],
+                [ "pralfc3",      "TINYINT",  1, None, "Flag allegati fornitori col.3", None ],
+                [ "pralfc4",      "TINYINT",  1, None, "Flag allegati fornitori col.4", None ],
+                [ "sm11_no",      "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], 
+                [ "datamin",      "DATE",  None, None, "Data di validità minima", None ], 
+                [ "datamax",      "DATE",  None, None, "Data di validità massima", None ], 
+                [ "ftel_natura",  "CHAR",     2, None, "Fattura elettronica: Natura aliquota", None ],
+                [ "ftel_rifnorm", "VARCHAR",255, None, "Fattura elettronica: riferimento normativo", None ], ]
             
             cls.aliqiva_indexes = cls.get_std_indexes()
             
@@ -1839,25 +1843,27 @@ class Azienda(object):
             
             
             cls.modpag =\
-              [ [ "id",         "INT",    idw, None, "ID Mod.pagamento", "AUTO_INCREMENT" ],
-                [ "codice",     "CHAR",    10, None, "Codice", None ],
-                [ "descriz",    "VARCHAR", 60, None, "Descrizione", None ],\
-                [ "tipo",       "CHAR",     1, None, "Tipologia", None ],\
-                [ "congar",     "TINYINT",  1, None, "Flag con o senza garanzia", None ],\
-                [ "contrass",   "TINYINT",  1, None, "Flag contrassegno", None ],\
-                [ "askbanca",   "TINYINT",  1, None, "Flag richiesta banca", None ],\
-                [ "askspese",   "TINYINT",  1, None, "Flag richiesta spese", None ],\
-                [ "modocalc",   "CHAR",     1, None, "Modalità di calcolo Sintetico/Dettagliato", None ],\
-                [ "tipoper",    "CHAR",     1, None, "Tipo periodi", None ],\
-                [ "finemese0",  "TINYINT",  1, None, "Flag fine mese su inizio calcolo", None ],\
-                [ "finemese",   "TINYINT",  1, None, "Flag calcolo fine mese", None ],\
-                [ "numscad",    "INT",      2, None, "Numero di scadenze", None ],\
-                [ "mesi1",      "INT",      2, None, "Num. di mesi alla prima scadenza", None ],\
-                [ "mesitra",    "INT",      2, None, "Num. di mesi tra una scadenza e l'altra", None ],\
-                [ "sc1noeff",   "TINYINT",  1, None, "Esclusione effetto su scadenza 1", None ],\
-                [ "sc1iva",     "TINYINT",  1, None, "Importo della scadenza 1 pari al totale IVA", None ],\
-                [ "sc1perc",    "DECIMAL",  3,    0, "Percentuale di calcolo per scadenza 1", None ],\
-                [ "id_pdcpi",   "INT",    idw, None, "ID cassa/banca se pag.immediato", None ] ]
+              [ [ "id",          "INT",    idw, None, "ID Mod.pagamento", "AUTO_INCREMENT" ],
+                [ "codice",      "CHAR",    10, None, "Codice", None ],
+                [ "descriz",     "VARCHAR", 60, None, "Descrizione", None ],\
+                [ "tipo",        "CHAR",     1, None, "Tipologia", None ],\
+                [ "congar",      "TINYINT",  1, None, "Flag con o senza garanzia", None ],\
+                [ "contrass",    "TINYINT",  1, None, "Flag contrassegno", None ],\
+                [ "askbanca",    "TINYINT",  1, None, "Flag richiesta banca", None ],\
+                [ "askspese",    "TINYINT",  1, None, "Flag richiesta spese", None ],\
+                [ "modocalc",    "CHAR",     1, None, "Modalità di calcolo Sintetico/Dettagliato", None ],\
+                [ "tipoper",     "CHAR",     1, None, "Tipo periodi", None ],\
+                [ "finemese0",   "TINYINT",  1, None, "Flag fine mese su inizio calcolo", None ],\
+                [ "finemese",    "TINYINT",  1, None, "Flag calcolo fine mese", None ],\
+                [ "numscad",     "INT",      2, None, "Numero di scadenze", None ],\
+                [ "mesi1",       "INT",      2, None, "Num. di mesi alla prima scadenza", None ],\
+                [ "mesitra",     "INT",      2, None, "Num. di mesi tra una scadenza e l'altra", None ],\
+                [ "sc1noeff",    "TINYINT",  1, None, "Esclusione effetto su scadenza 1", None ],\
+                [ "sc1iva",      "TINYINT",  1, None, "Importo della scadenza 1 pari al totale IVA", None ],\
+                [ "sc1perc",     "DECIMAL",  3,    0, "Percentuale di calcolo per scadenza 1", None ],\
+                [ "id_pdcpi",    "INT",    idw, None, "ID cassa/banca se pag.immediato", None ],
+                [ "ftel_tippag", "CHAR",     4, None, "Fattura elettronica: Tipo pagamento", None ], 
+                [ "ftel_modpag", "CHAR",     4, None, "Fattura elettronica: Modo pagamento", None ], ]
             for n in range(1,37):
                 col = 'gg' + ("00%d" % n)[-2:]
                 cls.modpag.append([ col, "INT", 4, None,\
@@ -1969,7 +1975,8 @@ class Azienda(object):
                 [ "id_tipevent", "INT",     idw, None, "ID Tipo evento", None ], 
                 [ "event_msg",   "VARCHAR",1024, None, "Messaggio evento", None ], 
                 [ "rptname",     "VARCHAR",  64, None, "Nome report da proporre a fine registrazione", None ], 
-            ]
+                [ "id_cau_si",   "INT",     idw, None, "ID Causale di sola iva da generare automaticamente", None ], 
+                [ "ftel_tipdoc", "CHAR",      4, None, "Fattura elettronica: Tipo documento", None ], ]
             
             cls.set_constraints(cls.TABNAME_CFGCONTAB,
                                 ((cls.TABSETUP_CONSTR_REGIVA,   'id_regiva',   cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -2331,6 +2338,7 @@ class Azienda(object):
                 [ "nocalciva",  "TINYINT",  1, None, "Flag inibizione calcolo dav/iva", None ],
                 [ "sm_link",    "INT",      6, None, "Chiave di raggruppamento registrazioni per spesometro", None ],
                 [ "sm_regrif",  "TINYINT",  1, None, "Flag spesometro registrazione di riferimento per aggregazioni", None ],
+                [ "id_reg_by",  "INT",    idw, None, "ID registrazione di provenienza", None ],
             ]
             
             cls.set_constraints(cls.TABNAME_CONTAB_H,
@@ -2801,8 +2809,10 @@ class Azienda(object):
                 [ "noivaprof",  "TINYINT",  1, None, "Flag accorpamento iva su c/partita se causale non iva in reg. contabile", None ],
                 [ "rptcolli",   "TINYINT",  1, None, "Flag stampa segnacolli", None ],
                 [ "aanotedoc",  "TINYINT",  1, None, "Flag inibizione note documento da anagrafica", None ],
-                [ "desevarif",  "TINYINT",  1, None, "Flag descrizione riga documento evaso basata su dati riferimento", None ]
-            ]
+                [ "desevarif",  "TINYINT",  1, None, "Flag descrizione riga documento evaso basata su dati riferimento", None ],
+                [ "ftel_tipdoc","CHAR",     4, None, "Fattura elettronica: Tipo documento", None ], 
+                [ "ftel_layout","CHAR",    16, None, "Fattura elettronica: Formato di stampa", None ], 
+                [ "ftel_flgddt","TINYINT",  1, None, "Flag per Documento di Trasporto", None ], ]
             
             cls.set_constraints(cls.TABNAME_CFGMAGDOC,
                                 ((cls.TABSETUP_CONSTR_PDCTIP,    'id_pdctip',  cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -2949,7 +2959,14 @@ class Azienda(object):
                 [ "id_docacq",            "INT",       idw, None, "ID documento acquisito da raggruppamento", None ],
                 [ "f_printed",            "TINYINT",     1, None, "Flag documento stampato", None ],
                 [ "f_emailed",            "TINYINT",     1, None, "Flag documento spedito x email", None ],
-                [ "initrasp",             "DATETIME", None, None, "Data e ora inizio trasporto", None ], ]
+                [ "initrasp",             "DATETIME", None, None, "Data e ora inizio trasporto", None ], 
+                [ "ftel_rifamm",          "VARCHAR",    20, None, "Fattura elettronica: rif.amministrativo", None ], 
+                [ "ftel_ordnum",          "VARCHAR",    15, None, "Fattura elettronica: numero ordine acquisto", None ], 
+                [ "ftel_orddat",          "DATE",     None, None, "Fattura elettronica: data ordine acquisto", None ], 
+                [ "ftel_codcig",          "VARCHAR",    15, None, "Fattura elettronica: codice GIG", None ], 
+                [ "ftel_codcup",          "VARCHAR",    15, None, "Fattura elettronica: codice CUP", None ], 
+                [ "ftel_numtrasm",        "INT",         5, None, "Fattura elettronica: numero trasmissione", None ],  
+                [ "ftel_bollovirt",       "DECIMAL",     6,    2, "Fattura elettronica: bollo virtuale", None ], ]
             
             if cls.MAGNOCODEDES:
                 cls.movmag_h += [\
@@ -3168,8 +3185,10 @@ class Azienda(object):
                 [ 'acqcee2',    "DECIMAL",  IVI, DVI, "IVA acquisti cee credito", None ],
                 [ 'tivper1',    "DECIMAL",  IVI, DVI, "IVA totale periodo debito", None ],
                 [ 'tivper2',    "DECIMAL",  IVI, DVI, "IVA totale periodo credito", None ],
-                [ 'vensos1',    "DECIMAL",  IVI, DVI, "IVA vendite sosp. debito", None ],
-                [ 'vensos2',    "DECIMAL",  IVI, DVI, "IVA vendite sosp. credito", None ],
+                [ 'vensos1',    "DECIMAL",  IVI, DVI, "IVA vendite split payment debito", None ],
+                [ 'vensos2',    "DECIMAL",  IVI, DVI, "IVA vendite split payment credito", None ],
+                [ 'acqsos1',    "DECIMAL",  IVI, DVI, "IVA acquisti split payment debito", None ],
+                [ 'acqsos2',    "DECIMAL",  IVI, DVI, "IVA acquisti split payment credito", None ],
                 [ 'ivaind1',    "DECIMAL",  IVI, DVI, "IVA indeducibile debito", None ],
                 [ 'ivaind2',    "DECIMAL",  IVI, DVI, "IVA indeducibile credito", None ],
                 [ 'docper1',    "DECIMAL",  IVI, DVI, "IVA periodo debito", None ],
@@ -3245,7 +3264,8 @@ class Azienda(object):
                 [ "f_nodesrif", "TINYINT",   1, None, "Non genera riga di riferimento al documento raggruppato", "UNSIGNED NOT NULL DEFAULT '0'" ],
                 [ "f_chgmag",   "TINYINT",   1, None, "Flag cambio magazzino su documenti generati", "UNSIGNED NOT NULL DEFAULT '0'" ],
                 [ "id_chgmag",  "INT",     idw, None, "Id magazzino da sostituire su documenti generati", None ], 
-                [ "id_chgpdc",  "INT",     idw, None, "Id sottoconto documenti generati", None ], ]
+                [ "id_chgpdc",  "INT",     idw, None, "Id sottoconto documenti generati", None ], 
+                [ "f_tipopdc",  "CHAR",      1, None, "Flag per clienti da considerare", None ], ]
             
             cls.set_constraints(cls.TABNAME_CFGFTDIF,
                                 ((cls.TABSETUP_CONSTR_CFGMAGDOC, 'id_docgen', cls.TABCONSTRAINT_TYPE_NOACTION),

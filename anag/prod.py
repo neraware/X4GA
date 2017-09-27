@@ -578,7 +578,7 @@ class ProdSearchResultsGrid(ga.SearchResultsGrid):
         if bt.MAGVISPRE:
             cols.append((100, (cn('prod_prezzo'),  "Prezzo",      _PRZ, True)))
         
-        if bt.MAGVISGIA:
+        if False and bt.MAGVISGIA:
             cols.append((100, (cn('prod_totgiac'), "Giacenza",    _QTA, True)))
         
         cols += [( 40, (cn('catart_codice'),  "Cod.",        _STR, True)),
@@ -888,7 +888,7 @@ class ProdPanel(ga.AnagPanel):
         return alib.LinkTableProd
     
     def InitAnagToolbar(self, parent):
-        if bt.MAGVISGIA:
+        if False and bt.MAGVISGIA:
             p = wx.Panel(parent)        
             tb = ga.AnagToolbar(p, wdr.ID_PROD_TOOLBAR, hide_ssv=False)
             ltmag = alib.LinkTableMagazz(p, wdr.ID_GIAC_SELMAG, 'giacmag')
@@ -920,25 +920,39 @@ class ProdPanel(ga.AnagPanel):
                                               self.db_tabname, col)
         fields = fields[:-2]
         fields += self._sqlrelcol
-        if bt.MAGVISGIA:
+        if False and bt.MAGVISGIA:
             fields += ', (%s) ~AS prod_totgiac' % self.GetGiacQuery()
         else:
             fields += ', NULL ~AS prod_totgiac'
         return fields
     
     def GetGiacQuery(self):
-        ppfilt = ""
+#         ppfilt = ""
+#         c = self.FindWindowByName('giacmag')
+#         if c:
+#             magid = c.GetValue()
+#             if magid is not None:
+#                 ppfilt = " AND pp.id_magazz=%s" % magid
+#         giac_query =\
+#         """SELECT SUM(pp.ini+pp.car-pp.sca)
+#              FROM %s pp
+#             WHERE pp.id_prod=%s.id %s""" % (bt.TABNAME_PRODPRO,
+#                                             self.db_tabname,
+#                                             ppfilt)
+        setup = adb.DbTable('cfgsetup')
+        setup.Retrieve('chiave="magdatchi"')
+        flt = 'doc.datdoc>"%s"' % setup.data.Format('%Y-%m-%d')
         c = self.FindWindowByName('giacmag')
         if c:
             magid = c.GetValue()
             if magid is not None:
-                ppfilt = " AND pp.id_magazz=%s" % magid
+                flt = " AND doc.id_magazz=%s" % magid
         giac_query =\
-        """SELECT SUM(pp.ini+pp.car-pp.sca)
-             FROM %s pp
-            WHERE pp.id_prod=%s.id %s""" % (bt.TABNAME_PRODPRO,
-                                            self.db_tabname,
-                                            ppfilt)
+        """SELECT SUM(COALESCE(mov.qta*tpm.aggini, 0) + COALESCE(mov.qta*tpm.aggcar, 0) - COALESCE(mov.qta*tpm.aggsca, 0))
+             FROM movmag_b mov
+             JOIN movmag_h doc ON doc.id=mov.id_doc
+             JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+            WHERE mov.id_prod=prod.id AND %(flt)s""" % locals()
         return giac_query
     
     def OnGruPrezChanged(self, event):
@@ -1205,7 +1219,7 @@ class ProdPanel(ga.AnagPanel):
     
     def GetSqlFilter(self):
         fltexp, fltpar = ga.AnagPanel.GetSqlFilter(self)
-        if bt.MAGVISGIA:
+        if False and bt.MAGVISGIA:
             m = self.FindWindowByName('giacmag')
             if m:
                 c = self.FindWindowByName('sologiac')
@@ -1489,7 +1503,7 @@ class ProdPanel(ga.AnagPanel):
     
     def GetDb2Print(self, rptdef, *args):
         db = dbm.dba.TabProdotti()
-        if bt.MAGVISGIA:
+        if False and bt.MAGVISGIA:
             db.AddField('(%s)' % self.GetGiacQuery(), 'totgiacmag')
             db.Reset()
             d = 'Giac.Tot.'

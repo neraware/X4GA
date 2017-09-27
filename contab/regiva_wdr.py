@@ -705,12 +705,14 @@ ID_ACQCEE1 = 10044
 ID_ACQCEE2 = 10045
 ID_TIVPER1 = 10046
 ID_TIVPER2 = 10047
-ID_VENSOS1 = 10048
-ID_VENSOS2 = 10049
-ID_IVAIND1 = 10050
-ID_IVAIND2 = 10051
-ID_DOCPER1 = 10052
-ID_DOCPER2 = 10053
+ID_DOCPER1 = 10048
+ID_DOCPER2 = 10049
+ID_VENSOS1 = 10050
+ID_VENSOS2 = 10051
+ID_IVAIND1 = 10052
+ID_IVAIND2 = 10053
+ID_ACQSOS1 = 10054
+ID_ACQSOS2 = 10055
 
 def LiqIvaTot1Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -798,40 +800,68 @@ def LiqIvaTot1Func( parent, call_fit = True, set_sizer = True ):
 
     item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
 
-    item24 = wx.StaticText( parent, ID_TEXT, "IVA a deducibilitÃ  differita:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item24 = wx.StaticText( parent, ID_TEXT, "Debito/Credito IVA del periodo:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item2.Add( item24, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item25 = NumCtrl(parent, ID_VENSOS1, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item25.SetName("vensos1")
+    item25 = NumCtrl(parent, ID_DOCPER1, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item25.SetName("docper1"); item25.SetEditable(False)
     item2.Add( item25, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item26 = NumCtrl(parent, ID_VENSOS2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item26.SetName("vensos2")
+    item26 = NumCtrl(parent, ID_DOCPER2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item26.SetName("docper2"); item26.SetEditable(False)
     item2.Add( item26, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item27 = wx.StaticText( parent, ID_TEXT, "IVA non detraibile del periodo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
+
+    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
+
+    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
+
+    item27 = wx.StaticText( parent, ID_TEXT, "IVA su vendite in Split Payment:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item2.Add( item27, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item28 = NumCtrl(parent, ID_IVAIND1, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item28.SetName("ivaind1")
+    item28 = NumCtrl(parent, ID_VENSOS1, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item28.SetName("vensos1")
     item2.Add( item28, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item29 = NumCtrl(parent, ID_IVAIND2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item29.SetName("ivaind2")
+    item29 = NumCtrl(parent, ID_VENSOS2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item29.SetName("vensos2")
     item2.Add( item29, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
-
-    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
-
-    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
-
-    item30 = wx.StaticText( parent, ID_TEXT, "Debito/Credito IVA del periodo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item30 = wx.StaticText( parent, ID_TEXT, "IVA non detraibile del periodo:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item2.Add( item30, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item31 = NumCtrl(parent, ID_DOCPER1, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item31.SetName("docper1"); item31.SetEditable(False)
+    item31 = NumCtrl(parent, ID_IVAIND1, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item31.SetName("ivaind1")
     item2.Add( item31, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item32 = NumCtrl(parent, ID_DOCPER2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item32.SetName("docper2"); item32.SetEditable(False)
+    item32 = NumCtrl(parent, ID_IVAIND2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item32.SetName("ivaind2")
     item2.Add( item32, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
+    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
+
+    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
+
+    item2.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER, 5 )
+
+    item33 = wx.BoxSizer( wx.VERTICAL )
+    
+    item34 = wx.StaticText( parent, ID_TEXT, "IVA su acquisti in Split Payment:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item33.Add( item34, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item35 = wx.StaticText( parent, ID_TEXT, "Ammontare dell'IVA split payment detraibile sugli acquisti, da versare.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item33.Add( item35, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item2.Add( item33, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item36 = NumCtrl(parent, ID_ACQSOS1, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item36.SetName("acqsos1")
+    item2.Add( item36, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+
+    item37 = NumCtrl(parent, ID_ACQSOS2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, validBackgroundColour=NOEDIT_BGCOL); item37.SetName("acqsos2")
+    item2.Add( item37, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+
     item0.Add( item2, 0, 0, 5 )
+
+    item38 = wx.FlexGridSizer( 0, 3, 0, 0 )
+    
+    item38.AddGrowableCol( 0 )
+
+    item0.Add( item38, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )
@@ -840,31 +870,31 @@ def LiqIvaTot1Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_IVAESI1 = 10054
-ID_IVADET2 = 10055
-ID_IVADCP1 = 10056
-ID_IVADCP2 = 10057
-ID_VARPRE1 = 10058
-ID_VARPRE2 = 10059
-ID_INVPRE1 = 10060
-ID_INVPRE2 = 10061
-ID_DOCPRE1 = 10062
-ID_DOCPRE2 = 10063
-ID_CRICOM2 = 10064
-ID_IVADOV1 = 10065
-ID_IVADOV2 = 10066
-ID_CRSDET2 = 10067
-ID_PERCINT = 10068
-ID_INTTRI1 = 10069
-ID_ACCIVA2 = 10070
-ID_VERTRA1 = 10071
-ID_DOCFIN1 = 10072
-ID_DOCFIN2 = 10073
-ID_CICINIZ = 10074
-ID_CICULIQ = 10075
-ID_CICUF24 = 10076
-ID_CICFINE = 10077
-ID_SAVELIQ = 10078
+ID_IVAESI1 = 10056
+ID_IVADET2 = 10057
+ID_IVADCP1 = 10058
+ID_IVADCP2 = 10059
+ID_VARPRE1 = 10060
+ID_VARPRE2 = 10061
+ID_INVPRE1 = 10062
+ID_INVPRE2 = 10063
+ID_DOCPRE1 = 10064
+ID_DOCPRE2 = 10065
+ID_CRICOM2 = 10066
+ID_IVADOV1 = 10067
+ID_IVADOV2 = 10068
+ID_CRSDET2 = 10069
+ID_PERCINT = 10070
+ID_INTTRI1 = 10071
+ID_ACCIVA2 = 10072
+ID_VERTRA1 = 10073
+ID_DOCFIN1 = 10074
+ID_DOCFIN2 = 10075
+ID_CICINIZ = 10076
+ID_CICULIQ = 10077
+ID_CICUF24 = 10078
+ID_CICFINE = 10079
+ID_SAVELIQ = 10080
 
 def LiqIvaTot2Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -1012,7 +1042,7 @@ def LiqIvaTot2Func( parent, call_fit = True, set_sizer = True ):
     item40 = NumCtrl(parent, ID_DOCFIN2, integerWidth=12, fractionWidth=bt.VALINT_DECIMALS, allowNegative=False, validBackgroundColour=NOEDIT_BGCOL); item40.SetName("docfin2"); item40.SetEditable(False)
     item2.Add( item40, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item0.Add( item2, 0, 0, 5 )
+    item0.Add( item2, 0, wx.GROW, 5 )
 
     item0.Add( [ 20, 20 ] , 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -1066,7 +1096,7 @@ def LiqIvaTot2Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANEL_REGISTRI = 10079
+ID_PANEL_REGISTRI = 10081
 
 def LiqIvaRiepRegFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1092,7 +1122,7 @@ def LiqIvaRiepRegFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANEL_RIEPALIQXREG = 10080
+ID_PANEL_RIEPALIQXREG = 10082
 
 def LiqIvaRiepAliqFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1133,8 +1163,8 @@ def LiqIvaWaitFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TIPREG = 10081
-ID_PANEL_RIEPALIQXTIPREG = 10082
+ID_TIPREG = 10083
+ID_PANEL_RIEPALIQXTIPREG = 10084
 
 def LiqIvaRiepTipiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1165,7 +1195,7 @@ def LiqIvaRiepTipiFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_RIEPZONE = 10083
+ID_RIEPZONE = 10085
 
 def LiqIvaRiepiloghiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -1194,13 +1224,13 @@ def LiqIvaRiepiloghiFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_ICONINFO = 10084
-ID_CCHELP_TITLE = 10085
-ID_CCHELP_START = 10086
-ID_CCHELP_DISP = 10087
-ID_LINE = 10088
-ID_STORIACIC = 10089
-ID_USACIC = 10090
+ID_ICONINFO = 10086
+ID_CCHELP_TITLE = 10087
+ID_CCHELP_START = 10088
+ID_CCHELP_DISP = 10089
+ID_LINE = 10090
+ID_STORIACIC = 10091
+ID_USACIC = 10092
 
 def LiqIvaCriComHelpFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -1264,15 +1294,15 @@ def LiqIvaCriComHelpFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TEXTCTRL = 10091
-ID_ANNI = 10092
-ID_PERIODO = 10093
-ID_DEBCRED = 10094
-ID_CREDEB = 10095
-ID_CRICOMSTART = 10096
-ID_CRICOMDISP = 10097
-ID_LIQEFF = 10098
-ID_SALVA = 10099
+ID_TEXTCTRL = 10093
+ID_ANNI = 10094
+ID_PERIODO = 10095
+ID_DEBCRED = 10096
+ID_CREDEB = 10097
+ID_CRICOMSTART = 10098
+ID_CRICOMDISP = 10099
+ID_LIQEFF = 10100
+ID_SALVA = 10101
 
 def ProgrLiqIvaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1403,9 +1433,9 @@ def ProgrLiqIvaFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BUTSTART = 10100
-ID_PANGRIDRIS = 10101
-ID_BUTPRINT = 10102
+ID_BUTSTART = 10102
+ID_PANGRIDRIS = 10103
+ID_BUTPRINT = 10104
 
 def CtrIvaSeqFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1449,9 +1479,9 @@ def CtrIvaSeqFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_YEAR = 10103
-ID_PANGRIDLIQ = 10104
-ID_BUTDELAST = 10105
+ID_YEAR = 10105
+ID_PANGRIDLIQ = 10106
+ID_BUTDELAST = 10107
 
 def LiqEffFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1486,18 +1516,18 @@ def LiqEffFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_REGISTRI = 10106
-ID_GETPRIV = 10107
-ID_GETCOND = 10108
-ID_GETASSO = 10109
-ID_GETENTI = 10110
-ID_GETAZIITA = 10111
-ID_GETAZICEE = 10112
-ID_GETESTERO = 10113
-ID_PANGRIDVEN = 10114
-ID_TOTVALOPER = 10115
-ID_TOTIMPOSTA = 10116
-ID_BUTPRT = 10117
+ID_REGISTRI = 10108
+ID_GETPRIV = 10109
+ID_GETCOND = 10110
+ID_GETASSO = 10111
+ID_GETENTI = 10112
+ID_GETAZIITA = 10113
+ID_GETAZICEE = 10114
+ID_GETESTERO = 10115
+ID_PANGRIDVEN = 10116
+ID_TOTVALOPER = 10117
+ID_TOTIMPOSTA = 10118
+ID_BUTPRT = 10119
 
 def VendAziPrivFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1631,15 +1661,15 @@ def VendAziPrivFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_ACQVEN = 10118
-ID_DETAIL = 10119
-ID_STATI_ITA = 10120
-ID_STATI_CEE = 10121
-ID_STATI_EXT = 10122
-ID_STATO = 10123
-ID_QUALIANAG = 10124
-ID_CONGR_TIPANA = 10125
-ID_PANGRIDFAT = 10126
+ID_ACQVEN = 10120
+ID_DETAIL = 10121
+ID_STATI_ITA = 10122
+ID_STATI_CEE = 10123
+ID_STATI_EXT = 10124
+ID_STATO = 10125
+ID_QUALIANAG = 10126
+ID_CONGR_TIPANA = 10127
+ID_PANGRIDFAT = 10128
 
 def FatturatoContabileClientiFornitFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1784,7 +1814,7 @@ def FatturatoContabileClientiFornitFunc( parent, call_fit = True, set_sizer = Tr
     
     return item0
 
-ID_PANGRIDTSOG = 10127
+ID_PANGRIDTSOG = 10129
 
 def LiqIvaTotTipiSoggettiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )

@@ -39,6 +39,8 @@ class PluginException(Exception):
 
 
 def load_plugin(plugin_name):
+    if plugin_name.startswith('fatturapa'):
+        return None
     import Env
     plugins = Env.plugins
     plugin_name = plugin_name.replace('_plugin', '')
@@ -74,7 +76,7 @@ def get_plugin_names(enabled=True):
         setup.AddFilter('setup.flag="0"')
     setup.AddOrder('setup.importo')
     setup.Retrieve()
-    return [setup.chiave.split('_')[0] for _ in setup]
+    return [setup.chiave.split('_')[0] for _ in setup if not 'fatturapa' in setup.chiave]
 
 
 def init_plugins():
@@ -82,6 +84,8 @@ def init_plugins():
     for name in get_plugin_names():
         if not name in Env.plugins:
             try:
+                if name.startswith('fatturapa'):
+                    continue
                 load_plugin(name)
             except PluginException:
                 cap = "Questa versione di X4GA è obsoleta!"
@@ -103,7 +107,7 @@ def check_new_plugins(read_setup=True):
         _file = _file.replace('\\','/')
         n = _file.rindex('/')
         name = _file[n+1:-4]
-        if not name in Env.plugins:
+        if not name in Env.plugins and not 'fatturapa' in name:
             if read_setup:
                 #test plugin disabilitato sull'azienda
                 setup = Env.adb.DbTable('cfgsetup', 'setup')
