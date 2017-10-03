@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.27', dt.Date(2017, 10, 3), (
+         ("BUG1190",
+         """Corretto file fatture per inclusione numero lettera a fianco a numero documento."""),
+        ),),
+    
     ('1.8.26', None, (
          ("BUG1189",
          """Corretto data entry documenti magazzino per coesistenza ritenuta d'acconto e iva split payment."""),

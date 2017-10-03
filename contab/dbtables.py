@@ -4908,7 +4908,7 @@ class Spesometro2017_AcquistiVendite(adb.DbTable):
         self.AddGroupOn('reg.id', 'reg_id')
         self.AddGroupOn('reg.datreg', 'reg_datreg')
         self.AddGroupOn('reg.datdoc', 'reg_datdoc')
-        self.AddGroupOn('reg.numdoc', 'reg_numdoc')
+        self.AddGroupOn('CONCAT(reg.numdoc, IF(riv.numdocsez IS NULL OR riv.numdocsez="", "", CONCAT("/", riv.numdocsez)))', 'reg_numdoc')
         self.AddGroupOn('reg.numiva', 'reg_numiva')
         self.AddGroupOn('iva.perciva', 'iva_perciva')
         self.AddGroupOn('iva.ftel_natura', 'iva_natura')
