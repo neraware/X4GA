@@ -100,6 +100,8 @@ class GridDocRag(dbglib.DbGridColoriAlternati):
             (120, (cn(mpa, 'descriz'),       "Mod.Pagamento",  _STR, True)),
             ( 40, (cn(des, 'codice'),        "Cod.",           _STR, True)),
             (250, (cn(des, 'descriz'),       "Destinazione",   _STR, True)),
+            (120, (cn(doc, 'ftel_codcig'),   "CIG",            _STR, True)),
+            (120, (cn(doc, 'ftel_codcup'),   "CUP",            _STR, True)),
             )
         
         colmap  = [c[1] for c in cols]
@@ -203,6 +205,8 @@ class GridDocGen(dbglib.DbGrid):
             (160, (cn(ban, 'descriz'),       "Banca appoggio", _STR, True)),
             ( 35, (cn(des, 'codice'),        "Cod.",           _STR, True)),
             (250, (cn(des, 'descriz'),       "Destinazione",   _STR, True)),
+            (120, (cn(doc, 'ftel_codcig'),   "CIG",            _STR, True)),
+            (120, (cn(doc, 'ftel_codcup'),   "CUP",            _STR, True)),
         )
         
         colmap  = [c[1] for c in cols]

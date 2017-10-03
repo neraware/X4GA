@@ -29,6 +29,18 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.26', None, (
+         ("BUG1189",
+         """Corretto data entry documenti magazzino per coesistenza ritenuta d'acconto e iva split payment."""),
+        ),),
+    
+    ('1.8.25', None, (
+         ("BET4232",
+         """Aggiunti i dati identificativi fattura pa in testata dei documenti."""),
+         ("BET4233",
+         """Aggiunti i riferimenti ai codici CIG e CUP in emissione riba, se presenti sui relativi documenti."""),
+        ),),
+    
     ('1.8.24', dt.Date(2017, 9, 27), (
          ("BUG1187",
          """Corretta generazione file fatture, in caso di nota credito venivano messi gli importi negativi."""),

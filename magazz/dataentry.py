@@ -92,6 +92,8 @@ datregsrc2 = today
 datdocsrc1 = datdocsrc2 = None
 magsearch = None
 pdcsearch = None
+codcigsrc = ""
+codcupsrc = ""
 acqsearch = True
 annsearch = True
 ricsearch = True
@@ -474,6 +476,12 @@ class MagazzPanel(aw.Panel,\
             self.Bind(wx.EVT_TEXT, self.OnHeadChanged, cn(name))
         
         for name in 'datrif'.split():
+            self.Bind(EVT_DATECHANGED, self.OnHeadChanged, cn(name))
+        
+        for name in 'ftel_ordnum ftel_rifamm ftel_codcig ftel_codcup'.split():
+            self.Bind(wx.EVT_TEXT, self.OnHeadChanged, cn(name))
+        
+        for name in 'ftel_orddat'.split():
             self.Bind(EVT_DATECHANGED, self.OnHeadChanged, cn(name))
         
         # bind eventi di cambiamento dati accompagnatori
@@ -1083,6 +1091,7 @@ class MagazzPanel(aw.Panel,\
             for name in\
                 """id_pdc id_dest id_modpag id_bancf id_speinc id_agente """\
                 """id_zona id_valuta id_tiplist id_aliqiva desrif numrif """\
+                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup """\
                 """datrif noteint notedoc sconto1 sconto2 sconto3 sconto4 sconto5 sconto6""".split():
                 if name != 'notedoc' or doc.cfgdoc.aanotedoc != 1:
                     setattr(doc, name, cn(name).GetValue())
@@ -1745,10 +1754,10 @@ class MagazzPanel(aw.Panel,\
             return False
         if not self.rowsok:
             return False
-        if (doc.totritacc or 0) != 0 and doc.is_split_payment():
-            msg = """La ritenuta d'acconto non può essere applicata in split payment"""
-            aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
-            return False
+#         if (doc.totritacc or 0) != 0 and doc.is_split_payment():
+#             msg = """La ritenuta d'acconto non può essere applicata in split payment"""
+#             aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
+#             return False
         if len(doc._info.righep0)>0:
             if MsgDialog(self, "Sono presenti righe senza prezzo.\nConfermi l'operazione?", 
                          style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
@@ -2390,6 +2399,7 @@ class MagazzPanel(aw.Panel,\
     def UpdatePanelHead(self):
         names = """id_pdc id_dest id_modpag id_agente id_zona id_valuta id_tiplist id_aliqiva """\
                 """datrif numrif desrif noteint notedoc f_ann f_acq """\
+                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup """\
                 """sconto1 sconto2 sconto3 sconto4 sconto5 sconto6""".split()
         if not self.dbdoc.cfgdoc.askmpnoeff:
             names.append("id_bancf")
@@ -2462,6 +2472,11 @@ class MagazzPanel(aw.Panel,\
         c["noteint"].Enable(en)
         c["notecli"].Enable(False)
         c["notecli2"].Enable(False)
+        c["ftel_ordnum"].Enable(en)
+        c["ftel_orddat"].Enable(en)
+        c["ftel_rifamm"].Enable(en)
+        c["ftel_codcig"].Enable(en)
+        c["ftel_codcup"].Enable(en)
         h = self.FindWindowByName('workzone').GetPageWithText('testa', exact=False)
         for n in range(6):
             l = n+1
@@ -2943,7 +2958,7 @@ class GridSearchDoc(dbglib.DbGridColoriAlternati):
             attr.SetReadOnly(True)
         return attr
     
-    def UpdateGrid(self, td, dr1, dr2, dd1, dd2, mag, pdc, acq, ann):
+    def UpdateGrid(self, td, dr1, dr2, dd1, dd2, mag, pdc, cig, cup, acq, ann):
         """
         Aggiorna i dati della griglia di ricerca.
         Passare:
@@ -2958,12 +2973,14 @@ class GridSearchDoc(dbglib.DbGridColoriAlternati):
         docs = self.dbdocs
         docs.ClearFilters()
         docs.AddFilter("doc.id_tipdoc=%s", td)
-        if mag: docs.AddFilter("doc.id_magazz=%s", mag)
-        if pdc: docs.AddFilter("doc.id_pdc=%s", pdc)
         if dr1: docs.AddFilter("doc.datreg>=%s", dr1)
         if dr2: docs.AddFilter("doc.datreg<=%s", dr2)
         if dd1: docs.AddFilter("doc.datdoc>=%s", dd1)
         if dd2: docs.AddFilter("doc.datdoc<=%s", dd2)
+        if mag: docs.AddFilter("doc.id_magazz=%s", mag)
+        if pdc: docs.AddFilter("doc.id_pdc=%s", pdc)
+        if cig: docs.AddFilter("doc.ftel_codcig=%s", cig)
+        if cup: docs.AddFilter("doc.ftel_codcup=%s", cup)
         if not acq: docs.AddFilter("doc.f_acq IS NULL OR doc.f_acq<>1")
         if not ann: docs.AddFilter("doc.f_ann IS NULL OR doc.f_ann<>1")
         docs.Retrieve()
@@ -2999,6 +3016,8 @@ class DocSearch(wx.Dialog):
                           ('srcdatdoc2', datdocsrc2),
                           ('id_magazz',  magsearch),
                           ('id_pdc',     pdcsearch),
+                          ('srccodcig',  codcigsrc),
+                          ('srccodcup',  codcupsrc),
                           ('acqsearch',  acqsearch),
                           ('annsearch',  annsearch),
                           ('ricordasel', ricsearch),):
@@ -3039,11 +3058,11 @@ class DocSearch(wx.Dialog):
         event.Skip()
     
     def UpdateSearch(self):
-        dr1, dr2, dd1, dd2, magid, pdcid, acq, ann =\
+        dr1, dr2, dd1, dd2, magid, pdcid, codcig, codcup, acq, ann =\
             map(lambda x: self.FindWindowByName(x).GetValue(),
-                'srcdatreg1 srcdatreg2 srcdatdoc1 srcdatdoc2 id_magazz id_pdc acqsearch annsearch'.split())
+                'srcdatreg1 srcdatreg2 srcdatdoc1 srcdatdoc2 id_magazz id_pdc srccodcig srccodcup acqsearch annsearch'.split())
         
-        self.gridsrc.UpdateGrid(self.tdocid, dr1, dr2, dd1, dd2, magid, pdcid, acq, ann)
+        self.gridsrc.UpdateGrid(self.tdocid, dr1, dr2, dd1, dd2, magid, pdcid, codcig, codcup, acq, ann)
         if self.gridsrc.dbdocs.IsEmpty():
             f = self.FindWindowById(wdr.ID_SRCDATREG1)
         else:
@@ -3066,15 +3085,17 @@ class DocSearch(wx.Dialog):
         
         global ricsearch; ricsearch = self.FindWindowByName('ricordasel').IsChecked()
         if ricsearch:
-            dr1, dr2, dd1, dd2, magid, pdcid, acq, ann =\
+            dr1, dr2, dd1, dd2, magid, pdcid, codcig, codcup, acq, ann =\
                 map(lambda x: self.FindWindowByName(x).GetValue(),
-                    'srcdatreg1 srcdatreg2 srcdatdoc1 srcdatdoc2 id_magazz id_pdc acqsearch annsearch'.split())
+                    'srcdatreg1 srcdatreg2 srcdatdoc1 srcdatdoc2 id_magazz id_pdc srccodcig srccodcup acqsearch annsearch'.split())
             global datregsrc1; datregsrc1 = dr1
             global datregsrc2; datregsrc2 = dr2
             global datdocsrc1; datdocsrc1 = dd1
             global datdocsrc2; datdocsrc2 = dd2
-            global pdcsearch;  pdcsearch = pdcid
             global magsearch;  magsearch = magid
+            global pdcsearch;  pdcsearch = pdcid
+            global srccodcig;  srccodcig = codcig
+            global srccodcup;  srccodcup = codcup
             global acqsearch;  acqsearch = acq
             global annsearch;  annsearch = ann
         

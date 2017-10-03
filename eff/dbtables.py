@@ -142,6 +142,16 @@ class Eff(dbc.Pcf):
                             out = 'Rif.to fattura n. '+out
                         else:
                             out = 'Rif.to documenti: '+out
+            dm = adb.DbTable('movmag_h', 'doc')
+            for scad in self.rif:
+                if dm.Retrieve('doc.id_reg=%d' % scad.id_reg) and dm.OneRow():
+                    if dm.ftel_codcig or dm.ftel_codcup:
+                        #trovato documento con cig e/o cup, aggiungo tali riferimenti
+                        if dm.ftel_codcig:
+                            out += (' CIG: %s' % dm.ftel_codcig)
+                        if dm.ftel_codcup:
+                            out += (' CUP: %s' % dm.ftel_codcup)
+                        break
             #impeff = (self.imptot or 0) - (self.imppar or 0)
             #out += " Totale Euro %.2f" % impeff
         return (out or '').ljust(80)

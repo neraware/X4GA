@@ -236,6 +236,8 @@ class FtDif(adb.DbTable):
         
         dr.ClearOrders()
         dr.AddOrder('pdc.descriz')
+        dr.AddOrder('docrag.ftel_codcig')
+        dr.AddOrder('docrag.ftel_codcup')
         if dg._sepmp:
             dr.AddOrder('modpag.descriz')
         if dg._sepdest:
@@ -243,7 +245,7 @@ class FtDif(adb.DbTable):
         dr.AddOrder('docrag.datreg')
         dr.AddOrder('docrag.datdoc')
         dr.AddOrder('docrag.numdoc')
-                
+        
         dr.ClearFilters()
         dr.AddFilter('docrag.id_tipdoc IN (%s)'\
                      % ','.join([str(x) for x in dr._tipidoc]))
@@ -378,6 +380,8 @@ class FtDif(adb.DbTable):
         
         lastmag = None
         lastpdc = None
+        lastcig = None
+        lastcup = None
         lastmp = None
         lastdest = None
         lastrig = None
@@ -414,9 +418,13 @@ class FtDif(adb.DbTable):
             if self.id_chgpdc is not None:
                 id_pdc = self.id_chgpdc
             
+            codcig = (d.ftel_codcig or '').strip()
+            codcup = (d.ftel_codcup or '').strip()
+            
             #test necessità di nuovo documento
 #             if idmag != lastmag or d.id_pdc != lastpdc or sepall or\
             if idmag != lastmag or id_pdc != lastpdc or sepall or\
+               (codcig != lastcig or codcup != lastcup) or \
                (sepmp and d.id_modpag != lastmp) or \
                (sepdest and d.id_dest != lastdest):
                 
@@ -511,6 +519,8 @@ class FtDif(adb.DbTable):
                 lastmag =  dg.id_magazz
 #                 lastpdc =  dr.id_pdc
                 lastpdc =  id_pdc
+                lastcig =  codcig
+                lastcup =  codcup
                 lastmp =   dr.id_modpag
                 lastdest = dr.id_dest
                 
