@@ -16,9 +16,9 @@ import awc.controls.windows as aw
 import awc.controls.dbgrid as dbglib
 from awc.controls.linktable import EVT_LINKTABCHANGED
 
-import fatturapa_magazz.fatturapa_wdr as wdr
-import fatturapa_magazz.dbtables as dbfe
-import fatturapa_cfg.dbtables as dbcfg
+import magazz.fatturapa.fatturapa_wdr as wdr
+import magazz.fatturapa.dbtables as dbfe
+import magazz.fatturapa.dbtables as dbcfg
 
 import Env
 import report as rpt

@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.28', None, (
+         ("BUG1191",
+         """Risolto problema di dipendenza da plugin fatturapa su nuove installazioni."""),
+        ),),
+    
     ('1.8.27', dt.Date(2017, 10, 3), (
          ("BUG1190",
          """Corretto file fatture per inclusione numero lettera a fianco a numero documento."""),

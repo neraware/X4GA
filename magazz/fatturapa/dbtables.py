@@ -6,8 +6,7 @@
 # ------------------------------------------------------------------------------
 
 import magazz.dbtables as dbm
-import anag.dbtables as dba
-import fatturapa_cfg.dbtables as dbcfg
+import stormdb as adb
 
 import Env
 import MySQLdb
@@ -80,7 +79,7 @@ class FatturaElettronica(dbm.DocMag):
     
     def __init__(self, *args, **kwargs):
         dbm.DocMag.__init__(self, *args, **kwargs)
-        self.AddBaseFilter('caunco.ftel_tipdoc IS NOT NULL AND caucon.ftel_tipdoc<>""')
+        self.AddBaseFilter('caucon.ftel_tipdoc IS NOT NULL AND caucon.ftel_tipdoc<>""')
         self.AddBaseFilter('pdc.ftel_codice IS NOT NULL AND pdc.ftel_codice<>""')
         self.Reset()
     
@@ -362,7 +361,7 @@ class FatturaElettronica(dbm.DocMag):
             body_gen_doc = xmldoc.appendElement(body_gen, 'DatiGeneraliDocumento')
             
             xmldoc.appendItems(body_gen_doc, 
-                               (('TipoDocumento',          self.caucon.ftel_tipdoc),
+                               (('TipoDocumento',          self.config.caucon.ftel_tipdoc),
 #                                 ('Causale',                self.config.descriz),  #indicato in v.1.1, ma da errore
                                 ('Divisa',                 'EUR'),
                                 ('Data',                   data(self.datdoc)),
@@ -614,7 +613,7 @@ class FatturaElettronica(dbm.DocMag):
         
         self.ftel_make_style(numprogr)
         
-        p = dbcfg.ProgrMagazz_FatturaElettronica()
+        p = ProgrMagazz_FatturaElettronica()
         p.Retrieve()
         if p.IsEmpty():
             p.CreateNewRow()
@@ -626,9 +625,7 @@ class FatturaElettronica(dbm.DocMag):
     
     def ftel_make_style(self, numprogr):
         path = self.ftel_get_pathname(numprogr)
-#         import fatturapa_magazz.fatturapa_v10_xsl as xsl
-#         open(os.path.join(path, 'fatturapa_v1.0.xsl'), 'w').write(xsl.xsl)
-        import fatturapa_magazz.fatturapa_v12_xsl as xsl
+        import magazz.fatturapa.fatturapa_v12_xsl as xsl
         open(os.path.join(path, 'fatturapa_v1.2.xsl'), 'w').write(xsl.xsl)
 
     def getRowReferenceById(self, id_doc):
@@ -756,3 +753,24 @@ class FTEL_Document(Document):
             item.appendChild(item_content)
             node.appendChild(item)
         return node
+
+
+
+class ProgrMagazz(adb.DbTable):
+    
+    _key = None
+    
+    def __init__(self):
+        if self._key is None:
+            raise Exception, "Classe non istanziabile"
+        adb.DbTable.__init__(self, 'cfgprogr', 'progr')
+        self.AddBaseFilter('progr.codice=%s', self._key)
+        self.Reset()
+    
+    def CreateNewRow(self, *args, **kwargs):
+        adb.DbTable.CreateNewRow(self)
+        self.codice = self._key
+
+
+class ProgrMagazz_FatturaElettronica(ProgrMagazz):
+    _key = 'ftel_numprogr'
