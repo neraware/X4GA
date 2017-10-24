@@ -103,7 +103,7 @@ class SearchResultsGrid(dbglib.DbGridColoriAlternati):
         
         dbglib.DbGridColoriAlternati.__init__(self, parent, id, 
                                               size=parent.GetClientSizeTuple(),
-                                              tableClass=self.tableClass,
+                                              tableClass=kwargs.get('tableClass', self.tableClass),
                                               style=0)
         self.tabalias = table
         

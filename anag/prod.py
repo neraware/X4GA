@@ -578,7 +578,7 @@ class ProdSearchResultsGrid(ga.SearchResultsGrid):
         if bt.MAGVISPRE:
             cols.append((100, (cn('prod_prezzo'),  "Prezzo",      _PRZ, True)))
         
-        if False and bt.MAGVISGIA:
+        if bt.MAGVISGIA:
             cols.append((100, (cn('prod_totgiac'), "Giacenza",    _QTA, True)))
         
         cols += [( 40, (cn('catart_codice'),  "Cod.",        _STR, True)),
@@ -888,7 +888,7 @@ class ProdPanel(ga.AnagPanel):
         return alib.LinkTableProd
     
     def InitAnagToolbar(self, parent):
-        if False and bt.MAGVISGIA:
+        if bt.MAGVISGIA:
             p = wx.Panel(parent)        
             tb = ga.AnagToolbar(p, wdr.ID_PROD_TOOLBAR, hide_ssv=False)
             ltmag = alib.LinkTableMagazz(p, wdr.ID_GIAC_SELMAG, 'giacmag')
@@ -920,7 +920,7 @@ class ProdPanel(ga.AnagPanel):
                                               self.db_tabname, col)
         fields = fields[:-2]
         fields += self._sqlrelcol
-        if False and bt.MAGVISGIA:
+        if bt.MAGVISGIA:
             fields += ', (%s) ~AS prod_totgiac' % self.GetGiacQuery()
         else:
             fields += ', NULL ~AS prod_totgiac'
@@ -948,7 +948,7 @@ class ProdPanel(ga.AnagPanel):
             if magid is not None:
                 flt = " AND doc.id_magazz=%s" % magid
         giac_query =\
-        """SELECT SUM(COALESCE(mov.qta*tpm.aggini, 0) + COALESCE(mov.qta*tpm.aggcar, 0) - COALESCE(mov.qta*tpm.aggsca, 0))
+        """SELECT SUM(mov.qta*tpm.aggini+mov.qta*tpm.aggcar-mov.qta*tpm.aggsca)
              FROM movmag_b mov
              JOIN movmag_h doc ON doc.id=mov.id_doc
              JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
@@ -1082,8 +1082,9 @@ class ProdPanel(ga.AnagPanel):
         return p
     
     def OnUpdateButtonRicalcCP(self, event):
-        self.UpdateButtonRicalcCP()
-        event.Skip()
+        if self.acceptDataChanged:
+            self.UpdateButtonRicalcCP()
+            event.Skip()
     
     def OnTestImmagine(self, event):
         self.TestImmagine()
@@ -1219,7 +1220,7 @@ class ProdPanel(ga.AnagPanel):
     
     def GetSqlFilter(self):
         fltexp, fltpar = ga.AnagPanel.GetSqlFilter(self)
-        if False and bt.MAGVISGIA:
+        if bt.MAGVISGIA:
             m = self.FindWindowByName('giacmag')
             if m:
                 c = self.FindWindowByName('sologiac')

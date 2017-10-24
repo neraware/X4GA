@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.29', None, (
+         ("BET4234",
+         """Riattivata la visualizzazione delle giacenze (ora calcolate da movimentazione) in manutenzione prodotti, se abilitata in setup azienda."""),
+        ),),
+    
     ('1.8.28', None, (
          ("BUG1191",
          """Risolto problema di dipendenza da plugin fatturapa su nuove installazioni."""),
