@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.30', None, (
+         ("BET4236",
+         """Ridimensionata pannello mastro in schede sottoconti."""),
+        ),),
+    
+    ('1.8.30', None, (
+         ("BET4235",
+         """Warning presenza acconti disponibili in selezione anagrafica su dataentry documenti magazzino."""),
+        ),),
+    
     ('1.8.29', None, (
          ("BET4234",
          """Riattivata la visualizzazione delle giacenze (ora calcolate da movimentazione) in manutenzione prodotti, se abilitata in setup azienda."""),

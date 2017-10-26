@@ -762,7 +762,7 @@ def DialogFunc( parent, call_fit = True, set_sizer = True ):
 
     item0.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item59 = WorkZoneNotebook( parent, ID_WORKZONE, wx.DefaultPosition, [600,400], 0 )
+    item59 = WorkZoneNotebook( parent, ID_WORKZONE, wx.DefaultPosition, [1000,400], 0 )
     item58 = item59
     
     item60 = wx.Panel( item59, -1 )
@@ -2502,7 +2502,7 @@ def BodyStatFunc( parent, call_fit = True, set_sizer = True ):
     item14.SetForegroundColour( wx.BLUE )
     item13.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item15 = wx.Panel( parent, ID_PANGRIDLIST, wx.DefaultPosition, [400,120], wx.SUNKEN_BORDER )
+    item15 = wx.Panel( parent, ID_PANGRIDLIST, wx.DefaultPosition, [300,120], wx.SUNKEN_BORDER )
     item13.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item13.AddGrowableCol( 0 )
@@ -2686,7 +2686,7 @@ def BodyStatDatiProd( parent, call_fit = True, set_sizer = True ):
     item37 = wx.StaticText( parent, ID_TEXT, "Note:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item36.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.TOP, 5 )
 
-    item38 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], wx.TE_MULTILINE )
+    item38 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [250,-1], wx.TE_MULTILINE )
     item38.SetName( "datiprod_note" )
     item36.Add( item38, 0, wx.GROW|wx.RIGHT|wx.TOP, 5 )
 

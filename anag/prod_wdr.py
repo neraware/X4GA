@@ -1078,12 +1078,12 @@ def ProdMastroFunc( parent, call_fit = True, set_sizer = True ):
     item1 = item2
     
     item3 = wx.Panel( item2, -1 )
-    ProdMastro1Func(item3, False)
-    item2.AddPage( item3, "Selezioni" )
+    ProdMastro2Func(item3, False)
+    item2.AddPage( item3, "Movimenti" )
 
     item4 = wx.Panel( item2, -1 )
-    ProdMastro2Func(item4, False)
-    item2.AddPage( item4, "Movimenti" )
+    ProdMastro1Func(item4, False)
+    item2.AddPage( item4, "Selezioni" )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -1592,12 +1592,12 @@ def ProdMastroEvaFunc( parent, call_fit = True, set_sizer = True ):
     item1 = item2
     
     item3 = wx.Panel( item2, -1 )
-    ProdMastroEvaFunc1(item3, False)
-    item2.AddPage( item3, "Selezioni" )
+    ProdMastroEvaFunc2(item3, False)
+    item2.AddPage( item3, "Movimenti" )
 
     item4 = wx.Panel( item2, -1 )
-    ProdMastroEvaFunc2(item4, False)
-    item2.AddPage( item4, "Movimenti" )
+    ProdMastroEvaFunc1(item4, False)
+    item2.AddPage( item4, "Selezioni" )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 

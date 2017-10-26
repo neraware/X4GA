@@ -132,7 +132,7 @@ class PdcProdHistoryGrid(dbglib.DbGrid):
         cols = []
         a = cols.append
         a(( 35, (cn(mag, "codice"),  "Mag.",      _STR, True)))
-        a((100, (cn(tpd, "descriz"), "Documento", _STR, True)))
+        a(( 70, (cn(tpd, "descriz"), "Doc.",      _STR, True)))
         a(( 40, (cn(doc, "numdoc"),  "Num.",      _STR, True)))
         a(( 80, (cn(doc, "datdoc"),  "Data doc.", _DAT, True)))
         a(( 35, (cn(tpm, "codice"),  "Mov.",      _STR, True)))
@@ -1570,6 +1570,8 @@ class MagazzPanel(aw.Panel,\
         a.GetForPdc(doc.id_pdc)
         cn = self.FindWindowByName
         cn('accontodisp').SetValue((a.acconto_disponib or 0))
+        if (a.acconto_disponib or 0) > 0:
+            aw.awu.MsgDialog(self, "Ci sono acconti disponibili per l'anagrafica", style=wx.ICON_INFORMATION)
     
     def EnableButFido(self, doc=None):
         if doc is None:

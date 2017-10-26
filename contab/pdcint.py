@@ -128,7 +128,7 @@ class GridMastro(dbglib.DbGridColoriAlternati):
             ( 50, (cn(pcp, "codice"),    "Cod.",      _STR, True )),
             (220, (cn(pcp, "descriz"),   "C/Partita", _STR, True )),
             ( 35, (cn(reg, "esercizio"), "Es.",       _STR, True )),
-            (240, (cn(mov, "note"),      "Note",      _STR, True )),
+            (500, (cn(mov, "note"),      "Note",      _STR, True )),
             (  1, (cn(reg, "id"),        "#reg",      _STR, True )),
             (  1, (cn(mov, "id"),        "#mov",      _STR, True )),
         )                                           

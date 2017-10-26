@@ -374,7 +374,9 @@ def DatiContabFunc( parent, call_fit = True, set_sizer = True ):
 
     item19 = wx.Panel( parent, ID_PANEL, wx.DefaultPosition, [880,160], 0 )
     item19.SetName( "daticontab_other" )
-    item0.Add( item19, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item0.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item0.Add( [ 950, 1 ] , 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
     item0.AddGrowableCol( 0 )
 
