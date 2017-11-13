@@ -34,6 +34,7 @@ from eff import effetti_wdr as wdr
 
 import contab
 from contab.pcf import PcfDialog
+from cfg.dbtables import ProgrEsercizio
 
 import report as rpt
 
@@ -826,6 +827,8 @@ class EmiEffettiPanel(wx.Panel):
         #dopo la scittura della registrazione
         pcf = adb.DbTable(bt.TABNAME_PCF, "pcf")
         
+        ese = ProgrEsercizio()
+        
         #contabilizzazione
         cok = True
         reg = dbe.dbc.DbRegCon()
@@ -834,12 +837,13 @@ class EmiEffettiPanel(wx.Panel):
                 #testata
                 reg.Reset()
                 reg.CreateNewRow()
-                reg.esercizio = datdist.year
+                #datdist.year
                 reg.id_caus = idcaucont
                 reg.tipreg = reg.config.tipo
                 reg.datreg = datdist
                 if bt.EFFCONSCA:
                     reg.datreg = eff.datscad
+                reg.esercizio = ese.GetEsercizioDaData(reg.datreg)
                 #dettaglio: riga1=cliente, riga2=conto effetti
                 body = reg.body
                 for riga, cpa, ccp, segno in\

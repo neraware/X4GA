@@ -30,6 +30,11 @@ import mx.DateTime as dt
 history = (
            
     ('1.8.30', None, (
+         ("BUG1192",
+         """Corretto l'esercizio delle registrazioni riba contabilizzate in base a data scadenza."""),
+        ),),
+    
+    ('1.8.30', None, (
          ("BET4236",
          """Ridimensionata pannello mastro in schede sottoconti."""),
         ),),
