@@ -581,6 +581,9 @@ class ProdSearchResultsGrid(ga.SearchResultsGrid):
         if bt.MAGVISGIA:
             cols.append((100, (cn('prod_totgiac'), "Giacenza",    _QTA, True)))
         
+        if bt.MAGVISDIS:
+            cols.append((100, (cn('prod_totgiac')+1, "Disponib.",   _QTA, True)))
+        
         cols += [( 40, (cn('catart_codice'),  "Cod.",        _STR, True)),
                  (120, (cn('catart_descriz'), "Categoria",   _STR, True)),
                  ( 40, (cn('gruart_codice'),  "Cod.",        _STR, True)),
@@ -914,16 +917,24 @@ class ProdPanel(ga.AnagPanel):
         return cmd, par
     
     def GetSqlColumns(self):
+        
         fields = ''
         for col,ctr in self.db_datalink:
             fields += '%s.%s AS "%s_%s", ' % (self.db_tabname, col, 
                                               self.db_tabname, col)
         fields = fields[:-2]
         fields += self._sqlrelcol
+        
         if bt.MAGVISGIA:
             fields += ', (%s) ~AS prod_totgiac' % self.GetGiacQuery()
         else:
             fields += ', NULL ~AS prod_totgiac'
+        
+        if bt.MAGVISDIS:
+            fields += ', (%s) ~AS prod_totdisp' % self.GetDispQuery()
+        else:
+            fields += ', NULL ~AS prod_totdisp'
+        
         return fields
     
     def GetGiacQuery(self):
@@ -946,7 +957,7 @@ class ProdPanel(ga.AnagPanel):
         if c:
             magid = c.GetValue()
             if magid is not None:
-                flt = " AND doc.id_magazz=%s" % magid
+                flt += " AND doc.id_magazz=%s" % magid
         giac_query =\
         """SELECT SUM(mov.qta*tpm.aggini+mov.qta*tpm.aggcar-mov.qta*tpm.aggsca)
              FROM movmag_b mov
@@ -954,6 +965,63 @@ class ProdPanel(ga.AnagPanel):
              JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
             WHERE mov.id_prod=prod.id AND %(flt)s""" % locals()
         return giac_query
+    
+    def GetDispQuery(self):
+        setup = adb.DbTable('cfgsetup')
+        setup.Retrieve('chiave="magdatchi"')
+        flt = 'doc.datdoc>"%s"' % setup.data.Format('%Y-%m-%d')
+        c = self.FindWindowByName('giacmag')
+        if c:
+            magid = c.GetValue()
+            if magid is not None:
+                flt += " AND doc.id_magazz=%s" % magid
+        disp_query = ("""(
+(
+SELECT COALESCE(SUM(mov.qta*tpm.aggini+mov.qta*tpm.aggcar-mov.qta*tpm.aggsca) ,0)
+  FROM movmag_b mov
+  JOIN movmag_h doc ON doc.id=mov.id_doc
+  JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+ WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND (tpm.aggini<>0 OR tpm.aggcar<>0 OR tpm.aggsca<>0) AND (%(flt)s)
+)
+
+-
+
+(
+SELECT COALESCE( SUM(mov.qta-
+
+       (SELECT COALESCE(SUM(eva.qta),0)
+          FROM movmag_b eva
+         WHERE eva.id_moveva=mov.id
+       )
+       
+      ) ,0)
+      FROM movmag_b mov
+      JOIN movmag_h doc ON doc.id=mov.id_doc
+      JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordcli=1 AND (%(flt)s)
+)
+
+
++
+
+(
+SELECT COALESCE( SUM(mov.qta-
+
+       (SELECT COALESCE(SUM(eva.qta),0)
+          FROM movmag_b eva
+         WHERE eva.id_moveva=mov.id
+       )
+       
+      ) ,0)
+      FROM movmag_b mov
+      JOIN movmag_h doc ON doc.id=mov.id_doc
+      JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordfor=1 AND (%(flt)s)
+)
+
+)""" % locals()).replace('\n', ' ')
+        
+        return disp_query
     
     def OnGruPrezChanged(self, event):
         self.UpdateButtonRicalcCP()

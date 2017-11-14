@@ -188,17 +188,7 @@ class LinkTableProd(LinkTable, LinkTableHideSearchMixin):
                         prod.costo,
                         prod.prezzo"""
                     
-        if bt.MAGVISGIA:
-#             tabprogr = bt.TABNAME_PRODPRO
-#             if self.ppmag:
-#                 testmag = ' AND pp.id_magazz=%d' % self.ppmag
-#             else:
-#                 testmag = ''
-#             out += ',\n'
-#             out += ("""(SELECT SUM(IF(pp.ini IS NULL,0,pp.ini)+IF(pp.car IS NULL,0,pp.car)-IF(pp.sca IS NULL,0,pp.sca)) 
-#                           FROM %(tabprogr)s pp
-#                          WHERE pp.id_prod=prod.id %(testmag)s) 'giac', 
-#                         NULL AS magid""" % locals()).replace('\n', ' ')        
+        if bt.MAGVISGIA or bt.MAGVISDIS:
             
             setup = adb.DbTable('cfgsetup')
             setup.Retrieve('chiave="magdatchi"')
@@ -207,6 +197,7 @@ class LinkTableProd(LinkTable, LinkTableHideSearchMixin):
             if self.ppmag:
                 flt += ' AND doc.id_magazz=%d' % self.ppmag
             
+        if bt.MAGVISGIA:
             #determino giacenza
             out += ',\n'
             out += ("""(
@@ -214,9 +205,10 @@ SELECT SUM(COALESCE(mov.qta*tpm.aggini, 0) +  COALESCE(mov.qta*tpm.aggcar, 0) - 
   FROM movmag_b mov
   JOIN movmag_h doc ON doc.id=mov.id_doc
   JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
- WHERE mov.id_prod=prod.id AND %(flt)s AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1)
+ WHERE mov.id_prod=prod.id AND %(flt)s AND (tpm.aggini<>0 OR tpm.aggcar<>0 OR tpm.aggsca<>0) AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1)
 )""" % locals()).replace('\n', ' ')        
             
+        if bt.MAGVISDIS:
             #determino disponibilità
             out += ',\n'
             out += ("""(
@@ -242,7 +234,7 @@ SELECT COALESCE(SUM(mov.qta-COALESCE(
       FROM movmag_b mov
       JOIN movmag_h doc ON doc.id=mov.id_doc
       JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
-      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordcli=1
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordcli=1 AND %(flt)s
 )
 
 
@@ -260,7 +252,7 @@ SELECT COALESCE(SUM(mov.qta-COALESCE(
       FROM movmag_b mov
       JOIN movmag_h doc ON doc.id=mov.id_doc
       JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
-      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordfor=1
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordfor=1 AND %(flt)s
 )
 
 )""" % locals()).replace('\n', ' ')
@@ -322,6 +314,8 @@ SELECT COALESCE(SUM(mov.qta-COALESCE(
         
         if bt.MAGVISGIA:
             out.append((120, ( 7, "Giacenza",  _QTA, False)))
+        
+        if bt.MAGVISDIS:
             out.append((120, ( 8, "Disponib",  _QTA, False)))
         
         return out
