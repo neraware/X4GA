@@ -963,25 +963,27 @@ class ProdPanel(ga.AnagPanel):
              FROM movmag_b mov
              JOIN movmag_h doc ON doc.id=mov.id_doc
              JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
-            WHERE mov.id_prod=prod.id AND %(flt)s""" % locals()
+            WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND (tpm.aggini<>0 OR tpm.aggcar<>0 OR tpm.aggsca<>0) AND %(flt)s""" % locals()
         return giac_query
     
     def GetDispQuery(self):
         setup = adb.DbTable('cfgsetup')
         setup.Retrieve('chiave="magdatchi"')
-        flt = 'doc.datdoc>"%s"' % setup.data.Format('%Y-%m-%d')
+        flt_gia = 'doc.datdoc>"%s"' % setup.data.Format('%Y-%m-%d')
+        flt_ord = 'TRUE'
         c = self.FindWindowByName('giacmag')
         if c:
             magid = c.GetValue()
             if magid is not None:
-                flt += " AND doc.id_magazz=%s" % magid
+                flt_gia += " AND doc.id_magazz=%s" % magid
+                flt_ord += " AND doc.id_magazz=%s" % magid
         disp_query = ("""(
 (
 SELECT COALESCE(SUM(mov.qta*tpm.aggini+mov.qta*tpm.aggcar-mov.qta*tpm.aggsca) ,0)
   FROM movmag_b mov
   JOIN movmag_h doc ON doc.id=mov.id_doc
   JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
- WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND (tpm.aggini<>0 OR tpm.aggcar<>0 OR tpm.aggsca<>0) AND (%(flt)s)
+ WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND (tpm.aggini<>0 OR tpm.aggcar<>0 OR tpm.aggsca<>0) AND (%(flt_gia)s)
 )
 
 -
@@ -998,7 +1000,7 @@ SELECT COALESCE( SUM(mov.qta-
       FROM movmag_b mov
       JOIN movmag_h doc ON doc.id=mov.id_doc
       JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
-      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordcli=1 AND (%(flt)s)
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordcli=1 AND (%(flt_ord)s)
 )
 
 
@@ -1016,7 +1018,7 @@ SELECT COALESCE( SUM(mov.qta-
       FROM movmag_b mov
       JOIN movmag_h doc ON doc.id=mov.id_doc
       JOIN cfgmagmov tpm ON tpm.id=mov.id_tipmov
-      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordfor=1 AND (%(flt)s)
+      WHERE mov.id_prod=prod.id AND (mov.f_ann IS NULL OR mov.f_ann<>1) AND (doc.f_ann IS NULL OR doc.f_ann<>1) AND tpm.aggordfor=1 AND (%(flt_ord)s)
 )
 
 )""" % locals()).replace('\n', ' ')
