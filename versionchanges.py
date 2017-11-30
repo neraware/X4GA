@@ -29,7 +29,19 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.8.30', None, (
+    ('1.8.34', dt.Date(2017, 11, 30), (
+         ("BET4238",
+         """Accorciata la descrizione del riferimento fattura in emissione riba per spazio cig/cup."""),
+        ),),
+    
+    ('1.8.33', None, (
+         ("BUG1193",
+         """Corretta la visualizzazione della giacenza in gestione prodotti."""),
+         ("BET4237",
+         """Visualizza disponibilità in gestione prodotti."""),
+        ),),
+    
+    ('1.8.32', None, (
          ("BUG1192",
          """Corretto l'esercizio delle registrazioni riba contabilizzate in base a data scadenza."""),
         ),),

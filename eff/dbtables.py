@@ -117,7 +117,7 @@ class Eff(dbc.Pcf):
                     #non trovo riferimenti (partita manuale?) o solo uno
                     #quindi la partita si riferisce ad una unica fattura
                     #descrivo con i dati della partita
-                    out = "Rif.to Fattura n. %s del %s"\
+                    out = "Fattura %s del %s"\
                         % (self.numdoc, self.datdoc.Format().split()[0])
                 else:
                     #no riferimenti, no numdoc/datdoc: non posso descrivere
@@ -139,9 +139,9 @@ class Eff(dbc.Pcf):
                         n += 1
                     if out:
                         if n == 1:
-                            out = 'Rif.to fattura n. '+out
+                            out = 'Fattura '+out
                         else:
-                            out = 'Rif.to documenti: '+out
+                            out = 'Fatture: '+out
             dm = adb.DbTable('movmag_h', 'doc')
             for scad in self.rif:
                 if dm.Retrieve('doc.id_reg=%d' % scad.id_reg) and dm.OneRow():
