@@ -1856,3 +1856,35 @@ class DataLinkZonaCellEditor(gred.DataLinkCellEditor):
 
 class LinkTabZonaAttr(dbg.LinkTabAttr):
     editorclass = DataLinkZonaCellEditor
+
+
+# ------------------------------------------------------------------------------
+
+
+class LinkTableTipoSollecitoPagamento(LinkTable):
+    
+    def __init__(self, parent, id, name=None, **kwargs):
+        LinkTable.__init__(self, parent, id, **kwargs)
+        if name:
+            self.SetName(name)
+        self.SetNameAlias()
+        from anag.tipsolpag import TipSolPagDialog
+        self.cardclass = TipSolPagDialog
+    
+    def SetNameAlias(self):
+        self.db_name = bt.TABNAME_TIPSOLPAG
+        self.db_alias = 'tipsolpag'
+
+
+# ------------------------------------------------------------------------------
+
+
+class DataLinkTipoSollecitoPagamentoCellEditor(gred.DataLinkCellEditor):
+    baseclass = LinkTableTipoSollecitoPagamento
+
+
+# ------------------------------------------------------------------------------
+
+
+class LinkTabTipoSollecitoPagamentoAttr(dbg.LinkTabAttr):
+    editorclass = DataLinkTipoSollecitoPagamentoCellEditor
