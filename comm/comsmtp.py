@@ -186,7 +186,8 @@ class SendMail(object):
                     smtp.starttls()
                     smtp.ehlo()
                 if not smtp.login(self.AuthUser, self.AuthPswd):
-                    raise AuthFailedException, 'Autenticazione fallita'
+                    self.error = 'Autenticazione fallita'
+                    raise AuthFailedException, self.error
             smtp.sendmail(self.SendFrom, self.SendTo, self.msg.as_string() )
             smtp.close()
         except Exception, e:

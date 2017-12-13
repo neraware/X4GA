@@ -445,6 +445,24 @@ class XFrame(aw.Frame):
                         self.Bind(wx.EVT_MENU, self.OnMenuExt, id=mid)
                         self.ftdif.append((mid, f.id, f.codice, f.descriz))
         
+        if Env.Azienda.BaseTab.GESSOLPAG:
+            
+            mod = menubar.FindItemById(ID_MENUTABSCAD)
+            if mod:
+                mod = mod.GetSubMenu()
+                if mod:
+                    mid = wx.NewId()
+                    mod.Append(mid, 'Testi solleciti di pagamento')
+                    self.Bind(wx.EVT_MENU, self.OnTipiSollecitiPagamento, id=mid)
+            
+            mod = menubar.FindItemById(ID_SCADGEST)
+            if mod:
+                mod = mod.GetSubMenu()
+                if mod:
+                    mid = wx.NewId()
+                    mod.Append(mid, 'Solleciti di pagamento')
+                    self.Bind(wx.EVT_MENU, self.OnSollecitiPagamento, id=mid)
+        
         #handlers menu
         for func, cid in (
             
@@ -1805,7 +1823,14 @@ class XFrame(aw.Frame):
     def OnChangeIva(self, event):
         from strumenti.changeiva import ChangeIvaFrame
         self.LaunchFrame(ChangeIvaFrame)            
-            
+        
+    def OnTipiSollecitiPagamento(self, event):
+        from anag.tipsolpag import TipSolPagFrame
+        self.LaunchFrame(TipSolPagFrame)
+    
+    def OnSollecitiPagamento(self, event):
+        from contab.solpag import SollecitiPagamentoFrame
+        self.LaunchFrame(SollecitiPagamentoFrame)
     
     def OnHelp(self, event):
         a = wx.GetApp()

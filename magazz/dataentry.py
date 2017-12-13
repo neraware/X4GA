@@ -86,6 +86,8 @@ import contab.pdcint as pdcint
 
 from awc.controls.attachbutton import AttachTableList
 
+from cfg.dbtables import PermessiUtenti
+
 today = Env.Azienda.Esercizio.dataElab
 datregsrc1 = today-today.day+1
 datregsrc2 = today
@@ -1946,9 +1948,8 @@ class MagazzPanel(aw.Panel,\
             if cfg.RowsCount()>0:
                 flt = "id NOT IN (%s)" % ','.join([str(c.id_tdoctra) for c in cfg])
         #testo diritti utenti su causali magazzino
-        from cfg.dbtables import PermessiUtenti
         p = PermessiUtenti(ambito='caumagazz')
-        p.Retrieve('perm.id_utente=%s AND perm.scrivi=1',
+        p.Retrieve('perm.id_utente=%s AND (perm.leggi=1 OR perm.scrivi=1)',
                    Env.Azienda.Login.userid)
         if not p.IsEmpty():
             if flt:
@@ -2171,10 +2172,16 @@ class MagazzPanel(aw.Panel,\
     def UpdateButtons(self, enable = True):
         status = self.status
         doc = self.dbdoc
+        p = PermessiUtenti(ambito='caumagazz')
+        p.Retrieve('perm.id_utente=%s AND perm.id_rel=%s AND perm.scrivi=1',
+                   Env.Azienda.Login.userid,
+                   doc.cfgdoc.id)
+        user_canedit = not p.IsEmpty()
         self.controls["butnew"].Enable(enable and\
                                        self.canedit and\
                                        self.canins and\
                                        self.cauid is not None and\
+                                       user_canedit and\
                                        status == STATUS_SELCAUS)
         
         self.controls["butsrc"].Enable(enable and\
@@ -2184,6 +2191,7 @@ class MagazzPanel(aw.Panel,\
         self.controls["butsave"].Enable(enable and\
                                         status == STATUS_EDITING and\
                                         self._headok and\
+                                        user_canedit and\
                                         self._scadok)
         
         self.controls["butprint"].Enable(enable and\
@@ -2194,10 +2202,12 @@ class MagazzPanel(aw.Panel,\
                                          doc.cfgdoc.IsPrintable())
         
         self.controls["butmodif"].Enable(enable and\
+                                         user_canedit and\
                                          status == STATUS_DISPLAY)
         
         self.controls["butacquis"].Enable(enable and\
                                           status == STATUS_EDITING and\
+                                          user_canedit and\
                                           doc.id_pdc is not None and\
                                           doc.cfgdoc.HasAcquisDocs())
         
@@ -2209,6 +2219,7 @@ class MagazzPanel(aw.Panel,\
         self.controls["butdel"].Enable(enable and\
                                        self.candelete and\
                                        status == STATUS_EDITING and\
+                                       user_canedit and\
                                        self.dbdoc.id is not None)
         
         self.controls["butattach"].Enable(enable and status in (STATUS_DISPLAY,

@@ -738,14 +738,17 @@ class CliForEmailsPanel(wx.Panel):
         ema = adb.DbTable(bt.TABNAME_DOCSEMAIL, 'emails')
         if not ema.Get(email_id) or not ema.OneRow():
             return
-        tmpfile = tempfile.NamedTemporaryFile(suffix='.pdf')
-        tmpname = tmpfile.name
-        tmpfile.close()
-        wx.GetApp().AppendTempFile(tmpname)
-        tmpfile = open(tmpname, 'wb')
-        tmpfile.write(ema.documento)
-        tmpfile.close()
-        os.startfile(tmpname)
+        if not ema.documento:
+            aw.awu.MsgDialog(self, "Nessun documento allegato alla mail", style=wx.ICON_INFORMATION)
+        else:
+            tmpfile = tempfile.NamedTemporaryFile(suffix='.pdf')
+            tmpname = tmpfile.name
+            tmpfile.close()
+            wx.GetApp().AppendTempFile(tmpname)
+            tmpfile = open(tmpname, 'wb')
+            tmpfile.write(ema.documento)
+            tmpfile.close()
+            os.startfile(tmpname)
     
     def OnPreview(self, event):
         self.PreviewMessage(event.GetEmailId())

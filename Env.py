@@ -1061,6 +1061,8 @@ class Azienda(object):
         MAGEXTRAVET = False  #flag attivazione campi extra sui vettori
         
         EFFCONSCA = False    #flag contabilizzazione effetti in base a data di scadenza
+        GESSOLPAG = False    #flag gestione solleciti di pagamento
+        GGSSOLPAG = 30       #giorni scadenza x solleciti di pagamento
         
         #variabili per la gestione dei listini
         MAGNUMSCO = 3        #numero di sconti gestiti
@@ -1677,6 +1679,13 @@ class Azienda(object):
         TABSETUP_CONSTR_RECAPITI = []
         TABVOICE_RECAPITI = {1: ['recapito', ['il', 'un', 'del', 'dal']],
                              2: ['recapiti', ['i', 'dai', 'dai']]}
+        
+        TABNAME_TIPSOLPAG = "tipsolpag"
+        TABDESC_TIPSOLPAG = "Tipi di solleciti pagamento"
+        TABSETUP_TABLE_TIPSOLPAG = numtab.next()
+        TABSETUP_CONSTR_TIPSOLPAG = []
+        TABVOICE_TIPSOLPAG = {1: ['sollecito', ['il', 'un', 'del', 'dal']],
+                              2: ['solleciti', ['i', 'dai', 'dai']]}
         
         tabelle = None
         
@@ -2416,6 +2425,15 @@ class Azienda(object):
                 [ "id_effreg",  "INT",     idw, None, "ID reg.contabile effetto", None ],
                 [ "id_effpdc",  "INT",     idw, None, "ID sottoconto effetto", None ],
                 [ "effdate",    "DATE",   None, None, "Data emissione effetto", None ] ]
+            
+            if cls.GESSOLPAG:
+                cls.pcf += [[ "no_sollec", "TINYINT", 1, None, "Flag esclusione partita dai solleciti di pagamento", None ],
+                            [ "soll1data",   "DATE", None, None, "Data invio sollecito 1", None ],
+                            [ "soll2data",   "DATE", None, None, "Data invio sollecito 2", None ],
+                            [ "soll3data",   "DATE", None, None, "Data invio sollecito 3", None ],
+                            [ "soll1mail",    "INT",  idw, None, "ID mail inviata per sollecito 1", None ],
+                            [ "soll2mail",    "INT",  idw, None, "ID mail inviata per sollecito 2", None ],
+                            [ "soll3mail",    "INT",  idw, None, "ID mail inviata per sollecito 3", None ],]
             
             cls.set_constraints(cls.TABNAME_PCF,
                                 ((cls.TABSETUP_CONSTR_PDC,       'id_pdc',    cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -3747,6 +3765,19 @@ class Azienda(object):
                                     ["KEY",         "id_pdc"], ]
             
             
+            cls.tipsolpag =\
+               [ [ "id",             "INT",       idw, None, "ID", "AUTO_INCREMENT" ],
+                 [ "livello",        "INT",         1, None, "NUmero di livello sollecito", None ],
+                 [ "codice",         "CHAR",       10, None, "Codice sollecito", None ],
+                 [ "descriz",        "VARCHAR",    60, None, "Descrizione sollecito", None ],
+                 [ "template",       "VARCHAR",   ntw, None, "Template", None ],
+             ]
+            
+            cls.tipsolpag_indexes = [["PRIMARY KEY", "id"],
+                                     ["UNIQUE KEY",  "codice"], 
+                                     ["UNIQUE KEY",  "descriz"], ]
+            
+            
             cls.tabelle = [ 
                 (cls.TABNAME_BILMAS,    cls.TABDESC_BILMAS,    cls.bilmas,    cls.bilmas_indexes,    cls.TABSETUP_CONSTR_BILMAS,    cls.TABVOICE_BILMAS    ),
                 (cls.TABNAME_BILCON,    cls.TABDESC_BILCON,    cls.bilcon,    cls.bilcon_indexes,    cls.TABSETUP_CONSTR_BILCON,    cls.TABVOICE_BILCON    ),
@@ -3828,6 +3859,7 @@ class Azienda(object):
                 (cls.TABNAME_DOCSEMAIL, cls.TABDESC_DOCSEMAIL, cls.docsemail, cls.docsemail_indexes, cls.TABSETUP_CONSTR_DOCSEMAIL, cls.TABVOICE_DOCSEMAIL ),
                 (cls.TABNAME_VARLIST,   cls.TABDESC_VARLIST,   cls.varlist,   cls.varlist_indexes,   cls.TABSETUP_CONSTR_VARLIST,   cls.TABVOICE_VARLIST   ),
                 (cls.TABNAME_RECAPITI,  cls.TABDESC_RECAPITI,  cls.recapiti,  cls.recapiti_indexes,  cls.TABSETUP_CONSTR_RECAPITI,  cls.TABVOICE_RECAPITI  ),
+                (cls.TABNAME_TIPSOLPAG, cls.TABDESC_TIPSOLPAG, cls.tipsolpag, cls.tipsolpag_indexes, cls.TABSETUP_CONSTR_TIPSOLPAG, cls.TABVOICE_TIPSOLPAG ),
             ]
             
             #alterazioni strutture tabelle da applicazione personalizzata
@@ -4068,6 +4100,8 @@ class Azienda(object):
                 ('MAGRELLIS',       'magrellis',          f, _flt, None),
                 ('MAGSELLIS',       'magsellis',          f, _flt, None),
                 ('EFFCONSCA',       'effconsca',          f, _flt, None),
+                ('GESSOLPAG',       'gessolpag',          f, _flt, None),
+                ('GGSSOLPAG',       'ggssolpag',          i, _int, None),
             ]
         
         

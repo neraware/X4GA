@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.36', None, (
+         ("BUG1194",
+         """Corretta verifica diritti lettura/scrittura utenti in dataentry documenti."""),
+        ),),
+    
+    ('1.8.35', None, (
+         ("BET4239",
+         """Gestione dei solleciti di pagamento."""),
+        ),),
+    
     ('1.8.34', dt.Date(2017, 11, 30), (
          ("BET4238",
          """Accorciata la descrizione del riferimento fattura in emissione riba per spazio cig/cup."""),

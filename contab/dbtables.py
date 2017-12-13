@@ -3509,8 +3509,8 @@ class SendedEmail(adb.DbTable):
     
     def __init__(self):
         adb.DbTable.__init__(self, bt.TABNAME_DOCSEMAIL, 'emails', fields='id,id_pdc,id_doc,datsend,oggetto,esito')
-        doc = self.AddJoin(bt.TABNAME_MOVMAG_H, 'doc', idLeft='id_doc')
-        tpd = doc.AddJoin(bt.TABNAME_CFGMAGDOC, 'tipdoc', idLeft='id_tipdoc')
+        doc = self.AddJoin(bt.TABNAME_MOVMAG_H, 'doc', idLeft='id_doc', join=adb.JOIN_LEFT)
+        tpd = doc.AddJoin(bt.TABNAME_CFGMAGDOC, 'tipdoc', idLeft='id_tipdoc', join=adb.JOIN_LEFT)
         pdc = self.AddJoin(bt.TABNAME_PDC, 'pdc', idLeft='id_pdc')
 #        cli = pdc.AddJoin(bt.TABNAME_CLIENTI, 'anag', idLeft='id')
         self.AddOrder('emails.datsend', adb.ORDER_DESCENDING)
