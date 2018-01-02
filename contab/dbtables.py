@@ -2439,10 +2439,14 @@ class LiqIva(adb.DbTable):
                                 #iva vendite split payment
                                 mt['vensos'+col] += imposta
                             elif self.tipo == "A":
-                                #iva vendite split payment
-                                mt['acqsos'+col] += imposta
+                                #iva acquisti split payment
+                                mt['acqsos'+col] += (imposta+indeduc)
                                 #incremento iva split.paym.acq. su tot.acq.
                                 mt['acqnor'+col] += imposta
+                        if aliq.iva.tipo == "A":
+                            mt['ivaind1'] += indeduc
+                        else:
+                            mt['ivaind2'] += indeduc
             if cbf is not None:
                 cbf(r)
         

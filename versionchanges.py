@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.40', None, (
+         ("BUG1196",
+         """Corretta la determinazione dell'imposta da versare in liquidazione iva per la parte indeducibile delle operazioni di acquisto in split payment."""),
+        ),),
+    
     ('1.8.39', None, (
          ("BUG1195",
          """Corretto filtro sui solleciti di pagamento."""),
