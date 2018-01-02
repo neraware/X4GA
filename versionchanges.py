@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.39', None, (
+         ("BUG1195",
+         """Corretto filtro sui solleciti di pagamento."""),
+        ),),
+    
+    ('1.8.37', None, (
+         ("BET4240",
+         """Formattazione sconti in cascata su stampa documenti."""),
+        ),),
+    
     ('1.8.36', None, (
          ("BUG1194",
          """Corretta verifica diritti lettura/scrittura utenti in dataentry documenti."""),

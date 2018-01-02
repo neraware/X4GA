@@ -195,127 +195,112 @@ def SollecitiPagamentoFunc( parent, call_fit = True, set_sizer = True ):
 
     item21.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item40 = wx.StaticBox( parent, -1, "Giorni scadenza" )
-    item39 = wx.StaticBoxSizer( item40, wx.VERTICAL )
-    
-    item41 = wx.FlexGridSizer( 0, 2, 0, 0 )
-    
-    item42 = wx.StaticText( parent, ID_TEXT, "Estrai partite scadute da giorni:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item41.Add( item42, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
-
-    item43 = NumCtrl(parent, ID_GGSCAD, integerWidth=4, fractionWidth=0, name='ggscad')
-    item41.Add( item43, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 5 )
-
-    item39.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item21.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
     item21.AddGrowableRow( 1 )
 
     item1.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item45 = wx.StaticBox( parent, -1, "Filtri" )
-    item44 = wx.StaticBoxSizer( item45, wx.VERTICAL )
+    item40 = wx.StaticBox( parent, -1, "Filtri" )
+    item39 = wx.StaticBoxSizer( item40, wx.VERTICAL )
     
-    item46 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item41 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item47 = wx.StaticText( parent, ID_TEXT, "Agente:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item46.Add( item47, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item42 = wx.StaticText( parent, ID_TEXT, "Agente:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item41.Add( item42, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item48 = alib.LinkTableAgente(parent, ID_AGENTE, name='id_agente')
-    item46.Add( item48, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item43 = alib.LinkTableAgente(parent, ID_AGENTE, name='id_agente')
+    item41.Add( item43, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item49 = wx.StaticText( parent, ID_TEXT, "Zona:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item46.Add( item49, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item44 = wx.StaticText( parent, ID_TEXT, "Zona:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item41.Add( item44, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item50 = alib.LinkTableZona(parent, ID_ZONA, name='id_zona')
-    item46.Add( item50, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item45 = alib.LinkTableZona(parent, ID_ZONA, name='id_zona')
+    item41.Add( item45, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item51 = wx.StaticText( parent, ID_TEXT, "Categoria:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item46.Add( item51, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item46 = wx.StaticText( parent, ID_TEXT, "Categoria:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item41.Add( item46, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item52 = alib.LinkTableCatCli(parent, ID_CATEG, name='id_categ')
-    item46.Add( item52, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item47 = alib.LinkTableCatCli(parent, ID_CATEG, name='id_categ')
+    item41.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item53 = wx.StaticText( parent, ID_TEXT, "Status:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item46.Add( item53, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item48 = wx.StaticText( parent, ID_TEXT, "Status:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item41.Add( item48, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item54 = alib.LinkTableStatCli(parent, ID_STATUS, name='id_status')
-    item46.Add( item54, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item49 = alib.LinkTableStatCli(parent, ID_STATUS, name='id_status')
+    item41.Add( item49, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item46.AddGrowableCol( 1 )
+    item41.AddGrowableCol( 1 )
 
-    item44.Add( item46, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item39.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item1.Add( item44, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item1.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
     item1.AddGrowableCol( 2 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
+    item50 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item51 = wx.StaticText( parent, ID_TEXT, "Riepilogo clienti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item51.SetForegroundColour( wx.BLUE )
+    item50.Add( item51, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
+
+    item52 = wx.StaticText( parent, ID_TEXT, "Partite scadute del cliente", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item52.SetForegroundColour( wx.BLUE )
+    item50.Add( item52, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item53 = wx.Panel( parent, ID_PANGRIDTOT, wx.DefaultPosition, [500,400], wx.SUNKEN_BORDER )
+    item53.SetName( "pangridtot" )
+    item50.Add( item53, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item54 = wx.Panel( parent, ID_PANGRIDPCF, wx.DefaultPosition, [520,160], wx.SUNKEN_BORDER )
+    item54.SetName( "pangridpcf" )
+    item50.Add( item54, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
     item55 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item56 = wx.StaticText( parent, ID_TEXT, "Riepilogo clienti", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item56.SetForegroundColour( wx.BLUE )
-    item55.Add( item56, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP, 5 )
-
-    item57 = wx.StaticText( parent, ID_TEXT, "Partite scadute del cliente", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item57.SetForegroundColour( wx.BLUE )
-    item55.Add( item57, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
-
-    item58 = wx.Panel( parent, ID_PANGRIDTOT, wx.DefaultPosition, [500,400], wx.SUNKEN_BORDER )
-    item58.SetName( "pangridtot" )
-    item55.Add( item58, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
-
-    item59 = wx.Panel( parent, ID_PANGRIDPCF, wx.DefaultPosition, [520,160], wx.SUNKEN_BORDER )
-    item59.SetName( "pangridpcf" )
-    item55.Add( item59, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
-
-    item60 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item56 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item61 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item55.Add( item56, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item57 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item60.Add( item61, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item58 = wx.Button( parent, ID_BUTUPDATE, "Aggiorna dati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item58.SetName( "butupdate" )
+    item57.Add( item58, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.ALL, 5 )
 
-    item62 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item63 = wx.Button( parent, ID_BUTUPDATE, "Aggiorna dati", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item63.SetName( "butupdate" )
-    item62.Add( item63, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.ALL, 5 )
+    item59 = wx.Button( parent, ID_BUTPRTRIEP, "Stampa riepilogo", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item59.SetName( "butprtriep" )
+    item57.Add( item59, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item64 = wx.Button( parent, ID_BUTPRTRIEP, "Stampa riepilogo", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item64.SetName( "butprtriep" )
-    item62.Add( item64, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item60 = wx.Button( parent, ID_BUTEMAIL, "Invia email", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item60.SetName( "butemail" )
+    item57.Add( item60, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item65 = wx.Button( parent, ID_BUTEMAIL, "Invia email", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item65.SetName( "butemail" )
-    item62.Add( item65, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item57.AddGrowableCol( 1 )
 
-    item62.AddGrowableCol( 1 )
-
-    item60.Add( item62, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item60.AddGrowableCol( 1 )
-
-    item55.Add( item60, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item66 = wx.FlexGridSizer( 0, 2, 0, 0 )
-    
-    item67 = wx.Panel( parent, ID_PANCOLORS, wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.SetName( "pancolors" )
-    item66.Add( item67, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
-
-    item66.AddGrowableCol( 1 )
-
-    item55.Add( item66, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item55.AddGrowableCol( 0 )
+    item55.Add( item57, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item55.AddGrowableCol( 1 )
 
-    item55.AddGrowableRow( 1 )
+    item50.Add( item55, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item0.Add( item55, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item61 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item62 = wx.Panel( parent, ID_PANCOLORS, wx.DefaultPosition, wx.DefaultSize, 0 )
+    item62.SetName( "pancolors" )
+    item61.Add( item62, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item61.AddGrowableCol( 1 )
+
+    item50.Add( item61, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item50.AddGrowableCol( 0 )
+
+    item50.AddGrowableCol( 1 )
+
+    item50.AddGrowableRow( 1 )
+
+    item0.Add( item50, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 

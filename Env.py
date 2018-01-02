@@ -1063,6 +1063,7 @@ class Azienda(object):
         EFFCONSCA = False    #flag contabilizzazione effetti in base a data di scadenza
         GESSOLPAG = False    #flag gestione solleciti di pagamento
         GGSSOLPAG = 30       #giorni scadenza x solleciti di pagamento
+        DOCSOLPAG = False    #flag allega pdf documenti in email solleciti di pagamento
         
         #variabili per la gestione dei listini
         MAGNUMSCO = 3        #numero di sconti gestiti
@@ -4102,6 +4103,7 @@ class Azienda(object):
                 ('EFFCONSCA',       'effconsca',          f, _flt, None),
                 ('GESSOLPAG',       'gessolpag',          f, _flt, None),
                 ('GGSSOLPAG',       'ggssolpag',          i, _int, None),
+                ('DOCSOLPAG',       'docsolpag',          f, _flt, None),
             ]
         
         

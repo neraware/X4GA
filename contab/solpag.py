@@ -125,7 +125,15 @@ class RiepilogoClientiGrid(dbglib.ADB_Grid):
         self.AddColumn(dbtot, 'pdc_codice', 'Cod.', col_width=50)
         self.AddColumn(dbtot, 'pdc_descriz', 'Cliente', col_width=100, is_fittable=True)
         self.AddColumn(dbtot, 'total_saldo', 'Scaduto', col_type=self.TypeFloat(NI, ND))
-        self.AddColumn(dbtot, 'anag_email', 'Indirizzo', col_width=200)
+        col_email = dbtot._GetFieldIndex('anag_email')
+        def get_email(row, _col):
+            rs = self.dbtot.GetRecordset()
+            email = rs[row][col_email] or ''
+            if len(email) == 0:
+                return '*** MANCA EMAIL ***'
+            return email
+        self.AddColumn(dbtot, 'anag_email', 'Indirizzo', col_width=200,
+                       get_cell_func=get_email)
         self.AddColumn(dbtot, 'pdc_id', '#pdc', col_width=1)
         
         self._col_email = dbtot._GetFieldIndex('anag_email')
@@ -163,7 +171,7 @@ class PartiteScaduteClienteTable(dbc.Pcf):
         dbc.Pcf._AddPcfJoins(self, pcf=pcf)
         self['pdc'].AddJoin('clienti', 'anag', idLeft='id')
         self.AddBaseFilter("tipana.tipo='C'")
-        self.AddBaseFilter("pcf.imptot<>pcf.imppar")
+        self.AddBaseFilter("COALESCE(pcf.imptot, 0) > COALESCE(pcf.imppar, 0)")
         self.AddField('COALESCE(pcf.imptot, 0) - COALESCE(pcf.imppar, 0)', 'saldo')
 
 
@@ -503,7 +511,7 @@ class SollecitiPagamentoPanel(aw.Panel, ScadenzarioColorsPanelMixin):
             numsend = 0
             for n, tot in enumerate(self.dbtot):
                 
-                email = tot.anag_email or 'fabio.cassini@gmail.com'
+                email = tot.anag_email
                 if len(email) == 0:
                     continue
                 
@@ -554,7 +562,7 @@ class SollecitiPagamentoPanel(aw.Panel, ScadenzarioColorsPanelMixin):
                         id_regs.append(scad.id_reg)
                 
                 pdf_attach = []
-                if id_regs:
+                if id_regs and bt.DOCSOLPAG:
                     docs = DocMag()
                     docs.Retrieve('doc.id_reg IN (%s)' % ','.join(map(str, id_regs)))
                     docs._info.anag = docs.GetAnag()

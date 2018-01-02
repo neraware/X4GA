@@ -347,7 +347,8 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.MAGSELLIS,
                    bt.EFFCONSCA,
                    bt.GESSOLPAG,
-                   bt.GGSSOLPAG,)
+                   bt.GGSSOLPAG,
+                   bt.DOCSOLPAG)
             bt.TIPO_CONTAB = cn('setup_tipo_contab').GetValue()
             bt.CONSOVGES = cn('setup_consovges').GetValue()
             bt.CONBILRICL = cn('setup_conbilricl').GetValue()
@@ -433,6 +434,7 @@ class AziendaSetupPanel(_SetupPanel):
             bt.EFFCONSCA = cn('setup_effconsca').GetValue()
             bt.GESSOLPAG = cn('setup_gessolpag').GetValue()
             bt.GGSSOLPAG = cn('setup_ggssolpag').GetValue()
+            bt.DOCSOLPAG = cn('setup_docsolpag').GetValue()
             bt.defstru()
             out = wx.GetApp().TestDBVers(force=True)
             if not out:
@@ -520,7 +522,8 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.MAGSELLIS,
                 bt.EFFCONSCA,
                 bt.GESSOLPAG,
-                bt.GGSSOLPAG = old
+                bt.GGSSOLPAG,
+                bt.DOCSOLPAG = old
         if out:
             cfg = CfgContab()
             cfg.SetEsercizio(Env.Azienda.Login.dataElab)
