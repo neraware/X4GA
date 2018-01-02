@@ -402,6 +402,19 @@ class DocMag(adb.DbTable):
     def get_mov_descriz(self):
         return self.mov.descriz
     
+    def get_mov_sconti(self):
+        sconti = ''
+        for n in range(bt.MAGNUMSCO):
+            s = getattr(self.mov, 'sconto%d' % (n+1), None)
+            if s:
+                if sconti:
+                    sconti += '+'
+                if s == int(s):
+                    sconti += str(int(s))
+                else:
+                    sconti += self.sepn(s, 2)
+        return sconti
+    
     def get_numdoc_print(self):
         if self.regcon.id:
             return self.regcon.get_numdoc_print()
