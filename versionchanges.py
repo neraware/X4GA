@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.41', dt.Date(2018, 1, 10), (
+         ("BUG1197",
+         """Corretta spedizione email solleciti pagamento per errore in caso di indirizzo mail nullo sul cliente."""),
+        ),),
+    
     ('1.8.40', None, (
          ("BUG1196",
          """Corretta la determinazione dell'imposta da versare in liquidazione iva per la parte indeducibile delle operazioni di acquisto in split payment."""),

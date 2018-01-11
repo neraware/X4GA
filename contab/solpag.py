@@ -512,7 +512,7 @@ class SollecitiPagamentoPanel(aw.Panel, ScadenzarioColorsPanelMixin):
             for n, tot in enumerate(self.dbtot):
                 
                 email = tot.anag_email
-                if len(email) == 0:
+                if not email:
                     continue
                 
                 wait.SetMessage(tot.pdc_descriz)
