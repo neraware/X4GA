@@ -418,7 +418,7 @@ class PdcMastroPanel(aw.Panel):
             db = self.gridmas.dbmas
             if not db.Get(pdcid):
                 awc.util.MsgDialog("Problema in lettura dati:\n\n%s"\
-                                   % db.GetError())
+                                   % repr(db.GetError()))
         self.gridmas.UpdateGrid()
         self.UpdateTotals()
 
