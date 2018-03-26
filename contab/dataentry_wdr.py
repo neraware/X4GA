@@ -434,7 +434,7 @@ def RegSearchFuncTipo_I( parent, call_fit = True, set_sizer = True ):
 
     item7 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item8 = wx.Panel( parent, ID_PANGRIDSEARCH, wx.DefaultPosition, [900,300], wx.SUNKEN_BORDER )
+    item8 = wx.Panel( parent, ID_PANGRIDSEARCH, wx.DefaultPosition, [1000,300], wx.SUNKEN_BORDER )
     item8.SetName( "pangridsearch" )
     item7.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 

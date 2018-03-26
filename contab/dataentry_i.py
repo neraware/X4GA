@@ -1167,18 +1167,24 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             if out:
                 out = self.ScadWrite()
         if out and self._cfg_id_cau_si is not None:
-            self.WriteRegSolaIvaAutomatica()
+            self.RegSolaIvaAutomaticaWrite()
         if out:
             self.ReportFineReg()
         return out
     
-    def WriteRegSolaIvaAutomatica(self):
+    def RegSolaIvaAutomaticaWrite(self):
+        pass
+    
+    def RegSolaIvaAutomaticaDelete(self, id_reg):
         pass
     
     def RegDelete(self):
+        id_reg = self.reg_id
         out = self.ScadStorno()
         if out:
             out = ctb.ContabPanel.RegDelete(self)
+        if out and self._cfg_id_cau_si:
+            self.RegSolaIvaAutomaticaDelete(id_reg)
         return out
     
     def RegRead(self, idreg):
@@ -1614,15 +1620,19 @@ class Reg_I_SearchGrid(ctb.RegSearchGrid):
         _NUM = gl.GRID_VALUE_NUMBER
         _STR = gl.GRID_VALUE_STRING
         _IMP = bt.GetValIntMaskInfo()
-        return (( 80, ( 1, "Data reg.",  _DAT, False)),
-                ( 30, ( 2, "Reg.",       _STR, False)),
-                ( 60, ( 3, "Prot.",      _STR, False)),
-                (200, ( 4, "Sottoconto", _STR, False)),
-                ( 80, ( 5, "N.Doc.",     _STR, True )),
-                ( 80, ( 6, "Data doc.",  _DAT, True )),
-                (110, ( 7, "Dare",       _IMP, True )),
-                (110, ( 8, "Avere",      _IMP, True )),
-                (  1, ( 0, "#reg",       _STR, False)))
+        return (( 80, (  1, "Data reg.",   _DAT, False)),
+                ( 30, (  2, "Reg.",        _STR, False)),
+                ( 60, (  3, "Prot.",       _STR, False)),
+                (200, (  4, "Sottoconto",  _STR, False)),
+                ( 80, (  5, "N.Doc.",      _STR, True )),
+                ( 80, (  6, "Data doc.",   _DAT, True )),
+                (110, (  7, "Dare",        _IMP, True )),
+                (110, (  8, "Avere",       _IMP, True )),
+                ( 40, (  9, "Cod.",        _STR, False)),
+                (120, ( 10, "Autofattura", _STR, False)),
+                ( 50, ( 11, "Prot.",       _STR, False)),
+                (  1, ( 13, "#link",       _STR, False)),
+                (  1, (  0, "#reg",        _STR, False)))
     
     def GetColumn2Fit(self):
         return 3
@@ -1659,7 +1669,11 @@ class Reg_I_SearchPanel(ctb.RegSearchPanel):
                 cmd = \
 """   SELECT reg.id, reg.datreg, riv.codice, reg.numiva, """\
 """          pdc.descriz, reg.numdoc, reg.datdoc, """\
-"""IF(row.segno="D", row.importo, 0), IF(row.segno="A", row.importo, 0) """\
+"""IF(row.segno="D", row.importo, 0), IF(row.segno="A", row.importo, 0), """\
+"""(SELECT srccau.codice FROM contab_h srch JOIN cfgcontab srccau ON srccau.id=srch.id_caus WHERE srch.id_reg_by=reg.id LIMIT 1), """\
+"""(SELECT srccau.descriz FROM contab_h srch JOIN cfgcontab srccau ON srccau.id=srch.id_caus WHERE srch.id_reg_by=reg.id LIMIT 1), """\
+"""(SELECT srch.numiva FROM contab_h srch WHERE srch.id_reg_by=reg.id LIMIT 1), """\
+"""(SELECT srch.id FROM contab_h srch WHERE srch.id_reg_by=reg.id LIMIT 1) """\
 """     FROM ((%s AS reg JOIN %s AS cau ON reg.id_caus=cau.id) """\
 """LEFT JOIN contab_b AS row ON row.id_reg=reg.id) """\
 """LEFT JOIN pdc AS pdc ON row.id_pdcpa=pdc.id """\

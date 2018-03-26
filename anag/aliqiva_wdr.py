@@ -15,6 +15,7 @@ from awc.controls.radiobox import RadioBox
 from awc.controls.numctrl import NumCtrl
 from awc.controls.datectrl import DateCtrl
 from awc.controls.textctrl import TextCtrl, TextCtrl_LC
+import anag.lib as alib
 
 from anag.basetab import AnagCardPanel, WorkZoneNotebook, UnoZeroCheckBox
 
@@ -78,7 +79,8 @@ ID_TIPO = 16005
 ID_DATAMIN = 16006
 ID_DATAMAX = 16007
 ID_MODO = 16008
-ID_SM11_NO = 16009
+ID_ALIQ_AUFT = 16009
+ID_SM11_NO = 16010
 
 def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -145,14 +147,22 @@ def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     item19.SetName( "modo" )
     item18.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item21 = wx.StaticBox( parent, -1, "Spesometro" )
+    item21 = wx.StaticBox( parent, -1, "Aliquota per generazione automatica autofatture:" )
     item20 = wx.StaticBoxSizer( item21, wx.VERTICAL )
     
-    item22 = UnoZeroCheckBox( parent, ID_SM11_NO, "Escludi dalla compilazione dello spesometro", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item22.SetName( "sm11_no" )
-    item20.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item22 = alib.LinkTableAliqIva(parent, ID_ALIQ_AUFT, name='id_aliq_auft')
+    item20.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item18.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item24 = wx.StaticBox( parent, -1, "Spesometro" )
+    item23 = wx.StaticBoxSizer( item24, wx.VERTICAL )
+    
+    item25 = UnoZeroCheckBox( parent, ID_SM11_NO, "Escludi dalla compilazione dello spesometro", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item25.SetName( "sm11_no" )
+    item23.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item18.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item18.AddGrowableCol( 0 )
 
@@ -171,7 +181,7 @@ def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_RADIOBOX = 16010
+ID_RADIOBOX = 16011
 
 def AliqIvaCardAllegFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.StaticBox( parent, -1, "Progressivi allegati clienti/fornitori" )
@@ -242,7 +252,7 @@ def AliqIvaCardAllegFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TEXTCTRL = 16011
+ID_TEXTCTRL = 16012
 
 def AliqIvaCardFatturaPaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )

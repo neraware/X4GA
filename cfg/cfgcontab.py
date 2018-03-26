@@ -148,7 +148,13 @@ class CfgCausale(object):
                      "davscorp",     #Flag colonna scorporo su dare/avere
                      "id_tipevent",  #ID Tipo evento
                      "event_msg",    #Messaggio evento
-                     "id_cau_si",)   #ID Causale di sola iva da generare autom.
+                     "id_cau_si",    #ID Causale di sola iva da generare autom.
+                     "giva_id_pdc",  #Giroconto IVA x squadratura: id sottoconto
+                     "giva_note",    #Giroconto IVA x squadratura: note   
+                     "giva_id_pdc1", #Giroconto IVA x rilevazione: id sottoconto1 
+                     "giva_note1",   #Giroconto IVA x rilevazione: note1  
+                     "giva_id_pdc2", #Giroconto IVA x rilevazione: id sottoconto2 
+                     "giva_note2",)  #Giroconto IVA x rilevazione: note2
         self.ResetConfig()
 
     def ResetConfig(self):
@@ -170,7 +176,8 @@ class CfgCausale(object):
 """cau.pcfsgn, cau.pcfabb, cau.pcfspe, cau.pcfins, cau.pades, """\
 """cau.id_pdctippa, pdcpa.codice, pdcpa.descriz, cau.pasegno, cau.cpdes, """\
 """cau.id_pdctipcp, pdccp.codice, pdccp.descriz, cau.id_pdcrow1, """\
-"""cau.camsegr1, cau.quaivanob, cau.davscorp, cau.id_tipevent, cau.event_msg, cau.id_cau_si """\
+"""cau.camsegr1, cau.quaivanob, cau.davscorp, cau.id_tipevent, cau.event_msg, cau.id_cau_si, """\
+"""cau.giva_id_pdc, cau.giva_note, cau.giva_id_pdc1, cau.giva_note1, cau.giva_id_pdc2, cau.giva_note2 """\
 """FROM %s AS cau """\
 """LEFT JOIN %s AS riv ON cau.id_regiva=riv.id """\
 """LEFT JOIN %s AS pdcpa ON cau.id_pdctippa=pdcpa.id """\

@@ -1800,7 +1800,8 @@ class Azienda(object):
                 [ "datamin",      "DATE",  None, None, "Data di validità minima", None ], 
                 [ "datamax",      "DATE",  None, None, "Data di validità massima", None ], 
                 [ "ftel_natura",  "CHAR",     2, None, "Fattura elettronica: Natura aliquota", None ],
-                [ "ftel_rifnorm", "VARCHAR",255, None, "Fattura elettronica: riferimento normativo", None ], ]
+                [ "ftel_rifnorm", "VARCHAR",255, None, "Fattura elettronica: riferimento normativo", None ], 
+                [ "id_aliq_auft", "INT",    idw, None, "ID aliquota per generazione automatica autofattura", None ], ]
             
             cls.aliqiva_indexes = cls.get_std_indexes()
             
@@ -1986,7 +1987,13 @@ class Azienda(object):
                 [ "event_msg",   "VARCHAR",1024, None, "Messaggio evento", None ], 
                 [ "rptname",     "VARCHAR",  64, None, "Nome report da proporre a fine registrazione", None ], 
                 [ "id_cau_si",   "INT",     idw, None, "ID Causale di sola iva da generare automaticamente", None ], 
-                [ "ftel_tipdoc", "CHAR",      4, None, "Fattura elettronica: Tipo documento", None ], ]
+                [ "ftel_tipdoc", "CHAR",      4, None, "Fattura elettronica: Tipo documento", None ],
+                [ "giva_id_pdc", "INT",     idw, None, "Giroconto IVA x squadratura: id sottoconto", None ],
+                [ "giva_note",   "VARCHAR",  32, None, "Giroconto IVA x squadratura: note", None ],
+                [ "giva_id_pdc1","INT",     idw, None, "Giroconto IVA x rilevazione: id sottoconto1", None ],
+                [ "giva_note1",  "VARCHAR",  32, None, "Giroconto IVA x rilevazione: note1", None ],
+                [ "giva_id_pdc2","INT",     idw, None, "Giroconto IVA x rilevazione: id sottoconto2", None ],
+                [ "giva_note2",  "VARCHAR",  32, None, "Giroconto IVA x rilevazione: note2", None ], ]
             
             cls.set_constraints(cls.TABNAME_CFGCONTAB,
                                 ((cls.TABSETUP_CONSTR_REGIVA,   'id_regiva',   cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -2359,7 +2366,8 @@ class Azienda(object):
             
             cls.contab_h_indexes = [ ["PRIMARY KEY", "id"],
                                       ["KEY",        "id_regiva,numiva,numdoc"],
-                                      ["KEY",        "datreg,id_regiva,numiva"], ]
+                                      ["KEY",        "datreg,id_regiva,numiva"], 
+                                      ["KEY",        "id_reg_by"], ]
             
             
             cls.contab_b =\

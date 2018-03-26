@@ -82,8 +82,12 @@ def CauContabCardFunc( parent, call_fit = True, set_sizer = True ):
     item3.AddPage( item5, "Scadenzario e Sottoconti preferiti" )
 
     item6 = wx.Panel( item3, -1 )
-    Setup3Func(item6, False)
-    item3.AddPage( item6, "Eventi" )
+    Setup4Func(item6, False)
+    item3.AddPage( item6, "Giroconti IVA" )
+
+    item7 = wx.Panel( item3, -1 )
+    Setup3Func(item7, False)
+    item3.AddPage( item7, "Eventi" )
 
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
@@ -706,6 +710,81 @@ def Setup3Func( parent, call_fit = True, set_sizer = True ):
     item0.AddGrowableCol( 0 )
 
     item0.AddGrowableRow( 2 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+ID_GIVA_ID_PDC = 16048
+ID_GIVA_NOTE = 16049
+ID_GIVA_ID_PDC1 = 16050
+ID_GIVA_NOTE1 = 16051
+ID_GIVA_ID_PDC2 = 16052
+ID_GIVA_NOTE2 = 16053
+
+def Setup4Func( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item1 = wx.StaticText( parent, ID_TEXT, 
+        "Questa sezione consente di specificare le informazioni necessarie a portare l'ammontare dell'imposta su righe solo contabili, senza gestine IVA,\n"
+        "utili nel caso di fatture registrate con il meccanismo dell'inversione contabile, come ad esempio reverse charge, split splyment.",
+        wx.DefaultPosition, wx.DefaultSize, 0 )
+    item0.Add( item1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item2 = wx.StaticLine( parent, ID_LINE, wx.DefaultPosition, [20,-1], wx.LI_HORIZONTAL )
+    item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item3 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item4 = wx.StaticText( parent, ID_TEXT, "Sottoconto su cui girocontare l'imposta per chiudere la squadratura dovuta all'inversione contabile:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item5 = wx.StaticText( parent, ID_TEXT, "Note della riga di giroconto", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item6 = alib.LinkTablePdc(parent, ID_GIVA_ID_PDC, name='giva_id_pdc')
+    item3.Add( item6, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item7 = TextCtrl( parent, ID_GIVA_NOTE, "", wx.DefaultPosition, [100,-1], 0 )
+    item7.SetName( "giva_note" )
+    item3.Add( item7, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item8 = wx.StaticText( parent, ID_TEXT, "Sottoconto 1 su cui girocontare l'imposta, se occorre rilevarla su sottoconto apposito:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item9 = wx.StaticText( parent, ID_TEXT, "Note della riga di giroconto", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item10 = alib.LinkTablePdc(parent, ID_GIVA_ID_PDC1, name='giva_id_pdc1')
+    item3.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item11 = TextCtrl( parent, ID_GIVA_NOTE1, "", wx.DefaultPosition, [100,-1], 0 )
+    item11.SetName( "giva_note1" )
+    item3.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item12 = wx.StaticText( parent, ID_TEXT, "Sottoconto 2 su cui girocontare l'imposta, se occorre rilevarla su sottoconto apposito:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item13 = wx.StaticText( parent, ID_TEXT, "Note della riga di giroconto", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item14 = alib.LinkTablePdc(parent, ID_GIVA_ID_PDC2, name='giva_id_pdc2')
+    item3.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item15 = TextCtrl( parent, ID_GIVA_NOTE2, "", wx.DefaultPosition, [100,-1], 0 )
+    item15.SetName( "giva_note2" )
+    item3.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item3.AddGrowableCol( 0 )
+
+    item3.AddGrowableCol( 1 )
+
+    item0.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item0.AddGrowableCol( 0 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

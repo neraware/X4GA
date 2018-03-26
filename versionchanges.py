@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.43', None, (
+         ("BET4242",
+         """Aggiunta aliquota iva su tabella aliquote iva da utilizzare in caso di generazione automatica di autofattura."""),
+        ),),
+    
+    ('1.8.42', None, (
+         ("BET4241",
+         """Implementati automatismi per registrazioni contabili con iva in scissione pagamenti."""),
+        ),),
+    
     ('1.8.41', dt.Date(2018, 1, 10), (
          ("BUG1197",
          """Corretta spedizione email solleciti pagamento per errore in caso di indirizzo mail nullo sul cliente."""),

@@ -192,6 +192,7 @@ class ContabPanelTipo_I_O(ctbi.ContabPanelTipo_I):
     def UpdateDavFromIVA(self):
         #determinazione righe contabili iva
         rigiva = []
+        totiva = 0
         for reciva in self.regrsi:
             for colimp, ivaid, ivacod, ivades, forcerow in (\
                 (RSIVA_IMPOSTA, RSIVA_ID_PDCIVA, RSIVA_pdciva_cod, RSIVA_pdciva_des, True),
@@ -225,6 +226,8 @@ class ContabPanelTipo_I_O(ctbi.ContabPanelTipo_I):
                         
                     elif self._cfg_pasegno == "A":
                         rigiva[n][ctb.RSDET_IMPDARE] += reciva[colimp]
+                    
+                    totiva += reciva[colimp]
         
         #controllo segno imposta, se negativo inverto segno contabile
         for r in rigiva:
@@ -234,6 +237,86 @@ class ContabPanelTipo_I_O(ctbi.ContabPanelTipo_I):
             elif r[ctb.RSDET_IMPAVERE]<0:
                 r[ctb.RSDET_IMPDARE] = -r[ctb.RSDET_IMPAVERE]
                 r[ctb.RSDET_IMPAVERE] = 0
+        
+        #giroconto iva se scissione pagamenti: aggiungo una riga x chiusura squadratura
+        if totiva and self._cfg_giva_id_pdc:
+            
+            _ivaid, _note = self._cfg_giva_id_pdc, self._cfg_giva_note or ''
+            pdc = adb.DbTable('pdc')
+            pdc.Get(_ivaid)
+            _ivacod, _ivades = pdc.codice, pdc.descriz
+            
+            td, ta = totiva, 0
+            if totiva<0:
+                td, ta = ta, td
+            if self._cfg_pasegno == "A":
+                td, ta = ta, td
+            
+            rigiva.append([None,    #RSDET_NUMRIGA
+                           "A",     #RSDET_TIPRIGA
+                           _ivaid,  #RSDET_PDCPA_ID
+                           _ivacod, #RSDET_PDCPA_cod
+                           _ivades, #RSDET_PDCPA_des
+                           td,      #RSDET_IMPDARE
+                           ta,      #RSDET_IMPAVERE
+                           None,    #RSDET_ALIQ_ID
+                           None,    #RSDET_ALIQ_cod
+                           None,    #RSDET_ALIQ_des
+                           None,    #RSDET_ALIQ_TOT
+                           _note,   #RSDET_NOTE
+                           0,       #RSDET_RIGAPI    
+                           1])      #RSDET_SOLOCONT
+        
+        #giroconto iva se scissione pagamenti: aggiungo due righe complementari x rilevazione imposta
+        if totiva and self._cfg_giva_id_pdc1:
+            
+            _ivaid1, _note1 = self._cfg_giva_id_pdc1, self._cfg_giva_note1 or ''
+            pdc = adb.DbTable('pdc')
+            pdc.Get(_ivaid1)
+            _ivacod1, _ivades1 = pdc.codice, pdc.descriz
+            
+            _ivaid2, _note2 = self._cfg_giva_id_pdc2, self._cfg_giva_note2 or ''
+            if not _ivaid2:
+                _ivaid2 = _ivaid1
+            pdc.Get(_ivaid2)
+            _ivacod2, _ivades2 = pdc.codice, pdc.descriz
+            
+            td, ta = totiva, 0
+            if totiva<0:
+                td, ta = ta, td
+            if self._cfg_pasegno == "A":
+                td, ta = ta, td
+            
+            #riga 1
+            rigiva.append([None,     #RSDET_NUMRIGA
+                           "A",      #RSDET_TIPRIGA
+                           _ivaid1,  #RSDET_PDCPA_ID
+                           _ivacod1, #RSDET_PDCPA_cod
+                           _ivades1, #RSDET_PDCPA_des
+                           td,       #RSDET_IMPDARE
+                           ta,       #RSDET_IMPAVERE
+                           None,     #RSDET_ALIQ_ID
+                           None,     #RSDET_ALIQ_cod
+                           None,     #RSDET_ALIQ_des
+                           None,     #RSDET_ALIQ_TOT
+                           _note1,   #RSDET_NOTE
+                           0,        #RSDET_RIGAPI    
+                           1])       #RSDET_SOLOCONT
+            #riga 2
+            rigiva.append([None,     #RSDET_NUMRIGA
+                           "A",      #RSDET_TIPRIGA
+                           _ivaid2,  #RSDET_PDCPA_ID
+                           _ivacod2, #RSDET_PDCPA_cod
+                           _ivades2, #RSDET_PDCPA_des
+                           ta,       #RSDET_IMPDARE
+                           td,       #RSDET_IMPAVERE
+                           None,     #RSDET_ALIQ_ID
+                           None,     #RSDET_ALIQ_cod
+                           None,     #RSDET_ALIQ_des
+                           None,     #RSDET_ALIQ_TOT
+                           _note2,   #RSDET_NOTE
+                           0,        #RSDET_RIGAPI    
+                           1])       #RSDET_SOLOCONT
         
         #ricostruzione lista dettaglio
         rs1 = []
@@ -448,38 +531,110 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
         ctbi.ContabPanelTipo_I.RegReset(self)
         del self.regrsi[:]
     
-    def WriteRegSolaIvaAutomatica(self):
+    def RegSolaIvaAutomaticaWrite(self):
+        
         import contab.dbtables as dbc
+        
         reg = dbc.DbRegCon()
-        reg.CreateNewRow()
+        reg.Retrieve("reg.id_reg_by=%s" % self.reg_id)
+        if reg.IsEmpty():
+            reg.CreateNewRow()
+            des_action = "generata"
+        else:
+            for b in reg.body:
+                b.Delete()
+            des_action = "modificata"
         reg.esercizio = self.reg_esercizio
         reg.id_caus = self._cfg_id_cau_si
         reg.tipreg = reg.config.tipo
         reg.datreg = self.reg_datreg
         reg.datdoc = self.reg_datdoc
         reg.numdoc = self.reg_numdoc
-        reg.numiva = self.reg_numiva
-        reg.st_regiva = 0
-        reg.st_giobol = 0
         reg.id_regiva = reg.config.id_regiva
         reg.id_reg_by = self.reg_id
+        
+        if reg.id is None:
+            rmax = adb.DbTable('contab_h', 'reg', fields=None)
+            rmax.AddMaximumOf('reg.numiva')
+            rmax.AddFilter('reg.esercizio=%s' % self.reg_esercizio)
+            rmax.AddFilter('reg.id_regiva=%s' % reg.id_regiva)
+            if reg.id is not None:
+                rmax.AddFilter('reg.id<>%s' % reg.id)
+            if rmax.Retrieve() and rmax.OneRow():
+                reg.numiva = rmax.max_numiva+1
+            else:
+                reg.numiva = 1
+        
+        reg.st_regiva = 0
+        reg.st_giobol = 0
+        
         body = reg.body
+        aliqiva = adb.DbTable('aliqiva')
+        aliqiva.Reset()
+        autom = adb.DbTable('cfgautom', 'autom')
+        if reg.regiva.tipo == "V":
+            autom.Retrieve('autom.codice="IVAVEN"')
+        elif reg.regiva.tipo == "A":
+            autom.Retrieve('autom.codice="IVAACQ"')
+        else:
+            raise Exception
+        id_pdciva = autom.aut_id
         for n, rsi in enumerate(self.regrsi):
+            aliqiva.Get(rsi[RSIVA_ID_ALIQIVA])
+            id_aliq_auft = aliqiva.id_aliq_auft or aliqiva.id
             body.CreateNewRow()
             body.numriga = n+1
             body.tipriga = "I"
             body.importo = rsi[RSIVA_TTIVATO]
             body.imponib = rsi[RSIVA_IMPONIB]
-            body.imposta = rsi[RSIVA_IMPOSTA]
-            body.indeduc = rsi[RSIVA_INDEDUC]
-            body.id_aliqiva = rsi[RSIVA_ID_ALIQIVA]
+#             body.imposta = rsi[RSIVA_IMPOSTA]
+#             body.indeduc = rsi[RSIVA_INDEDUC]
+            body.imposta = (rsi[RSIVA_IMPOSTA] or 0) + (rsi[RSIVA_INDEDUC] or 0)
+            body.indeduc = 0
+            body.id_aliqiva = id_aliq_auft
             body.segno = "DA"[1-"DA".index(reg.config.pasegno)]
             body.id_pdcpa = self.id_pdcpa
-            body.id_pdccp = rsi[RSIVA_ID_PDCIVA]
-            body.id_pdciva = rsi[RSIVA_ID_PDCIVA]
+            body.id_pdccp = id_pdciva
+            body.id_pdciva = id_pdciva
             body.ivaman = 0
-        if not reg.Save():
+        if reg.Save():
+            msg = "E' stata %s la registrazione:\n%s n. %s del %s, prot. IVA %s" % (des_action,
+                                                                                    reg.config.descriz,
+                                                                                    reg.numdoc,
+                                                                                    reg.dita(reg.datdoc),
+                                                                                    reg.numiva)
+            icn = wx.ICON_INFORMATION
+                
+            rmax = adb.DbTable('contab_h', 'reg', fields=None)
+            rmax.AddMaximumOf('reg.datreg')
+            rmax.AddFilter('reg.esercizio=%s' % self.reg_esercizio)
+            rmax.AddFilter('reg.id_regiva=%s' % reg.id_regiva)
+            rmax.AddFilter('reg.numiva<%s' % reg.numiva)
+            rmax.Retrieve()
+            if rmax.max_datreg > reg.datreg:
+                msg += '\n\nATTENZIONE!!! Risulta fuori sequenza!!! Controllare manualmente il registro iva %s %s' % (reg.regiva.codice,
+                                                                                                                      reg.regiva.descriz)
+                icn = wx.ICON_WARNING
+        
+            aw.awu.MsgDialog(self, msg, style=icn)
+            
+        else:
             aw.awu.MsgDialog(self, repr(reg.GetError()), style=wx.ICON_ERROR)
+    
+    def RegSolaIvaAutomaticaDelete(self, id_reg):
+        import contab.dbtables as dbc
+        reg = dbc.DbRegCon()
+        reg.Retrieve("reg.id_reg_by=%s" % id_reg)
+        if not reg.IsEmpty():
+            msg = "E' stata eliminata la registrazione:\n%s n. %s del %s, prot. IVA %s" % (reg.config.descriz,
+                                                                                           reg.numdoc,
+                                                                                           reg.dita(reg.datdoc),
+                                                                                           reg.numiva)
+            reg.Delete()
+            if reg.Save():
+                aw.awu.MsgDialog(self, msg, style=wx.ICON_INFORMATION)
+            else:
+                aw.awu.MsgDialog(self, repr(reg.GetError()), style=wx.ICON_ERROR)
     
     def _GridEdit_Iva__Init__(self):
         parent = self.FindWindowById(ctbw.ID_PANGRID_IVA)
