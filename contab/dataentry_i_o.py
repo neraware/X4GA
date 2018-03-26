@@ -561,7 +561,7 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
             if reg.id is not None:
                 rmax.AddFilter('reg.id<>%s' % reg.id)
             if rmax.Retrieve() and rmax.OneRow():
-                reg.numiva = rmax.max_numiva+1
+                reg.numiva = (rmax.max_numiva or 0)+1
             else:
                 reg.numiva = 1
         
