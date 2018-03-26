@@ -29,7 +29,7 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.8.43', None, (
+    ('1.8.44', dt.Date(2018, 3, 26), (
          ("BET4242",
          """Aggiunta aliquota iva su tabella aliquote iva da utilizzare in caso di generazione automatica di autofattura."""),
         ),),
