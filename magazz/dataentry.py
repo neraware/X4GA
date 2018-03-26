@@ -2540,13 +2540,13 @@ class MagazzPanel(aw.Panel,\
         cn('butinitraspnow').Enable(self.status == STATUS_EDITING and not bool(cn('initrasp').GetValue()))
         cn('butrptcolli').Show(cfgdoc.rptcolli == 1)
         #abilitazione campi destinatario non codificato
-        e = (bt.MAGNOCODEDES and self.status == STATUS_EDITING and enab and cfgdoc.askdatiacc == 'X' and cfgdoc.askdestin == 'X' and doc.id_dest is None)
+        e = (bt.MAGNOCODEDES and self.status == STATUS_EDITING and enab and cfgdoc.askdatiacc == 'X' and cfgdoc.askdestin == 'X')# and doc.id_dest is None)
         self.FindWindowByName('enable_nocodedes').Enable(e)
         e = e and cn('enable_nocodedes').IsChecked()
         for ctrl in aw.awu.GetAllChildrens(self, lambda x: x.GetName().startswith('nocodedes')):
             ctrl.Enable(e)
         #abilitazione campi vettore non codificato
-        e = (bt.MAGNOCODEVET and self.status == STATUS_EDITING and enab and cfgdoc.askdatiacc == 'X' and cfgdoc.asktravet == 'X' and doc.id_travet is None)
+        e = (bt.MAGNOCODEVET and self.status == STATUS_EDITING and enab and cfgdoc.askdatiacc == 'X' and cfgdoc.asktravet == 'X')# and doc.id_travet is None)
         self.FindWindowByName('enable_nocodevet').Enable(e)
         e = e and cn('enable_nocodevet').IsChecked()
         for ctrl in aw.awu.GetAllChildrens(self, lambda x: x.GetName().startswith('nocodevet')):
