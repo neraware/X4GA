@@ -539,24 +539,25 @@ class FatturaElettronica(dbm.DocMag):
             # 2.2.2 <DatiRiepilogo>
             iva = dbm.adb.DbTable('aliqiva')
             for ivaid, ivacod, ivades, imponib, imposta, importo, imposcr, isomagg, perciva, percind, tipoalq in self._info.totiva:
+                if iva.id != ivaid:
+                    iva.Get(ivaid)
                 body_det_rie = xmldoc.appendElement(body_det, 'DatiRiepilogo')
                 dativa = []
                 dativa.append(('AliquotaIVA',       fmt_sc(perciva)))
-                dativa.append(('ImponibileImporto', fmt_ii(imponib)))
-                dativa.append(('Imposta',           fmt_ii(imposta)))
-                if iva.id != ivaid:
-                    iva.Get(ivaid)
-                if iva.tipo == "S":
-                    #split payment
-                    esig = "S"
-                else:
-                    #esigilità immediata
-                    esig = "I"
-                dativa.append(('EsigibilitaIVA', esig))
                 if iva.ftel_natura:
                     dativa.append(('Natura', iva.ftel_natura))
-                    if iva.ftel_rifnorm:
-                        dativa.append(('RiferimentoNormativo', iva.ftel_rifnorm))
+                dativa.append(('ImponibileImporto', fmt_ii(imponib)))
+                dativa.append(('Imposta',           fmt_ii(imposta)))
+                if iva.ftel_natura and iva.ftel_rifnorm:
+                    dativa.append(('RiferimentoNormativo', iva.ftel_rifnorm))
+                else:
+                    if iva.tipo == "S":
+                        #split payment
+                        esig = "S"
+                    else:
+                        #esigilità immediata
+                        esig = "I"
+                    dativa.append(('EsigibilitaIVA', esig))
                 xmldoc.appendItems(body_det_rie, dativa)
             
             # 2.4 <DatiPagamento>
