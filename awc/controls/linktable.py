@@ -1470,7 +1470,7 @@ Per cercare mediante contenuto, digitare .. seguito dal testo da ricercare all'i
         if filter != self.filter:
             actualid = self.GetValue()
             self.filter = filter
-            if self.apply_filter_on_setvalue:
+            if self.apply_filter_on_setvalue and actualid != self.currentid:
                 self.SetValue(actualid)
                 if not self.Validate() or (self.iderror and resetOnError):
                     self.ResetValue()
