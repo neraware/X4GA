@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.8.45', dt.Date(2018, 6, 21), (
+         ("BUG1198",
+         """Corretta la sequenza delle informazioni nel riepilogo iva della fattura elettronica per problemi in caso di aliquota con natura."""),
+        ),),
+    
     ('1.8.44', dt.Date(2018, 3, 26), (
          ("BET4242",
          """Aggiunta aliquota iva su tabella aliquote iva da utilizzare in caso di generazione automatica di autofattura."""),
