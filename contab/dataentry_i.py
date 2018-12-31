@@ -31,7 +31,8 @@ import MySQLdb
 from mx import DateTime
 
 import Env
-from Env import Azienda
+from Env import Azienda, opj
+import os
 bt = Azienda.BaseTab
 
 import contab.scad          as scad
@@ -315,14 +316,44 @@ class GeneraPartiteMixin(scad.Scadenze):
         self.controls["totscad"].SetValue(totimp)
     
     def ScadCalc(self, totimposta=0):
+        
         if self._cfg_pcf != '1':
             return
         del self.regrss[:]
-        datdoc = self.controls["datdoc"].GetValue()
-        if datdoc is None:
-            datdoc = self.controls["datreg"].GetValue()
-        scad = self.CalcolaScadenze(datdoc, self.reg_modpag_id,\
-                                    self.totdoc, totimposta)
+        
+        calcola = True
+        
+        i = getattr(self, 'ftel_acq_info', None)
+        if i:
+            s = i.docinfo.scadenze
+            if s:
+                modpag = adb.DbTable('modpag')
+                modpag.AddFilter('ftel_tippag=%s AND ftel_modpag=%s AND numscad=%s', s[0].condpag, s[0].modpag, len(s))
+                modpag.Retrieve()
+                if modpag.IsEmpty():
+                    modpag.CreateNewRow()
+                    modpag.codice = '!%s-%s' % (s[0].modpag, len(s))
+                    modpag.descriz = '%s XML FT.EL. - %s SCAD.' % (modpag.codice, len(s))
+                    modpag.ftel_tippag = s[0].condpag
+                    modpag.ftel_modpag = s[0].modpag
+                    modpag.numscad = len(s)
+                    if not modpag.Save():
+                        aw.awu.MsgDialog(self, repr(modpag.GetError()), style=wx.ICON_ERROR)
+                        return
+                    aw.awu.MsgDialog(self, "E' stata creata la mod.pag. %s" % s[0].modpag, style=wx.ICON_INFORMATION)
+                self.reg_modpag_id = modpag.id
+                scad = []
+                for _s in s:
+                    scad.append([_s.datscad, _s.impscad, modpag.tipo == "R", False])
+                calcola = False
+        
+        if calcola:
+            datdoc = self.controls["datdoc"].GetValue()
+            if datdoc is None:
+                datdoc = self.controls["datreg"].GetValue()
+            scad = self.CalcolaScadenze(datdoc, self.reg_modpag_id,\
+                                        self.totdoc, totimposta)
+        
         note = [ x[RSSCA_NOTE] for x in self.regrss ]
         for data, imp, riba, cass in scad:
             self.regrss.append( [data, imp, None, None, riba] )
@@ -704,10 +735,16 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         ContabPanelTipo_E   x registrazioni di sola iva.
     """
     
+    ftel_acq_info = None
+    
     def __init__(self, *args, **kwargs):
         """
         Costruttore standard.
         """
+        
+        if 'ftel_acq_info' in kwargs:
+            self.ftel_acq_info = kwargs.pop('ftel_acq_info')
+        
         #pdc iva normale
         self._auto_pdciva_id = None
         self._auto_pdciva_cod = None
@@ -754,6 +791,17 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         self.dbsrc.AddJoin(bt.TABNAME_CFGCONTAB, 'caus', idLeft='id_caus', idRight='id')
         body = self.dbsrc.AddJoin(bt.TABNAME_CONTAB_B, 'body', idLeft='id', idRight='id_reg')
         body.AddJoin(bt.TABNAME_PDC, 'pdcpa', idLeft='id_pdcpa', join=adb.JOIN_LEFT, fields='id,codice,descriz')
+        
+        if self.ftel_acq_info:
+            dbcau = adb.DbTable('cfgcontab')
+            dbcau.AddJoin('regiva')
+            dbcau.AddFilter('regiva.tipo="A" AND cfgcontab.ftel_tipdoc="%s"' % self.ftel_acq_info.tipdoc)
+            dbcau.Retrieve()
+            if dbcau.IsEmpty():
+                f = 'FALSE'
+            else:
+                f = 'id IN (%s)' % ','.join(map(str, [c.id for c in dbcau]))
+            self.controls['causale'].SetFilter(f)
         
         self.Bind(lt.EVT_LINKTABCHANGED, self.OnRegIvaChanged, id=wdr.ID_REGIVA)
     
@@ -852,10 +900,28 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
     
     def RegNew(self):
         if self.canins:
+            
+            if getattr(self, 'ftel_acq_info', None):
+                i = self.ftel_acq_info
+                if i.pdc_id is None:
+                    msg = "Acquisizione fattura di %s, non presente in anagrafica.\nConfermi l'acquisizione automatica del fornitore ?" % i.pdc_descriz
+                    if aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT) != wx.ID_YES:
+                        return
+                    i.acquis_fornit()
+                    msg = "Fornitore %s acquisito con il codice %s" % (i.pdc_descriz, i.pdc_codice)
+                    aw.awu.MsgDialog(self, msg, style=wx.ICON_INFORMATION)
+            
             dlgPa = self.GetSelRowPaClass()(self, -1)
             if self._cfg_id_pdcrow1:
                 dlgPa.id = self._cfg_id_pdcrow1
                 dlgPa.controls['pdcpa'].SetValue(self._cfg_id_pdcrow1)
+            
+            if getattr(self, 'ftel_acq_info', None):
+                dlgPa.controls['pdcpa'].SetValue(self.ftel_acq_info.pdc_id)
+                dlgPa.controls['pdcpa'].Disable()
+                dlgPa.controls['totdoc'].SetValue(self.ftel_acq_info.totdoc)
+                dlgPa.controls['totdoc'].Disable()
+            
             if dlgPa.ShowModal() > 0:
                 cn = lambda x: self.FindWindowByName(x)
                 regiva_id = cn('id_regiva').GetValue()
@@ -894,25 +960,81 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                                         0,         #RSDET_RIGAPI
                                         0])        #RSDET_SOLOCONT
                     nrig = 2
-                    for cprow in dlgPa.rspref:
-                        #crea righe c/partita da sottoconti preferiti
-                        if cprow[0]:
+                    
+                    if getattr(self, 'ftel_acq_info', None):
+                        
+                        info = self.ftel_acq_info
+                        
+                        id_pdccos = bt.FTEL_ACQPDC
+                        for cprow in dlgPa.rspref:
+                            if cprow[0]:
+                                id_pdccos = cprow[1]
+                                break
+                        
+                        pdc = adb.DbTable('pdc')
+                        pdc.Get(id_pdccos)
+                        if pdc.IsEmpty():
+                            raise Exception("Conto di costo non definito")
+                        
+                        aliqiva = adb.DbTable('aliqiva')
+#                         aliqiva.AddBaseFilter('aliqiva.ftel_xmlacq=1')
+                        aliqiva.Reset()
+                        
+                        for tiva in info.docinfo.totiva:
+                            
+                            #determino importo
+                            if tiva.imponib >= 0:
+                                impd, impa = tiva.imponib, 0
+                            else:
+                                impd, impa = 0, -tiva.imponib
+                            
+                            #determino aliquota iva
+                            aliqiva.ClearFilters()
+                            if tiva.aliqiva:
+                                aliqiva.AddFilter('aliqiva.perciva=%s', tiva.aliqiva)
+                            else:
+                                if not tiva.natura:
+                                    raise Exception("Manca imposta e natura sul file")
+                                aliqiva.AddFilter('aliqiva.ftel_natura=%s', tiva.natura)
+                            aliqiva.Retrieve()
+                            
                             self.AddDefaultRow([nrig,             #RSDET_NUMRIGA
                                                 "C",              #RSDET_TIPRIGA
-                                                cprow[1],         #RSDET_PDCPA_ID
-                                                cprow[2],         #RSDET_PDCPA_cod
-                                                cprow[3],         #RSDET_PDCPA_des
-                                                None,             #RSDET_IMPDARE
-                                                None,             #RSDET_IMPAVERE
-                                                self.aliqdef_id,  #RSDET_ALIQ_ID
-                                                self.aliqdef_cod, #RSDET_ALIQ_cod
-                                                self.aliqdef_des, #RSDET_ALIQ_des
+                                                pdc.id,           #RSDET_PDCPA_ID
+                                                pdc.codice,       #RSDET_PDCPA_cod
+                                                pdc.descriz,      #RSDET_PDCPA_des
+                                                impd,             #RSDET_IMPDARE
+                                                impa,             #RSDET_IMPAVERE
+                                                aliqiva.id,       #RSDET_ALIQ_ID
+                                                aliqiva.codice,   #RSDET_ALIQ_cod
+                                                aliqiva.descriz,  #RSDET_ALIQ_des
                                                 None,             #RSDET_ALIQ_TOT
                                                 None,             #RSDET_NOTE
                                                 0,                #RSDET_RIGAPI
                                                 0])               #RSDET_SOLOCONT
-                            self._cfg_pdcpref_da[cprow[1]] = cprow[4] #segno
-                            nrig += 1
+                        
+                        self.ftel_acq_acquis()
+                        
+                    else:
+                        for cprow in dlgPa.rspref:
+                            #crea righe c/partita da sottoconti preferiti
+                            if cprow[0]:
+                                self.AddDefaultRow([nrig,             #RSDET_NUMRIGA
+                                                    "C",              #RSDET_TIPRIGA
+                                                    cprow[1],         #RSDET_PDCPA_ID
+                                                    cprow[2],         #RSDET_PDCPA_cod
+                                                    cprow[3],         #RSDET_PDCPA_des
+                                                    None,             #RSDET_IMPDARE
+                                                    None,             #RSDET_IMPAVERE
+                                                    self.aliqdef_id,  #RSDET_ALIQ_ID
+                                                    self.aliqdef_cod, #RSDET_ALIQ_cod
+                                                    self.aliqdef_des, #RSDET_ALIQ_des
+                                                    None,             #RSDET_ALIQ_TOT
+                                                    None,             #RSDET_NOTE
+                                                    0,                #RSDET_RIGAPI
+                                                    0])               #RSDET_SOLOCONT
+                                self._cfg_pdcpref_da[cprow[1]] = cprow[4] #segno
+                                nrig += 1
                 self.ReadProgr()
                 self.DefaultValues()
                 self.reg_nocalciva = 0
@@ -928,6 +1050,10 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                             if len(self.regrsb)>1:
                                 self.InitPdcIndeduc(1)
                 
+                if getattr(self, 'ftel_acq_info', None):
+                    self.reg_datdoc = self.ftel_acq_info.docinfo.datdoc
+                    self.reg_numdoc = self.ftel_acq_info.docinfo.numdoc
+                
                 self.SetRegStatus(ctb.STATUS_EDITING)
                 
             else:
@@ -935,6 +1061,9 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 self.SetRegStatus(ctb.STATUS_SELCAUS)
             
             dlgPa.Destroy()
+    
+    def ftel_acq_acquis(self):
+        pass
     
     def AddDefaultRow(self, row):
         self.regrsb.append(row)
@@ -1170,6 +1299,88 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             self.RegSolaIvaAutomaticaWrite()
         if out:
             self.ReportFineReg()
+        
+        if out and getattr(self, 'ftel_acq_info', None):
+            cmd = "UPDATE contab_h SET ftel_xml=%s WHERE id=%s"
+            db = adb.db.get_db()
+            db.Execute(cmd, (self.ftel_acq_info.filename, self.reg_id))
+            self.ftel_acq_savefiles()
+            aw.awu.MsgDialog(self, "Documento acquisito", style=wx.ICON_INFORMATION)
+            self.GetParent().EndModal(wx.ID_OK)
+        
+        return out
+    
+    def ftel_acq_savefiles(self):
+        #memorizza file xml
+        att = adb.DbTable('allegati')
+        att.CreateNewRow()
+        att.attscope = 'contab_h'
+        att.attkey = self.reg_id
+        att.description = self.ftel_acq_info.filename
+        att.datins = Env.DateTime.now()
+        att.attach_type = 1
+        att.hidden = 0
+        att.autotext = 0
+        h = open(self.ftel_acq_info.fullname, 'r')
+        stream = h.read()
+        h.close()
+        n, f = self.ftel_acq_info.GetNewFilePathAndName()
+        att.folderno = n
+        path = self.ftel_acq_info.GetFolderName(att.folderno)
+        if not os.path.isdir(path):
+            try:
+                os.mkdir(path)
+            except:
+                out = False
+        ext = '.xml'
+        filename = opj(path, '%s%s' % (f, ext))
+        att.file = filename.split('/')[-1]
+        att.size = len(stream)
+        try:
+            h = open(filename, 'wb')
+            h.write(stream)
+            h.close()
+            att.Save()
+            out = True
+        except Exception, e:
+            awu.MsgDialog(self, repr(e.args))
+            out = False
+        if not out:
+            return False
+        
+        for a in self.ftel_acq_info.docinfo.allegati:
+            att.CreateNewRow()
+            att.attscope = 'contab_h'
+            att.attkey = self.reg_id
+            att.description = a.descriz
+            att.datins = Env.DateTime.now()
+            att.attach_type = 1
+            att.hidden = 0
+            att.autotext = 0
+            stream = a.stream
+            n, f = self.ftel_acq_info.GetNewFilePathAndName()
+            att.folderno = n
+            path = self.ftel_acq_info.GetFolderName(att.folderno)
+            if not os.path.isdir(path):
+                try:
+                    os.mkdir(path)
+                except:
+                    out = False
+            ext = '.%s' % a.filetype.lower()
+            filename = opj(path, '%s%s' % (f, ext))
+            att.file = filename.split('/')[-1]
+            att.size = len(stream)
+            try:
+                h = open(filename, 'wb')
+                h.write(stream)
+                h.close()
+                att.Save()
+            except Exception, e:
+                awu.MsgDialog(self, repr(e.args))
+                out = False
+            if not out:
+                return False
+        
         return out
     
     def RegSolaIvaAutomaticaWrite(self):

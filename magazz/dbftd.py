@@ -299,10 +299,10 @@ class FtDif(adb.DbTable):
         if self.f_tipopdc in ['A', 'E']:
             if self.f_tipopdc == 'A':
 #                 dr.AddFilter('pdc.ftel_codice is null or LENGTH(pdc.ftel_codice)=0')
-                dr.AddFilter('LENGTH(pdc.ftel_codice)<>6')
+                dr.AddFilter('(pdc.ftel_codice IS NULL OR LENGTH(pdc.ftel_codice)<>6)')
             else:
 #                 dr.AddFilter('not pdc.ftel_codice is null and LENGTH(pdc.ftel_codice)>0')
-                dr.AddFilter('LENGTH(pdc.ftel_codice)=6')
+                dr.AddFilter('(pdc.ftel_codice IS NOT NULL AND LENGTH(pdc.ftel_codice)=6)')
         
         if not dr.Retrieve():
             raise Exception, repr(dr.GetError())

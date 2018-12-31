@@ -418,22 +418,24 @@ class Report:
             desc = "documento"
         
         if tipo == TYPE_PDF:
-            if rptout[-4:].lower() != '.pdf':
-                if rptout[-1] != '.':
-                    rptout += "."
-                rptout += "pdf"
             
-            basePath, _ = os.path.split(rptout)
-            try:
-                if not os.path.isdir(basePath):
-                    os.makedirs(basePath)
-            except:
-                msg = 'Impossibile creare la cartella %s' % basePath
-                if self.messages:
-                    awu.MsgDialog(None, msg, style=wx.ICON_ERROR)
-                    return None
-                else:
-                    raise Exception, msg
+            if isinstance(rptout, (str, unicode)):
+                if rptout[-4:].lower() != '.pdf':
+                    if rptout[-1] != '.':
+                        rptout += "."
+                    rptout += "pdf"
+                
+                basePath, _ = os.path.split(rptout)
+                try:
+                    if not os.path.isdir(basePath):
+                        os.makedirs(basePath)
+                except:
+                    msg = 'Impossibile creare la cartella %s' % basePath
+                    if self.messages:
+                        awu.MsgDialog(None, msg, style=wx.ICON_ERROR)
+                        return None
+                    else:
+                        raise Exception, msg
             
             p = self.parameters
             p['rptdef'] = rptdef
@@ -478,7 +480,7 @@ class Report:
             #impostato, da Report.__init__
             bp = os.path.split(self.GetFileName())[0]
             rptout = os.path.join(bp, rptout)
-        if rptout[-4:].lower() != '.pdf':
+        if isinstance(rptout, (str, unicode)) and rptout[-4:].lower() != '.pdf':
             if rptout[-1] != '.':
                 rptout += "."
             rptout += "pdf"

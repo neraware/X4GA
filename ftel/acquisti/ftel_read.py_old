@@ -1,0 +1,274 @@
+# -*- coding: utf-8 -*-
+
+import xml.dom.minidom as minidom
+import base64
+import datetime
+
+
+class _FTEL_Anag(object):
+    
+    paese = None
+    piva = None
+    codfisc = None
+    descriz = None
+    indirizzo = None
+    civico = None
+    cap = None
+    citta = None
+    prov = None
+    c_numtel = None
+    c_numfax = None
+    c_email = None
+
+class _FTEL_Head(object):
+    
+    tipdoc = None
+    divisa = None
+    datdoc = None
+    numdoc = None
+    totdoc = None
+    
+    righe = None
+    totiva = None
+    scadenze = None
+    
+    allegati = None
+    
+    def __init__(self):
+        object.__init__(self)
+        self.righe = []
+        self.totiva = []
+        self.allegati = []
+        self.scadenze = []
+
+
+class _FTEL_Body(object):
+    
+    numriga = None
+    codart = None
+    descriz = None
+    qta = None
+    unimis = None
+    prezzo = None
+    totale = None
+    aliqiva = None
+    
+class _FTEL_RigaIva(object):
+    
+    aliqiva = None
+    imponib = None
+    imposta = None
+    esigiva = None
+    natura = None
+
+class _FTEL_RigaScadenza(object):
+    
+    condpag = None
+    modpag = None
+    datscad = None
+    impscad = None
+    banca = None
+    iban = None
+    abi = None
+    cab = None
+    bic = None
+
+class _FTEL_Allegato(object):
+    
+    filename = None
+    filetype = None
+    descriz = None
+    stream = None
+
+
+class FTEL_Fornitore(_FTEL_Anag):
+    regfisc = None
+    
+class FTEL_Cliente(_FTEL_Anag):
+    pass
+
+
+class FTEL(object):
+    
+    formato = None
+    
+    anag_fornit = None
+    anag_cliente = None
+    docs = None
+    
+    def __init__(self, filename):
+        self.anag_fornit = FTEL_Fornitore()
+        self.anag_cliente = FTEL_Cliente()
+        self.docs = []
+        self.init_dom(filename)
+    
+    def init_dom(self, filename):
+        
+        object.__init__(self)
+        f = open(filename, 'r')
+        dom = minidom.parse(f)
+        f.close()
+        
+        if len(dom.getElementsByTagName('p:FatturaElettronica')) > 0:
+            self.dom_ftel = dom.getElementsByTagName('p:FatturaElettronica')[0]
+        elif len(dom.getElementsByTagName('ns0:FatturaElettronica')) > 0:
+            self.dom_ftel = dom.getElementsByTagName('ns0:FatturaElettronica')[0]
+        elif len(dom.getElementsByTagName('FatturaElettronica')) > 0:
+            self.dom_ftel = dom.getElementsByTagName('FatturaElettronica')[0]
+        else:
+            raise Exception("Non trovo tag FatturaElettronica")
+        
+        self.dom_head = self.dom_ftel.getElementsByTagName('FatturaElettronicaHeader')[0]
+        self.dom_body = self.dom_ftel.getElementsByTagName('FatturaElettronicaBody')
+    
+    def get_value(self, node, chain, conv=None):
+        try:
+            for name in chain.split('|'):
+                node = node.getElementsByTagName(name)[0]
+            value = node.firstChild.nodeValue
+            if callable(conv):
+                value = conv(value)
+            return value
+        except:
+            return None
+
+
+class FTEL_Acquisto(FTEL):
+    
+    def __init__(self, dom):
+        
+        FTEL.__init__(self, dom)
+        
+        def h(*v):
+            return self.get_value(self.dom_head, *v)
+        
+        self.formato = h('DatiTrasmissione|FormatoTrasmissione')
+        
+        #dati del fornitore
+        f = self.anag_fornit
+        f.paese =     h('CedentePrestatore|DatiAnagrafici|IdFiscaleIVA|IdPaese')
+        f.piva =      h('CedentePrestatore|DatiAnagrafici|IdFiscaleIVA|IdCodice')
+        f.codfisc =   h('CedentePrestatore|DatiAnagrafici|CodiceFiscale')
+        f.descriz =   h('CedentePrestatore|DatiAnagrafici|Anagrafica|Denominazione')
+        f.regfisc =   h('CedentePrestatore|DatiAnagrafici|Anagrafica|RegimeFiscale')
+        f.indirizzo = h('CedentePrestatore|Sede|Indirizzo')
+        f.civico =    h('CedentePrestatore|Sede|NumeroCivico')
+        f.cap =       h('CedentePrestatore|Sede|CAP')
+        f.citta =     h('CedentePrestatore|Sede|Comune')
+        f.prov =      h('CedentePrestatore|Sede|Provincia')
+        f.c_numtel =  h('CedentePrestatore|Contatti|Telefono')
+        f.c_numfax =  h('CedentePrestatore|Contatti|Fax')
+        f.c_email =   h('CedentePrestatore|Contatti|Email')
+        
+        #cessionario/committente (l'azienda)
+        c = self.anag_cliente
+        c.paese =     h('CessionarioCommittente|DatiAnagrafici|IdFiscaleIVA|IdPaese')
+        c.piva =      h('CessionarioCommittente|DatiAnagrafici|IdFiscaleIVA|IdCodice')
+        c.codfisc =   h('CessionarioCommittente|DatiAnagrafici|CodiceFiscale')
+        c.descriz =   h('CessionarioCommittente|DatiAnagrafici|Anagrafica|Denominazione')
+        c.indirizzo = h('CessionarioCommittente|Sede|Indirizzo')
+        c.civico =    h('CessionarioCommittente|Sede|NumeroCivico')
+        c.cap =       h('CessionarioCommittente|Sede|CAP')
+        c.citta =     h('CessionarioCommittente|Sede|Comune')
+        c.prov =      h('CessionarioCommittente|Sede|Provincia')
+        
+        for body in self.dom_body:
+            
+            dgen = body.getElementsByTagName('DatiGenerali')[0]
+            ddet = body.getElementsByTagName('DatiBeniServizi')[0]
+            
+            def g(*v): 
+                return self.get_value(dgen, *v)
+            
+            self.docs.append(_FTEL_Head())
+            h = self.docs[-1]
+            
+            h.tipdoc = g('DatiGeneraliDocumento|TipoDocumento')
+            h.divisa = g('DatiGeneraliDocumento|Divisa')
+            h.datdoc = g('DatiGeneraliDocumento|Data', dtos)
+            h.numdoc = g('DatiGeneraliDocumento|Numero')
+            h.totdoc = g('DatiGeneraliDocumento|ImportoTotaleDocumento', float)
+            
+            for det in ddet.getElementsByTagName('DettaglioLinee'):
+                
+                def d(*v):
+                    return self.get_value(det, *v)
+                
+                h.righe.append(_FTEL_Body())
+                r = h.righe[-1]
+                
+                r.numriga = d('NumeroLinea')
+                r.codart =  d('CodiceArticolo|CodiceValore')
+                r.descriz = d('Descrizione')
+                r.qta =     d('Quantita', float)
+                r.unimis =  d('UnitaMisura')
+                r.prezzo =  d('PrezzoUnitario', float)
+                r.totale =  d('PrezzoTotale', float)
+                r.aliqiva = d('AliquotaIVA', float)
+            
+            for tot in ddet.getElementsByTagName('DatiRiepilogo'):
+                
+                def i(*v):
+                    return self.get_value(tot, *v)
+                
+                h.totiva.append(_FTEL_RigaIva())
+                t = h.totiva[-1]
+                
+                t.aliqiva = i('AliquotaIVA', float)
+                t.imponib = i('ImponibileImporto', float)
+                t.imposta = i('Imposta', float)
+                t.esigiva = i('EsigibilitaIVA')
+                t.natura = i('Natura')
+            
+            dp = body.getElementsByTagName('DatiPagamento')[0]
+            
+            condpag = self.get_value(dp, 'CondizioniPagamento')
+            
+            for detpag in dp.getElementsByTagName('DettaglioPagamento'):
+                
+                def r(*v):
+                    return self.get_value(detpag, *v)
+                
+                h.scadenze.append(_FTEL_RigaScadenza())
+                s = h.scadenze[-1]
+                
+                s.condpag = condpag
+                s.modpag =  r('ModalitaPagamento')
+                s.datscad = r('DataScadenzaPagamento', dtos)
+                if s.datscad is None:
+                    gg = r('GiorniTerminiPagamento', int)
+                    if gg:
+                        s.datscad = h.datdoc + gg
+                s.impscad = r('ImportoPagamento', float)
+                s.banca =   r('IstitutoFinanziario')
+                s.iban =    r('IBAN')
+                s.abi =     r('ABI')
+                s.cab =     r('CAB')
+                s.bic =     r('BIC')
+            
+            for att in body.getElementsByTagName('Allegati'):
+                
+                def s(*v):
+                    return self.get_value(att, *v)
+                
+                h.allegati.append(_FTEL_Allegato())
+                a = h.allegati[-1]
+                
+                a.filename = s('NomeAttachment')
+                a.filetype = s('FormatoAttachment')
+                a.descriz = s('DescrizioneAttachment')
+                a.stream = base64.b64decode(s('Attachment'))
+
+
+def get_node_value(node):
+    return node.firstChild.nodeValue
+
+
+def dtos(sd): #YYYY-MM-DD
+    try:
+        _y = int(sd[0:4])
+        _m = int(sd[5:7])
+        _d = int(sd[8:10])
+        return datetime.date(_y, _m, _d)
+    except:
+        return None

@@ -91,12 +91,12 @@ def SetConfigBasePath(appdesc=None, pathprefix=''):
     logfile = opj(config_base_path, 'log.txt')
 
 
-from __builtin__ import round as round_bi
-def _round(n,d=0):
-    return round_bi(n+0.0000001,d)
-
-import __builtin__
-__builtin__.round = _round
+# from __builtin__ import round as round_bi
+# def _round(n,d=0):
+#     return round_bi(n+0.0000001,d)
+# 
+# import __builtin__
+# __builtin__.round = _round
 
 
 class PluginLoadingException(Exception):
@@ -1065,6 +1065,18 @@ class Azienda(object):
         GGSSOLPAG = 30       #giorni scadenza x solleciti di pagamento
         DOCSOLPAG = False    #flag allega pdf documenti in email solleciti di pagamento
         
+        FTEL_ACQPDC = None   #sottoconto di costo generico x acquisizione ft.el. fornitori
+        FTEL_VENCOD = False  #flag inclusione codici prodotto
+        FTEL_VENPDF = False  #flag inclusione stampa pdf
+        
+        FTEL_EEB_URL = ""    #evolvia bill: url
+        FTEL_EEB_USER = ""   #evolvia bill: username
+        FTEL_EEB_PSWD = ""   #evolvia bill: password
+        
+        @classmethod
+        def is_eeb_enabled(cls):
+            return bool(cls.FTEL_EEB_URL)
+        
         #variabili per la gestione dei listini
         MAGNUMSCO = 3        #numero di sconti gestiti
         MAGNUMRIC = 3        #numero di ricariche gestite
@@ -1087,7 +1099,7 @@ class Azienda(object):
         MAGSEPLIS = False    #flag visualizzazione sconto effettivo del costo ultimo v/ prezzo pubblico
         MAGRELLIS = False    #flag visualizzazione ricarica effettiva di ogni singolo listino v/ costo ultimo
         MAGSELLIS = False    #flag visualizzazione sconto effettivo di ogni singolo listino v/ prezzo pubblico
-        
+         
         TABSETUP_COLUMNNAME =        0
         TABSETUP_COLUMNTYPE =        1
         TABSETUP_COLUMNLENGTH =      2
@@ -1801,7 +1813,8 @@ class Azienda(object):
                 [ "datamax",      "DATE",  None, None, "Data di validità massima", None ], 
                 [ "ftel_natura",  "CHAR",     2, None, "Fattura elettronica: Natura aliquota", None ],
                 [ "ftel_rifnorm", "VARCHAR",255, None, "Fattura elettronica: riferimento normativo", None ], 
-                [ "id_aliq_auft", "INT",    idw, None, "ID aliquota per generazione automatica autofattura", None ], ]
+                [ "id_aliq_auft", "INT",    idw, None, "ID aliquota per generazione automatica autofattura", None ], 
+                [ "ftel_xmlacq",  "TINYINT",  1, None, "Fattura elettronica: aliquota disponibile x acquisizione xml ft.fornitori", None ], ]
             
             cls.aliqiva_indexes = cls.get_std_indexes()
             
@@ -2060,7 +2073,8 @@ class Azienda(object):
                 [ "id_bricon",  "INT",    idw, None, "ID conto bilancio ricl.", None ],
                 [ "id_bilcee",  "INT",    idw, None, "ID bilancio CEE", None ], 
                 [ "id_statpdc", "INT",    idw, None, "ID status p.d.c.", None ], 
-                [ "ftel_codice","VARCHAR", 10, None, "Fattura elettronica: codice destinatario pa", None]
+                [ "ftel_codice","VARCHAR",  7, None, "Fattura elettronica: codice destinatario pa", None],
+                [ "ftel_pec",   "VARCHAR",255, None, "Fattura elettronica: indirizzo pec", None],
             ]
             
             cls.set_constraints(cls.TABNAME_PDC,
@@ -2356,6 +2370,7 @@ class Azienda(object):
                 [ "sm_link",    "INT",      6, None, "Chiave di raggruppamento registrazioni per spesometro", None ],
                 [ "sm_regrif",  "TINYINT",  1, None, "Flag spesometro registrazione di riferimento per aggregazioni", None ],
                 [ "id_reg_by",  "INT",    idw, None, "ID registrazione di provenienza", None ],
+                [ "ftel_xml",   "VARCHAR", 64, None, "Nome file XML fattura elettronica fornitore", None ],
             ]
             
             cls.set_constraints(cls.TABNAME_CONTAB_H,
@@ -3022,6 +3037,10 @@ class Azienda(object):
                     ["nocodevet_targa",   "VARCHAR",    16, None, "Vettore non codificato: targa", None ],
                     ["nocodevet_autista", "VARCHAR",    64, None, "Vettore non codificato: autista", None ],
                     ["nocodevet_dichiar", "VARCHAR",   ntw, None, "Vettore non codificato: dichiarazione", None ], ]
+            
+            cls.movmag_h += [\
+            [ "ftel_eeb_status",      "CHAR",        1, None, "EEB: status", None ],
+            [ "ftel_eeb_message",     "VARCHAR",   255, None, "EEB: messaggio riposta invio", None ], ]
             
             cls.set_constraints(cls.TABNAME_MOVMAG_H,
                                 ((cls.TABSETUP_CONSTR_CFGMAGDOC, 'id_tipdoc',  cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -4112,6 +4131,12 @@ class Azienda(object):
                 ('GESSOLPAG',       'gessolpag',          f, _flt, None),
                 ('GGSSOLPAG',       'ggssolpag',          i, _int, None),
                 ('DOCSOLPAG',       'docsolpag',          f, _flt, None),
+                ('FTEL_ACQPDC',     'ftel_acqpdc',        i, _int, None),
+                ('FTEL_VENCOD',     'ftel_vencod',        f, _flt, None),
+                ('FTEL_VENPDF',     'ftel_venpdf',        f, _flt, None),
+                ('FTEL_EEB_URL',    'ftel_eeb_url',       s, _str, None),
+                ('FTEL_EEB_USER',   'ftel_eeb_user',      s, _str, None),
+                ('FTEL_EEB_PSWD',   'ftel_eeb_pswd',      s, _str, None),
             ]
         
         

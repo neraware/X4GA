@@ -44,6 +44,7 @@ import awc.util as awu
 import promem
 from X_wdr import *
 
+import Env
 
 
 ID_TB_CLIENT = wx.NewId()
@@ -225,7 +226,6 @@ class XFrame(aw.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
     
     def DisplayUserStatusBar(self):
-        import Env
         v = Env.version
         l = Env.Azienda.Login
         sb = self.GetStatusBar()
@@ -297,7 +297,7 @@ class XFrame(aw.Frame):
                                 pass
             p = None
             try:
-                p = Env.Azienda.config.get('Site', 'folder')
+                p = Env.Azienda.config.get('Site', 'folder')  # @UndefinedVariable
             except:
                 pass
             if not p:
@@ -423,6 +423,44 @@ class XFrame(aw.Frame):
         menubar = self.AdaptMenuBar_Clean(menubar)
         
         self.SetMenuBar(menubar)
+        
+        mft = wx.Menu()
+        
+        if not Env.Azienda.BaseTab.is_eeb_enabled():
+            pass
+#             mid = wx.NewId()
+#             mft.Append(mid, 'test')
+#             self.Bind(wx.EVT_MENU, lambda x: self._FTEL_Vendite_OnExport(), id=mid)
+#         else:
+#             mid = wx.NewId()
+#             mft.Append(mid, 'Genera file per la trasmissione')
+#             self.Bind(wx.EVT_MENU, lambda x: self._FTEL_Vendite_OnExport(), id=mid)
+#             mft.Append(mid, 'Apri cartella files generati')
+#             self.Bind(wx.EVT_MENU, lambda x: self._FatturaPA_OnFolder(), id=mid)
+#             mft.Append(mid, 'Documenti trasmessi/da trasmettere')
+#             self.Bind(wx.EVT_MENU, lambda x: self._FatturaPA_OnElenco(), id=mid)
+#         n = menubar.FindMenu('Fattura elettronica')
+#         mvx = menubar.GetMenu(n)
+#         mvx.AppendMenu(wx.NewId(), 'Vendite', mft)
+        
+#         item40 = wx.Menu()
+#         item40.Append( ID_FTEL_B2B_VEN_GENERA, "Genera file per la trasmissione", "Genera file da trasmettere a SDI" )
+#         item40.Append( ID_FTEL_B2B_VEN_FOLDER, "Apri cartella files generati", "Apre la cartella dei files generati" )
+#         item40.Append( ID_FTEL_B2B_VEN_ELENCO, "Documenti trasmessi/da trasmettere", "Visualizza l'elenco dei documenti fattura elettronica" )
+#         item39.AppendMenu( ID_MENUFTEL_VEN_B2B, "B2B / Privati", item40 )
+#     
+#         
+#         item41 = wx.Menu()
+#         item41.Append( ID_FTEL_PA_VEN_GENERA, "Genera file per la trasmissione", "Genera file FATTURAPA da trasmettere a SDI" )
+#         item41.Append( ID_FTEL_PA_VEN_FOLDER, "Apri cartella files generati", "Apre la cartella dei files FATTURAPA generati" )
+#         item41.Append( ID_FTEL_PA_VEN_ELENCO, "Documenti trasmessi/da trasmettere", "Visualizza l'elenco dei documenti FATTURAPA" )
+#         item39.AppendMenu( ID_MENUFTEL_VEN_PA, "P.A.", item41 )
+#     
+#         item39.Append( ID_FTEL_EEB_EXPORT, "Trasmissione vendite\tShift-Alt-V", "" )
+#         item39.Append( ID_FTEL_EEB_NOTIF, "Ricezione notifiche\tShift-Alt-R", "" )
+#         item37.AppendMenu( ID_MENUFTEL_VEN, "Vendite", item39 )
+#     
+#         item0.Append( item37, "Fattura elettronica" )
         
         #costruzione menu fatturazione differita
         mod = menubar.FindItemById(ID_MAGOPEDIF)
@@ -638,6 +676,7 @@ class XFrame(aw.Frame):
             (self.OnCfgPdcRange,               ID_CFGPDCRANGE),
             (self.OnCfgMassimaliSpesometro,    ID_CFGSPESOM),
             
+            (self._FTEL_Acquisti_OnAcquis,     ID_CONTABGES_ACQXML),
             #dataentry contabili
             (self.OnDataEntryContabIva,        ID_CONTABGES_ACQVEN),
             (self.OnDataEntryContabSaldaConto, ID_CONTABGES_INCPAG),
@@ -649,10 +688,23 @@ class XFrame(aw.Frame):
             (self.OnDataEntryMagazz,           ID_MAGAZZINS),
             (self.OnStaDif,                    ID_STADIFF),
             
-            #fatturapa
-            (self._FatturaPA_OnGenera,         ID_FATTURAPA_GENERA),
-            (self._FatturaPA_OnFolder,         ID_FATTURAPA_FOLDER),
-            (self._FatturaPA_OnElenco,         ID_FATTURAPA_ELENCO),
+#             #fattura elettronica vendite - pa
+#             (self._FatturaPA_OnGenera,         ID_FTEL_PA_VEN_GENERA),
+#             (self._FatturaPA_OnFolder,         ID_FTEL_PA_VEN_FOLDER),
+#             (self._FatturaPA_OnElenco,         ID_FTEL_PA_VEN_ELENCO),
+#             
+#             #fattura elettronica vendite - b2b
+#             (self._FTEL_B2B_Vendite_OnGenera,  ID_FTEL_B2B_VEN_GENERA),
+#             (self._FTEL_B2B_Vendite_OnFolder,  ID_FTEL_B2B_VEN_FOLDER),
+#             (self._FTEL_B2B_Vendite_OnElenco,  ID_FTEL_B2B_VEN_ELENCO),
+            
+            #fattura elettronica - acquisti
+            (self._FTEL_Acquisti_OnRicevi,     ID_FTEL_ACQ_RICEVI),
+            (self._FTEL_Acquisti_OnAcquis,     ID_FTEL_ACQ_IMPORTA),
+            
+            #fattura elettronica - vendite
+            (self._FTEL_Vendite_OnExport,      ID_FTEL_VEN_GENERA),
+            (self._FTEL_Vendite_OnRicNotif,    ID_FTEL_VEN_RICNOTIF),
             
             #chiusure contabili
             (self.OnChiusContabGenMov,         ID_CHIUSCONT_GENMOV),
@@ -675,6 +727,8 @@ class XFrame(aw.Frame):
             ):
             self.Bind(wx.EVT_MENU, func, id=cid)
         
+        bt = Env.Azienda.BaseTab
+         
         #menu specifici della mod
         
         return menubar
@@ -1641,20 +1695,33 @@ class XFrame(aw.Frame):
         from magazz.dataentry_o import MagazzFrame_O as DocMagazzFrame
         self.LaunchFrame(DocMagazzFrame)
     
-    def _FatturaPA_OnGenera(self, event):
-        
-        from magazz.fatturapa.fatturapa import FatturaElettronicaFrame
-        self.LaunchFrame(FatturaElettronicaFrame)
+#     def _FatturaPA_OnGenera(self):
+#         from magazz.fatturapa.fatturapa import FatturaElettronicaFrame
+#         self.LaunchFrame(FatturaElettronicaFrame)
+#     
+#     def _FatturaPA_OnFolder(self):
+#         from magazz.fatturapa.fatturapa import apri_cartella_files
+#         apri_cartella_files()
+#     
+#     def _FatturaPA_OnElenco(self):
+#         from magazz.fatturapa.fatturapa import ElencoFattureElettronicheFrame
+#         self.LaunchFrame(ElencoFattureElettronicheFrame)
     
-    def _FatturaPA_OnFolder(self, event):
-        
-        from magazz.fatturapa.fatturapa import apri_cartella_files
-        apri_cartella_files()
+    def _FTEL_Acquisti_OnRicevi(self, event):
+        from ftel.acquisti.ricevi import FtelRiceviFrame
+        self.LaunchFrame(FtelRiceviFrame)
     
-    def _FatturaPA_OnElenco(self, event):
-        
-        from magazz.fatturapa.fatturapa import ElencoFattureElettronicheFrame
-        self.LaunchFrame(ElencoFattureElettronicheFrame)
+    def _FTEL_Acquisti_OnAcquis(self, event):
+        from ftel.acquisti.acquis import FtelAcquisFrame
+        self.LaunchFrame(FtelAcquisFrame)
+    
+    def _FTEL_Vendite_OnExport(self, event):
+        from ftel.vendite.export import ExportFrame
+        self.LaunchFrame(ExportFrame)
+    
+    def _FTEL_Vendite_OnRicNotif(self, event):
+        from ftel.vendite.notifiche import NotificheFrame
+        self.LaunchFrame(NotificheFrame)
     
     def OnInterrProdotto(self, event):
         from magazz.prodint import ProdInterrFrame

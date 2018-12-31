@@ -37,7 +37,7 @@ import stormdb as adb
 
 import X_wdr as wdr
 
-import urllib2_file
+# import urllib2_file
 
 
 class XApp(wx.App):

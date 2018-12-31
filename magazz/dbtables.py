@@ -1131,7 +1131,7 @@ class DocMag(adb.DbTable):
                                     else:
                                         pro.RicalcolaCosto()
                             if 'ricprezzo' in col and val:
-                                if gpr.calcpc == 'P':
+                                if True:#gpr.calcpc == 'P':
                                     #ricalcola prezzo
                                     pro.RicalcolaPrezzo()
                             if 'riclist' in col and val:

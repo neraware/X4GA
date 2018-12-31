@@ -197,17 +197,19 @@ class Ean13Barcode(eanbc.Ean13BarcodeWidget):
 
 
 import StringIO
-try:
-    from pygooglechart import QRChart
-except ImportError:
-    class QRChart:
-        def __init__(self, *args, **kwargs):
-            raise Exception, "Manca package pygooglechart"
+# try:
+#     from pygooglechart import QRChart
+# except ImportError:
+#     class QRChart:
+#         def __init__(self, *args, **kwargs):
+#             raise Exception, "Manca package pygooglechart"
 
-class QRCode(object):
+from qrcode import QRCode
+
+class X4QRCode(object):
     
     def __init__(self, w, h, message, **kwargs):
-        self.qrc = QRChart(w, h, **kwargs)
+        self.qrc = QRCode()#w, h, **kwargs)
         self.qrc.add_data(message)
     
     def getPngImage(self, w, h, fgcol, bgcol):
@@ -215,26 +217,7 @@ class QRCode(object):
         w = int(w)
         h = int(h)
         
-#        img = Image.new('RGB', (w, h), bgcol)
-#        d = ImageDraw.Draw(img)
-#        for bx, bw in bars:
-#            d.rectangle(((bx, 0), (bx+bw-1, h-1)), fgcol)
-#        del d
-        
-        import urllib2
-        opener = urllib2.urlopen(self.qrc.get_url())
-
-        if opener.headers['content-type'] != 'image/png':
-            raise Exception('Server responded with a ' \
-                'content-type of %s' % opener.headers['content-type'])
-
-        stream = opener.read()
-        
-        opener.close()
-        
-        img = Image.open(StringIO.StringIO(stream))
-        
-        return img
+        return self.qrc.make_image()
 
 
 # ------------------------------------------------------------------------------
@@ -280,7 +263,8 @@ def getBarcodeImage(oCanvas, x0, y0, dx, dy, fgcol, bgcol,
 #        kw = {'barWidth': 1,
 #              'barHeight': dy}
 #        kw['lquiet'] = kw['rquiet'] = 0
-        bc = QRCode(int(dx), int(dy), ccode)#, **kw)
+        ccode = ccode.replace('^[^', '{').replace('^]^', '}')
+        bc = X4QRCode(int(dx), int(dy), ccode)#, **kw)
         img = bc.getPngImage(dx, dy, fgcol, bgcol)
     
     return img

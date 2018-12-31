@@ -29,6 +29,95 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.19', dt.Date(2018, 12, 28), (
+         ("BET4247",
+         """Possibilità di scelta clienti tra B2B e PA in generazione file XML."""),
+        ),),
+    
+    ('1.9.18', dt.Date(2018, 12, 27), (
+         ("BUG1202",
+         """Fix lettura file xml acquisto se contenente allegato in formato zip."""),
+        ),),
+    
+    ('1.9.16', dt.Date(2018, 12, 27), (
+         ("BUG1199",
+         """Fix tipologia ritenuta d'acconto in file xml, non rispettava setup."""),
+         ("BUG1200",
+         """Fix arrotondamento prezzo unitario in caso di documenti con scorporo."""),
+         ("BUG1201",
+         """Fix dataentry contabile con causale composta che genera partita."""),
+        ),),
+    
+    ('1.9.15', dt.Date(2018, 12, 21), (
+         ("BUG1198",
+         """Fix spedizione email con file pdf privi di estensione."""),
+        ),),
+    
+    ('1.9.14', dt.Date(2018, 12, 19), (
+         ("BUG1198",
+         """Fix generazione file pdf privo di estensione."""),
+        ),),
+    
+    ('1.9.13', dt.Date(2018, 12, 14), (
+         ("BUG1197",
+         """Fix generazione file xml per sconti in cascata e spese incasso."""),
+        ),),
+    
+    ('1.9.12', dt.Date(2018, 12, 13), (
+         ("BUG1196",
+         """Fix messaggio mancanza coordinate di recapito in dataentry documenti, causava oscuramento campo banca."""),
+        ),),
+    
+    ('1.9.11', dt.Date(2018, 12, 13), (
+         ("BUG1195",
+         """Filtro esportazione file xml solo per pa se data login inferiore al 2019."""),
+        ),),
+    
+    ('1.9.10', dt.Date(2018, 12, 12), (
+         ("BUG1194",
+         """Fix fatturazione differita per clienti con codice destinatario b2b."""),
+        ),),
+    
+    ('1.9.09', dt.Date(2018, 12, 12), (
+         ("BET4246",
+         """Aggiunto controllo presenza coordinate recapito fattura elettronica in data entry documenti."""),
+        ),),
+    
+    ('1.9.08', None, (
+         ("BUG1193",
+         """Filtro su registro iva vendite in esportazione file xml fattura elettronica."""),
+        ),),
+    
+    ('1.9.07', None, (
+         ("NEW4002",
+         """Aggiunta comunicazione gateway fatture elettroniche."""),
+        ),),
+    
+    ('1.9.06', None, (
+         ("BET4245",
+         """Aggiunto indirizzo PEC su schede anagrafice clienti/fornitori."""),
+        ),),
+    
+    ('1.9.05', None, (
+         ("BUG1192",
+         """Fix importazione fatture xml per errore dovuto ad errato namespace."""),
+        ),),
+    
+    ('1.9.04', None, (
+         ("BET4244",
+         """Esportazione fatture xml anche per importi a zero."""),
+        ),),
+    
+    ('1.9.02', None, (
+         ("BET4243",
+         """Implementati codici a barre 2d QRCode su report."""),
+        ),),
+    
+    ('1.9.01', None, (
+         ("NEW4001",
+         """Adeguamento a fatturazione elettronica."""),
+        ),),
+    
     ('1.8.45', dt.Date(2018, 6, 21), (
          ("BUG1198",
          """Corretta la sequenza delle informazioni nel riepilogo iva della fattura elettronica per problemi in caso di aliquota con natura."""),

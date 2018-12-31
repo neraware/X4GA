@@ -348,7 +348,13 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.EFFCONSCA,
                    bt.GESSOLPAG,
                    bt.GGSSOLPAG,
-                   bt.DOCSOLPAG)
+                   bt.DOCSOLPAG,
+                   bt.FTEL_ACQPDC,
+                   bt.FTEL_VENCOD,
+                   bt.FTEL_VENPDF,
+                   bt.FTEL_EEB_URL,
+                   bt.FTEL_EEB_USER,
+                   bt.FTEL_EEB_PSWD,)
             bt.TIPO_CONTAB = cn('setup_tipo_contab').GetValue()
             bt.CONSOVGES = cn('setup_consovges').GetValue()
             bt.CONBILRICL = cn('setup_conbilricl').GetValue()
@@ -435,6 +441,13 @@ class AziendaSetupPanel(_SetupPanel):
             bt.GESSOLPAG = cn('setup_gessolpag').GetValue()
             bt.GGSSOLPAG = cn('setup_ggssolpag').GetValue()
             bt.DOCSOLPAG = cn('setup_docsolpag').GetValue()
+            bt.FTEL_ACQPDC = cn('setup_ftel_acqpdc').GetValue()
+            bt.FTEL_VENCOD = cn('setup_ftel_vencod').GetValue()
+            bt.FTEL_VENPDF = cn('setup_ftel_venpdf').GetValue()
+            bt.FTEL_EEB_URL = cn('setup_ftel_eeb_url').GetValue()
+            bt.FTEL_EEB_USER = cn('setup_ftel_eeb_user').GetValue()
+            bt.FTEL_EEB_PSWD = cn('setup_ftel_eeb_pswd').GetValue()
+            
             bt.defstru()
             out = wx.GetApp().TestDBVers(force=True)
             if not out:
@@ -523,7 +536,13 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.EFFCONSCA,
                 bt.GESSOLPAG,
                 bt.GGSSOLPAG,
-                bt.DOCSOLPAG = old
+                bt.DOCSOLPAG,
+                bt.FTEL_ACQPDC,
+                bt.FTEL_VENCOD,
+                bt.FTEL_VENPDF,
+                bt.FTEL_EEB_URL,
+                bt.FTEL_EEB_USERN,
+                bt.FTEL_EEB_PSWD = old
         if out:
             cfg = CfgContab()
             cfg.SetEsercizio(Env.Azienda.Login.dataElab)

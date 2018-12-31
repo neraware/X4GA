@@ -53,8 +53,8 @@ class AliqIvaSearchResultsGrid(ga.SearchResultsGrid):
                 ( 50, (cn('aliqiva_perciva'),     "%IVA",       _PRC, True)),
                 ( 50, (cn('aliqiva_tipo'),        "Tipo",       _STR, True)),
                 ( 50, (cn('aliqiva_modo'),        "Modo",       _STR, True)),
-                ( 70, (cn('aliqiva_sm11_no'),     "No spesom.", _CHK, True)),
                 ( 40, (cn('aliqiva_ftel_natura'), "Nat.",       _STR, True)),
+                ( 80, (cn('aliqiva_ftel_xmlacq'), "XML Acq",    _CHK, True)),
                 (  1, (cn('aliqiva_id'),          "#aliq",      _STR, True)),
             )
     

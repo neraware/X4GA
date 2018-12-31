@@ -493,6 +493,8 @@ class MagazzPanel(aw.Panel,\
         for name in 'impcontr totpeso totcolli notevet'.split():
             self.Bind(wx.EVT_TEXT, self.OnFootChanged, cn(name))
         
+        self.Bind(wx.EVT_RADIOBOX, self.OnHeadChanged, cn('ftel_eeb_status'))
+        
         self.Bind(EVT_DATECHANGED, self.OnFootChanged, cn("initrasp"))
         self.Bind(wx.EVT_BUTTON, self.OnFootChanged, cn("initraspnow"))
         
@@ -578,7 +580,7 @@ class MagazzPanel(aw.Panel,\
         for f in bt.tabelle[bt.TABSETUP_TABLE_MOVMAG_H][bt.TABSETUP_TABLESTRUCTURE]:
             if f[bt.TABSETUP_COLUMNTYPE] in 'CHAR,VARCHAR':
                 c = self.FindWindowByName(f[bt.TABSETUP_COLUMNNAME])
-                if c:
+                if c and hasattr(c, 'SetMaxLength'):
                     c.SetMaxLength(f[bt.TABSETUP_COLUMNLENGTH])
     
     def TestQuit(self):
@@ -1034,6 +1036,7 @@ class MagazzPanel(aw.Panel,\
                 if self.TestPcf():
                     self.SetRegStatus(STATUS_EDITING)
                     self.UpdateBodyButtons()
+                    self.CheckCodFE()
         event.Skip()
     
     def TestCanModify(self):
@@ -1045,6 +1048,7 @@ class MagazzPanel(aw.Panel,\
                 registrazione già stampata sul registro iva
                 data registrazione precedente l'ultima stampa definitiva del giornale
                 data registrazione precedente l'ultima stampa definitiva del registro iva
+                fattura elettronica in status Consegnato, Mancata consegna
         """
         out = True
         doc = self.dbdoc
@@ -1076,6 +1080,12 @@ class MagazzPanel(aw.Panel,\
         self.gridbody.ResetView()
         event.Skip()
     
+    def CheckCodFE(self):
+        if self.dbdoc.pdc.tipana.tipo == "C" and len(self.dbdoc.pdc.ftel_codice or '') == 0 and len(self.dbdoc.pdc.ftel_pec or '') == 0:
+            def msg(*x):
+                aw.awu.MsgDialog(self, "Attenzione, mancano coordinate di recapito fattura elettronica sul cliente", style=wx.ICON_WARNING)
+            wx.CallAfter(msg)
+    
     def OnAnagChanged(self, event):
         DbgMsg('OnAnagChanged, control=%s' %event.GetEventObject().GetName())
         self.UpdateHeadAnag(initAll=True)
@@ -1089,11 +1099,12 @@ class MagazzPanel(aw.Panel,\
                 cn('id_pdc').SetValue(None)
         except:
             pass
+        self.CheckCodFE()
         def UpdateHead():
             for name in\
                 """id_pdc id_dest id_modpag id_bancf id_speinc id_agente """\
                 """id_zona id_valuta id_tiplist id_aliqiva desrif numrif """\
-                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup """\
+                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup ftel_eeb_status """\
                 """datrif noteint notedoc sconto1 sconto2 sconto3 sconto4 sconto5 sconto6""".split():
                 if name != 'notedoc' or doc.cfgdoc.aanotedoc != 1:
                     setattr(doc, name, cn(name).GetValue())
@@ -2412,7 +2423,7 @@ class MagazzPanel(aw.Panel,\
     def UpdatePanelHead(self):
         names = """id_pdc id_dest id_modpag id_agente id_zona id_valuta id_tiplist id_aliqiva """\
                 """datrif numrif desrif noteint notedoc f_ann f_acq """\
-                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup """\
+                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup ftel_eeb_status """\
                 """sconto1 sconto2 sconto3 sconto4 sconto5 sconto6""".split()
         if not self.dbdoc.cfgdoc.askmpnoeff:
             names.append("id_bancf")

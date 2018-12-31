@@ -80,7 +80,7 @@ ID_DATAMIN = 16006
 ID_DATAMAX = 16007
 ID_MODO = 16008
 ID_ALIQ_AUFT = 16009
-ID_SM11_NO = 16010
+ID_FTEL_XMLACQ = 16010
 
 def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -155,11 +155,11 @@ def AliqIvaCardDatiFunc( parent, call_fit = True, set_sizer = True ):
 
     item18.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item24 = wx.StaticBox( parent, -1, "Spesometro" )
+    item24 = wx.StaticBox( parent, -1, "XML Fatture di acquisto" )
     item23 = wx.StaticBoxSizer( item24, wx.VERTICAL )
     
-    item25 = UnoZeroCheckBox( parent, ID_SM11_NO, "Escludi dalla compilazione dello spesometro", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item25.SetName( "sm11_no" )
+    item25 = UnoZeroCheckBox( parent, ID_FTEL_XMLACQ, "Usa per determinazione aliquota iva in acquisizione xml", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item25.SetName( "ftel_xmlacq" )
     item23.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item18.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )

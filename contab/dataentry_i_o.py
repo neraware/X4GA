@@ -109,6 +109,10 @@ class ContabPanelTipo_I_O(ctbi.ContabPanelTipo_I):
         self.SetName('regconiva_o_panel')
         self.HelpBuilder_SetDir('contab.dataentry.RegConIva_O')
     
+    def ftel_acq_acquis(self):
+        if self.ftel_acq_info:
+            self.UpdateIvaFromDav()
+    
     def OnEnableSezIva(self, event):
         if self.reg_nocalciva:
             msg =\
@@ -1548,8 +1552,9 @@ class ContabDialogTipo_I_O(ctb.ContabDialog):
     def __init__(self, *args, **kwargs):
         if not kwargs.has_key('title') and len(args) < 3:
             kwargs['title'] = FRAME_TITLE
+        ftel_acq_info = kwargs.pop('ftel_acq_info', None)
         ctb.ContabDialog.__init__(self, *args, **kwargs)
-        self.dataentrypanel = ContabPanelTipo_I_O(self, -1)
+        self.dataentrypanel = ContabPanelTipo_I_O(self, -1, ftel_acq_info=ftel_acq_info)
         self.AddSizedPanel(self.dataentrypanel)
         self.Layout()
         self.CenterOnScreen()
