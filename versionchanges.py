@@ -29,7 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.29', dt.Date(2019, 1, 9), (
+    ('1.9.31', dt.Date(2019, 1, 9), (
+         ("BUG1205",
+         """Fix generazione file xml in caso di prezzo con più di 2 decimali."""),
+         ("BUG1206",
+         """Fix generazione file xml in presenza di caratteri unicode."""),
+         ("BET4252",
+         """Inserito controllo possibilità modifica documento in base a status fattura elettronica."""),
+        ),),
+    
+    ('1.9.29', None, (
          ("BUG1204",
          """Fix acquisizione file xml in caso di mancanza dati pagamento."""),
         ),),

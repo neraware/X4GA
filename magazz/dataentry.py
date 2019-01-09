@@ -907,17 +907,20 @@ class MagazzPanel(aw.Panel,\
                     self.SetRegStatus(STATUS_EDITING)
                 else:
                     if self.IsDocValid(docload=True):
-                        if self.status == STATUS_GETKEY and self.TestNumDoc():
-                            if self.TestPcf():
-                                doc = self.dbdoc
-                                c = self.controls["id_pdc"]
-                                if doc.cfgdoc.pdcdamag:
-#                                    doc.id_pdc = doc.magazz.id_pdc
-                                    def InitAnag(*args):
-                                        c.SetValue(doc.magazz.id_pdc)
-                                    wx.CallAfter(InitAnag)
-                                self.SetRegStatus(STATUS_EDITING)
-                                c.SetFocus()
+                        if self.TestCanModify():
+                            if self.status == STATUS_GETKEY and self.TestNumDoc():
+                                if self.TestPcf():
+                                    doc = self.dbdoc
+                                    c = self.controls["id_pdc"]
+                                    if doc.cfgdoc.pdcdamag:
+    #                                    doc.id_pdc = doc.magazz.id_pdc
+                                        def InitAnag(*args):
+                                            c.SetValue(doc.magazz.id_pdc)
+                                        wx.CallAfter(InitAnag)
+                                    self.SetRegStatus(STATUS_EDITING)
+                                    c.SetFocus()
+                        else:
+                            self.SetRegStatus(STATUS_SELCAUS)
         else:
             self.isediting = True
             self.SetRegStatus(STATUS_GETKEY)
@@ -1068,6 +1071,8 @@ class MagazzPanel(aw.Panel,\
                     err = "è antecedente l'ultima stampa definitiva del registro iva"
             if err:
                 err = 'La registrazione contabile derivante da questo documento\n%s' % err
+        if not err and doc.ftel_eeb_status and doc.ftel_eeb_status in "CM":
+            err = 'Documento già consegnato a SDI'
         if err:
             aw.awu.MsgDialog(self, message=err, caption="Impossibile modificare",
                              style=wx.ICON_ERROR)
@@ -2267,6 +2272,12 @@ class MagazzPanel(aw.Panel,\
             err += '\n\nProseguo comunque ?'
             if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                 return False
+        status = self.FindWindowByName('ftel_eeb_status').GetValue() or 'x'
+        if status in "CM":
+            err = "Attenzione: memorizzando con queto status fattura elettronica, il documento non potrà più essere modificato."
+            err += '\n\nProseguo comunque ?'
+            if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
+                return False
         return True
     
     def DocReset(self):
@@ -2501,6 +2512,7 @@ class MagazzPanel(aw.Panel,\
         c["ftel_rifamm"].Enable(en)
         c["ftel_codcig"].Enable(en)
         c["ftel_codcup"].Enable(en)
+        c["ftel_eeb_status"].Enable(en)
         h = self.FindWindowByName('workzone').GetPageWithText('testa', exact=False)
         for n in range(6):
             l = n+1
