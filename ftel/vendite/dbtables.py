@@ -537,7 +537,7 @@ class FatturaElettronica(dbm.DocMag):
                 else:
                     tabiva = mov.iva
                 
-                DP = 2
+                DP = Env.Azienda.BaseTab.MAGPRE_DECIMALS
                 
                 if _importo and self.config.scorpiva:
                     _prezzo = round(_prezzo/(100+mov.iva.perciva)*100, 5)
@@ -550,7 +550,6 @@ class FatturaElettronica(dbm.DocMag):
                 xmldoc.appendItems(body_det_row, (('NumeroLinea', str(_numriga)),))
                 
                 dati = []
-#                 dati.append(('NumeroLinea', str(_numriga)))
                 
                 if Env.Azienda.BaseTab.FTEL_VENCOD and len(_codart or '') > 0:
                     body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
@@ -867,6 +866,8 @@ class FatturaElettronica(dbm.DocMag):
         client = self.gateway_get_client()
         username = Env.Azienda.BaseTab.FTEL_EEB_USER
         password = hashlib.sha256(unicode(Env.Azienda.BaseTab.FTEL_EEB_PSWD)).hexdigest()
+        if filename.lower().endswith('.xml'):
+            xml_stream = unicode(xml_stream).encode('utf-8')
         xml_b64 = base64.encodestring(xml_stream)#unicode(xml_stream).encode('utf-8'))
         info = xml_b64+unicode(password).encode('utf-8')
         filehash = hashlib.sha256(info).hexdigest()
