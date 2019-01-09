@@ -8,7 +8,7 @@
 import os
 from ftel.vendite.dbtables import FTEL_NOCODE
 from anag.clienti import ClientiDialog
-from wx.grid import EVT_GRID_CELL_LEFT_DCLICK
+from wx.grid import EVT_GRID_CELL_LEFT_DCLICK, EVT_GRID_CELL_LEFT_CLICK
 from stormdb.db import get_db
 def open_dir(f):
     if os.sys.platform.startswith('win'):
@@ -46,33 +46,6 @@ class ExportGrid(dbglib.ADB_Grid):
         def ci(tab, col):
             return tab._GetFieldIndex(col, inline=True)
         
-#         if self._canedit:
-#             self.AddColumn(doc, 'fe_sel', 'Sel.', col_width=40, col_type=self.TypeCheck())
-#         
-        TYPEVAL = self.TypeFloat(Env.Azienda.BaseTab.VALINT_INTEGERS, Env.Azienda.BaseTab.VALINT_DECIMALS)
-        
-        self.COL_TPDCOD = self.AddColumn(tpd, 'codice', 'Cod.', col_width=40)
-        self.COL_TPDDES = self.AddColumn(tpd, 'descriz', 'Documento', col_width=150)
-        self.COL_NUMDOC = self.AddColumn(doc, 'numdoc', 'Num.', col_type=self.TypeInteger(5))
-        self.COL_DATDOC = self.AddColumn(doc, 'datdoc', 'Data', col_type=self.TypeDate())
-        self.COL_PDCCOD = self.AddColumn(pdc, 'codice', 'Cod.', col_width=60)
-        self.COL_PDCDES = self.AddColumn(pdc, 'descriz', 'Cliente', col_width=200, is_fittable=True)
-        self.COL_TOTDOC = self.AddColumn(doc, 'totimporto', 'Tot.Documento', col_type=TYPEVAL)
-        self.COL_CODDES = self.AddColumn(pdc, 'ftel_codice', 'CDFE', col_width=70)
-        self.COL_INDPEC = self.AddColumn(pdc, 'ftel_pec', 'PEC', col_width=180)
-        if Env.Azienda.BaseTab.is_eeb_enabled():
-            self.COL_MESSAG = self.AddColumn(doc, 'ftel_eeb_message', 'Errore', col_width=500)
-#         self.COL_BOLLOV = self.AddColumn(doc, 'ftel_bollovirt', 'Bollo V.', col_type=self.TypeFloat(5, 2), is_editable=self._canedit)
-#         self.COL_NUMORD = self.AddColumn(doc, 'ftel_ordnum', 'Ord.Acq.', col_width=80, is_editable=self._canedit)
-#         self.COL_DATORD = self.AddColumn(doc, 'ftel_orddat', 'Del', col_type=self.TypeDate(), is_editable=self._canedit)
-#         self.COL_CODCIG = self.AddColumn(doc, 'ftel_codcig', 'CIG', col_width=80, is_editable=self._canedit)
-#         self.COL_CODCUP = self.AddColumn(doc, 'ftel_codcup', 'CUP', col_width=110, is_editable=self._canedit)
-#         self.COL_RIFAMM = self.AddColumn(doc, 'ftel_rifamm', 'Rif.Amm.', col_width=120, is_editable=self._canedit)
-        self.COL_NUMTRA = self.AddColumn(doc, 'ftel_numtrasm', 'N.Tras.', col_type=self.TypeInteger(5))
-        self.COL_ID_DOC = self.AddColumn(doc, 'id', '#doc', col_width=1)
-        self.COL_ID_PDC = self.AddColumn(pdc, 'id', '#pdc', col_width=1)
-        
-#         self._col_sel = ci(doc, 'fe_sel')
         self._col_rfa = ci(doc, 'ftel_rifamm')
         self._col_num = ci(doc, 'ftel_numtrasm')
         self._col_oan = ci(doc, 'ftel_ordnum')
@@ -86,33 +59,54 @@ class ExportGrid(dbglib.ADB_Grid):
         self._col_pec = ci(pdc, 'ftel_pec')
         self._col_sts = ci(doc, 'ftel_eeb_status')
         
+        TYPEVAL = self.TypeFloat(Env.Azienda.BaseTab.VALINT_INTEGERS, Env.Azienda.BaseTab.VALINT_DECIMALS)
+        
+        if 'fe_sel' in doc.GetAllColumnsNames():
+            self.COL_SELECT = self.AddColumn(doc, 'fe_sel', 'Sel.', col_width=40, col_type=self.TypeCheck())
+        
+        self.COL_TPDCOD = self.AddColumn(tpd, 'codice', 'Cod.', col_width=40)
+        self.COL_TPDDES = self.AddColumn(tpd, 'descriz', 'Documento', col_width=150)
+        
+        self.tipsez = {}
+        regcon = dbfe.adb.DbTable('contab_h', 'regcon')
+        regcon.AddJoin('regiva')
+        regcon.Reset()
+        
+        col_tipdoc = ci(doc, 'id_tipdoc')
+        col_numdoc = ci(doc, 'numdoc')
+        col_regcon = ci(doc, 'id_reg')
+        def get_numdoc(row, col):
+            rs = self.dbdoc.GetRecordset()
+            id_tipdoc = rs[row][col_tipdoc]
+            if not id_tipdoc in self.tipsez:
+                id_regcon = rs[row][col_regcon]
+                regcon.Get(id_regcon)
+                self.tipsez[id_tipdoc] = regcon.regiva.numdocsez
+            numdoc = rs[row][col_numdoc]
+            numsez = self.tipsez[id_tipdoc]
+            if numsez:
+                numdoc = '%s/%s' % (numdoc, numsez)
+            return numdoc
+        
+        self.COL_NUMDOC = self.AddColumn(doc, 'numdoc', 'Num.', col_width=70, 
+                                         get_cell_func=get_numdoc)
+        
+        self.COL_DATDOC = self.AddColumn(doc, 'datdoc', 'Data', col_type=self.TypeDate())
+        self.COL_PDCCOD = self.AddColumn(pdc, 'codice', 'Cod.', col_width=60)
+        self.COL_PDCDES = self.AddColumn(pdc, 'descriz', 'Cliente', col_width=200, is_fittable=True)
+        self.COL_TOTDOC = self.AddColumn(doc, 'totimporto', 'Tot.Documento', col_type=TYPEVAL)
+        self.COL_CODDES = self.AddColumn(pdc, 'ftel_codice', 'CDFE', col_width=70)
+        self.COL_INDPEC = self.AddColumn(pdc, 'ftel_pec', 'PEC', col_width=180)
+        if Env.Azienda.BaseTab.is_eeb_enabled():
+            self.COL_MESSAG = self.AddColumn(doc, 'ftel_eeb_message', 'Errore', col_width=500)
+        self.COL_NUMTRA = self.AddColumn(doc, 'ftel_numtrasm', 'N.Tras.', col_type=self.TypeInteger(5))
+        self.COL_ID_DOC = self.AddColumn(doc, 'id', '#doc', col_width=1)
+        self.COL_ID_PDC = self.AddColumn(pdc, 'id', '#pdc', col_width=1)
+        
         self.CreateGrid()
         
         if not self._canedit:
             self.AddTotalsRow(self.COL_PDCDES, 'Totali', (ci(doc, 'ftel_bollovirt'),))
-    
-#     def CellEditAfterUpdate(self, row, gridcol, col, value):
-#         doc = self.dbdoc
-#         doc.MoveRow(row)
-#         
-#         if col == self._col_rfa:
-#             cmd = "UPDATE movmag_h SET ftel_rifamm=%%s WHERE id=%s" % doc.id
-#             doc._info.db.Execute(cmd, doc.ftel_rifamm[:20])
-#         if col == self._col_oan:
-#             cmd = "UPDATE movmag_h SET ftel_ordnum=%%s WHERE id=%s" % doc.id
-#             doc._info.db.Execute(cmd, doc.ftel_ordnum)
-#         elif col == self._col_oad:
-#             cmd = "UPDATE movmag_h SET ftel_orddat=%%s WHERE id=%s" % doc.id
-#             doc._info.db.Execute(cmd, doc.ftel_orddat)
-#         elif col == self._col_cig:
-#             cmd = "UPDATE movmag_h SET ftel_codcig=%%s WHERE id=%s" % doc.id
-#             doc._info.db.Execute(cmd, doc.ftel_codcig)
-#         elif col == self._col_cup:
-#             cmd = "UPDATE movmag_h SET ftel_codcup=%%s WHERE id=%s" % doc.id
-#             doc._info.db.Execute(cmd, doc.ftel_codcup)
-#         elif col == self._col_bol:
-#             cmd = "UPDATE movmag_h SET ftel_bollovirt=%%s WHERE id=%s" % doc.id
-#             doc._info.db.Execute(cmd, doc.ftel_bollovirt)
     
     def GetAttr(self, row, col, rscol, attr):
         attr = dbglib.ADB_Grid.GetAttr(self, row, col, rscol, attr)
@@ -138,7 +132,6 @@ class ExportGrid(dbglib.ADB_Grid):
 
 class ExportPanel(aw.Panel):
     
-    GridClass = ExportGrid
     window_filler = wdr.FtelExportFunc
     report_name = "Documenti fattura elettronica"
     
@@ -152,7 +145,10 @@ class ExportPanel(aw.Panel):
             cn('butgen').SetLabel('Avvia trasmissione')
         
         self.dbdocs = dbfe.FatturaElettronica()
-        self.gridocs = self.GridClass(cn('pangridocs'), self.dbdocs)
+        self.dbdocs.AddField('0.0', 'fe_sel')
+        self.dbdocs.Reset()
+        
+        self.gridocs = ExportGrid(cn('pangridocs'), self.dbdocs)
         
         self.dbpfe = dbfe.ProgrMagazz_FatturaElettronica()
         self.UpdateNumProgr()
@@ -173,6 +169,8 @@ class ExportPanel(aw.Panel):
         
 #         self.UpdateData()
         
+        self.gridocs.Bind(EVT_GRID_CELL_LEFT_CLICK, self.OnCellClicked)
+        
         self.gridocs.Bind(EVT_GRID_CELL_LEFT_DCLICK, self.OnCellDoubleClicked)
         for name in 'status_da_inviare status_in_lavorazione status_trasmessi'.split():
             self.Bind(wx.EVT_CHECKBOX, self.OnUpdateData, cn(name))
@@ -186,6 +184,9 @@ class ExportPanel(aw.Panel):
     
     def OnUpdateData(self, event):
         self.UpdateData()
+    
+    def OnCellClicked(self, event):
+        event.Skip()
     
     def OnCellDoubleClicked(self, event):
         row, col = event.GetRow(), event.GetCol()
@@ -226,15 +227,6 @@ class ExportPanel(aw.Panel):
     
     def Validate(self):
         err = False
-#         for doc in self.dbdocs:
-# #             if doc.fe_sel and not doc.totimposta and not doc.ftel_bollovirt:
-#             if not doc.totimposta and not doc.ftel_bollovirt:
-#                 err = True
-        if err:
-            msg = "Sono stati selezionati documenti privi di imposta e di bollo virtuale.\nProseguire ?"
-            stl = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
-            if aw.awu.MsgDialog(self, msg, style=stl) != wx.ID_YES:
-                return False
         return True
     
     def UpdateNumProgr(self):
@@ -360,6 +352,10 @@ class ExportPanel(aw.Panel):
             enable = False
         cn('butgen').Enable(enable and not docs.IsEmpty())
         cn('numprogr').Enable(enable)
+        if enable and cn('selaut').IsChecked():
+            col = docs._GetFieldIndex('fe_sel', inline=True)
+            for r in docs.GetRecordset():
+                r[col] = 1
         self.gridocs.ChangeData(docs.GetRecordset())
     
     def OnUpdateTotali(self, event):
@@ -373,15 +369,14 @@ class ExportPanel(aw.Panel):
         numdoc = totdoc = 0
         try:
             for doc in self.dbdocs:
-                if True:#doc.fe_sel:
-                    if reg.id != doc.id_reg:
-                        reg.Get(doc.id_reg)
-                    if reg.config.pasegno == "D":
-                        segno = +1
-                    else:
-                        segno = -1
-                    totdoc += (doc.totimporto*segno)
-                    numdoc += 1
+                if reg.id != doc.id_reg:
+                    reg.Get(doc.id_reg)
+                if reg.config.pasegno == "D":
+                    segno = +1
+                else:
+                    segno = -1
+                totdoc += (doc.totimporto*segno)
+                numdoc += 1
         finally:
             wx.EndBusyCursor()
         cn('docsel_num').SetValue(numdoc)
@@ -392,21 +387,22 @@ class ExportPanel(aw.Panel):
     
     def GeneraFile(self):
         
-#         if not self.dbdocs.Locate(lambda r: r.fe_sel):
         if self.dbdocs.IsEmpty():
             aw.awu.MsgDialog(self, "Nessun documento selezionato\nper la generazione del file")
             return False
         
-        msg = """Confermando, il documento sarà contrassegnato come trasmesso """\
+        col = self.dbdocs._GetFieldIndex('id', inline=True)
+        sel = self.dbdocs._GetFieldIndex('fe_sel', inline=True)
+        docids = [r[col] for r in self.dbdocs._info.rs if r[sel]]
+        
+        msg = """Confermando, i %s documento saranno contrassegnati come trasmessi """\
               """ed il progressivo di trasmissione incrementerà di conseguenza.\n\n"""\
-              """Confermi la generazione del file da trasmettere?\n"""
-              
+              """Confermi la generazione dei file da trasmettere?\n""" % len(docids)
+        
         if aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION | wx.YES_NO | wx.NO_DEFAULT) == wx.ID_YES:
             
             numprogr = self.FindWindowByName('numprogr').GetValue()
             
-            col = self.dbdocs._GetFieldIndex('id', inline=True)
-            docids = [r[col] for r in self.dbdocs._info.rs]# if d.fe_sel]
             path = None
             
             def firma_pa(pathname, filename):
@@ -429,18 +425,19 @@ class ExportPanel(aw.Panel):
             try:
                 doc = dbfe.FatturaElettronica()
                 for n, xdoc in enumerate(self.dbdocs):
-                    if len(xdoc.pdc.ftel_codice or '') == 0 and len(xdoc.pdc.ftel_pec or '') == 0:
-                        void += 1
-                    else:
-                        doc.Get(xdoc.id)
-                        wait.SetMessage('%s n. %s del %s' % (doc.config.descriz,
-                                                             doc.numdoc,
-                                                             doc.datdoc.Format()))
-                        path, _name = doc.ftel_make_files(numprogr, firma_pa)
-                        numprogr += 1
+                    if xdoc.fe_sel:
+                        if len(xdoc.pdc.ftel_codice or '') == 0 and len(xdoc.pdc.ftel_pec or '') == 0:
+                            void += 1
+                        else:
+                            doc.Get(xdoc.id)
+                            wait.SetMessage('%s n. %s del %s' % (doc.config.descriz,
+                                                                 doc.numdoc,
+                                                                 doc.datdoc.Format()))
+                            path, _name = doc.ftel_make_files(numprogr, firma_pa)
+                            numprogr += 1
                     wait.SetValue(n)
-#             except Exception, e:
-#                 aw.awu.MsgDialog(self, message=' '.join(map(str, e.args)), style=wx.ICON_ERROR)
+            except Exception, e:
+                aw.awu.MsgDialog(self, message=' '.join(map(str, e.args)), style=wx.ICON_ERROR)
             finally:
                 wait.Destroy()
             if void:

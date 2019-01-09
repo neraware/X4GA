@@ -29,6 +29,25 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.28', dt.Date(2019, 1, 8), (
+         ("BUG1203",
+         """Fix acquisizione file xml in caso di presenza di più fatture da acquisire."""),
+        ),),
+    
+    ('1.9.27', None, (
+         ("BET4249",
+         """Inclusione codice fiscale e dati iscrizione rea cedente/prestatore nel file xml."""),
+         ("BET4250",
+         """Impostazione automatica del codice destinatario fattura elettronica in memorizzazione scheda cliente."""),
+         ("BET4251",
+         """Possibilità di associare conto di costo a fornitore inserito automaticamente da xml."""),
+        ),),
+    
+    ('1.9.24', None, (
+         ("BET4248",
+         """Possibilità di selezione automatica e manuale dei documenti da trasmettere."""),
+        ),),
+    
     ('1.9.19', dt.Date(2018, 12, 28), (
          ("BET4247",
          """Possibilità di scelta clienti tra B2B e PA in generazione file XML."""),

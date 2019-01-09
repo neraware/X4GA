@@ -149,7 +149,12 @@ def show_pdf(xmldoc, filename):
             data.qta = riga.qta
             data.unimis = riga.unimis
             data.prezzo = riga.prezzo
-            data.sconto_per = riga.sconto_per
+            data.sconto_pe1 = riga.sconto_pe1
+            data.sconto_pe2 = riga.sconto_pe2
+            data.sconto_pe3 = riga.sconto_pe3
+            data.sconto_pe4 = riga.sconto_pe4
+            data.sconto_pe5 = riga.sconto_pe5
+            data.sconto_pe6 = riga.sconto_pe6
             data.sconto_val = riga.sconto_val
             data.totale = riga.totale
             data.aliqiva = riga.aliqiva

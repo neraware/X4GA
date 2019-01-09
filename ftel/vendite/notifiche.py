@@ -32,7 +32,6 @@ FRAME_TITLE = "Esportazione documenti in formato Fattura Elettronica"
 
 class NotifichePanel(ExportPanel):
     
-    GridClass = ExportGrid
     window_filler = wdr.FtelNotificheFunc
     report_name = "Documenti fattura elettronica"
     
@@ -43,7 +42,7 @@ class NotifichePanel(ExportPanel):
         cn = self.FindWindowByName
         
         self.dbdocs = dbfe.FatturaElettronica()
-        self.gridocs = self.GridClass(cn('pangridocs'), self.dbdocs)
+        self.gridocs = ExportGrid(cn('pangridocs'), self.dbdocs)
         
         self.init_colors()
         
@@ -102,7 +101,7 @@ class NotifichePanel(ExportPanel):
         if aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION | wx.YES_NO | wx.NO_DEFAULT) == wx.ID_YES:
             
             col = self.dbdocs._GetFieldIndex('id', inline=True)
-            docids = [r[col] for r in self.dbdocs._info.rs]# if d.fe_sel]
+            docids = [r[col] for r in self.dbdocs._info.rs]
             
             wait = aw.awu.WaitDialog(self, title="Trasmissione in corso...", maximum=len(docids))
             try:

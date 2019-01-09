@@ -258,3 +258,41 @@ class FornitDialog(pdcrel.ga._AnagDialog):
             kwargs['title'] = FRAME_TITLE
         pdcrel.ga._AnagDialog.__init__(self, *args, **kwargs)
         self.LoadAnagPanel(FornitPanel(self, -1))
+
+
+
+class AssociaCostoDialog(aw.Dialog):
+    
+    def __init__(self, parent, *args, **kwargs):
+        self.id_fornit = kwargs.pop('id_fornit')
+        aw.Dialog.__init__(self, parent, *args, **kwargs)
+        panel = aw.Panel(self)
+        wdr.AssociaCostoFunc(panel)
+        self.Layout()
+        cn = self.FindWindowByName
+        cn('id_fornit').SetValue(self.id_fornit)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonSave, cn('butsave'))
+    
+    def OnButtonSave(self, event):
+        cn = self.FindWindowByName
+        self.id_pdccos = cn('id_pdccos').GetValue()
+        if self.id_pdccos:
+            self.EndModal(wx.ID_OK)
+        else:
+            aw.awu.MsgDialog(self, 'Selezionare un sottoconto', style=wx.ICON_INFORMATION)
+    
+#         kwargs['title'] = 'Associa costo'
+
+def associa_costo(parent, id_fornit):
+    dlg = AssociaCostoDialog(parent, id_fornit=id_fornit)
+    do = dlg.ShowModal() == wx.ID_OK
+    dlg.Destroy()
+    if do:
+        pp = adb.DbTable('cfgpdcpref')
+        pp.CreateNewRow()
+        pp.ambito = 2
+        pp.key_id = id_fornit
+        pp.pdcord = 0
+        pp.id_pdc = dlg.id_pdccos
+        if not pp.Save():
+            aw.awu.MsgDialog(parent, repr(pp.GetError()), style=wx.ICON_ERROR)

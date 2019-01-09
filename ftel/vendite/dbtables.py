@@ -104,8 +104,6 @@ class FatturaElettronica(dbm.DocMag):
         dbm.DocMag.__init__(self, *args, **kwargs)
         self.AddBaseFilter('(caucon.ftel_tipdoc IS NOT NULL AND caucon.ftel_tipdoc<>"")')
         self.AddBaseFilter('regiva.tipo="V"')
-#         self.AddBaseFilter('(doc.ftel_eeb_status IS NULL OR doc.ftel_eeb_status != "T")')
-# #         self.AddBaseFilter('pdc.ftel_codice IS NOT NULL AND pdc.ftel_codice<>""')
         self.Reset()
         
         self.dbcfg = dbm.adb.DbTable('cfgsetup', 'setup')        
@@ -189,16 +187,6 @@ class FatturaElettronica(dbm.DocMag):
         return dataz
     
     def get_keydoc(self):
-#         #composizione chiave univoca del documento, composta come:
-#         #id_doc-id_pdc-datadoc-numerodoc:totdoc*100
-#         #questo consente il controllo sul gateway che ci si riferisca al documento in
-#         #modo che risultino inalterati cliente, data, numero documento e totale
-#         keydoc = '%s-%s-%s-%s:%s' % (self.id,
-#                                      self.id_pdc,
-#                                      self.dtos(self.datdoc),
-#                                      self.numdoc,
-#                                      str(int(self.totimporto*100)))
-#         return keydoc
         return str(self.id)
     
     def ftel_make_files(self, numprogr, pa_callback):
@@ -259,9 +247,6 @@ class FatturaElettronica(dbm.DocMag):
         if not ftel_codice or ftel_codice == FTEL_NOCODE:
             if self.pdc.ftel_pec:
                 xmldoc.appendItems(datitrasm, (('PECDestinatario',  self.pdc.ftel_pec),))
-#             else:
-#                 raise Exception("Manca indirizzo pec e codice destinatario fattura su cliente %s %s" % (self.pdc.codice,
-#                                                                                                         self.pdc.descriz,))
         
         # 1.1.5 <ContattiTrasmittente>
         dati = []
@@ -287,7 +272,10 @@ class FatturaElettronica(dbm.DocMag):
         # 1.2.1.1 <IdFiscaleIVA>
         cedente_datianag_datifisc = xmldoc.appendElement(cedente_datianag, 'IdFiscaleIVA')
         xmldoc.appendItems(cedente_datianag_datifisc, (('IdPaese',  Env.Azienda.stato or "IT"),
-                                                       ('IdCodice', Env.Azienda.piva or Env.Azienda.codfisc)))
+                                                       ('IdCodice', Env.Azienda.piva)))
+        if Env.Azienda.codfisc:
+            # 1.2.1.2 <CodiceFiscale>
+            xmldoc.appendItems(cedente_datianag, (('CodiceFiscale', Env.Azienda.codfisc),))
         
         # 1.2.1.3 <Anagrafica>
         cedente_datianag_anagraf = xmldoc.appendElement(cedente_datianag, 'Anagrafica')
@@ -322,6 +310,24 @@ class FatturaElettronica(dbm.DocMag):
                                                  ('Comune',    dataz['socit']),
                                                  ('Provincia', dataz['sopro']),
                                                  ('Nazione',   'IT'),))
+        
+        if dataz['reanum']:
+            # 1.2.4 <IscrizioneREA>
+            cedente_rea = xmldoc.appendElement(cedente, 'IscrizioneREA')
+            xmldoc.appendItems(cedente_rea, (('Ufficio',   dataz['reauff']),
+                                             ('NumeroREA', dataz['reanum']),))
+            if dataz['capsoc']:
+                if dataz['socuni']:
+                    socuni = 'SU'
+                else:
+                    socuni = 'SM'
+                xmldoc.appendItems(cedente_rea, (('CapitaleSociale', fmt_ii(dataz['capsoc'])),
+                                                 ('SocioUnico',      socuni),))
+            if dataz['socliq']:
+                socliq = 'LS'
+            else:
+                socliq = 'LN'
+            xmldoc.appendItems(cedente_rea, (('StatoLiquidazione', socliq),))
         
         if dataz['rfdes'] or dataz['rfcognome']:
             dati = []
@@ -436,7 +442,7 @@ class FatturaElettronica(dbm.DocMag):
                                     ('ImportoBollo',  fmt_ii(self.ftel_bollovirt)),))
             
             if 'prof_conpre' in self.mov.config.GetFieldNames():
-                # 2.1.1.7 <DatiCassaPrevidenziale> - gestito se presente plugin 'prof'ù
+                # 2.1.1.7 <DatiCassaPrevidenziale> - gestito se presente plugin 'prof'
                 contot = conimp = 0
                 conalp = conaln = None
                 for mov in self.mov:
@@ -503,12 +509,19 @@ class FatturaElettronica(dbm.DocMag):
             
             # 2.2.1 <DettaglioLinee>
             
-            lMov=self.mov.GetRecordset()
+            id_aliq_first = None
+            col_id_aliq = self.mov._GetFieldIndex('id_aliqiva', inline=True)
+            rsb = self.mov.GetRecordset()
+            for n in range(len(rsb)):
+                if rsb[n][col_id_aliq]:
+                    id_aliq_first = rsb[n][col_id_aliq]
+                    break
+            if id_aliq_first is None:
+                raise Exception('Aliquota non trovata')
+            first_aliq = adb.DbTable('aliqiva')
+            first_aliq.Get(id_aliq_first)
             
             for i, mov in enumerate(self.mov):
-                
-                if not mov.importo: #and not self.stampaDescriz:
-                    continue
                 
                 _numriga = mov.numriga
                 _codart = mov.prod.codice
@@ -518,9 +531,15 @@ class FatturaElettronica(dbm.DocMag):
                 _importo = mov.importo
                 _um = mov.um
                 
+                if mov.config.tipologia == "E":
+                    #righe sconto merce usano aliquota first_aliq, poi si accoda riga negativa
+                    tabiva = first_aliq
+                else:
+                    tabiva = mov.iva
+                
                 DP = 2
                 
-                if self.config.scorpiva:
+                if _importo and self.config.scorpiva:
                     _prezzo = round(_prezzo/(100+mov.iva.perciva)*100, 5)
                     DP = 5
                     _importo = round(_importo/(100+mov.iva.perciva)*100, 2)
@@ -540,16 +559,15 @@ class FatturaElettronica(dbm.DocMag):
                 
                 dati.append(('Descrizione', _descriz))
                 
-                if not mov.importo:
+                if not _importo:
+                    dati.append(('Quantita', '0.00'))
                     dati.append(('PrezzoUnitario', '0.00'))
                     dati.append(('PrezzoTotale', '0.00'))
-                    dati.append(('AliquotaIVA', '0.00'))
-                    dati.append(('Natura', 'N3'))
+                    dati.append(('AliquotaIVA', fmt_sc(first_aliq.perciva)))
+                    if first_aliq.ftel_natura:
+                        dati.append(('Natura', first_aliq.ftel_natura))
                 else:
-                    #========================================================                
-                    # dati per quantita'
-                    if True:#_qta:
-                        dati.append(('Quantita', fmt_qt(_qta or 1)))
+                    dati.append(('Quantita', fmt_qt(_qta or 1)))
                     if _um:
                         dati.append(('UnitaMisura', _um))
                     if _prezzo:
@@ -568,24 +586,69 @@ class FatturaElettronica(dbm.DocMag):
                             body_det_row_sconto = xmldoc.appendElement(body_det_row, 'ScontoMaggiorazione')
                             xmldoc.appendItems(body_det_row_sconto, sdati)
                     dati.append(('PrezzoTotale', fmt_ii(_importo)))
-                    if mov.iva.id:
-                        dati.append(('AliquotaIVA', fmt_sc(mov.iva.perciva)))
-                    if mov.samefloat(mov.iva.perciva, 0):
-                        dati.append(('Natura', mov.iva.ftel_natura))
+                    dati.append(('AliquotaIVA', fmt_sc(tabiva.perciva)))
+                    if mov.samefloat(tabiva.perciva, 0):
+                        dati.append(('Natura', tabiva.ftel_natura))
                     if self.ftel_rifamm:
                         dati.append(('RiferimentoAmministrazione', self.ftel_rifamm))
-                        
-                if dati:
-                    xmldoc.appendItems(body_det_row, dati)
+                
+                xmldoc.appendItems(body_det_row, dati)
 
-                if self.stampaDescriz:
-                    lAddDes=self.GetRowDescriz(lMov[(i+1):])
-                    for e in lAddDes:
-                        newEle=xmldoc.appendElement(body_det_row, 'AltriDatiGestionali')
-                        xmldoc.appendItems(newEle, (('TipoDato', 'D'),
-                                                    ('RiferimentoTesto',  e[:60]), ))
+                if mov.config.tipologia == "E":
+                    #body dettaglio linea aggiunta x sconto merce
                     
-                #========================================================                
+                    body_det_row = xmldoc.appendElement(body_det, 'DettaglioLinee')
+                    
+                    xmldoc.appendItems(body_det_row, (('NumeroLinea', str(_numriga)),))
+                    
+                    dati = []
+                    
+                    if Env.Azienda.BaseTab.FTEL_VENCOD and len(_codart or '') > 0:
+                        body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
+                        xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', 'COD'),
+                                                                 ('CodiceValore', _codart)))
+                    
+                    dati.append(('Descrizione', _descriz))
+                    
+                    if not _importo:
+                        dati.append(('Quantita', '0.00'))
+                        dati.append(('PrezzoUnitario', '0.00'))
+                        dati.append(('PrezzoTotale', '0.00'))
+                        dati.append(('AliquotaIVA', fmt_sc(first_aliq.perciva)))
+                        if first_aliq.ftel_natura:
+                            dati.append(('Natura', first_aliq.ftel_natura))
+                    else:
+                        if True:#_qta:
+                            dati.append(('Quantita', fmt_qt(_qta or 1)))
+                        if _um:
+                            dati.append(('UnitaMisura', _um))
+                        if _prezzo:
+                            dati.append(('PrezzoUnitario', fmt_pr(-_prezzo, DP)))
+                        else:
+                            dati.append(('PrezzoUnitario', fmt_pr(-_importo)))
+                        xmldoc.appendItems(body_det_row, dati)
+                        dati = []
+                        for n in range(1, 7):
+                            per_sconto = getattr(mov, 'sconto%d' % n) or 0
+                            if per_sconto:
+                                #body dettaglio sconto
+                                sdati = []
+                                sdati.append(('Tipo', 'SC'))
+                                sdati.append(('Percentuale', fmt_sc(per_sconto)))
+                                body_det_row_sconto = xmldoc.appendElement(body_det_row, 'ScontoMaggiorazione')
+                                xmldoc.appendItems(body_det_row_sconto, sdati)
+                        dati.append(('PrezzoTotale', fmt_ii(-_importo)))
+                        dati.append(('AliquotaIVA', fmt_sc(tabiva.perciva)))
+                        if mov.samefloat(tabiva.perciva, 0):
+                            dati.append(('Natura', tabiva.ftel_natura))
+                        if self.ftel_rifamm:
+                            dati.append(('RiferimentoAmministrazione', self.ftel_rifamm))
+                            
+                    xmldoc.appendItems(body_det_row, dati)
+                    
+                    adg = xmldoc.appendElement(body_det_row, 'AltriDatiGestionali')
+                    xmldoc.appendItems(adg, (('TipoDato',          'OMAGGIO'),
+                                             ('RiferimentoTesto',  'SCONTO MERCE'), ))
             
             self.MakeTotals()
             
@@ -652,16 +715,28 @@ class FatturaElettronica(dbm.DocMag):
                 reg = self.regcon
                 reg.Get(self.id_reg)
                 if reg.OneRow():
-                    for scad in self.regcon.scad:
-                        # 2.4.2 <DettaglioPagamento>
+                    if len(self.regcon.scad) == 0:
                         datipag = [('ModalitaPagamento',     self.modpag.ftel_modpag),
-                                   ('DataScadenzaPagamento', data(scad.datscad)),
-                                   ('ImportoPagamento',      fmt_ii(scad.importo)),]
+                                   ('DataScadenzaPagamento', data(self.datdoc)),
+                                   ('ImportoPagamento',      fmt_ii(self.totdare)),]
                         if cli.id_bancapag:
                             dbban = dbm.adb.DbTable('banche')
                             if dbban.Get(cli.id_bancapag) and dbban.OneRow():
                                 if len(dbban.iban or '') > 0:
                                     datipag.append(('IBAN', dbban.iban))
+                        body_pag_det = xmldoc.appendElement(body_pag, 'DettaglioPagamento')
+                        xmldoc.appendItems(body_pag_det, datipag)
+                    else:
+                        for scad in self.regcon.scad:
+                            # 2.4.2 <DettaglioPagamento>
+                            datipag = [('ModalitaPagamento',     self.modpag.ftel_modpag),
+                                       ('DataScadenzaPagamento', data(scad.datscad)),
+                                       ('ImportoPagamento',      fmt_ii(scad.importo)),]
+                            if cli.id_bancapag:
+                                dbban = dbm.adb.DbTable('banche')
+                                if dbban.Get(cli.id_bancapag) and dbban.OneRow():
+                                    if len(dbban.iban or '') > 0:
+                                        datipag.append(('IBAN', dbban.iban))
                         body_pag_det = xmldoc.appendElement(body_pag, 'DettaglioPagamento')
                         xmldoc.appendItems(body_pag_det, datipag)
             
@@ -671,11 +746,10 @@ class FatturaElettronica(dbm.DocMag):
             if rptname and Env.Azienda.BaseTab.FTEL_VENPDF:
                 doc = FatturaElettronica()
                 doc.Get(self.id)
+                doc.MakeTotals()
                 doc._info.anag = doc.GetAnag()
                 pdf_h = StringIO()
                 rpt.Report(None, doc, rptname, pdf_h, output="STORE") 
-#                            changepathname=self.ftel_get_pathname(numprogr),
-#                            changefilename=self.ftel_get_filename(numprogr, ext='pdf'))
                 pdf_h.seek(0)
                 pdf_stream = pdf_h.read()
                 pdf_h.close()
@@ -690,7 +764,6 @@ class FatturaElettronica(dbm.DocMag):
                 body_pdf = xmldoc.appendElement(body, 'Allegati')
                 xmldoc.appendItems(body_pdf, (('NomeAttachment', filename),
                                               ('FormatoAttachment', 'PDF'),
-#                                               ('DescrizioneAttachment', 'Documento'),
                                               ('Attachment', base64.b64encode(pdf_stream)),))
             
             if not self.MoveNext():
@@ -740,16 +813,6 @@ class FatturaElettronica(dbm.DocMag):
                 if not db.Execute(cmd, (numprogr, status, message)):
                     raise Exception(db.dbError.description)
             elif response['result'] == "ERROR":
-#                 status = self.STATUS_ERRORE
-#                 message = response['error']
-#                 cmd = """
-#                     UPDATE movmag_h SET ftel_eeb_status=%%s,
-#                                         ftel_eeb_message=%%s
-#                      WHERE id=%s
-#                 """ % self.id
-#                 db = self._info.db
-#                 if not db.Execute(cmd, (status, message)):
-#                     raise Exception(db.dbError.description)
                 raise Exception("Errore nella trasmissione al gateway:\n%s" % response['error'])
         else:
             cmd = """
@@ -779,34 +842,6 @@ class FatturaElettronica(dbm.DocMag):
         if not os.path.isfile(filename):
             import ftel.vendite.fatturapa_v12_xsl as xsl
             open(filename, 'w').write(xsl.xsl)
-    
-    def getRowReferenceById(self, id_doc):
-        lRif=[]
-        con = Env.Azienda.DB.connection
-        cur = con.cursor()
-        rs=()
-        if 1:#try:
-            cur.execute("SELECT id FROM %s where id_doc=%s" % (Env.Azienda.BaseTab.TABNAME_MOVMAG_B, id_doc))
-            rs = cur.fetchall()
-#         except MySQLdb.Error, e:
-#             print "Errore %d - %s" % (e.args[0], e.args[1])        
-        lIdBody=[i[0] for i in rs]
-        for mov in self.mov:
-            if mov.importo:
-                if mov.id_moveva in lIdBody:
-                    if mov.id_moveva:
-                        lRif.append(mov.numriga)
-        return lRif
-    
-    def GetRowDescriz(self, lMov):
-        lDescriz=[]
-        for e in lMov:
-            if not(e[10]==0 or e[10]==None):
-                break
-            if e[5][:7]=="Rif.to ":
-                continue
-            lDescriz.append(e[5])
-        return lDescriz
     
     @classmethod
     def gateway_get_url(cls, path):

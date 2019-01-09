@@ -20,9 +20,9 @@ class _FTEL_Anag(object):
     cap = None
     citta = None
     prov = None
-    c_numtel = None
-    c_numfax = None
-    c_email = None
+    numtel = None
+    numfax = None
+    email = None
 
 class _FTEL_Head(object):
     
@@ -192,15 +192,22 @@ class _FTEL_Body(object):
     qta = None
     unimis = None
     prezzo = None
-    sconto_per = None
+    sconto_pe1 = sconto_pe2 = sconto_pe3 = sconto_pe4 = sconto_pe5 = sconto_pe6 = None
     sconto_val = None
     totale = None
     aliqiva = None
     
     def get_descriz_sconto(self):
-        if self.sconto_per:
-            sconto = self.sconto_per
-            return '%s%%' % adb.DbTable.sepnvi(sconto)
+        sconti = []
+        for n in range(1,6,1):
+            s = getattr(self, 'sconto_pe%d' % n)
+            if s:
+                if s == int(s):
+                    sconti.append(str(int(s)))
+                else:
+                    sconti.append(adb.DbTable.sepn(s, 2))
+        if sconti:
+            return '+'.join(sconti)
         if self.sconto_val:
             return adb.DbTable.sepnvi(self.sconto_val)
         return ''
@@ -285,10 +292,11 @@ class FTEL(object):
         self.dom_head = self.dom_ftel.getElementsByTagName('FatturaElettronicaHeader')[0]
         self.dom_body = self.dom_ftel.getElementsByTagName('FatturaElettronicaBody')
     
-    def get_value(self, node, chain, conv=None):
+    def get_value(self, node, chain, conv=None, index=0):
         try:
             for name in chain.split('|'):
-                node = node.getElementsByTagName(name)[0]
+                node = node.getElementsByTagName(name)[index]
+                index = 0
             value = node.firstChild.nodeValue
             if callable(conv):
                 value = conv(value)
@@ -308,33 +316,39 @@ class FTEL_Doc(FTEL):
         
         self.formato = h('DatiTrasmissione|FormatoTrasmissione')
         
-        #dati del fornitore
-        f = self.anag_fornit
-        f.paese =     h('CedentePrestatore|DatiAnagrafici|IdFiscaleIVA|IdPaese')
-        f.piva =      h('CedentePrestatore|DatiAnagrafici|IdFiscaleIVA|IdCodice')
-        f.codfisc =   h('CedentePrestatore|DatiAnagrafici|CodiceFiscale')
-        f.descriz =   h('CedentePrestatore|DatiAnagrafici|Anagrafica|Denominazione')
-        f.regfisc =   h('CedentePrestatore|DatiAnagrafici|Anagrafica|RegimeFiscale')
-        f.indirizzo = h('CedentePrestatore|Sede|Indirizzo')
-        f.civico =    h('CedentePrestatore|Sede|NumeroCivico')
-        f.cap =       h('CedentePrestatore|Sede|CAP')
-        f.citta =     h('CedentePrestatore|Sede|Comune')
-        f.prov =      h('CedentePrestatore|Sede|Provincia')
-        f.c_numtel =  h('CedentePrestatore|Contatti|Telefono')
-        f.c_numfax =  h('CedentePrestatore|Contatti|Fax')
-        f.c_email =   h('CedentePrestatore|Contatti|Email')
+        def read_anag(anag, tipo):
+            
+            def _h(x):
+                return h(x % tipo)
+            
+            cp_desc = _h(r'%s|DatiAnagrafici|Anagrafica|Denominazione')
+            cp_nome = _h(r'%s|DatiAnagrafici|Anagrafica|Nome')
+            cp_cogn = _h(r'%s|DatiAnagrafici|Anagrafica|Cognome')
+            
+            anag.nome = cp_nome
+            anag.cognome = cp_cogn
+            if cp_desc:
+                anag.descriz = cp_desc
+            else:
+                anag.descriz = '%s %s' % (cp_cogn, cp_nome)
+            
+            anag.regfisc =   _h(r'%s|DatiAnagrafici|Anagrafica|RegimeFiscale')
+            
+            anag.paese =     _h(r'%s|DatiAnagrafici|IdFiscaleIVA|IdPaese')
+            anag.piva =      _h(r'%s|DatiAnagrafici|IdFiscaleIVA|IdCodice')
+            anag.codfisc =   _h(r'%s|DatiAnagrafici|CodiceFiscale')
+            
+            anag.indirizzo = _h(r'%s|Sede|Indirizzo')
+            anag.civico =    _h(r'%s|Sede|NumeroCivico')
+            anag.cap =       _h(r'%s|Sede|CAP')
+            anag.citta =     _h(r'%s|Sede|Comune')
+            anag.prov =      _h(r'%s|Sede|Provincia')
+            anag.numtel =    _h(r'%s|Contatti|Telefono')
+            anag.numfax =    _h(r'%s|Contatti|Fax')
+            anag.email =     _h(r'%s|Contatti|Email')
         
-        #cessionario/committente (l'azienda)
-        c = self.anag_cliente
-        c.paese =     h('CessionarioCommittente|DatiAnagrafici|IdFiscaleIVA|IdPaese')
-        c.piva =      h('CessionarioCommittente|DatiAnagrafici|IdFiscaleIVA|IdCodice')
-        c.codfisc =   h('CessionarioCommittente|DatiAnagrafici|CodiceFiscale')
-        c.descriz =   h('CessionarioCommittente|DatiAnagrafici|Anagrafica|Denominazione')
-        c.indirizzo = h('CessionarioCommittente|Sede|Indirizzo')
-        c.civico =    h('CessionarioCommittente|Sede|NumeroCivico')
-        c.cap =       h('CessionarioCommittente|Sede|CAP')
-        c.citta =     h('CessionarioCommittente|Sede|Comune')
-        c.prov =      h('CessionarioCommittente|Sede|Provincia')
+        read_anag(self.anag_fornit, 'CedentePrestatore')
+        read_anag(self.anag_cliente, 'CessionarioCommittente')
         
         for body in self.dom_body:
             
@@ -362,8 +376,8 @@ class FTEL_Doc(FTEL):
             
             for det in ddet.getElementsByTagName('DettaglioLinee'):
                 
-                def d(*v):
-                    return self.get_value(det, *v)
+                def d(*v, **w):
+                    return self.get_value(det, *v, **w)
                 
                 h.righe.append(_FTEL_Body())
                 r = h.righe[-1]
@@ -374,7 +388,12 @@ class FTEL_Doc(FTEL):
                 r.qta =         d('Quantita', float)
                 r.unimis =      d('UnitaMisura')
                 r.prezzo =      d('PrezzoUnitario', float)
-                r.sconto_per =  d('ScontoMaggiorazione|Percentuale', float)
+                r.sconto_pe1 =  d('ScontoMaggiorazione|Percentuale', float, index=0)
+                r.sconto_pe2 =  d('ScontoMaggiorazione|Percentuale', float, index=1)
+                r.sconto_pe3 =  d('ScontoMaggiorazione|Percentuale', float, index=2)
+                r.sconto_pe4 =  d('ScontoMaggiorazione|Percentuale', float, index=3)
+                r.sconto_pe5 =  d('ScontoMaggiorazione|Percentuale', float, index=4)
+                r.sconto_pe6 =  d('ScontoMaggiorazione|Percentuale', float, index=5)
                 r.sconto_val =  d('ScontoMaggiorazione|Importo', float)
                 r.totale =      d('PrezzoTotale', float)
                 r.aliqiva =     d('AliquotaIVA', float)

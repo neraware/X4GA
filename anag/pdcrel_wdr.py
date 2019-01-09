@@ -44,7 +44,7 @@ from anag.catcli import CatCliDialog
 from anag.catfor import CatForDialog
 from anag.lib import LinkTableBilCee, LinkTableStati
 
-from anag.lib import LinkTableCliente, LinkTableBanca, LinkTableTipList, LinkTableStatCli, LinkTableStatFor, LinkTableStatPdc, LinkTableFornit, LinkTablePdc
+from anag.lib import LinkTableCliente, LinkTableBanca, LinkTableTipList, LinkTableStatCli, LinkTableStatFor, LinkTableStatPdc, LinkTableFornit, LinkTablePdc, LinkTablePdcCosti
 
 from Env import Azienda
 bt = Azienda.BaseTab
@@ -3677,6 +3677,35 @@ def CliForNoteFunc( parent, call_fit = True, set_sizer = True ):
     item0.AddGrowableCol( 0 )
 
     item0.AddGrowableRow( 0 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+ID_ASCO_FORNIT = 14210
+ID_ASCO_COSTO = 14211
+
+def AssociaCostoFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.BoxSizer( wx.VERTICAL )
+    
+    item1 = wx.StaticText( parent, ID_TEXT, "Fornitore", wx.DefaultPosition, [300,-1], 0 )
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item2 = LinkTableFornit(parent, ID_ASCO_FORNIT, "id_fornit"); item2.Disable()
+    item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item3 = wx.StaticText( parent, ID_TEXT, "Sottoconto di costo predefinito:", wx.DefaultPosition, [300,-1], 0 )
+    item0.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item4 = LinkTablePdcCosti(parent, ID_ASCO_COSTO, "id_pdccos")
+    item0.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item5 = wx.Button( parent, ID_BUTSAVE, "Salva", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item5.SetName( "butsave" )
+    item0.Add( item5, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

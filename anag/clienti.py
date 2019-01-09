@@ -417,6 +417,19 @@ class ClientiPanel(pdcrel._CliForPanel):
         return p
 
     def UpdateDataRecord( self ):
+        cn = self.FindWindowByName
+        cdfe = cn('ftel_codice').GetValue()
+        if not cdfe:
+            if (cn('nazione').GetValue() or 'IT') == 'IT':
+                cod = '0000000'
+                neg = ''
+            else:
+                cod = 'XXXXXXX'
+                neg = 'non '
+            msg = 'Manca il codice destinatario fattura elettronica, verrà impostato a %s in quanto soggetto %sresidente.\nConfermi ?' % (cod, neg)
+            if aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION|wx.YES_NO|wx.YES) != wx.ID_YES:
+                return False
+            cn('ftel_codice').SetValue(cod)
         written = pdcrel._CliForPanel.UpdateDataRecord(self)
         if written:
             if bt.MAGSCOCAT:

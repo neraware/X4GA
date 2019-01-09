@@ -33,6 +33,7 @@ from mx import DateTime
 import Env
 from Env import Azienda, opj
 import os
+from anag.fornit import associa_costo
 bt = Azienda.BaseTab
 
 import contab.scad          as scad
@@ -903,13 +904,17 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             
             if getattr(self, 'ftel_acq_info', None):
                 i = self.ftel_acq_info
-                if i.pdc_id is None:
+                if i.pdc.id is None:
                     msg = "Acquisizione fattura di %s, non presente in anagrafica.\nConfermi l'acquisizione automatica del fornitore ?" % i.pdc_descriz
                     if aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT) != wx.ID_YES:
                         return
                     i.acquis_fornit()
-                    msg = "Fornitore %s acquisito con il codice %s" % (i.pdc_descriz, i.pdc_codice)
-                    aw.awu.MsgDialog(self, msg, style=wx.ICON_INFORMATION)
+                    msg = "Fornitore %s acquisito con il codice %s.\nVuoi associare un conto di costo predefinito ?" % (i.pdc.descriz, i.pdc.codice)
+                    new = aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION|wx.YES_NO)
+                    if new == wx.ID_YES:
+                        associa_costo(self, id_fornit=i.pdc.id)
+                else:
+                    i.acquis_fornit()
             
             dlgPa = self.GetSelRowPaClass()(self, -1)
             if self._cfg_id_pdcrow1:
@@ -917,7 +922,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 dlgPa.controls['pdcpa'].SetValue(self._cfg_id_pdcrow1)
             
             if getattr(self, 'ftel_acq_info', None):
-                dlgPa.controls['pdcpa'].SetValue(self.ftel_acq_info.pdc_id)
+                dlgPa.controls['pdcpa'].SetValue(self.ftel_acq_info.pdc.id)
                 dlgPa.controls['pdcpa'].Disable()
                 dlgPa.controls['totdoc'].SetValue(self.ftel_acq_info.totdoc)
                 dlgPa.controls['totdoc'].Disable()
@@ -1332,8 +1337,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 os.mkdir(path)
             except:
                 out = False
-        ext = '.xml'
-        filename = opj(path, '%s%s' % (f, ext))
+        filename = opj(path, self.ftel_acq_info.filename)
         att.file = filename.split('/')[-1]
         att.size = len(stream)
         try:

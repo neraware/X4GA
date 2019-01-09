@@ -1131,12 +1131,16 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             err = ''
             if ctr == 0:
                 #controllo presenza
-                if not cf and not pi and ta == 'A':
-                    err = 'Mancano sia il Codice Fiscale che la Partita IVA'
-                elif not cf:
-                    err = 'Manca il Codice Fiscale'
-                elif not pi and ta == 'A':
-                    err = 'Manca la Partita IVA'
+                if (cn('nazione').GetValue() or 'IT') == 'IT':
+                    if not cf and not pi and ta == 'A':
+                        err = 'Mancano sia il Codice Fiscale che la Partita IVA'
+                    elif not cf:
+                        err = 'Manca il Codice Fiscale'
+                    elif not pi and ta == 'A':
+                        err = 'Manca la Partita IVA'
+                else:
+                    if not pi and ta == 'A':
+                        err = 'Manca la Partita IVA / VAT n.'
             elif ctr == 1:
                 #controllo di forma
                 if pi:

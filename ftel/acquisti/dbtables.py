@@ -43,17 +43,19 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
     def __init__(self, fields=None, primaryKey=None, mandatoryFields="", 
         defaults=None):
         adb.DbMem.__init__(self, fields='fullname filename pdc_id pdc_codice pdc_descriz tipdoc datdoc numdoc totdoc docinfo docxml'.split())
-    
-    def update_list(self):
-        
-        self.Reset()
         
         pdc = adb.DbTable('pdc')
         pdc.AddJoin('pdctip', 'tipana', idLeft='id_tipo')
         pdc.AddJoin('fornit', 'anag', idLeft='id')
         pdc.AddBaseFilter('tipana.tipo="F"')
         pdc.AddOrder('pdc.codice', adb.ORDER_DESCENDING)
+        self.pdc = pdc
+    
+    def update_list(self):
         
+        self.Reset()
+        
+        pdc = self.pdc
         path = ElencoFiles.get_basepath()
         files = glob.glob(opj(path, '*.xml'))
         files.sort()
@@ -74,8 +76,6 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                 self.docxml = f
                 self.pdc_descriz = f.anag_fornit.descriz
                 pdc.Retrieve('anag.piva=%s', f.anag_fornit.piva)
-                self.pdc_id = pdc.id
-                self.pdc_codice = pdc.codice
     
     def archive_file(self):
         
@@ -95,12 +95,7 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
     
     def acquis_fornit(self):
         
-        pdc = adb.DbTable('pdc')
-        pdc.AddJoin('pdctip', 'tipana', idLeft='id_tipo')
-        pdc.AddJoin('fornit', 'anag', idLeft='id')
-        pdc.AddBaseFilter('tipana.tipo="F"')
-        pdc.AddOrder('pdc.codice', adb.ORDER_DESCENDING)
-        
+        pdc = self.pdc
         tpa = adb.DbTable('pdctip', 'tipana')
         tpa.AddJoin('pdcrange')
         
@@ -136,8 +131,8 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                 raise Exception(repr(pdc.GetError()))
             
             cmd = r"""
-                INSERT INTO fornit (id, indirizzo, cap, citta, prov, codfisc, nazione, piva)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO fornit (id, indirizzo, cap, citta, prov, codfisc, nazione, piva, sm11_cognome, sm11_nome, numtel, numfax, email)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             if not pdc._info.db.Execute(cmd, (pdc.id,
                                               f.anag_fornit.indirizzo,
@@ -146,11 +141,13 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                                               f.anag_fornit.prov,
                                               f.anag_fornit.codfisc,
                                               f.anag_fornit.paese,
-                                              f.anag_fornit.piva,)):
+                                              f.anag_fornit.piva,
+                                              f.anag_fornit.cognome,
+                                              f.anag_fornit.nome,
+                                              f.anag_fornit.numtel,
+                                              f.anag_fornit.numfax,
+                                              f.anag_fornit.email,)):
                 raise Exception(pdc._info.dbError.description)
-            
-            self.pdc_id = pdc.id
-            self.pdc_codice = pdc.codice
     
     @classmethod
     def get_basepath(cls, arc=False, subpath=''):
@@ -250,11 +247,22 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
 class RigheDbMem(adb.DbMem):
     
     def __init__(self):
-        fields = 'numriga codart descriz qta unimis prezzo sconto_per sconto_val totale aliqiva'.split()
+        fields = 'numriga codart descriz qta unimis prezzo sconto_pe1 sconto_pe2 sconto_pe3 sconto_pe4 sconto_pe5 sconto_pe6 sconto_val totale aliqiva'.split()
         adb.DbMem.__init__(self, fields=fields)
     
     def get_descriz_sconto(self):
-        return self.sepnvi(self.sconto_per)
+        sconti = []
+        for n in range(1,6,1):
+            s = getattr(self, 'sconto_pe%d' % n)
+            if s:
+                if s == int(s):
+                    sconti.append(str(int(s)))
+                else:
+                    sconti.append(adb.DbTable.sepn(s, 2))
+        if sconti:
+            return '+'.join(sconti)
+        if self.sconto_val:
+            return adb.DbTable.sepnvi(self.sconto_val)
     
     def get_descriz_aliqiva(self):
         aliqiva = self.aliqiva
