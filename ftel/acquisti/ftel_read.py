@@ -413,31 +413,35 @@ class FTEL_Doc(FTEL):
                 t.natura = i('Natura')
                 t.rifnorm = d('RiferimentoNormativo')
             
-            dp = body.getElementsByTagName('DatiPagamento')[0]
-            
-            condpag = self.get_value(dp, 'CondizioniPagamento')
-            
-            for detpag in dp.getElementsByTagName('DettaglioPagamento'):
+            try:
                 
-                def r(*v):
-                    return self.get_value(detpag, *v)
+                dp = body.getElementsByTagName('DatiPagamento')[0]
                 
-                h.scadenze.append(_FTEL_RigaScadenza())
-                s = h.scadenze[-1]
+                condpag = self.get_value(dp, 'CondizioniPagamento')
                 
-                s.condpag = condpag
-                s.modpag =  r('ModalitaPagamento')
-                s.datscad = r('DataScadenzaPagamento', stod)
-                if s.datscad is None:
-                    gg = r('GiorniTerminiPagamento', int)
-                    if gg:
-                        s.datscad = h.datdoc + gg
-                s.impscad = r('ImportoPagamento', float)
-                s.banca =   r('IstitutoFinanziario')
-                s.iban =    r('IBAN')
-                s.abi =     r('ABI')
-                s.cab =     r('CAB')
-                s.bic =     r('BIC')
+                for detpag in dp.getElementsByTagName('DettaglioPagamento'):
+                    
+                    def r(*v):
+                        return self.get_value(detpag, *v)
+                    
+                    h.scadenze.append(_FTEL_RigaScadenza())
+                    s = h.scadenze[-1]
+                    
+                    s.condpag = condpag
+                    s.modpag =  r('ModalitaPagamento')
+                    s.datscad = r('DataScadenzaPagamento', stod)
+                    if s.datscad is None:
+                        gg = r('GiorniTerminiPagamento', int)
+                        if gg:
+                            s.datscad = h.datdoc + gg
+                    s.impscad = r('ImportoPagamento', float)
+                    s.banca =   r('IstitutoFinanziario')
+                    s.iban =    r('IBAN')
+                    s.abi =     r('ABI')
+                    s.cab =     r('CAB')
+                    s.bic =     r('BIC')
+            except:
+                pass
             
             for att in body.getElementsByTagName('Allegati'):
                 
