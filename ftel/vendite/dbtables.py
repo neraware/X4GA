@@ -243,10 +243,8 @@ class FatturaElettronica(dbm.DocMag):
         xmldoc.appendItems(datitrasm, (('ProgressivoInvio',    str(numprogr).zfill(5)),
                                        ('FormatoTrasmissione', xmldoc.sdicver),))
         
+        # 1.1.5 <ContattiTrasmittente>
         xmldoc.appendItems(datitrasm, (('CodiceDestinatario',  ftel_codice),))
-        if not ftel_codice or ftel_codice == FTEL_NOCODE:
-            if self.pdc.ftel_pec:
-                xmldoc.appendItems(datitrasm, (('PECDestinatario',  self.pdc.ftel_pec),))
         
         # 1.1.5 <ContattiTrasmittente>
         dati = []
@@ -256,12 +254,19 @@ class FatturaElettronica(dbm.DocMag):
                 if x.isalnum():
                     numtel += x
             if numtel:
+                # 1.1.5.1 <Telefono>
                 dati.append(('Telefono', numtel))
         if Env.Azienda.email:
+            # 1.1.5.2 <Email>
             dati.append(('Email', Env.Azienda.email))
         if dati:
             contattitrasm = xmldoc.appendElement(datitrasm, 'ContattiTrasmittente',)
             xmldoc.appendItems(contattitrasm, dati)
+        
+        if not ftel_codice or ftel_codice == FTEL_NOCODE:
+            if self.pdc.ftel_pec:
+                # 1.1.6 <PECDestinatario>
+                xmldoc.appendItems(datitrasm, (('PECDestinatario',  self.pdc.ftel_pec),))
         
         # 1.2 <CedentePrestatore>
         cedente = xmldoc.appendElement(head, 'CedentePrestatore')
