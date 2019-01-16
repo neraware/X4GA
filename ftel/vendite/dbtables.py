@@ -741,8 +741,8 @@ class FatturaElettronica(dbm.DocMag):
                                 if dbban.Get(cli.id_bancapag) and dbban.OneRow():
                                     if len(dbban.iban or '') > 0:
                                         datipag.append(('IBAN', dbban.iban))
-                        body_pag_det = xmldoc.appendElement(body_pag, 'DettaglioPagamento')
-                        xmldoc.appendItems(body_pag_det, datipag)
+                            body_pag_det = xmldoc.appendElement(body_pag, 'DettaglioPagamento')
+                            xmldoc.appendItems(body_pag_det, datipag)
             
             #genero file pdf dei documenti elaborati
             pdf_stream = None

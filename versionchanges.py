@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.34', dt.Date(2019, 1, 16), (
+         ("BUG1209",
+         """Fix file xml in presenza di più scadenze pagamento."""),
+        ),),
+    
     ('1.9.33', dt.Date(2019, 1, 16), (
          ("BUG1208",
          """Aggiunti i riferimenti ai ddt in xml se fattura differita."""),
