@@ -29,13 +29,18 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.33', dt.Date(2019, 1, 16), (
+         ("BUG1208",
+         """Aggiunti i riferimenti ai ddt in xml se fattura differita."""),
+        ),),
+    
     ('1.9.32', dt.Date(2019, 1, 10), (
          ("BUG1205",
          """Fix generazione file xml in caso di prezzo con più di 2 decimali."""),
          ("BUG1206",
          """Fix generazione file xml in presenza di caratteri unicode."""),
          ("BUG1207",
-         """Fix generazione file xml, i dati contatti trasmittente precedevano l'indirizzo pec del cliente."""),
+         """Fix generazione file xml, i dati contatti trasmittente seguivano l'indirizzo pec del cliente."""),
          ("BET4252",
          """Inserito controllo possibilità modifica documento in base a status fattura elettronica."""),
         ),),

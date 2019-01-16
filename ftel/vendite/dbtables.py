@@ -493,7 +493,7 @@ class FatturaElettronica(dbm.DocMag):
                 body_gen_acq = xmldoc.appendElement(body_gen, 'DatiOrdineAcquisto')
                 xmldoc.appendItems(body_gen_acq, v)
             
-            if self.config.ftel_flgddt:
+            if True:#self.config.ftel_flgddt:
                 # 2.1.8 <DatiDDT>
                 ddt = dbm.DocMag()
                 ddt.ClearOrders()
@@ -505,8 +505,8 @@ class FatturaElettronica(dbm.DocMag):
                         body_gen_ddt = xmldoc.appendElement(body_gen, 'DatiDDT')
                         xmldoc.appendItems(body_gen_ddt, (('NumeroDDT', str(ddt.numdoc)),
                                                           ('DataDDT',   data(ddt.datdoc)),))
-                        for i1 in self.getRowReferenceById(ddt.id):
-                            xmldoc.appendItems(body_gen_ddt, (('RiferimentoNumeroLinea', str(i1)),))
+                        for movddt in ddt.mov:
+                            xmldoc.appendItems(body_gen_ddt, (('RiferimentoNumeroLinea', str(movddt.numriga)),))
             
             # 2.2 <DatiBeniServizi>
             
