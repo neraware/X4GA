@@ -102,6 +102,7 @@ class FatturaElettronica(dbm.DocMag):
     
     def __init__(self, *args, **kwargs):
         dbm.DocMag.__init__(self, *args, **kwargs)
+        self['pdc'].AddJoin('clienti', 'anag', idLeft='id')
         self.AddBaseFilter('(caucon.ftel_tipdoc IS NOT NULL AND caucon.ftel_tipdoc<>"")')
         self.AddBaseFilter('regiva.tipo="V"')
         self.Reset()
@@ -530,7 +531,7 @@ class FatturaElettronica(dbm.DocMag):
                 
                 _numriga = mov.numriga
                 _codart = mov.prod.codice
-                _descriz = mov.descriz
+                _descriz = mov.descriz or '.'
                 _qta = mov.qta
                 _prezzo = mov.prezzo
                 _importo = mov.importo

@@ -1066,6 +1066,7 @@ class Azienda(object):
         DOCSOLPAG = False    #flag allega pdf documenti in email solleciti di pagamento
         
         FTEL_ACQPDC = None   #sottoconto di costo generico x acquisizione ft.el. fornitori
+        FTEL_SOLITA = False  #flag esclusione clienti esteri
         FTEL_VENCOD = False  #flag inclusione codici prodotto
         FTEL_VENPDF = False  #flag inclusione stampa pdf
         
@@ -4132,6 +4133,7 @@ class Azienda(object):
                 ('GGSSOLPAG',       'ggssolpag',          i, _int, None),
                 ('DOCSOLPAG',       'docsolpag',          f, _flt, None),
                 ('FTEL_ACQPDC',     'ftel_acqpdc',        i, _int, None),
+                ('FTEL_SOLITA',     'ftel_solita',        f, _flt, None),
                 ('FTEL_VENCOD',     'ftel_vencod',        f, _flt, None),
                 ('FTEL_VENPDF',     'ftel_venpdf',        f, _flt, None),
                 ('FTEL_EEB_URL',    'ftel_eeb_url',       s, _str, None),

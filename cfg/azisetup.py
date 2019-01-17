@@ -350,6 +350,7 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.GGSSOLPAG,
                    bt.DOCSOLPAG,
                    bt.FTEL_ACQPDC,
+                   bt.FTEL_SOLITA,
                    bt.FTEL_VENCOD,
                    bt.FTEL_VENPDF,
                    bt.FTEL_EEB_URL,
@@ -442,6 +443,7 @@ class AziendaSetupPanel(_SetupPanel):
             bt.GGSSOLPAG = cn('setup_ggssolpag').GetValue()
             bt.DOCSOLPAG = cn('setup_docsolpag').GetValue()
             bt.FTEL_ACQPDC = cn('setup_ftel_acqpdc').GetValue()
+            bt.FTEL_SOLITA = cn('setup_ftel_solita').GetValue()
             bt.FTEL_VENCOD = cn('setup_ftel_vencod').GetValue()
             bt.FTEL_VENPDF = cn('setup_ftel_venpdf').GetValue()
             bt.FTEL_EEB_URL = cn('setup_ftel_eeb_url').GetValue()
@@ -538,6 +540,7 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.GGSSOLPAG,
                 bt.DOCSOLPAG,
                 bt.FTEL_ACQPDC,
+                bt.FTEL_SOLITA,
                 bt.FTEL_VENCOD,
                 bt.FTEL_VENPDF,
                 bt.FTEL_EEB_URL,

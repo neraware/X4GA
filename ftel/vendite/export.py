@@ -42,6 +42,7 @@ class ExportGrid(dbglib.ADB_Grid):
         doc = self.dbdoc = dbdoc
         tpd = doc.config
         pdc = doc.pdc
+        cli = pdc.anag
         
         def ci(tab, col):
             return tab._GetFieldIndex(col, inline=True)
@@ -62,10 +63,10 @@ class ExportGrid(dbglib.ADB_Grid):
         TYPEVAL = self.TypeFloat(Env.Azienda.BaseTab.VALINT_INTEGERS, Env.Azienda.BaseTab.VALINT_DECIMALS)
         
         if 'fe_sel' in doc.GetAllColumnsNames():
-            self.COL_SELECT = self.AddColumn(doc, 'fe_sel', 'Sel.', col_width=40, col_type=self.TypeCheck())
+            self.COL_SELECT = self.AddColumn(doc, 'fe_sel', 'Sel.', col_width=30, col_type=self.TypeCheck())
         
         self.COL_TPDCOD = self.AddColumn(tpd, 'codice', 'Cod.', col_width=40)
-        self.COL_TPDDES = self.AddColumn(tpd, 'descriz', 'Documento', col_width=150)
+        self.COL_TPDDES = self.AddColumn(tpd, 'descriz', 'Documento', col_width=110)
         
         self.tipsez = {}
         regcon = dbfe.adb.DbTable('contab_h', 'regcon')
@@ -92,8 +93,11 @@ class ExportGrid(dbglib.ADB_Grid):
                                          get_cell_func=get_numdoc)
         
         self.COL_DATDOC = self.AddColumn(doc, 'datdoc', 'Data', col_type=self.TypeDate())
-        self.COL_PDCCOD = self.AddColumn(pdc, 'codice', 'Cod.', col_width=60)
+        self.COL_PDCCOD = self.AddColumn(pdc, 'codice', 'Cod.', col_width=50)
         self.COL_PDCDES = self.AddColumn(pdc, 'descriz', 'Cliente', col_width=200, is_fittable=True)
+        self.COL_CODFIS = self.AddColumn(cli, 'codfisc', 'Cod.Fiscale', col_width=140)
+        self.COL_NAZION = self.AddColumn(cli, 'nazione', 'Naz.', col_width=50)
+        self.COL_PARIVA = self.AddColumn(cli, 'piva', 'P.IVA', col_width=100)
         self.COL_TOTDOC = self.AddColumn(doc, 'totimporto', 'Tot.Documento', col_type=TYPEVAL)
         self.COL_CODDES = self.AddColumn(pdc, 'ftel_codice', 'CDFE', col_width=70)
         self.COL_INDPEC = self.AddColumn(pdc, 'ftel_pec', 'PEC', col_width=180)
@@ -258,6 +262,8 @@ class ExportPanel(aw.Panel):
         
         docs = self.dbdocs
         docs.ClearFilters()
+        if Env.Azienda.BaseTab.FTEL_SOLITA:
+            docs.AddFilter('(anag.nazione IS NULL OR anag.nazione="" OR anag.nazione="IT")')
         docs.AddFilter('doc.datdoc>=%s AND doc.datdoc<=%s', data1, data2)
         tipicli = cn('tipicli').GetValue()
         if tipicli == 'B':
