@@ -398,6 +398,8 @@ class FTEL_Doc(FTEL):
                 r.totale =      d('PrezzoTotale', float)
                 r.aliqiva =     d('AliquotaIVA', float)
             
+            _totdoc = 0
+            
             for tot in ddet.getElementsByTagName('DatiRiepilogo'):
                 
                 def i(*v):
@@ -412,6 +414,11 @@ class FTEL_Doc(FTEL):
                 t.esigiva = i('EsigibilitaIVA')
                 t.natura = i('Natura')
                 t.rifnorm = d('RiferimentoNormativo')
+                
+                _totdoc += (t.imponib + t.imposta)
+            
+            if h.totdoc is None:
+                h.totdoc = _totdoc
             
             try:
                 
