@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.35', dt.Date(2019, 1, 16), (
+         ("BET4253",
+         """Aggiunta possibilità di esclusione dei clienti esteri in generazione xml."""),
+        ),),
+    
     ('1.9.34', dt.Date(2019, 1, 16), (
          ("BUG1209",
          """Fix file xml in presenza di più scadenze pagamento."""),
