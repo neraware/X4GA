@@ -85,7 +85,7 @@ class FtelAcquisPanel(aw.Panel):
     def AcquisFile(self, rowlist):
         cf = rowlist.docxml.anag_cliente.codfisc
         pi = rowlist.docxml.anag_cliente.piva
-        if (cf and cf != Env.Azienda.codfisc) or (pi and pi != Env.Azienda.piva):
+        if cf != Env.Azienda.codfisc and pi != Env.Azienda.piva:
             if cf:
                 msg = "Il documento è destinato al cod.fiscale %s\nImpossibile procedere." % cf
             else:
