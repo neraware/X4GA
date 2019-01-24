@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.36', dt.Date(2019, 1, 24), (
+         ("BUG1210",
+         """Fix carattere U+2019 in generazione xml."""),
+         ("BET4254",
+         """Editazione importo bollo virtuale su piede documento ed evidenziazione bollo mancante se documento senza imposta."""),
+        ),),
+    
     ('1.9.35', dt.Date(2019, 1, 16), (
          ("BET4253",
          """Aggiunta possibilità di esclusione dei clienti esteri in generazione xml."""),

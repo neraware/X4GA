@@ -187,6 +187,10 @@ class _MagazzPanel_O_Mixin(object):
                         (wdr.ID_TOTRITACC,  doc.totritacc),):
             self.FindWindowById(ID).SetValue(val)
         
+        def update_bollo():
+            self.FindWindowByName('ftel_bollovirt').SetValue(doc.ftel_bollovirt)
+        wx.CallAfter(update_bollo)
+        
         out = False
         warnColor = wx.RED
         if doc.mov.Locate(lambda m: not self.GridBodyIsRowOK()):

@@ -1778,6 +1778,7 @@ class MagazzPanel(aw.Panel,\
 #             msg = """La ritenuta d'acconto non può essere applicata in split payment"""
 #             aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
 #             return False
+        doc.ftel_bollovirt = self.FindWindowByName('ftel_bollovirt').GetValue()
         if len(doc._info.righep0)>0:
             if MsgDialog(self, "Sono presenti righe senza prezzo.\nConfermi l'operazione?", 
                          style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
@@ -2253,6 +2254,9 @@ class MagazzPanel(aw.Panel,\
         pass
     
     def Validate(self):
+        if self.FindWindowByName('ftel_bollovirt').GetValue() >= 10:
+            aw.awu.MsgDialog(self, 'Importo bollo errato', style=wx.ICON_ERROR)
+            return False
         for c in aw.awu.GetAllChildrens(self, lambda x: hasattr(x, 'IsTooBig')):
             if c.IsTooBig() and not 'margine' in c.GetName().lower():
                 return False
@@ -2522,6 +2526,7 @@ class MagazzPanel(aw.Panel,\
     def EnableFootControls(self, enable=True):
         enable = enable and self.status == STATUS_EDITING
         enable = enable and self.IsHeadValid()
+        self.FindWindowByName('ftel_bollovirt').Enable(enable)
         scadenab = enable
         if scadenab and self.dbdoc.cfgdoc.caucon.pcf != '1':
             scadenab = False

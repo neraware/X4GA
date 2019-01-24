@@ -139,7 +139,7 @@ def FtelExportFunc( parent, call_fit = True, set_sizer = True ):
 
     item1.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
-    item1.AddGrowableCol( 1 )
+    item1.AddGrowableCol( 3 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -147,7 +147,7 @@ def FtelExportFunc( parent, call_fit = True, set_sizer = True ):
     item27.SetForegroundColour( wx.BLUE )
     item0.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item28 = wx.Panel( parent, ID_PANGRIDOCS, wx.DefaultPosition, [1000,250], wx.SUNKEN_BORDER )
+    item28 = wx.Panel( parent, ID_PANGRIDOCS, wx.DefaultPosition, [1050,250], wx.SUNKEN_BORDER )
     item28.SetName( "pangridocs" )
     item0.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 

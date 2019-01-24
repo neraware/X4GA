@@ -1753,41 +1753,58 @@ def PiedeTotTipoOFunc( parent, call_fit = True, set_sizer = True ):
 
     item75 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item77 = wx.StaticBox( parent, -1, "Importi da dedurre:" )
+    item77 = wx.StaticBox( parent, -1, "Bollo virtuale" )
     item76 = wx.StaticBoxSizer( item77, wx.VERTICAL )
     
-    item78 = wx.StaticText( parent, ID_LABELTOTDOC, "Rit. Acconto", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item76.Add( item78, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
-
-    item79 = bt.GetValIntNumCtrl(parent, ID_TOTRITACC, 'totritacc', editable=False)
-    item76.Add( item79, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item80 = wx.StaticText( parent, ID_LABELTOTDOC, "IVA Split Payment:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item76.Add( item80, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
-
-    item81 = bt.GetValIntNumCtrl(parent, ID_TOTIVASPL, 'totivaspl', editable=False)
-    item76.Add( item81, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item82 = wx.StaticText( parent, ID_LABELTOTDOC, "IVA su omaggi a carico:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item76.Add( item82, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item83 = bt.GetValIntNumCtrl(parent, ID_TOTIVAOMA, 'totivaoma', editable=False)
-    item76.Add( item83, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item75.Add( item76, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
-
-    item85 = wx.StaticBox( parent, -1, "Tot. finale:" )
-    item84 = wx.StaticBoxSizer( item85, wx.VERTICAL )
+    item78 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item86 = wx.StaticText( parent, ID_LABELTOTDOC, "TOT. DARE", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item84.Add( item86, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item79 = wx.StaticText( parent, ID_LABELTOTDOC, "Importo del bollo v.:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item78.Add( item79, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item87 = bt.GetValIntNumCtrl(parent, ID_TOTDARE, 'totdare', editable=False)
-    item84.Add( item87, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item80 = NumCtrl(parent, ID_TOTRITACC, integerWidth=3, fractionWidth=2); item80.SetName('ftel_bollovirt'); item80.SetEditable(False)
+    item78.Add( item80, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item75.Add( item84, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item76.Add( item78, 0, wx.ALIGN_CENTER, 5 )
 
-    item4.Add( item75, 0, wx.ALIGN_BOTTOM, 5 )
+    item75.Add( item76, 0, wx.ALIGN_RIGHT|wx.RIGHT|wx.TOP, 5 )
+
+    item82 = wx.StaticBox( parent, -1, "Importi da dedurre:" )
+    item81 = wx.StaticBoxSizer( item82, wx.VERTICAL )
+    
+    item83 = wx.StaticText( parent, ID_LABELTOTDOC, "Rit. Acconto", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item81.Add( item83, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item84 = bt.GetValIntNumCtrl(parent, ID_TOTRITACC, 'totritacc', editable=False)
+    item81.Add( item84, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item85 = wx.StaticText( parent, ID_LABELTOTDOC, "IVA Split Payment:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item81.Add( item85, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item86 = bt.GetValIntNumCtrl(parent, ID_TOTIVASPL, 'totivaspl', editable=False)
+    item81.Add( item86, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item87 = wx.StaticText( parent, ID_LABELTOTDOC, "IVA su omaggi a carico:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item81.Add( item87, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item88 = bt.GetValIntNumCtrl(parent, ID_TOTIVAOMA, 'totivaoma', editable=False)
+    item81.Add( item88, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item75.Add( item81, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+
+    item90 = wx.StaticBox( parent, -1, "Tot. finale:" )
+    item89 = wx.StaticBoxSizer( item90, wx.VERTICAL )
+    
+    item91 = wx.StaticText( parent, ID_LABELTOTDOC, "TOT. DARE", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item89.Add( item91, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item92 = bt.GetValIntNumCtrl(parent, ID_TOTDARE, 'totdare', editable=False)
+    item89.Add( item92, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item75.Add( item89, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+
+    item75.AddGrowableRow( 0 )
+
+    item4.Add( item75, 0, wx.GROW|wx.ALIGN_BOTTOM, 5 )
 
     item4.AddGrowableCol( 0 )
 

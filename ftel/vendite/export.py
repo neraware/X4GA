@@ -99,6 +99,7 @@ class ExportGrid(dbglib.ADB_Grid):
         self.COL_NAZION = self.AddColumn(cli, 'nazione', 'Naz.', col_width=50)
         self.COL_PARIVA = self.AddColumn(cli, 'piva', 'P.IVA', col_width=100)
         self.COL_TOTDOC = self.AddColumn(doc, 'totimporto', 'Tot.Documento', col_type=TYPEVAL)
+        self.COL_BOLLOV = self.AddColumn(doc, 'ftel_bollovirt', 'Bollo', col_type=self.TypeFloat(3, Env.Azienda.BaseTab.VALINT_DECIMALS))
         self.COL_CODDES = self.AddColumn(pdc, 'ftel_codice', 'CDFE', col_width=70)
         self.COL_INDPEC = self.AddColumn(pdc, 'ftel_pec', 'PEC', col_width=180)
         if Env.Azienda.BaseTab.is_eeb_enabled():
@@ -119,7 +120,11 @@ class ExportGrid(dbglib.ADB_Grid):
         if 0 <= row < len(rs):
             r = rs[row]
             colors = True
-            if rscol in (self._col_cdf, 
+            if rscol == self._col_bol:
+                if not r[self._col_bol] and not r[self._col_tiv]:
+                    attr.SetBackgroundColour(doc.COLOR_DATI_MANCANTI)
+                    colors = False
+            elif rscol in (self._col_cdf, 
                          self._col_pec):
                 if len(r[self._col_cdf] or '') == 0 and len(r[self._col_pec] or '') == 0:
                     attr.SetBackgroundColour(doc.COLOR_DATI_MANCANTI)
