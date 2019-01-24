@@ -778,6 +778,7 @@ class FatturaElettronica(dbm.DocMag):
         stream = unicode(xmldoc.toprettyxml(indent="  ", encoding="utf-8"))
         text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)    
         stream = text_re.sub('>\g<1></', stream)
+        stream = stream.replace("’", "'")
         n = stream.index('>')+1
 #         stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.0.xsl"?>' + stream[n:]
         stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.2.xsl"?>' + stream[n:]
