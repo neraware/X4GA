@@ -23,6 +23,16 @@ class _FTEL_Anag(object):
     numtel = None
     numfax = None
     email = None
+    
+    def get_indirizzo2(self):
+        i = ''
+        if self.cap:
+            i += ('%s ' % self.cap)
+        i += ('%s ' % self.citta)
+        if self.prov:
+            i += ('(%s)' % self.prov)
+        return i
+
 
 class _FTEL_Head(object):
     
@@ -134,12 +144,13 @@ class _FTEL_Head(object):
                 if natura == "N3": desc = "NON IMPONIBILE"
                 if natura == "N4": desc = "ESENTE"
                 if natura == "N5": desc = "REGIME DEL MARGINE"
-                if natura == "N6": desc = "INVERSIONE CONTABILE (REV.CHARGE)"
+                if natura == "N6": desc = "INVERS.CONTABILE (REV.CHARGE)"
                 if natura == "N7": desc = "ASSOLTA IN ALTRO PAESE UE"
                 rifnorm = getattr(self.totiva[num], 'rifnorm')
                 if rifnorm:
                     desc = '%s - %s' % (desc, rifnorm)
             return desc
+            
         if col == 'imponib':
             return adb.DbTable.sepnvi(imponib)
         if col == 'imposta':

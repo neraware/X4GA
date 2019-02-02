@@ -1504,7 +1504,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[RS.doc.anag_fornit.cap+' '+RS.doc.anag_fornit.citta+' ('+RS.doc.anag_fornit.prov+')']]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[RS.doc.anag_fornit.get_indirizzo2()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1564,7 +1564,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[RS.doc.anag_cliente.cap+' '+RS.doc.anag_cliente.citta+' ('+(RS.doc.anag_cliente.prov or '')+')']]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[RS.doc.anag_cliente.get_indirizzo2()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
