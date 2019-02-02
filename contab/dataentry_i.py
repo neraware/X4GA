@@ -324,30 +324,30 @@ class GeneraPartiteMixin(scad.Scadenze):
         
         calcola = True
         
-        i = getattr(self, 'ftel_acq_info', None)
-        if i:
-            s = i.docinfo.scadenze
-            if s:
-                modpag = adb.DbTable('modpag')
-                modpag.AddFilter('ftel_tippag=%s AND ftel_modpag=%s AND numscad=%s', s[0].condpag, s[0].modpag, len(s))
-                modpag.Retrieve()
-                if modpag.IsEmpty():
-                    modpag.CreateNewRow()
-                    modpag.codice = '!%s-%s' % (s[0].modpag, len(s))
-                    modpag.descriz = '%s XML FT.EL. - %s SCAD.' % (modpag.codice, len(s))
-                    modpag.ftel_tippag = s[0].condpag
-                    modpag.ftel_modpag = s[0].modpag
-                    modpag.numscad = len(s)
-                    if not modpag.Save():
-                        aw.awu.MsgDialog(self, repr(modpag.GetError()), style=wx.ICON_ERROR)
-                        return
-                    aw.awu.MsgDialog(self, "E' stata creata la mod.pag. %s" % s[0].modpag, style=wx.ICON_INFORMATION)
-                self.reg_modpag_id = modpag.id
-                scad = []
-                for _s in s:
-                    scad.append([_s.datscad, _s.impscad, modpag.tipo == "R", False])
-                calcola = False
-        
+#         i = getattr(self, 'ftel_acq_info', None)
+#         if i:
+#             s = i.docinfo.scadenze
+#             if s:
+# #                 modpag = adb.DbTable('modpag')
+# #                 modpag.AddFilter('ftel_tippag=%s AND ftel_modpag=%s AND numscad=%s', s[0].condpag, s[0].modpag, len(s))
+# #                 modpag.Retrieve()
+# #                 if modpag.IsEmpty():
+# #                     modpag.CreateNewRow()
+# #                     modpag.codice = '!%s-%s' % (s[0].modpag, len(s))
+# #                     modpag.descriz = '%s XML FT.EL. - %s SCAD.' % (modpag.codice, len(s))
+# #                     modpag.ftel_tippag = s[0].condpag
+# #                     modpag.ftel_modpag = s[0].modpag
+# #                     modpag.numscad = len(s)
+# #                     if not modpag.Save():
+# #                         aw.awu.MsgDialog(self, repr(modpag.GetError()), style=wx.ICON_ERROR)
+# #                         return
+# #                     aw.awu.MsgDialog(self, "E' stata creata la mod.pag. %s" % s[0].modpag, style=wx.ICON_INFORMATION)
+# #                 self.reg_modpag_id = modpag.id
+#                 scad = []
+#                 for _s in s:
+#                     scad.append([_s.datscad, _s.impscad, modpag.tipo == "R", False])
+#                 calcola = False
+#         
         if calcola:
             datdoc = self.controls["datdoc"].GetValue()
             if datdoc is None:
@@ -938,8 +938,9 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 self.reg_regiva_des = regiva_des
                 self.id_pdcpa = dlgPa.id
                 self.totdoc = dlgPa.doc
-                impd = self.totdoc; impa = None
-                if self._cfg_pasegno == "A": impd, impa = impa, impd
+                impa = self.totdoc; impd = None
+                if self._cfg_pasegno == "D":
+                    impd, impa = impa, impd
                 if (impd or 0) < 0:
                     impa = -impd
                     impd = None
@@ -993,14 +994,23 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                             else:
                                 impd, impa = 0, -tiva.imponib
                             
+                            if self._cfg_pasegno == "D":
+                                impd, impa = impa, impd
+                            
                             #determino aliquota iva
                             aliqiva.ClearFilters()
                             if tiva.aliqiva:
-                                aliqiva.AddFilter('aliqiva.perciva=%s', tiva.aliqiva)
+                                aliqiva.AddFilter('(aliqiva.perciva=%s AND aliqiva.percind=0)', tiva.aliqiva)
                             else:
                                 if not tiva.natura:
                                     raise Exception("Manca imposta e natura sul file")
                                 aliqiva.AddFilter('aliqiva.ftel_natura=%s', tiva.natura)
+                            
+                            if info.docinfo.get_totale_imposta_split() !=  0:
+                                aliqiva.AddFilter('aliqiva.tipo="S"')
+                            else:
+                                aliqiva.AddFilter('aliqiva.tipo<>"S"')
+                            
                             aliqiva.Retrieve()
                             
                             self.AddDefaultRow([nrig,             #RSDET_NUMRIGA
