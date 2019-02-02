@@ -1392,7 +1392,7 @@ def FTEL_Setup( parent, call_fit = True, set_sizer = True ):
 
     item1.Add( item7, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item13 = wx.StaticBox( parent, -1, "ebill.evolsia.srl" )
+    item13 = wx.StaticBox( parent, -1, "ebill.evolvia.srl" )
     item12 = wx.StaticBoxSizer( item13, wx.VERTICAL )
     
     item14 = wx.FlexGridSizer( 0, 3, 0, 0 )
