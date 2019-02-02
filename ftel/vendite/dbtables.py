@@ -506,8 +506,8 @@ class FatturaElettronica(dbm.DocMag):
                         body_gen_ddt = xmldoc.appendElement(body_gen, 'DatiDDT')
                         xmldoc.appendItems(body_gen_ddt, (('NumeroDDT', str(ddt.numdoc)),
                                                           ('DataDDT',   data(ddt.datdoc)),))
-                        for movddt in ddt.mov:
-                            xmldoc.appendItems(body_gen_ddt, (('RiferimentoNumeroLinea', str(movddt.numriga)),))
+#                         for movddt in ddt.mov:
+#                             xmldoc.appendItems(body_gen_ddt, (('RiferimentoNumeroLinea', str(movddt.numriga)),))
             
             # 2.2 <DatiBeniServizi>
             
