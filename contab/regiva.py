@@ -116,6 +116,7 @@ class GridReg(dbglib.DbGridColoriAlternati):
         cols = (\
             ( 60, (cn(reg, 'numiva'),  "Prot.",     _NUM, True )),\
             ( 80, (cn(reg, 'datreg'),  "Data reg.", _DAT, True )),\
+            ( 80, (cn(reg, 'datope'),  "Data op.",  _DAT, True )),\
             (100, (cn(cau, 'descriz'), "Causale",   _STR, True )),\
             ( 80, (cn(reg, 'datdoc'),  "Data Doc.", _DAT, True )),\
             ( 80, (cn(reg, 'numdoc'),  "Num.",      _STR, True )),\

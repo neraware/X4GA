@@ -2183,6 +2183,7 @@ class DocMag(adb.DbTable):
         reg.tipreg =    reg.config.tipo
         reg.datreg =    self.datreg
         reg.datdoc =    self.datdoc
+        reg.datope =    self.datope
         reg.numdoc =    self.numdoc
         reg.numiva =    self.numiva
         reg.id_regiva = self.GetRegIva()

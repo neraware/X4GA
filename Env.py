@@ -2371,8 +2371,8 @@ class Azienda(object):
                 [ "sm_link",    "INT",      6, None, "Chiave di raggruppamento registrazioni per spesometro", None ],
                 [ "sm_regrif",  "TINYINT",  1, None, "Flag spesometro registrazione di riferimento per aggregazioni", None ],
                 [ "id_reg_by",  "INT",    idw, None, "ID registrazione di provenienza", None ],
-                [ "ftel_xml",   "VARCHAR", 64, None, "Nome file XML fattura elettronica fornitore", None ],
-            ]
+                [ "ftel_xml",   "VARCHAR", 64, None, "Nome file XML fattura elettronica fornitore", None ], 
+                [ "datope",     "DATE",  None, None, "Data operazione", None ], ]
             
             cls.set_constraints(cls.TABNAME_CONTAB_H,
                                 ((cls.TABSETUP_CONSTR_CFGCONTAB, 'id_caus',   cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -3009,7 +3009,8 @@ class Azienda(object):
                 [ "ftel_codcig",          "VARCHAR",    15, None, "Fattura elettronica: codice GIG", None ], 
                 [ "ftel_codcup",          "VARCHAR",    15, None, "Fattura elettronica: codice CUP", None ], 
                 [ "ftel_numtrasm",        "INT",         5, None, "Fattura elettronica: numero trasmissione", None ],  
-                [ "ftel_bollovirt",       "DECIMAL",     6,    2, "Fattura elettronica: bollo virtuale", None ], ]
+                [ "ftel_bollovirt",       "DECIMAL",     6,    2, "Fattura elettronica: bollo virtuale", None ], 
+                [ "datope",               "DATE",     None, None, "Data operazione", None ], ]
             
             if cls.MAGNOCODEDES:
                 cls.movmag_h += [\

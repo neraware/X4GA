@@ -199,7 +199,7 @@ def PanelReg1Func( parent, call_fit = True, set_sizer = True ):
     item1.SetForegroundColour( wx.BLUE )
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item2 = wx.Panel( parent, ID_PANGRIDREG, wx.DefaultPosition, [910,400], wx.SUNKEN_BORDER )
+    item2 = wx.Panel( parent, ID_PANGRIDREG, wx.DefaultPosition, [1000,400], wx.SUNKEN_BORDER )
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item0.AddGrowableCol( 0 )

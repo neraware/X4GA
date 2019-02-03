@@ -29,6 +29,22 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.39', dt.Date(2019, 2, 2), (
+         ("BUG1212",
+         """Corretta acquisizione xml, propone mod.pag. da scheda fornitore."""),
+         ("BUG1213",
+         """Corretta acquisizione xml, identifica aliquote iva considerando 
+         split payment."""),
+         ("BUG1214",
+         """Corretta acquisizione xml, corretto segno righe di costo se 
+         nota credito."""),
+        ),),
+    
+    ('1.9.38', dt.Date(2019, 1, 31), (
+         ("BUG1211",
+         """Fix bollo virtuale generazione xml."""),
+        ),),
+    
     ('1.9.36', dt.Date(2019, 1, 24), (
          ("BUG1210",
          """Fix carattere U+2019 in generazione xml."""),

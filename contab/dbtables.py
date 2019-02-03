@@ -1777,8 +1777,8 @@ class RegIva(adb.DbTable,
         """
         self.ClearFilters()
         self.AddFilter("reg.id_regiva='%s'" % self._rivid)
-        self.AddFilter(r"reg.datreg>=%s", dreg1)
-        self.AddFilter(r"reg.datreg<=%s", dreg2)
+        self.AddFilter(r"COALESCE(reg.datope, reg.datreg)>=%s", dreg1)
+        self.AddFilter(r"COALESCE(reg.datope, reg.datreg)<=%s", dreg2)
         if protini:# is not None:
             self.AddFilter(r"reg.numiva>=%s", protini)
         
@@ -1790,8 +1790,8 @@ class RegIva(adb.DbTable,
         ra.ClearFilters()
         ra.AddFilter("reg.id_regiva='%s'" % self._rivid)
         if radate is None: radate = dreg1
-        ra.AddFilter(r"reg.datreg>=%s", radate)
-        ra.AddFilter(r"reg.datreg<=%s", dreg2)
+        ra.AddFilter(r"COALESCE(reg.datope, reg.datreg)>=%s", radate)
+        ra.AddFilter(r"COALESCE(reg.datope, reg.datreg)<=%s", dreg2)
         if raprot:# is not None:
             ra.AddFilter(r"reg.numiva>=%s", raprot)
         

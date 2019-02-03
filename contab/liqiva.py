@@ -917,7 +917,7 @@ class LiqIvaPanel(aw.Panel):
         
         s = self.dbsog
         s.ClearFilters()
-        s.AddFilter('reg.datreg>=%s AND reg.datreg<=%s', datmin, datmax)
+        s.AddFilter('COALESCE(reg.datope, reg.datreg)>=%s AND COALESCE(reg.datope, reg.datreg)<=%s', datmin, datmax)
         s.Retrieve()
         self.gridriepsog.ChangeData(s.GetRecordset())
         

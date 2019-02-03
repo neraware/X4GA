@@ -120,6 +120,7 @@ class GridMastro(dbglib.DbGridColoriAlternati):
             (120, (cn(cau, "descriz"),   "Causale",   _STR, True )),
             ( 50, (cn(mov, "cos_numdoc"),"N.doc.",    _STR, True )),
             ( 80, (cn(mov, "cos_datdoc"),"Data doc.", _DAT, True )),
+            ( 80, (cn(reg, "datope"),    "Data op.",  _DAT, True )),
             ( 50, (cn(reg, "numiva"),    "Prot.",     _NUM, True )),
             ( 35, (cn(riv, "codice"),    "C.",        _STR, True )),
             (100, (cn(riv, "descriz"),   "Reg. IVA",  _STR, True )),
@@ -150,7 +151,7 @@ class GridMastro(dbglib.DbGridColoriAlternati):
         map(lambda c:\
             self.SetColumnDefaultSize(c[0], c[1]), enumerate(colsize))
         
-        self.SetAnchorColumns(9, (2, 7))
+        self.SetAnchorColumns(10, (3, 8))
         self.AutoSizeColumns()
         sz = wx.FlexGridSizer(1,0,0,0)
         sz.AddGrowableCol( 0 )
@@ -189,7 +190,7 @@ class GridMastro(dbglib.DbGridColoriAlternati):
         mov = pdc.GetMastro()
         row = event.GetRow()
         mov.MoveRow(row)
-        try:
+        if True: #try:
             cls = contab.RegConDialogClass(mov.id_reg)
             if cls:
                 wx.BeginBusyCursor()
@@ -205,8 +206,8 @@ class GridMastro(dbglib.DbGridColoriAlternati):
                     self.GetEventHandler().AddPendingEvent(evt)
                 dlg.Destroy()
                 event.Skip()
-        except:
-            pass
+#         except:
+#             pass
     
     def UpdateGrid(self):
         self.ChangeData(self.dbmas.GetMastro().GetRecordset())

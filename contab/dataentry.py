@@ -125,6 +125,7 @@ class ContabPanel(aw.Panel,\
         self.reg_cau_tipo = None
         self.reg_datreg = None
         self.reg_datdoc = None
+        self.reg_datope = None
         self.reg_numdoc = None
         self.reg_regiva_id = None
         self.reg_numiva = None
@@ -584,7 +585,7 @@ class ContabPanel(aw.Panel,\
         try:
             cmd =\
                 """SELECT reg.id, reg.esercizio, reg.id_caus, reg.tipreg, """\
-                """reg.datreg, reg.datdoc, reg.numdoc, """\
+                """reg.datreg, reg.datdoc, reg.datope, reg.numdoc, """\
                 """reg.id_regiva, reg.numiva, """\
                 """reg.st_regiva, reg.st_giobol, """\
                 """reg.id_modpag, reg.nocalciva, """\
@@ -608,6 +609,7 @@ class ContabPanel(aw.Panel,\
                 self.reg_cau_tipo,\
                 self.reg_datreg,\
                 self.reg_datdoc,\
+                self.reg_datope,\
                 self.reg_numdoc,\
                 self.reg_regiva_id,\
                 self.reg_numiva,\
@@ -749,6 +751,20 @@ class ContabPanel(aw.Panel,\
                     gvalid = False
         
         if gvalid:
+            #test data operazione in confronto alla data registrazione
+            do = self.controls["datope"].GetValue()
+            if do:
+                msg = None
+                if do  > dr:
+                    msg = "La data operazione non può essere successiva a quella di registrazione"
+                elif do.year<dr.year:
+                    msg = "La data operazione si riferisce ad un altro anno rispetto alla data di registrazione."
+                elif do.month >= 2 and (dr.month - do.month) > 1:
+                    msg = "La data operazione è troppo antecedente rispetto alla data di registrazione."
+                if msg:
+                    gvalid = False
+        
+        if gvalid:
             #test validità recordset dare/avere
             td = ta = 0
             rs = self.regrsb
@@ -820,6 +836,7 @@ class ContabPanel(aw.Panel,\
         if gvalid:
             self.reg_datreg = self.controls["datreg"].GetValue()
             self.reg_datdoc = self.controls["datdoc"].GetValue()
+            self.reg_datope = self.controls["datope"].GetValue()
             self.reg_numdoc = self.controls["numdoc"].GetValue()
         
         return gvalid
@@ -833,6 +850,7 @@ class ContabPanel(aw.Panel,\
                 self.reg_cau_tipo,\
                 self.reg_datreg,\
                 self.reg_datdoc,\
+                self.reg_datope,\
                 self.reg_numdoc,\
                 self.reg_regiva_id,\
                 self.reg_numiva,\
@@ -841,16 +859,16 @@ class ContabPanel(aw.Panel,\
         if self.newreg:
             #inserimento testata nuova registrazione
             cmd =\
-"""INSERT INTO %s (esercizio, id_caus, tipreg, datreg, datdoc, numdoc, """\
+"""INSERT INTO %s (esercizio, id_caus, tipreg, datreg, datdoc, datope, numdoc, """\
 """id_regiva, numiva, id_modpag, nocalciva) """\
-"""VALUES (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)"""\
+"""VALUES (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)"""\
 % bt.TABNAME_CONTAB_H
             
         else:
             #modifica testata registrazione esistente
             cmd =\
 """UPDATE %s SET esercizio=%%s, id_caus=%%s, tipreg=%%s, datreg=%%s, """\
-"""datdoc=%%s, numdoc=%%s, id_regiva=%%s, numiva=%%s, id_modpag=%%s, """\
+"""datdoc=%%s, datope=%%s, numdoc=%%s, id_regiva=%%s, numiva=%%s, id_modpag=%%s, """\
 """nocalciva=%%s """\
 """WHERE id=%%s"""\
 % bt.TABNAME_CONTAB_H
@@ -1019,6 +1037,7 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
         self.reg_cau_tipo = None
         self.reg_datreg = None
         self.reg_datdoc = None
+        self.reg_datope = None
         self.reg_numdoc = None
         self.reg_regiva_id = None
         self.reg_numiva = None
@@ -1084,17 +1103,20 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
         reg_id = self.controls["reg_id"]
         datreg = self.controls["datreg"]
         datdoc = self.controls["datdoc"]
+        datope = self.controls["datope"]
         numdoc = self.controls["numdoc"]
         
         if self.status == STATUS_SELCAUS:
             reg_id.SetValue(None)
             datreg.SetValue(None)
             datdoc.SetValue(None)
+            datope.SetValue(None)
             numdoc.SetValue("")
         else:
             reg_id.SetValue(self.reg_id)
             datreg.SetValue(self.reg_datreg)
             datdoc.SetValue(self.reg_datdoc)
+            datope.SetValue(self.reg_datope)
             numdoc.SetValue(self.reg_numdoc)
 
     def UpdatePanelBody(self):
@@ -1169,6 +1191,8 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
         
         self.controls["datdoc"].Enable(enable and\
                                        self._cfg_datdoc in ('0', '1'))
+        
+        self.controls["datope"].Enable(enable)
         
         self.controls["numdoc"].Enable(enable and\
                                        self._cfg_numdoc in ('0', '1'))

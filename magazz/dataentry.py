@@ -449,7 +449,8 @@ class MagazzPanel(aw.Panel,\
         for name, evt in (('numdoc', wx.EVT_TEXT),
                           ('numiva', wx.EVT_TEXT),
                           ('datdoc',  EVT_DATECHANGED),
-                          ('datreg',  EVT_DATECHANGED),):
+                          ('datreg',  EVT_DATECHANGED),
+                          ('datope',  EVT_DATECHANGED),):
             self.Bind(evt, self.OnDocIdChanged, self.controls[name])
         self.Bind(linktab.EVT_LINKTABCHANGED, self.OnDocIdChanged,\
                   id=wdr.ID_MAGAZZ)
@@ -699,6 +700,7 @@ class MagazzPanel(aw.Panel,\
         numiva = cn('numiva').GetValue()
         datreg = cn('datreg').GetValue()
         datdoc = cn('datdoc').GetValue()
+        datope = cn('datope').GetValue()
         #valuta = cn('id_valuta').GetValue()
         magazz = cn('id_magazz').GetValue()
         doc = self.dbdoc
@@ -713,7 +715,13 @@ class MagazzPanel(aw.Panel,\
             err = "La data di registrazione è errata"
         elif datdoc is None:
             err = "La data del documento è errata"
-        else:
+        if not err:
+            if datope:
+                if datope.year != datreg.year:
+                    err = "Data operazione in anno diverso da data registrazione"
+                elif datope > datreg:
+                    err = "Data operazione successiva a data registrazione"
+        if not err:
             filter, fparms = self.GetDocLoadFilter(frame)
             dbdoc = adb.DbTable(bt.TABNAME_MOVMAG_H, "doc")
             dbdoc.AddJoin(bt.TABNAME_CFGMAGDOC, "tipdoc")
@@ -1444,6 +1452,8 @@ class MagazzPanel(aw.Panel,\
                 if name == "numdoc" and doc.cfgdoc.numdoc == '3':
                     doc.numiva = value
                     self.controls["numiva"].SetValue(doc.numiva)
+                if name == 'datope':
+                    self.controls["datope"].SetValue(doc.datope)
     
     def OnHeadChanged(self, event):
         
@@ -2282,6 +2292,18 @@ class MagazzPanel(aw.Panel,\
             err += '\n\nProseguo comunque ?'
             if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                 return False
+        datreg = self.dbdoc.datreg
+        datope = self.dbdoc.datope
+        if datope:
+            if datope.year != datreg.year:
+                aw.awu.MsgDialog(self, "Data operazione in anno diverso da data registrazione", style=wx.ICON_ERROR)
+                return False
+            elif datope > datreg:
+                aw.awu.MsgDialog(self, "Data operazione successiva a data registrazione", style=wx.ICON_ERROR)
+                return False
+            elif datreg.month >= 2 and (datreg.month - datope.month) > 1:
+                aw.awu.MsgDialog(self, "Data operazione troppo antecedente la data registrazione", style=wx.ICON_ERROR)
+                return False
         return True
     
     def DocReset(self):
@@ -2408,6 +2430,7 @@ class MagazzPanel(aw.Panel,\
                      ("datreg",    doc.datreg),\
                      ("datdoc",    doc.datdoc),\
                      ("numdoc",    doc.numdoc),\
+                     ("datope",    doc.datope),\
                      ("numiva",    doc.numiva)):
             if f in self.controls:
                 self.controls[f].SetValue(v)
@@ -2461,6 +2484,7 @@ class MagazzPanel(aw.Panel,\
         datreg = self.controls["datreg"]
         datdoc = self.controls["datdoc"]
         numdoc = self.controls["numdoc"]
+        datope = self.controls["datope"]
         numiva = self.controls["numiva"]
         
         if self.status == STATUS_SELCAUS:
@@ -2469,6 +2493,7 @@ class MagazzPanel(aw.Panel,\
             valuta.SetValueSilent(None)
             datreg.SetValueSilent(None)
             datdoc.SetValueSilent(None)
+            datope.SetValueSilent(None)
             numdoc.SetValueSilent(0)
             numiva.SetValueSilent(0)
         else:
@@ -2478,6 +2503,7 @@ class MagazzPanel(aw.Panel,\
             valuta.SetValueSilent(None)
             datreg.SetValueSilent(doc.datreg)
             datdoc.SetValueSilent(doc.datdoc)
+            datope.SetValueSilent(doc.datope)
             numdoc.SetValueSilent(doc.numdoc)
             numiva.SetValueSilent(doc.numiva)
 
@@ -2594,6 +2620,7 @@ class MagazzPanel(aw.Panel,\
         self.controls["doc_id"].Enable(False)
         self.controls["datdoc"].Enable(enable and cfg.datdoc != '3')
         self.controls["numdoc"].Enable(enable)
+        self.controls["datope"].Enable(enable)
         self.controls["numiva"].Enable(enable\
                                        and cfg.askprotiva is not None\
                                        and len(cfg.askprotiva)>0\
