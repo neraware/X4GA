@@ -101,6 +101,10 @@ class ContabPanelTipo_I_O(ctbi.ContabPanelTipo_I):
         c = cn('enableseziva')
         if c:
             c.Show()
+            p = self.GetParent()
+            s = p.GetSize()
+            p.SetSize([s[0]-1, s[1]-1])
+            p.SetSize(s)
             self.Bind(wx.EVT_BUTTON, self.OnEnableSezIva, c)
         
         if self.__class__ == ContabPanelTipo_I_O:
@@ -628,12 +632,89 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
     def RegSolaIvaAutomaticaDelete(self, id_reg):
         import contab.dbtables as dbc
         reg = dbc.DbRegCon()
-        reg.Retrieve("reg.id_reg_by=%s" % id_reg)
+        reg.Retrieve("(reg.id_reg_by=%s AND reg.id_regiva IS NOT NULL)" % id_reg)
         if not reg.IsEmpty():
             msg = "E' stata eliminata la registrazione:\n%s n. %s del %s, prot. IVA %s" % (reg.config.descriz,
                                                                                            reg.numdoc,
                                                                                            reg.dita(reg.datdoc),
                                                                                            reg.numiva)
+            reg.Delete()
+            if reg.Save():
+                aw.awu.MsgDialog(self, msg, style=wx.ICON_INFORMATION)
+            else:
+                aw.awu.MsgDialog(self, repr(reg.GetError()), style=wx.ICON_ERROR)
+    
+    def RegPagamentoAutomaticoWrite(self):
+        
+        import contab.dbtables as dbc
+        
+        reg = dbc.DbRegCon(doPagAuto=False)
+        reg.Retrieve("reg.id_reg_by=%s" % self.reg_id)
+        if reg.IsEmpty():
+            reg.CreateNewRow()
+            des_action = "generata"
+        else:
+            for b in reg.body:
+                b.Delete()
+            des_action = "modificata"
+        reg.esercizio = self.reg_esercizio
+        reg.id_caus = self.mp_id_caupi
+        reg.tipreg = reg.config.tipo
+        reg.datreg = self.reg_datope or self.reg_datreg
+        reg.datdoc = self.reg_datdoc
+        reg.numdoc = self.reg_numdoc
+        reg.id_regiva = None
+        reg.id_reg_by = self.reg_id
+        
+        reg.st_regiva = 0
+        reg.st_giobol = 0
+        
+        if self._cfg_pasegno == 'A':
+            segno1, segno2 = 'A', 'D'
+            importo = self.regrsb[0][ctb.RSDET_IMPAVERE] \
+                  or -self.regrsb[0][ctb.RSDET_IMPDARE]
+        else:
+            segno1, segno2 = 'D', 'A'
+            importo = self.regrsb[0][ctb.RSDET_IMPDARE] \
+                  or -self.regrsb[0][ctb.RSDET_IMPAVERE]
+        
+        id_pdcreg = self.regrsb[0][ctb.RSDET_PDCPA_ID]
+        
+        body = reg.body
+        
+        body.CreateNewRow()
+        body.numriga = 1
+        body.tipriga = reg.tipreg
+        body.importo = importo
+        body.segno = segno1
+        body.id_pdcpa = self.mp_id_pdcpi
+        body.id_pdccp = id_pdcreg
+        
+        body.CreateNewRow()
+        body.numriga = 2
+        body.tipriga = reg.tipreg
+        body.importo = importo
+        body.segno = segno2
+        body.id_pdcpa = id_pdcreg
+        body.id_pdccp = self.mp_id_pdcpi
+        
+        if reg.Save():
+            msg = "E' stata %s la registrazione:\n%s del %s" % (des_action,
+                                                                reg.config.descriz,
+                                                                reg.dita(reg.datreg),)
+            icn = wx.ICON_INFORMATION
+            aw.awu.MsgDialog(self, msg, style=icn)
+             
+        else:
+            aw.awu.MsgDialog(self, repr(reg.GetError()), style=wx.ICON_ERROR)
+    
+    def RegPagamentoAutomaticoDelete(self, id_reg):
+        import contab.dbtables as dbc
+        reg = dbc.DbRegCon(doPagAuto=False)
+        reg.Retrieve("(reg.id_reg_by=%s AND reg.id_regiva IS NULL)" % id_reg)
+        if not reg.IsEmpty():
+            msg = "E' stata eliminata la registrazione:\n%s del %s" % (reg.config.descriz,
+                                                                       reg.dita(reg.datdoc),)
             reg.Delete()
             if reg.Save():
                 aw.awu.MsgDialog(self, msg, style=wx.ICON_INFORMATION)

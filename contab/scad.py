@@ -50,12 +50,15 @@ class Scadenze(object):
         self.mp_mesi1 = None
         self.mp_mesitra = None
         self.mp_id_pdcpi = None
+        self.mp_id_caupi = None
         self.mp_sc1noeff = None
         self.mp_sc1iva = None
         self.mp_sc1perc = None
         self.mp_gg = None
         self.mp_pdcpi_cod = None
         self.mp_pdcpi_des = None
+        self.mp_caupi_cod = None
+        self.mp_caupi_des = None
 
     def SetupModPag(self, id_modpag):
         """
@@ -82,6 +85,7 @@ class Scadenze(object):
         self.mp_mesi1 = None
         self.mp_mesitra = None
         self.mp_id_pdcpi = None
+        self.mp_id_caupi = None
         self.mp_sc1noeff = None
         self.mp_sc1iva = None
         self.mp_sc1perc = None
@@ -93,7 +97,7 @@ class Scadenze(object):
             return
         cmd =\
 """SELECT mp.codice, mp.descriz, mp.tipo, mp.contrass, mp.modocalc, """\
-"""mp.tipoper, mp.finemese0, mp.finemese, mp.numscad, mp.mesi1, mp.mesitra, mp.id_pdcpi, """\
+"""mp.tipoper, mp.finemese0, mp.finemese, mp.numscad, mp.mesi1, mp.mesitra, mp.id_pdcpi, mp.id_caupi, """\
 """mp.sc1noeff, mp.sc1iva, mp.sc1perc, mp.ggextra, """\
 """mp.gg01, mp.gg02, mp.gg03, mp.gg04, mp.gg05, mp.gg06, mp.gg07, mp.gg08, mp.gg09, mp.gg10, mp.gg11, mp.gg12,"""\
 """mp.gg13, mp.gg14, mp.gg15, mp.gg16, mp.gg17, mp.gg18, mp.gg19, mp.gg20, mp.gg21, mp.gg22, mp.gg23, mp.gg24,"""\
@@ -122,10 +126,11 @@ class Scadenze(object):
             self.mp_mesi1,\
             self.mp_mesitra,\
             self.mp_id_pdcpi,\
+            self.mp_id_caupi,\
             self.mp_sc1noeff,\
             self.mp_sc1iva,\
             self.mp_sc1perc,\
-            self.mp_ggextra = rsmp[:16]
+            self.mp_ggextra = rsmp[:17]
             self.mp_finemese0 = self.mp_finemese0 or False
             self.mp_finemese = self.mp_finemese or False
             self.mp_sc1noeff = self.mp_sc1noeff or False
@@ -133,13 +138,14 @@ class Scadenze(object):
             if self.mp_mesi1 is None:   self.mp_mesi1 = 0
             if self.mp_mesitra is None: self.mp_mesitra = 0
             self.mp_gg = []
-            mp_gg = rsmp[16:53]
+            mp_gg = rsmp[17:54]
             for gg in mp_gg:
                 self.mp_gg.append(gg or 0)
             self.mp_gem = []
-            mp_gem = rsmp[52:65]
+            mp_gem = rsmp[53:66]
             for gem in mp_gem:
                 self.mp_gem.append(gem or 0)
+        
         if self.mp_id_pdcpi:
             cmd = \
                 """SELECT pdc.codice, pdc.descriz """\
@@ -157,6 +163,24 @@ class Scadenze(object):
         else:
             self.mp_pdcpi_cod = None
             self.mp_pdcpi_des = None
+        
+        if self.mp_id_caupi:
+            cmd = \
+                """SELECT cau.codice, cau.descriz """\
+                """FROM %s AS cfgcontab """\
+                """WHERE cau.id=%%s""" % bt.TABNAME_CFGCONTAB
+            try:
+                cur = adb.db.get_cursor()
+                cur.execute(cmd, self.mp_id_caupi)
+                rs = cur.fetchone()
+                cur.close()
+            except:
+                rs = (None, None)
+            self.mp_caupi_cod = rs[0]
+            self.mp_caupi_des = rs[1]
+        else:
+            self.mp_caupi_cod = None
+            self.mp_caupi_des = None
 
     def CalcolaScadenze(self, datestart, id_modpag, imptot = 0, impiva = 0):
         """
@@ -280,12 +304,15 @@ class Scadenze_Table(adb.DbTable):
         self.mp_mesi1 = None
         self.mp_mesitra = None
         self.mp_id_pdcpi = None
+        self.mp_id_caupi = None
         self.mp_sc1noeff = None
         self.mp_sc1iva = None
         self.mp_sc1perc = None
         self.mp_gg = None
         self.mp_pdcpi_cod = None
         self.mp_pdcpi_des = None
+        self.mp_caupi_cod = None
+        self.mp_caupi_des = None
 
     def SetupModPag(self, id_modpag):
         """
@@ -312,6 +339,7 @@ class Scadenze_Table(adb.DbTable):
         self.mp_mesi1 = None
         self.mp_mesitra = None
         self.mp_id_pdcpi = None
+        self.mp_id_caupi = None
         self.mp_sc1noeff = None
         self.mp_sc1iva = None
         self.mp_sc1perc = None
@@ -323,7 +351,7 @@ class Scadenze_Table(adb.DbTable):
             return
         cmd =\
 """SELECT mp.codice, mp.descriz, mp.tipo, mp.contrass, mp.modocalc, """\
-"""mp.tipoper, mp.finemese0, mp.finemese, mp.numscad, mp.mesi1, mp.mesitra, mp.id_pdcpi, """\
+"""mp.tipoper, mp.finemese0, mp.finemese, mp.numscad, mp.mesi1, mp.mesitra, mp.id_pdcpi, mp.id_caupi, """\
 """mp.sc1noeff, mp.sc1iva, mp.sc1perc, mp.ggextra, """\
 """mp.gg01, mp.gg02, mp.gg03, mp.gg04, mp.gg05, mp.gg06, mp.gg07, mp.gg08, mp.gg09, mp.gg10, mp.gg11, mp.gg12,"""\
 """mp.gg13, mp.gg14, mp.gg15, mp.gg16, mp.gg17, mp.gg18, mp.gg19, mp.gg20, mp.gg21, mp.gg22, mp.gg23, mp.gg24,"""\
@@ -350,10 +378,11 @@ class Scadenze_Table(adb.DbTable):
             self.mp_mesi1,\
             self.mp_mesitra,\
             self.mp_id_pdcpi,\
+            self.mp_id_caupi,\
             self.mp_sc1noeff,\
             self.mp_sc1iva,\
             self.mp_sc1perc,\
-            self.mp_ggextra = rsmp[:16]
+            self.mp_ggextra = rsmp[:17]
             self.mp_finemese0 = self.mp_finemese0 or False
             self.mp_finemese = self.mp_finemese or False
             self.mp_sc1noeff = self.mp_sc1noeff or False
@@ -361,15 +390,16 @@ class Scadenze_Table(adb.DbTable):
             if self.mp_mesi1 is None:   self.mp_mesi1 = 0
             if self.mp_mesitra is None: self.mp_mesitra = 0
             self.mp_gg = []
-            mp_gg = rsmp[16:53]
+            mp_gg = rsmp[17:54]
             for gg in mp_gg:
                 self.mp_gg.append(gg or 0)
             self.mp_gem = []
-            mp_gem = rsmp[52:65]
+            mp_gem = rsmp[53:66]
             for gem in mp_gem:
                 self.mp_gem.append(gem or 0)
         self.mp_pdcpi_cod = None
         self.mp_pdcpi_des = None
+        
         if self.mp_id_pdcpi:
             cmd = \
                 """SELECT pdc.codice, pdc.descriz """\
@@ -380,6 +410,19 @@ class Scadenze_Table(adb.DbTable):
                 pdc.Get(self.mp_id_pdcpi)
                 self.mp_pdcpi_cod = pdc.codice
                 self.mp_pdcpi_des = pdc.descriz
+            except:
+                pass
+        
+        if self.mp_id_caupi:
+            cmd = \
+                """SELECT cau.codice, cau.descriz """\
+                """FROM %s AS cau """\
+                """WHERE cau.id=%%s""" % bt.TABNAME_CFGCONTAB
+            try:
+                cau = adb.DbTable(bt.TABNAME_CFGCONTAB, 'cau')
+                cau.Get(self.mp_id_caupi)
+                self.mp_caupi_cod = cau.codice
+                self.mp_caupi_des = cau.descriz
             except:
                 pass
 

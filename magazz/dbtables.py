@@ -2441,6 +2441,7 @@ class DocMag(adb.DbTable):
         return out
 
     def CollegaCont(self):
+        ex_id_reg = self.id_reg
         regcon = self.regcon
         scad = regcon.scad
         rssca = copy.deepcopy(scad.GetRecordset())
@@ -2462,12 +2463,10 @@ class DocMag(adb.DbTable):
             coll = regcon.Save()
             self.id_reg = regcon.id
             #self.f_printed = 1
-            if not coll:
-                #if not self.Save():
-                    #raise Exception, \
-                          #"Problema in collegamento contabile:\n%s"\
-                          #% repr(regcon.GetError())
-            #else:
+            if coll:
+                if ex_id_reg is not None:
+                    regcon.RegPagamentoAutomaticoDelete(ex_id_reg)
+            else:
                 if regcon.IsDuplicated() and \
                    regcon.GetDuplicatedKeyNumber() == 2:
                     err, msg = NumProtIvaEsiste, 'Protocollo IVA esistente'

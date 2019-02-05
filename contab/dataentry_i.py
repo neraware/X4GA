@@ -363,7 +363,7 @@ class GeneraPartiteMixin(scad.Scadenze):
                 self.regrss[s][RSSCA_NOTE] = note[s]
     
     def TestPagImm(self):
-        if self.mp_id_pdcpi is not None:
+        if self.mp_id_pdcpi is not None and self.mp_id_caupi is None:
             #pagamento immediato, genero righe di giroconto cli-for/cassa
             n = len(self.regrsb)-1
             if n>=0:
@@ -1313,6 +1313,9 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         if out and self._cfg_id_cau_si is not None:
             self.RegSolaIvaAutomaticaWrite()
         if out:
+            if self.mp_id_caupi is not None:
+                self.RegPagamentoAutomaticoWrite()
+        if out:
             self.ReportFineReg()
         
         if out and getattr(self, 'ftel_acq_info', None):
@@ -1403,6 +1406,12 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
     def RegSolaIvaAutomaticaDelete(self, id_reg):
         pass
     
+    def RegPagamentoAutomaticoWrite(self):
+        pass
+    
+    def RegPagamentoAutomaticoDelete(self, id_reg):
+        pass
+    
     def RegDelete(self):
         id_reg = self.reg_id
         out = self.ScadStorno()
@@ -1410,6 +1419,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             out = ctb.ContabPanel.RegDelete(self)
         if out and self._cfg_id_cau_si:
             self.RegSolaIvaAutomaticaDelete(id_reg)
+        if out: # and self.mp_id_caupi:
+            self.RegPagamentoAutomaticoDelete(id_reg)
         return out
     
     def RegRead(self, idreg):

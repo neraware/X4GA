@@ -70,10 +70,12 @@ class ModPagPanel(ga.AnagPanel):
     def __init__(self, *args, **kwargs):
         ga.AnagPanel.__init__(self, *args, **kwargs)
         self.SetDbSetup( bt.tabelle[ bt.TABSETUP_TABLE_MODPAG ] )
-        self._sqlrelcol = ", pdcpi.id, pdcpi.codice, pdcpi.descriz"
+        self._sqlrelcol = ", pdcpi.id, pdcpi.codice, pdcpi.descriz, caupi.id, caupi.codice, caupi.descriz"
         self._sqlrelfrm =\
             " LEFT JOIN %s AS pdcpi ON %s.id_pdcpi=pdcpi.id"\
-            % (bt.TABNAME_PDC, self.db_tabname)
+            " LEFT JOIN %s AS caupi ON %s.id_caupi=caupi.id"\
+            % (bt.TABNAME_PDC, self.db_tabname,
+               bt.TABNAME_CFGCONTAB, self.db_tabname,)
         self.db_report = "Modalita' di Pagamento"
 
     def InitAnagCard(self, parent):

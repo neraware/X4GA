@@ -94,10 +94,12 @@ class DbRegCon(adb.DbTable,
     def get_regiva(self):
         return self.regiva
     
-    def __init__(self, writable=True):
+    def __init__(self, writable=True, doPagAuto=True):
         
         adb.DbTable.__init__(self,\
             bt.TABNAME_CONTAB_H, "reg", writable=writable)
+        
+        self._info.doPagAuto = doPagAuto
         
         self.dbmpa = scad.Scadenze_Table()
         
@@ -201,44 +203,36 @@ class DbRegCon(adb.DbTable,
         out = True
         cfg = self.config
         newreg = (self.id is None)
+        delreg = None
+        if deletions:
+            delreg = deletions[0]
         if cfg.pcf == '1':# and cfg.pcfscon != '1':
             #storno partite
             out = self.PcfStorno()
         if out and self.modpag.id_pdcpi is not None:
             if not self.id in deletions:
-                #righe di giroc. cli/for-cassa x pag.imm.
-                self.TestPagImm()
+                if self.modpag.id_caupi is None:
+                    #righe di giroc. cli/for-cassa x pag.imm.
+                    self.TestPagImm()
         if out:
             #scrittura registrazione
             self.SetSilent(True) #previene il ricaricamento degli mchildrens
             out = adb.DbTable._SaveRecords(self, records, deletions)
             self.SetSilent(False)
         if out:
-#            if self.id_regiva:
-#                #aggiornamento ultimo numero di protocollo iva
-#                progr = self._info.progr
-#                progr.ClearFilters()
-#                progr.AddFilter("progr.codice=%s",  "iva_ultins")
-#                progr.AddFilter("progr.keydiff=%s", self.esercizio)
-#                progr.AddFilter("progr.key_id=%s",  self.id_regiva)
-#                if progr.Retrieve():
-#                    if progr.IsEmpty():
-#                        progr.CreateNewRow()
-#                        progr.codice = "iva_lastins"
-#                        progr.keydiff = self.esercizio
-#                        progr.key_id = self.id_regiva
-#                        progr.progrnum = 0
-#                    if self.numdoc > progr.progrnum:
-#                        progr.progrnum = self.numiva
-#                        progr.Save()
-#                del progr
             if cfg.pcf == '1':
                 if self.modpag.id_pdcpi is None:
                     #aggiorno partite
                     out = self.PcfWrite()
                 else:
-                    #pag.imm. non scrivo partite
-                    out = True
+                    if self._info.doPagAuto:
+                        #pag.imm. non scrivo partite
+                        if delreg: #self.modpag.id_caupi is None:
+                            out = self.RegPagamentoAutomaticoDelete(delreg)
+                        if self.id:
+                            out = self.RegPagamentoAutomaticoWrite()
+                    else:
+                        out = True
                 if out:
                     #rimemorizzo le scadenze della regitrazione
                     #se sono state create nuove parite
@@ -246,6 +240,66 @@ class DbRegCon(adb.DbTable,
         if out and cfg.id_tipevent is not None:
             self.GeneraEvento(None, newreg)
         return out
+    
+    def RegPagamentoAutomaticoWrite(self):
+        
+        reg = DbRegCon(doPagAuto=False)
+        reg.Retrieve("(reg.id_reg_by=%s AND reg.id_regiva IS NULL)" % self.id)
+        if reg.IsEmpty():
+            reg.CreateNewRow()
+#             des_action = "generata"
+        else:
+            for b in reg.body:
+                b.Delete()
+#             des_action = "modificata"
+        reg.esercizio = self.esercizio
+        reg.id_caus = self.modpag.id_caupi
+        reg.tipreg = reg.config.tipo
+        reg.datreg = self.datope or self.datreg
+        reg.datdoc = self.datdoc
+        reg.numdoc = self.numdoc
+        reg.id_regiva = None
+        reg.id_reg_by = self.id
+        
+        reg.st_regiva = 0
+        reg.st_giobol = 0
+        
+        self.body.MoveFirst()
+        importo = self.body.importo
+        id_pdcreg = self.body.id_pdcpa
+        
+        if self.config.pasegno == 'A':
+            segno1, segno2 = 'A', 'D'
+        else:
+            segno1, segno2 = 'D', 'A'
+        
+        body = reg.body
+        
+        body.CreateNewRow()
+        body.numriga = 1
+        body.tipriga = reg.tipreg
+        body.importo = importo
+        body.segno = segno1
+        body.id_pdcpa = self.modpag.id_pdcpi
+        body.id_pdccp = id_pdcreg
+        
+        body.CreateNewRow()
+        body.numriga = 2
+        body.tipriga = reg.tipreg
+        body.importo = importo
+        body.segno = segno2
+        body.id_pdcpa = id_pdcreg
+        body.id_pdccp = self.modpag.id_pdcpi
+        
+        return reg.Save()
+    
+    def RegPagamentoAutomaticoDelete(self, id_reg):
+        reg = DbRegCon(doPagAuto=False)
+        reg.Retrieve("(reg.id_reg_by=%s AND reg.id_regiva IS NULL)" % id_reg)
+        if not reg.IsEmpty():
+            reg.Delete()
+            return reg.Save()
+        return True
     
     def GeneraEvento(self, parent, newreg):
         from cfg.dbtables import EventiTable

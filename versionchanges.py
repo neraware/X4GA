@@ -29,6 +29,15 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.40', dt.Date(2019, 2, 5), (
+         ("NEW4003",
+         """Implementata data operazione come data di competenza IVA."""),
+         ("NEW4004",
+         """Implementato nuovo meccanismo di incasso/pagamento immediato 
+         che consente di associare registrazione separata dell'operazione
+         di cassa."""),
+        ),),
+    
     ('1.9.39', dt.Date(2019, 2, 2), (
          ("BUG1212",
          """Corretta acquisizione xml, propone mod.pag. da scheda fornitore."""),

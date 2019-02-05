@@ -1887,6 +1887,7 @@ class Azienda(object):
                 [ "sc1iva",      "TINYINT",  1, None, "Importo della scadenza 1 pari al totale IVA", None ],\
                 [ "sc1perc",     "DECIMAL",  3,    0, "Percentuale di calcolo per scadenza 1", None ],\
                 [ "id_pdcpi",    "INT",    idw, None, "ID cassa/banca se pag.immediato", None ],
+                [ "id_caupi",    "INT",    idw, None, "ID causale pag.immediato", None ],
                 [ "ftel_tippag", "CHAR",     4, None, "Fattura elettronica: Tipo pagamento", None ], 
                 [ "ftel_modpag", "CHAR",     4, None, "Fattura elettronica: Modo pagamento", None ], ]
             for n in range(1,37):
