@@ -473,9 +473,8 @@ class FTEL_Doc(FTEL):
                     a_filename = s('NomeAttachment')
                     a_filetype = None
                     
-                    if a_filename.lower().endswith('.pdf') or (s('FormatoAttachment') or '') == 'pdf':
-                        a_filetype = 'PDF'
-                    elif a_filename.lower().endswith('.zip'):
+                    ac = s('AlgoritmoCompressione') or ''
+                    if a_filename.lower().endswith('.zip') or ac.lower() == 'zip':
                         f = StringIO(a_stream)
                         z = zipfile.ZipFile(f)
                         for zfilename in z.namelist():
@@ -486,6 +485,9 @@ class FTEL_Doc(FTEL):
                                 a_filetype = 'PDF'
                                 break
                         z.close()
+                    
+                    if a_filename.lower().endswith('.pdf') or (s('FormatoAttachment') or '') == 'pdf':
+                        a_filetype = 'PDF'
                     
                     if a_filetype:
                         h.allegati.append(_FTEL_Allegato())
