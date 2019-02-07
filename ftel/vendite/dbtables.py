@@ -14,16 +14,17 @@ from xml.dom.minidom import Document
 import re
 
 import os
-import datetime
-import base64
 def opj(*x):
     return os.path.join(*x).replace('\\', '/')
 
 import report as rpt
 from cStringIO import StringIO
+import base64
 
 from suds.client import Client as SudsClient
 import hashlib
+
+import zipfile
 
 
 FTEL_NOCODE = '0000000'
@@ -765,22 +766,30 @@ class FatturaElettronica(dbm.DocMag):
                 _, filename = os.path.split(fullname)
                 filename = filename.replace('.xml', '.pdf')
                 
+                zip_h = StringIO()
+                zf = zipfile.ZipFile(zip_h, mode='wb', compression=zipfile.ZIP_DEFLATED)
+                zf.writestr(str(filename), pdf_stream)
+                zf.close()
+                zip_h.seek(0)
+                zip_stream = zip_h.read()
+                zip_h.close()
+                
                 # 2.5 <Allegati>
                 body_pdf = xmldoc.appendElement(body, 'Allegati')
-                xmldoc.appendItems(body_pdf, (('NomeAttachment', filename),
-                                              ('FormatoAttachment', 'PDF'),
-                                              ('Attachment', base64.b64encode(pdf_stream)),))
+                xmldoc.appendItems(body_pdf, (('NomeAttachment',        filename),
+                                              ('AlgoritmoCompressione', 'ZIP'),
+                                              ('FormatoAttachment',     'PDF'),
+                                              ('Attachment',            base64.b64encode(zip_stream)),))
             
             if not self.MoveNext():
                 loop = False
         
         #genero file xml dei documenti elaborati
-        stream = unicode(xmldoc.toprettyxml(indent="  ", encoding="utf-8"))
+        stream = unicode(xmldoc.toprettyxml(encoding="utf-8"))
         text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)    
         stream = text_re.sub('>\g<1></', stream)
         stream = stream.replace("’", "'")
         n = stream.index('>')+1
-#         stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.0.xsl"?>' + stream[n:]
         stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.2.xsl"?>' + stream[n:]
         
         fullname = self.ftel_get_filename(numprogr, self.datdoc.year)

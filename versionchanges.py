@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.43', dt.Date(2019, 2, 8), (
+         ("BET4255",
+         """Allegato pdf in file xml ora compresso."""),
+        ),),
+    
     ('1.9.42', dt.Date(2019, 2, 7), (
          ("BUG1215",
          """Fix dataentry documenti, dava errore se con numerazione a piede."""),
