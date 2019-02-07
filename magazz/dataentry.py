@@ -700,7 +700,11 @@ class MagazzPanel(aw.Panel,\
         numiva = cn('numiva').GetValue()
         datreg = cn('datreg').GetValue()
         datdoc = cn('datdoc').GetValue()
-        datope = cn('datope').GetValue()
+        c = cn('datope')
+        if c:
+            datope = c.GetValue()
+        else:
+            datope = None
         #valuta = cn('id_valuta').GetValue()
         magazz = cn('id_magazz').GetValue()
         doc = self.dbdoc

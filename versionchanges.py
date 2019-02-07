@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.42', dt.Date(2019, 2, 7), (
+         ("BUG1215",
+         """Fix dataentry documenti, dava errore se con numerazione a piede."""),
+        ),),
+    
     ('1.9.41', dt.Date(2019, 2, 7), (
          ("NEW4003",
          """Implementata data operazione come data di competenza IVA."""),
