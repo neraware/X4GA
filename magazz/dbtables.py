@@ -2504,12 +2504,16 @@ class DocMag(adb.DbTable):
                     cod = "ivaacqcee"
                     break
                 elif mov.iva.tipo == 'S':
-                    if regivatip == "V":
-                        cod = "ivavensos"
-                    elif regivatip == "A":
+#                     if regivatip == "V":
+#                         cod = "ivavensos"
+#                     elif regivatip == "A":
+#                         cod = "ivaacqsos"
+#                     else:
+#                         raise Exception, "Impossibile usare l'aliquota %s, riservata alle operazioni in split payment, se il registro non e' di tipo Vendite o Acquisti" % mov.iva.codice
+                    if regivatip == "A":
                         cod = "ivaacqsos"
                     else:
-                        raise Exception, "Impossibile usare l'aliquota %s, riservata alle operazioni in split payment, se il registro non e' di tipo Vendite o Acquisti" % mov.iva.codice
+                        cod = "ivavensos"
                     break
         if cod is None:
             if (regivatip or ' ') in "AVC":
