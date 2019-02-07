@@ -663,10 +663,12 @@ def DialogFunc( parent, call_fit = True, set_sizer = True ):
 
     item32 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item33 = wx.StaticText( parent, ID_TEXT, "Data operaz.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item33 = wx.StaticText( parent, ID_TEXT, "Compet.IVA", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item33.SetToolTip( wx.ToolTip("Data di competenza IVA; se compilata, prevale sulla data di registrazione nella stampa dei registri e nella liquidazione IVA") )
     item32.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
     item34 = DateCtrl( parent, ID_DATOPE, "", wx.DefaultPosition, [80,-1], 0 )
+    item34.SetToolTip( wx.ToolTip("Data di competenza IVA; se compilata, prevale sulla data di registrazione nella stampa dei registri e nella liquidazione IVA") )
     item34.SetName( "datope" )
     item32.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 

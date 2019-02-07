@@ -680,7 +680,7 @@ def HeadFunc( parent, call_fit = True, set_sizer = True ):
     item19 = wx.StaticText( parent, ID_TEXT, "Num.Prot.:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
     item17.Add( item19, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item20 = wx.StaticText( parent, ID_TEXT, "Data operaz.:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item20 = wx.StaticText( parent, ID_TEXT, "Compet.IVA", wx.DefaultPosition, wx.DefaultSize, 0 )
     item20.SetToolTip( wx.ToolTip("Data di competenza IVA; se compilata, prevale sulla data di registrazione nella stampa dei registri e nella liquidazione IVA") )
     item17.Add( item20, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -693,11 +693,12 @@ def HeadFunc( parent, call_fit = True, set_sizer = True ):
     item23 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
     item24 = DateCtrl( parent, ID_TXT_DATOPE, "", wx.DefaultPosition, [80,-1], 0 )
+    item24.SetToolTip( wx.ToolTip("Data di competenza IVA; se compilata, prevale sulla data di registrazione nella stampa dei registri e nella liquidazione IVA") )
     item24.SetName( "datope" )
     item23.Add( item24, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item25 = wx.Button( parent, ID_BTN_DOPEDOC, "=D.D.", wx.DefaultPosition, [30,20], 0 )
-    item25.SetName( "btndocedoc" )
+    item25.SetName( "button_docedoc" )
     item23.Add( item25, 0, wx.ALIGN_CENTER|wx.LEFT, 5 )
 
     item17.Add( item23, 0, wx.ALIGN_CENTER, 5 )

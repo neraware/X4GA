@@ -447,8 +447,8 @@ class ExportPanel(aw.Panel):
                             path, _name = doc.ftel_make_files(numprogr, firma_pa)
                             numprogr += 1
                     wait.SetValue(n)
-            except Exception, e:
-                aw.awu.MsgDialog(self, message=' '.join(map(str, e.args)), style=wx.ICON_ERROR)
+#             except Exception, e:
+#                 aw.awu.MsgDialog(self, message=' '.join(map(str, e.args)), style=wx.ICON_ERROR)
             finally:
                 wait.Destroy()
             if void:

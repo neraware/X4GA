@@ -29,12 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.40', dt.Date(2019, 2, 5), (
+    ('1.9.41', dt.Date(2019, 2, 7), (
          ("NEW4003",
          """Implementata data operazione come data di competenza IVA."""),
          ("NEW4004",
          """Implementato nuovo meccanismo di incasso/pagamento immediato 
-         che consente di associare registrazione separata dell'operazione
+         che consente di generare registrazione separata dell'operazione
          di cassa."""),
         ),),
     

@@ -185,6 +185,7 @@ class ContabPanel(aw.Panel,\
         butmod = self.controls["button_modify"]
         butquit = self.controls["button_quit"]
         butdel = self.controls["button_delete"]
+        butdod = self.controls["button_docedoc"]
         
         self.InitCausale()
         
@@ -196,8 +197,13 @@ class ContabPanel(aw.Panel,\
         self.Bind(wx.EVT_BUTTON, self.OnRegModify, butmod)
         self.Bind(wx.EVT_BUTTON, self.OnRegQuit,   butquit)
         self.Bind(wx.EVT_BUTTON, self.OnRegDelete, butdel)
+        self.Bind(wx.EVT_BUTTON, self.OnDatOpeDoc, butdod)
         
         self.Bind(wx.EVT_SIZE,   self.OnResize)
+    
+    def OnDatOpeDoc(self, event):
+        cn = self.FindWindowByName
+        cn('datope').SetValue(cn('datdoc').GetValue())
     
     def OptimizeSize(self, min_width=1000, min_height=640):
         mw, mh = min_width, min_height
