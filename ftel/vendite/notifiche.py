@@ -124,6 +124,12 @@ class NotifichePanel(ExportPanel):
                             status = doc.STATUS_MANCATACONS
                         elif status_gw == "E":
                             status = doc.STATUS_ERRORE
+                        elif status_gw == "Z":
+                            status = doc.STATUS_PA_ACCETTATI
+                        elif status_gw == "K":
+                            status = doc.STATUS_PA_RIFIUTATI
+                        elif status_gw == "T":
+                            status = doc.STATUS_PA_DECOTERM
                         else:
                             raise Exception("Status da gateway non riconosciuto: %s" % status_gw)
                         cmd = "UPDATE movmag_h SET ftel_eeb_status='%s' WHERE id=%s" % (status, doc.id)

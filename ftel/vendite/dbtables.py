@@ -86,6 +86,9 @@ class FatturaElettronica(dbm.DocMag):
     STATUS_CONSEGNATO =      'C'
     STATUS_MANCATACONS =     'M'
     STATUS_ERRORE =          'E'
+    STATUS_PA_ACCETTATI =    'Z'
+    STATUS_PA_RIFIUTATI  =   'K'
+    STATUS_PA_DECOTERM =     'T'
     
     STATUS_COLORS = {STATUS_XML_DA_GENERARE: 'lemonchiffon',
                      STATUS_XML_GENERATO:    'dodgerblue1',
@@ -93,7 +96,10 @@ class FatturaElettronica(dbm.DocMag):
                      STATUS_IN_CODA_X_SDI:   'plum1',
                      STATUS_CONSEGNATO:      'turquoise1',
                      STATUS_MANCATACONS:     'seagreen1',
-                     STATUS_ERRORE:          'darkorange1',}
+                     STATUS_ERRORE:          'darkorange1',
+                     STATUS_PA_ACCETTATI:    'palegreen',
+                     STATUS_PA_RIFIUTATI:    'chocolate',
+                     STATUS_PA_DECOTERM:     'seashell3',}
     
     COLOR_STATUS_DA_INVIARE_AL_GATEWAY = 'darkseagreen'
     

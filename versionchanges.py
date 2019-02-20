@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.48', dt.Date(2019, 2, 20), (
+         ("BUG1216",
+         """Corretta l'identificazione del fornitore in acquisizione documenti xml."""),
+        ),),
+    
+    ('1.9.46', None, (
+         ("BET4256",
+         """Gestione status PA accettati, PA rifiutati, PA decorrenza termini."""),
+        ),),
+    
     ('1.9.43', dt.Date(2019, 2, 8), (
          ("BET4255",
          """Allegato pdf in file xml ora compresso."""),

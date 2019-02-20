@@ -181,8 +181,9 @@ class ExportPanel(aw.Panel):
         self.gridocs.Bind(EVT_GRID_CELL_LEFT_CLICK, self.OnCellClicked)
         
         self.gridocs.Bind(EVT_GRID_CELL_LEFT_DCLICK, self.OnCellDoubleClicked)
-        for name in 'status_da_inviare status_in_lavorazione status_trasmessi'.split():
-            self.Bind(wx.EVT_CHECKBOX, self.OnUpdateData, cn(name))
+#         for name in 'status_da_inviare status_in_lavorazione status_trasmessi'.split():
+#             self.Bind(wx.EVT_CHECKBOX, self.OnUpdateData, cn(name))
+        self.Bind(wx.EVT_CHECKBOX, self.OnUpdateData)
         
         for name, func in (('butsrc', self.OnUpdateData),
                            ('butprt', self.OnPrintData),
@@ -225,6 +226,9 @@ class ExportPanel(aw.Panel):
         cn('panel_status_c').SetBackgroundColour(c[d.STATUS_CONSEGNATO])
         cn('panel_status_m').SetBackgroundColour(c[d.STATUS_MANCATACONS])
         cn('panel_status_e').SetBackgroundColour(c[d.STATUS_ERRORE])
+        cn('panel_status_z').SetBackgroundColour(c[d.STATUS_PA_ACCETTATI])
+        cn('panel_status_k').SetBackgroundColour(c[d.STATUS_PA_RIFIUTATI])
+        cn('panel_status_t').SetBackgroundColour(c[d.STATUS_PA_DECOTERM])
     
     def OnPrintData(self, event):
         self.PrintData()
@@ -296,13 +300,20 @@ class ExportPanel(aw.Panel):
             enable = False
         if cn('status_e').IsChecked():
             flags.append(docs.STATUS_ERRORE)
+        if cn('status_z').IsChecked():
+            flags.append(docs.STATUS_PA_ACCETTATI)
+        if cn('status_k').IsChecked():
+            flags.append(docs.STATUS_PA_RIFIUTATI)
+        if cn('status_t').IsChecked():
+            flags.append(docs.STATUS_PA_DECOTERM)
         if flags:
             flt = 'doc.ftel_eeb_status IN (%s)' % ','.join(['"%s"' % f for f in flags])
             if filter0:
                 flt = '%s OR %s' % (filter0, flt)
             docs.AddFilter(flt)
-            cn('butgen').Enable(not 'T' in flags and not 'A' in flags)
-            cn('numprogr').Enable(enable)
+            e = not ('T' in flags or 'A' in flags or 'Z' in flags or 'T' in flags)
+            cn('butgen').Enable(e)
+            cn('numprogr').Enable(e)
         else:
             docs.AddFilter('FALSE')
             cn('butgen').Disable()
@@ -361,8 +372,9 @@ class ExportPanel(aw.Panel):
             msg = "Attenzione: le seguenti aliquote IVA sono da classificare:\n%s" % ','.join([ai[1] for ai in ai_err])
             aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
             enable = False
-        cn('butgen').Enable(enable and not docs.IsEmpty())
-        cn('numprogr').Enable(enable)
+        e = cn('butgen').IsEnabled() and not docs.IsEmpty()
+        cn('butgen').Enable(e)
+        cn('numprogr').Enable(e)
         if enable and cn('selaut').IsChecked():
             col = docs._GetFieldIndex('fe_sel', inline=True)
             for r in docs.GetRecordset():
