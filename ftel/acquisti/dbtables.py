@@ -42,7 +42,7 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
     
     def __init__(self, fields=None, primaryKey=None, mandatoryFields="", 
         defaults=None):
-        adb.DbMem.__init__(self, fields='fullname filename pdc_id pdc_codice pdc_descriz tipdoc datdoc numdoc totdoc docinfo docxml'.split())
+        adb.DbMem.__init__(self, fields='fullname filename pdc_id pdc_codice pdc_descriz pdc_piva tipdoc datdoc numdoc totdoc docinfo docxml'.split())
         
         pdc = adb.DbTable('pdc')
         pdc.AddJoin('pdctip', 'tipana', idLeft='id_tipo')
@@ -75,6 +75,7 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                 self.docinfo = doc
                 self.docxml = f
                 self.pdc_descriz = f.anag_fornit.descriz
+                self.pdc_piva = f.anag_fornit.piva
                 pdc.Retrieve('anag.piva=%s', f.anag_fornit.piva)
     
     def archive_file(self):

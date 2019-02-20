@@ -904,6 +904,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             
             if getattr(self, 'ftel_acq_info', None):
                 i = self.ftel_acq_info
+                i.pdc.Retrieve('anag.piva=%s', i.pdc_piva)
                 if i.pdc.id is None:
                     msg = "Acquisizione fattura di %s, non presente in anagrafica.\nConfermi l'acquisizione automatica del fornitore ?" % i.pdc_descriz
                     if aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT) != wx.ID_YES:
