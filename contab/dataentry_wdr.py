@@ -136,8 +136,10 @@ ID_PANTOOLBAR = 10000
 ID_PANEL_CAUS = 10001
 ID_PANEL_HEAD = 10002
 ID_AUTONOTEREG = 10003
-ID_PANEL_SCAD = 10004
-ID_PANEL_BODY = 10005
+ID_XML_FILENAME = 10004
+ID_XML_DATRIC = 10005
+ID_PANEL_SCAD = 10006
+ID_PANEL_BODY = 10007
 
 def DialogFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -172,15 +174,31 @@ def DialogFunc( parent, call_fit = True, set_sizer = True ):
     item7 = AutoNotes(parent, ID_AUTONOTEREG); item7.SetName('autonotes')
     item2.Add( item7, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
+    item8 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item9 = wx.StaticText( parent, ID_XML_FILENAME, "-", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item9.SetName( "xml_filename" )
+    item8.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item10 = wx.StaticText( parent, ID_XML_DATRIC, "-", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item10.SetName( "xml_datric" )
+    item8.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+
+    item8.AddGrowableCol( 0 )
+
+    item8.AddGrowableCol( 1 )
+
+    item2.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
     item2.AddGrowableCol( 0 )
 
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item8 = parent.FindWindowById( ID_PANEL_SCAD )
-    item0.Add( item8, 0, wx.GROW|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item11 = parent.FindWindowById( ID_PANEL_SCAD )
+    item0.Add( item11, 0, wx.GROW|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item9 = parent.FindWindowById( ID_PANEL_BODY )
-    item0.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item12 = parent.FindWindowById( ID_PANEL_BODY )
+    item0.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item0.AddGrowableCol( 0 )
 
@@ -193,13 +211,13 @@ def DialogFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TEXT = 10006
-ID_PANGRID_DAV = 10007
-ID_TOTDARE = 10008
-ID_TOTAVERE = 10009
-ID_TOTQUADR = 10010
-ID_TOTQUADRSGN = 10011
-ID_PARITY = 10012
+ID_TEXT = 10008
+ID_PANGRID_DAV = 10009
+ID_TOTDARE = 10010
+ID_TOTAVERE = 10011
+ID_TOTQUADR = 10012
+ID_TOTQUADRSGN = 10013
+ID_PARITY = 10014
 
 def BodyDavFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -285,12 +303,12 @@ def BodyDavFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRID_IVA = 10013
-ID_SEZIVA = 10014
-ID_TOTIMPON = 10015
-ID_TOTIMPST = 10016
-ID_TOTINDED = 10017
-ID_TOTIVATO = 10018
+ID_PANGRID_IVA = 10015
+ID_SEZIVA = 10016
+ID_TOTIMPON = 10017
+ID_TOTIMPST = 10018
+ID_TOTINDED = 10019
+ID_TOTIVATO = 10020
 
 def BodyIvaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -377,7 +395,7 @@ def BodyIvaFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_CAUSALE = 10019
+ID_CAUSALE = 10021
 
 def CauRegFunc( parent, call_fit = True, set_sizer = True ):
     item1 = wx.StaticBox( parent, -1, "Causale" )
@@ -396,11 +414,11 @@ def CauRegFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TXTDATMIN = 10020
-ID_TXTDATMAX = 10021
-ID_BTNSEARCH = 10022
-ID_PANGRIDSEARCH = 10023
-ID_BTNSELECT = 10024
+ID_TXTDATMIN = 10022
+ID_TXTDATMAX = 10023
+ID_BTNSEARCH = 10024
+ID_PANGRIDSEARCH = 10025
+ID_BTNSELECT = 10026
 
 def RegSearchFuncTipo_I( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -463,8 +481,8 @@ def RegSearchFuncTipo_I( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANSCADANAG = 10025
-ID_PANSCADSCAD = 10026
+ID_PANSCADANAG = 10027
+ID_PANSCADSCAD = 10028
 
 def ScadFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -486,7 +504,7 @@ def ScadFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_DAVIVAZONE = 10027
+ID_DAVIVAZONE = 10029
 
 def BodyFuncTipo_I_O( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -511,8 +529,8 @@ def BodyFuncTipo_I_O( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_FOREIGN = 10028
-ID_LINE = 10029
+ID_FOREIGN = 10030
+ID_LINE = 10031
 
 def BodyFuncTipo_I_S( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -613,13 +631,13 @@ def BodyFuncTipo_I_S( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TXT_DATREG = 10030
-ID_TXT_DATDOC = 10031
-ID_TXT_NUMDOC = 10032
-ID_REGIVA = 10033
-ID_TXT_NUMIVA = 10034
-ID_TXT_DATOPE = 10035
-ID_BTN_DOPEDOC = 10036
+ID_TXT_DATREG = 10032
+ID_TXT_DATDOC = 10033
+ID_TXT_NUMDOC = 10034
+ID_REGIVA = 10035
+ID_TXT_NUMIVA = 10036
+ID_TXT_DATOPE = 10037
+ID_BTN_DOPEDOC = 10038
 
 def HeadFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -718,11 +736,11 @@ def HeadFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TEXT_TIPOPDC = 10037
-ID_PDCROWPA = 10038
-ID_TOTDOC = 10039
-ID_PANGRID_PDCPREF = 10040
-ID_BTNOK = 10041
+ID_TEXT_TIPOPDC = 10039
+ID_PDCROWPA = 10040
+ID_TOTDOC = 10041
+ID_PANGRID_PDCPREF = 10042
+ID_BTNOK = 10043
 
 def SelRowPaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -787,16 +805,16 @@ def SelRowPaFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRID_PCF = 10042
-ID_CHKPCFOPEN = 10043
-ID_PCFOPENUM = 10044
-ID_PCFOPETOT = 10045
-ID_PCFSELNUM = 10046
-ID_PCFSELTOT = 10047
-ID_BTNPCFSALDA = 10048
-ID_BTNPCFCARD = 10049
-ID_BTNPCFNEW = 10050
-ID_BUTANAG = 10051
+ID_PANGRID_PCF = 10044
+ID_CHKPCFOPEN = 10045
+ID_PCFOPENUM = 10046
+ID_PCFOPETOT = 10047
+ID_PCFSELNUM = 10048
+ID_PCFSELTOT = 10049
+ID_BTNPCFSALDA = 10050
+ID_BTNPCFCARD = 10051
+ID_BTNPCFNEW = 10052
+ID_BUTANAG = 10053
 
 def PcfPanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -905,8 +923,8 @@ def PcfPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PAN_SCA = 10052
-ID_PAN_DAV = 10053
+ID_PAN_SCA = 10054
+ID_PAN_DAV = 10055
 
 def BodyFuncTipo_SC( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -928,12 +946,12 @@ def BodyFuncTipo_SC( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRID_SCA = 10054
-ID_SALATT = 10055
-ID_SALAFT = 10056
-ID_TOTIMP = 10057
-ID_TOTABB = 10058
-ID_TOTSPE = 10059
+ID_PANGRID_SCA = 10056
+ID_SALATT = 10057
+ID_SALAFT = 10058
+ID_TOTIMP = 10059
+ID_TOTABB = 10060
+ID_TOTSPE = 10061
 
 def BodyScadFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1022,9 +1040,9 @@ def BodyScadFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TEXT_TIPOPDC1 = 10060
-ID_TEXT_TIPOPDC2 = 10061
-ID_PDCROWCP = 10062
+ID_TEXT_TIPOPDC1 = 10062
+ID_TEXT_TIPOPDC2 = 10063
+ID_PDCROWCP = 10064
 
 def SelRowPa_SC_Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1089,7 +1107,7 @@ def SelRowPa_SC_Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BODYISI = 10063
+ID_BODYISI = 10065
 
 def BodyFuncTipo_I_SI( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1108,17 +1126,17 @@ def BodyFuncTipo_I_SI( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TXT_RAGSOC = 10064
-ID_TXT_CODICE = 10065
-ID_TXT_INDIRIZZO = 10066
-ID_TXT_CAP = 10067
-ID_TXT_CITTA = 10068
-ID_TXT_PROVINCIA = 10069
-ID_PDCPA_STATO = 10070
-ID_TXT_CODFISC = 10071
-ID_TXT_PIVA = 10072
-ID_ANAGDIALOG = 10073
-ID_ANAGCHANGE = 10074
+ID_TXT_RAGSOC = 10066
+ID_TXT_CODICE = 10067
+ID_TXT_INDIRIZZO = 10068
+ID_TXT_CAP = 10069
+ID_TXT_CITTA = 10070
+ID_TXT_PROVINCIA = 10071
+ID_PDCPA_STATO = 10072
+ID_TXT_CODFISC = 10073
+ID_TXT_PIVA = 10074
+ID_ANAGDIALOG = 10075
+ID_ANAGCHANGE = 10076
 
 def ScadAnagFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1271,11 +1289,11 @@ def ScadAnagFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_MODPAG = 10075
-ID_TOTSCAD = 10076
-ID_SCADNEW = 10077
-ID_SCADDEL = 10078
-ID_SCADSUD = 10079
+ID_MODPAG = 10077
+ID_TOTSCAD = 10078
+ID_SCADNEW = 10079
+ID_SCADDEL = 10080
+ID_SCADSUD = 10081
 
 def ScadScadFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1362,8 +1380,8 @@ def ScadScadFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_SPLITANAGSCAD = 10080
-ID_PANDAV = 10081
+ID_SPLITANAGSCAD = 10082
+ID_PANDAV = 10083
 
 def BodyFuncTipo_C( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1392,15 +1410,15 @@ def BodyFuncTipo_C( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TXT_REGSTATUS = 10082
-ID_BTN_NEW = 10083
-ID_BTN_SEARCH = 10084
-ID_BTN_END = 10085
-ID_BTN_MODIFY = 10086
-ID_BTN_DELETE = 10087
-ID_BTN_QUIT = 10088
-ID_ATTACH_SPY = 10089
-ID_ATTACH = 10090
+ID_TXT_REGSTATUS = 10084
+ID_BTN_NEW = 10085
+ID_BTN_SEARCH = 10086
+ID_BTN_END = 10087
+ID_BTN_MODIFY = 10088
+ID_BTN_DELETE = 10089
+ID_BTN_QUIT = 10090
+ID_ATTACH_SPY = 10091
+ID_ATTACH = 10092
 
 def ToolBarFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )

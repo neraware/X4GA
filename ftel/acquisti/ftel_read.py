@@ -320,6 +320,7 @@ class FTEL_Doc(FTEL):
     
     def __init__(self, *args, **kwargs):
         
+        load_attachments = kwargs.pop('load_attachments', True)
         FTEL.__init__(self, *args, **kwargs)
         
         def h(*v):
@@ -461,41 +462,42 @@ class FTEL_Doc(FTEL):
             except:
                 pass
             
-            for att in body.getElementsByTagName('Allegati'):
-                
-                def s(*v):
-                    return self.get_value(att, *v)
-                
-                a = s('Attachment')
-                if a:
-                    a_stream = base64.b64decode(a)
+            if load_attachments:
+                for att in body.getElementsByTagName('Allegati'):
                     
-                    a_filename = s('NomeAttachment')
-                    a_filetype = None
+                    def s(*v):
+                        return self.get_value(att, *v)
                     
-                    ac = s('AlgoritmoCompressione') or ''
-                    if a_filename.lower().endswith('.zip') or ac.lower() == 'zip':
-                        f = StringIO(a_stream)
-                        z = zipfile.ZipFile(f)
-                        for zfilename in z.namelist():
-                            if zfilename.lower().endswith('.pdf'):
-                                z.read(zfilename)
-                                a_filename = zfilename
-                                a_stream = z.read(zfilename)
-                                a_filetype = 'PDF'
-                                break
-                        z.close()
-                    
-                    if a_filename.lower().endswith('.pdf') or (s('FormatoAttachment') or '') == 'pdf':
-                        a_filetype = 'PDF'
-                    
-                    if a_filetype:
-                        h.allegati.append(_FTEL_Allegato())
-                        a = h.allegati[-1]
-                        a.filetype = a_filetype
-                        a.filename = a_filename
-                        a.descriz = s('DescrizioneAttachment')
-                        a.stream = a_stream
+                    a = s('Attachment')
+                    if a:
+                        a_stream = base64.b64decode(a)
+                        
+                        a_filename = s('NomeAttachment')
+                        a_filetype = None
+                        
+                        ac = s('AlgoritmoCompressione') or ''
+                        if a_filename.lower().endswith('.zip') or ac.lower() == 'zip':
+                            f = StringIO(a_stream)
+                            z = zipfile.ZipFile(f)
+                            for zfilename in z.namelist():
+                                if zfilename.lower().endswith('.pdf'):
+                                    z.read(zfilename)
+                                    a_filename = zfilename
+                                    a_stream = z.read(zfilename)
+                                    a_filetype = 'PDF'
+                                    break
+                            z.close()
+                        
+                        if a_filename.lower().endswith('.pdf') or (s('FormatoAttachment') or '') == 'pdf':
+                            a_filetype = 'PDF'
+                        
+                        if a_filetype:
+                            h.allegati.append(_FTEL_Allegato())
+                            a = h.allegati[-1]
+                            a.filetype = a_filetype
+                            a.filename = a_filename
+                            a.descriz = s('DescrizioneAttachment')
+                            a.stream = a_stream
 
 
 def get_node_value(node):

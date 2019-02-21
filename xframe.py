@@ -1713,7 +1713,8 @@ class XFrame(aw.Frame):
     
     def _FTEL_Acquisti_OnAcquis(self, event):
         from ftel.acquisti.acquis import FtelAcquisFrame
-        self.LaunchFrame(FtelAcquisFrame)
+        frame = self.LaunchFrame(FtelAcquisFrame)
+        frame.panel.update_list()
     
     def _FTEL_Vendite_OnExport(self, event):
         from ftel.vendite.export import ExportFrame

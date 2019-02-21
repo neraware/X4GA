@@ -54,6 +54,7 @@ class ElencoFilesGrid(dbglib.ADB_Grid):
         IVI, DVI = bt.VALINT_INTEGERS, bt.VALINT_DECIMALS
         
         self.AddColumn(dblist, 'filename',  'Nome file', col_width=150)
+        self.AddColumn(dblist, 'datric',  'Data ricez.', col_type=self.TypeDate())
         self.AddColumn(dblist, 'pdc_codice',  'Cod.', col_width=50)
         self.AddColumn(dblist, 'pdc_descriz',  'Fornitore', col_width=200, is_fittable=True)
         self.AddColumn(dblist, 'tipdoc',  'Doc.', col_width=50)
@@ -72,7 +73,6 @@ class FtelAcquisPanel(aw.Panel):
         cn = self.FindWindowByName
         self.dblist = dbftel.ElencoFiles()
         self.gridlist = ElencoFilesGrid(cn('pangridlist'), self.dblist)
-        self.update_list()
         self.Bind(wx.EVT_BUTTON, self.OnUpdateList, cn('butrefresh'))
         self.Bind(gl.EVT_GRID_CELL_LEFT_DCLICK, self.OnAcquisFile, self.gridlist)
     
@@ -105,12 +105,23 @@ class FtelAcquisPanel(aw.Panel):
         event.Skip()
     
     def update_list(self):
+        
         wx.BeginBusyCursor()
+        wait = aw.awu.WaitDialog(self, message='Aggiornamento informazioni in corso', maximum=0)
+        
+        def init_progress(files):
+            wait.SetRange(len(files))
+        
+        def progress(n, filename):
+            wait.SetMessage('%s%%' % int(float(n) / (wait.progress.GetRange() or 1) * 100))
+            wait.SetValue(n)
+        
         try:
-            self.dblist.update_list()
+            self.dblist.update_list(init_progress, progress)
             self.gridlist.ChangeData(self.dblist.GetRecordset())
         finally:
             wx.EndBusyCursor()
+            wait.Destroy()
 
 
 class FtelAcquisFrame(aw.Frame):
@@ -119,7 +130,8 @@ class FtelAcquisFrame(aw.Frame):
         if not kwargs.has_key('title') and len(args) < 3:
             kwargs['title'] = FRAME_TITLE
         aw.Frame.__init__(self, *args, **kwargs)
-        self.AddSizedPanel(FtelAcquisPanel(self))
+        self.panel = FtelAcquisPanel(self)
+        self.AddSizedPanel(self.panel)
 
 
 def show_pdf(xmldoc, filename):

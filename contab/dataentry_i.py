@@ -737,14 +737,14 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
     """
     
     ftel_acq_info = None
+    ftel_insert = False
     
     def __init__(self, *args, **kwargs):
         """
         Costruttore standard.
         """
         
-        if 'ftel_acq_info' in kwargs:
-            self.ftel_acq_info = kwargs.pop('ftel_acq_info')
+        ftel_acq_info = kwargs.pop('ftel_acq_info', None)
         
         #pdc iva normale
         self._auto_pdciva_id = None
@@ -793,7 +793,15 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         body = self.dbsrc.AddJoin(bt.TABNAME_CONTAB_B, 'body', idLeft='id', idRight='id_reg')
         body.AddJoin(bt.TABNAME_PDC, 'pdcpa', idLeft='id_pdcpa', join=adb.JOIN_LEFT, fields='id,codice,descriz')
         
+        cn = self.FindWindowByName
+        
+        self.ftel_acq_info = ftel_acq_info
+        
         if self.ftel_acq_info:
+            
+            self.ftel_insert = True
+            i = self.ftel_acq_info
+            
             dbcau = adb.DbTable('cfgcontab')
             dbcau.AddJoin('regiva')
             dbcau.AddFilter('regiva.tipo="A" AND cfgcontab.ftel_tipdoc="%s"' % self.ftel_acq_info.tipdoc)
@@ -803,6 +811,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             else:
                 f = 'id IN (%s)' % ','.join(map(str, [c.id for c in dbcau]))
             self.controls['causale'].SetFilter(f)
+            
+            self.update_xml_info()
         
         self.Bind(lt.EVT_LINKTABCHANGED, self.OnRegIvaChanged, id=wdr.ID_REGIVA)
     
@@ -863,6 +873,16 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                     msg = "La data di registrazione è antecedente l'ultima stampa definitiva del registro Iva"
                 elif (rei.lastprtnum or 0)>0 and rei.lastprtdat.year == self.reg_datreg.year and self.reg_numiva<rei.lastprtnum:
                     msg = "Il numero di protocollo Iva è inferiore all'ultimo protocollo stampato in definitivo sul registro."
+            if not msg and self.reg_id:
+                reg = adb.DbTable('contab_h', 'reg')
+                if reg.Get(self.reg_id) and reg.OneRow():
+                    if reg.sm_link:
+                        dr = Env.DateTime.date.fromordinal(reg.sm_link)
+                        datric = Env.DateTime.Date(dr.year,dr.month, dr.day)
+                        if self.reg_datreg < datric:
+                            msg = "Data registrazione non valida, file ricevuto il %s" % reg.dita(datric)
+                        elif self.reg_datope < datric:
+                            msg = "Data operazione (competenza IVA) non valida, file ricevuto il %s" % reg.dita(datric)
             if msg:
                 awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
                 out = False
@@ -906,11 +926,11 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 i = self.ftel_acq_info
                 i.pdc.Retrieve('anag.piva=%s', i.pdc_piva)
                 if i.pdc.id is None:
-                    msg = "Acquisizione fattura di %s, non presente in anagrafica.\nConfermi l'acquisizione automatica del fornitore ?" % i.pdc_descriz
+                    msg = "Acquisizione documento di %s, non presente in anagrafica.\nConfermi l'acquisizione automatica del fornitore ?" % i.pdc_descriz
                     if aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION|wx.YES_NO|wx.YES_DEFAULT) != wx.ID_YES:
                         return
                     i.acquis_fornit()
-                    msg = "Fornitore %s acquisito con il codice %s.\nVuoi associare un conto di costo predefinito ?" % (i.pdc.descriz, i.pdc.codice)
+                    msg = "Fornitore %s acquisito con il codice %s.\nVuoi associare un conto di costo predefinito ?" % (i.pdc_descriz, i.pdc_codice)
                     new = aw.awu.MsgDialog(self, msg, style=wx.ICON_QUESTION|wx.YES_NO)
                     if new == wx.ID_YES:
                         associa_costo(self, id_fornit=i.pdc.id)
@@ -1135,7 +1155,10 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         self.aliqdef_cod = None
         self.aliqdef_des = None
         self.reg_nocalciva = None
-
+        if not self.ftel_insert:
+            self.ftel_acq_info = None
+            self.update_xml_info()
+    
     def DefaultValues(self):
         ctb.ContabPanel.DefaultValues(self)
         regiva = self.reg_regiva_id
@@ -1320,9 +1343,13 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             self.ReportFineReg()
         
         if out and getattr(self, 'ftel_acq_info', None):
-            cmd = "UPDATE contab_h SET ftel_xml=%s WHERE id=%s"
+            info = self.ftel_acq_info
+            if info.datric is None:
+                raise Exception("Data di ricezione mancante")
+            n_datric = info.datric.toordinal()
+            cmd = "UPDATE contab_h SET ftel_xml=%s, sm_link=%s WHERE id=%s"
             db = adb.db.get_db()
-            db.Execute(cmd, (self.ftel_acq_info.filename, self.reg_id))
+            db.Execute(cmd, (info.filename, n_datric, self.reg_id))
             self.ftel_acq_savefiles()
             aw.awu.MsgDialog(self, "Documento acquisito", style=wx.ICON_INFORMATION)
             self.GetParent().EndModal(wx.ID_OK)
@@ -1442,8 +1469,40 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             self.SetupModPag(self.reg_modpag_id)
         if out:
             self.UpdatePanelCliFor()
+        self.update_xml_info()
         return out
-
+    
+    def update_xml_info(self):
+        
+        reg = adb.DbTable('contab_h', 'reg')
+        cn = self.FindWindowByName
+        i = self.ftel_acq_info
+        
+        _filename = _datric = ''
+        if i:
+            #inserimento
+            _filename = i.filename
+            _datric = i.datric
+        else:
+            #modifica
+            if reg.Get(self.reg_id) and reg.OneRow():
+                _filename = reg.ftel_xml
+                if reg.sm_link is not None:
+                    _datric = Env.DateTime.Date.fromordinal(reg.sm_link)
+        if _datric:
+            _datric = 'Ricevuto il: %s' % reg.dita(_datric)
+        
+        cn('xml_filename').SetLabel(_filename)
+        cn('xml_datric').SetLabel(_datric)
+        
+        def layout():
+            p = self.GetParent()
+            s = p.GetSize()
+            p.SetSize((s[0]+1, s[1]+1))
+            p.SetSize(s)
+            p.Layout()
+        wx.CallAfter(layout)
+    
     def CheckNumIva(self, canForce=False, numiva=None, datreg=None):
         """
         Controllo di congruenza tra numero iva e data registrazione::

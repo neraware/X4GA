@@ -42,7 +42,7 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
     
     def __init__(self, fields=None, primaryKey=None, mandatoryFields="", 
         defaults=None):
-        adb.DbMem.__init__(self, fields='fullname filename pdc_id pdc_codice pdc_descriz pdc_piva tipdoc datdoc numdoc totdoc docinfo docxml'.split())
+        adb.DbMem.__init__(self, fields='fullname filename pdc_id pdc_codice pdc_descriz pdc_piva tipdoc datdoc numdoc totdoc datric docinfo docxml'.split())
         
         pdc = adb.DbTable('pdc')
         pdc.AddJoin('pdctip', 'tipana', idLeft='id_tipo')
@@ -51,7 +51,7 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
         pdc.AddOrder('pdc.codice', adb.ORDER_DESCENDING)
         self.pdc = pdc
     
-    def update_list(self):
+    def update_list(self, init_progress=None, progress=None):
         
         self.Reset()
         
@@ -60,10 +60,20 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
         files = glob.glob(opj(path, '*.xml'))
         files.sort()
         
+        if callable(init_progress):
+            init_progress(files)
+        
         for n, fullname in enumerate(files):
+            
+            if callable(progress):
+                progress(n, fullname)
+            
             f = FTEL_Doc(fullname)
             filename = fullname.replace('\\', '/')
             filename = filename[filename.rfind('/')+1:]
+            
+            self.pdc.Retrieve('anag.piva=%s', f.anag_fornit.piva)
+            
             for doc in f.docs:
                 self.CreateNewRow()
                 self.fullname = fullname
@@ -72,11 +82,21 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                 self.datdoc = doc.datdoc
                 self.numdoc = doc.numdoc
                 self.totdoc = doc.totdoc
+                self.datric = None
                 self.docinfo = doc
                 self.docxml = f
+                self.pdc_id = None
+                self.pdc_codice = None
                 self.pdc_descriz = f.anag_fornit.descriz
                 self.pdc_piva = f.anag_fornit.piva
-                pdc.Retrieve('anag.piva=%s', f.anag_fornit.piva)
+                if self.pdc_piva:
+                    if pdc.Retrieve('anag.piva=%s', self.pdc_piva) and pdc.OneRow():
+                        self.pdc_id = pdc.id
+                        self.pdc_codice = pdc.codice
+        try:
+            self.gateway_get_date_ricezione()
+        except Exception, e:
+            print e
     
     def archive_file(self):
         
@@ -149,6 +169,11 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                                               f.anag_fornit.numfax,
                                               f.anag_fornit.email,)):
                 raise Exception(pdc._info.dbError.description)
+        
+        self.pdc_id = pdc.id
+        self.pdc_codice = pdc.codice
+        self.pdc_descriz = pdc.descriz
+        self.pdc_piva = pdc.anag.piva
     
     @classmethod
     def get_basepath(cls, arc=False, subpath=''):
@@ -241,6 +266,57 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
             f.write(xml_stream)
             f.close()
             return filename
+        
+        raise Exception(resp['error'])
+    
+    def gateway_get_data_ricezione(self, filename):
+        
+        client = self.gateway_get_client()
+        username = Env.Azienda.BaseTab.FTEL_EEB_USER
+        piva = Env.Azienda.piva
+        password = hashlib.sha256(unicode(Env.Azienda.BaseTab.FTEL_EEB_PSWD)).hexdigest()
+        info = piva+str(filename)+unicode(password).encode('utf-8')
+        _hash = hashlib.sha256(info).hexdigest()
+        
+        resp = client.service.get_data_ricezione(username=username,
+                                                 piva=piva,
+                                                 filename=filename,
+                                                 hash=_hash)
+        if resp['result'] == "OK":
+            return resp['datric']
+        
+        raise Exception(resp['error'])
+    
+    def gateway_get_date_ricezione(self):
+        
+        dataric_info = '|'.join([doc.filename for doc in self])
+        
+        client = self.gateway_get_client()
+        username = Env.Azienda.BaseTab.FTEL_EEB_USER
+        piva = Env.Azienda.piva
+        password = hashlib.sha256(unicode(Env.Azienda.BaseTab.FTEL_EEB_PSWD)).hexdigest()
+        info = piva+str(dataric_info)+unicode(password).encode('utf-8')
+        _hash = hashlib.sha256(info).hexdigest()
+        
+        resp = client.service.get_date_ricezione(username=username,
+                                                 piva=piva,
+                                                 filenames=dataric_info,
+                                                 hash=_hash)
+        if resp['result'] == "OK":
+            
+            file_info = {}
+            for info in resp['datric_info'].split('|'):
+                filename, datric = info.split('^')
+                file_info[filename] = Env.DateTime.date.fromordinal(int(datric))
+            
+            for _ in self:
+                if self.filename in file_info:
+                    datric = file_info[self.filename]
+                    self.datric = Env.DateTime.Date(datric.year,
+                                                    datric.month,
+                                                    datric.day,)
+            
+            return
         
         raise Exception(resp['error'])
 
