@@ -1492,8 +1492,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         if _datric:
             _datric = 'Ricevuto il: %s' % reg.dita(_datric)
         
-        cn('xml_filename').SetLabel(_filename)
-        cn('xml_datric').SetLabel(_datric)
+        cn('xml_filename').SetLabel(_filename or '')
+        cn('xml_datric').SetLabel(_datric or '')
     
     def CheckNumIva(self, canForce=False, numiva=None, datreg=None):
         """
