@@ -23,7 +23,7 @@ def ElencoFilesFunc( parent, call_fit = True, set_sizer = True ):
     item1.SetForegroundColour( wx.BLUE )
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item2 = wx.Panel( parent, ID_PANGRIDLIST, wx.DefaultPosition, [750,200], wx.SUNKEN_BORDER )
+    item2 = wx.Panel( parent, ID_PANGRIDLIST, wx.DefaultPosition, [850,200], wx.SUNKEN_BORDER )
     item2.SetName( "pangridlist" )
     item0.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 

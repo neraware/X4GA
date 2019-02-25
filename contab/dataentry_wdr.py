@@ -182,7 +182,7 @@ def DialogFunc( parent, call_fit = True, set_sizer = True ):
 
     item10 = wx.StaticText( parent, ID_XML_DATRIC, "-", wx.DefaultPosition, wx.DefaultSize, 0 )
     item10.SetName( "xml_datric" )
-    item8.Add( item10, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item8.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
     item8.AddGrowableCol( 0 )
 

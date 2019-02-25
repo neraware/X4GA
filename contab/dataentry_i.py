@@ -1481,12 +1481,12 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         _filename = _datric = ''
         if i:
             #inserimento
-            _filename = i.filename
+            _filename = i.filename or ''
             _datric = i.datric
         else:
             #modifica
             if reg.Get(self.reg_id) and reg.OneRow():
-                _filename = reg.ftel_xml
+                _filename = reg.ftel_xml or ''
                 if reg.sm_link is not None:
                     _datric = Env.DateTime.Date.fromordinal(reg.sm_link)
         if _datric:
@@ -1494,14 +1494,6 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         
         cn('xml_filename').SetLabel(_filename)
         cn('xml_datric').SetLabel(_datric)
-        
-        def layout():
-            p = self.GetParent()
-            s = p.GetSize()
-            p.SetSize((s[0]+1, s[1]+1))
-            p.SetSize(s)
-            p.Layout()
-        wx.CallAfter(layout)
     
     def CheckNumIva(self, canForce=False, numiva=None, datreg=None):
         """

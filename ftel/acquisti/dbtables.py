@@ -90,9 +90,10 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                 self.pdc_descriz = f.anag_fornit.descriz
                 self.pdc_piva = f.anag_fornit.piva
                 if self.pdc_piva:
-                    if pdc.Retrieve('anag.piva=%s', self.pdc_piva) and pdc.OneRow():
+                    if pdc.Retrieve('anag.piva=%s', self.pdc_piva) and not pdc.IsEmpty():
                         self.pdc_id = pdc.id
                         self.pdc_codice = pdc.codice
+                        self.pdc_descriz = pdc.descriz
         try:
             self.gateway_get_date_ricezione()
         except Exception, e:
