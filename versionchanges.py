@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.51', None, (
+         ("BET4257",
+         """Estensione allegati xml."""),
+        ),),
+    
     ('1.9.50', dt.Date(2019, 2, 22), (
          ("BUG1217",
          """Fix richiamo registrazione iva sprovvista di nome file xml."""),

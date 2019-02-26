@@ -787,6 +787,22 @@ class FatturaElettronica(dbm.DocMag):
                                               ('FormatoAttachment',     'PDF'),
                                               ('Attachment',            base64.b64encode(zip_stream)),))
             
+            for filename, pdf_stream in self.add_attachments():
+                zip_h = StringIO()
+                zf = zipfile.ZipFile(zip_h, mode='wb', compression=zipfile.ZIP_DEFLATED)
+                zf.writestr(str(filename), pdf_stream)
+                zf.close()
+                zip_h.seek(0)
+                zip_stream = zip_h.read()
+                zip_h.close()
+                
+                # 2.5 <Allegati>
+                body_pdf = xmldoc.appendElement(body, 'Allegati')
+                xmldoc.appendItems(body_pdf, (('NomeAttachment',        filename),
+                                              ('AlgoritmoCompressione', 'ZIP'),
+                                              ('FormatoAttachment',     'PDF'),
+                                              ('Attachment',            base64.b64encode(zip_stream)),))
+            
             if not self.MoveNext():
                 loop = False
         
@@ -856,6 +872,9 @@ class FatturaElettronica(dbm.DocMag):
             p.Save()
         
         return pathname, filename
+    
+    def add_attachments(self):
+        return []
     
     def ftel_make_style(self, year):
         path = self.ftel_get_pathname(year)
