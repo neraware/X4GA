@@ -881,7 +881,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                         datric = Env.DateTime.Date(dr.year,dr.month, dr.day)
                         if self.reg_datreg < datric:
                             msg = "Data registrazione non valida, file ricevuto il %s" % reg.dita(datric)
-                        elif self.reg_datope < datric:
+                        elif self.reg_datope and self.reg_datope < datric:
                             msg = "Data operazione (competenza IVA) non valida, file ricevuto il %s" % reg.dita(datric)
             if msg:
                 awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
