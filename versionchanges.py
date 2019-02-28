@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.54', dt.Date(2019, 2, 28), (
+         ("BET4258",
+         """Aggancio aliquota iva specificata sulla schda del fornitore 
+         in acquisizione da file xml."""),
+        ),),
+    
     ('1.9.53', dt.Date(2019, 2, 28), (
          ("BUG1219",
          """Fix memorizzazione documento di acquisto non arrivato da gateway."""),

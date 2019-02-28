@@ -1007,6 +1007,9 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
 #                         aliqiva.AddBaseFilter('aliqiva.ftel_xmlacq=1')
                         aliqiva.Reset()
                         
+                        fornit = adb.DbTable('fornit')
+                        fornit.Get(self.id_pdcpa)
+                        
                         for tiva in info.docinfo.totiva:
                             
                             #determino importo
@@ -1020,19 +1023,29 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                             
                             #determino aliquota iva
                             aliqiva.ClearFilters()
-                            if tiva.aliqiva:
-                                aliqiva.AddFilter('(aliqiva.perciva=%s AND aliqiva.percind=0)', tiva.aliqiva)
-                            else:
-                                if not tiva.natura:
-                                    raise Exception("Manca imposta e natura sul file")
-                                aliqiva.AddFilter('aliqiva.ftel_natura=%s', tiva.natura)
+                            aliqiva.Reset()
                             
-                            if info.docinfo.get_totale_imposta_split() !=  0:
-                                aliqiva.AddFilter('aliqiva.tipo="S"')
-                            else:
-                                aliqiva.AddFilter('aliqiva.tipo<>"S"')
+                            if fornit.id_aliqiva:
+                                
+                                aliqiva.Get(fornit.id_aliqiva)
+                                if aliqiva.perciva != tiva.aliqiva:
+                                    aliqiva.Reset()
                             
-                            aliqiva.Retrieve()
+                            if aliqiva.IsEmpty():
+                                
+                                if tiva.aliqiva:
+                                    aliqiva.AddFilter('(aliqiva.perciva=%s AND aliqiva.percind=0)', tiva.aliqiva)
+                                else:
+                                    if not tiva.natura:
+                                        raise Exception("Manca imposta e natura sul file")
+                                    aliqiva.AddFilter('aliqiva.ftel_natura=%s', tiva.natura)
+                                
+                                if info.docinfo.get_totale_imposta_split() !=  0:
+                                    aliqiva.AddFilter('aliqiva.tipo="S"')
+                                else:
+                                    aliqiva.AddFilter('aliqiva.tipo<>"S"')
+                                
+                                aliqiva.Retrieve()
                             
                             self.AddDefaultRow([nrig,             #RSDET_NUMRIGA
                                                 "C",              #RSDET_TIPRIGA
