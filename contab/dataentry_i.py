@@ -1345,8 +1345,9 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         if out and getattr(self, 'ftel_acq_info', None):
             info = self.ftel_acq_info
             if info.datric is None:
-                raise Exception("Data di ricezione mancante")
-            n_datric = info.datric.toordinal()
+                n_datric = None
+            else:
+                n_datric = info.datric.toordinal()
             cmd = "UPDATE contab_h SET ftel_xml=%s, sm_link=%s WHERE id=%s"
             db = adb.db.get_db()
             db.Execute(cmd, (info.filename, n_datric, self.reg_id))
@@ -1397,7 +1398,6 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             att.CreateNewRow()
             att.attscope = 'contab_h'
             att.attkey = self.reg_id
-            att.description = a.descriz
             att.datins = Env.DateTime.now()
             att.attach_type = 1
             att.hidden = 0
@@ -1415,6 +1415,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             filename = opj(path, '%s%s' % (f, ext))
             att.file = filename.split('/')[-1]
             att.size = len(stream)
+            att.description = att.file
             try:
                 h = open(filename, 'wb')
                 h.write(stream)
