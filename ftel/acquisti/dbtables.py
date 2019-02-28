@@ -96,7 +96,16 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                         self.pdc_descriz = pdc.descriz
         
         if Env.Azienda.BaseTab.FTEL_EEB_URL:
+            
             self.gateway_get_date_ricezione()
+            
+            #ordina il recordset x data ricezione
+            c = self._GetFieldIndex('datric')
+            rs = self.GetRecordset()
+            rsx = [[r[c], r] for r in rs]
+            rsx.sort()
+            rs = [r[1] for r in rsx]
+            self.SetRecordset(rs)
     
     def archive_file(self):
         
