@@ -29,7 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.51', dt.Date(2019, 2, 26), (
+    ('1.9.53', dt.Date(2019, 2, 28), (
+         ("BUG1219",
+         """Fix memorizzazione documento di acquisto non arrivato da gateway."""),
+        ),),
+    
+    ('1.9.52', dt.Date(2019, 2, 26), (
          ("BUG1218",
          """Fix richiamo registrazione iva sprovvista di data operazione."""),
          ("BET4257",
