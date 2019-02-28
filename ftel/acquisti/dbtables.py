@@ -94,10 +94,9 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
                         self.pdc_id = pdc.id
                         self.pdc_codice = pdc.codice
                         self.pdc_descriz = pdc.descriz
-        try:
+        
+        if Env.Azienda.BaseTab.FTEL_EEB_URL:
             self.gateway_get_date_ricezione()
-        except Exception, e:
-            print e
     
     def archive_file(self):
         
