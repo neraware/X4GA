@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.55', None, (
+         ("BET4259",
+         """Allega pdf layout generico e pdf allegati alla registrazione da
+         acquisizione da file xml."""),
+        ),),
+    
     ('1.9.54', dt.Date(2019, 2, 28), (
          ("BET4258",
          """Aggancio aliquota iva specificata sulla schda del fornitore 

@@ -34,6 +34,7 @@ import Env
 from Env import Azienda, opj
 import os
 from anag.fornit import associa_costo
+from ftel import xsl_filename, get_xsl_stream
 bt = Azienda.BaseTab
 
 import contab.scad          as scad
@@ -1371,7 +1372,9 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         return out
     
     def ftel_acq_savefiles(self):
-        #memorizza file xml
+        
+        # memorizza nella tabella allegati il file xml
+        
         att = adb.DbTable('allegati')
         att.CreateNewRow()
         att.attscope = 'contab_h'
@@ -1407,7 +1410,61 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         if not out:
             return False
         
-        for a in self.ftel_acq_info.docinfo.allegati:
+        base_pdfname = self.ftel_acq_info.filename
+        if base_pdfname.lower().endswith('.p7m'):
+            base_pdfname = base_pdfname[:-4]
+        if base_pdfname.lower().endswith('.xml'):
+            base_pdfname = base_pdfname[:-4]
+        
+        # genera foglio di stile xsl se serve
+        
+        xsl_fullname = opj(path, xsl_filename)
+        if not os.path.isfile(xsl_fullname):
+            h = open(xsl_fullname, 'w')
+            h.write(get_xsl_stream())
+            h.close()
+        
+        # memorizza nella tabella allegati il pdf layout generico
+        
+        from ftel.acquisti.acquis import _get_generic_layout_pdf_stream
+        pdf_stream = _get_generic_layout_pdf_stream(filename)
+        
+        if pdf_stream:
+            att.CreateNewRow()
+            att.attscope = 'contab_h'
+            att.attkey = self.reg_id
+            att.datins = Env.DateTime.now()
+            att.attach_type = 1
+            att.hidden = 0
+            att.autotext = 0
+            stream = pdf_stream
+            n, f = self.ftel_acq_info.GetNewFilePathAndName()
+            att.folderno = n
+            path = self.ftel_acq_info.GetFolderName(att.folderno)
+            if not os.path.isdir(path):
+                try:
+                    os.mkdir(path)
+                except:
+                    out = False
+            name = '%s.pdf' % base_pdfname
+            filename = opj(path, name)
+            att.file = filename.split('/')[-1]
+            att.size = len(stream)
+            att.description = att.file
+            try:
+                h = open(filename, 'wb')
+                h.write(stream)
+                h.close()
+                att.Save()
+            except Exception, e:
+                awu.MsgDialog(self, repr(e.args))
+                out = False
+            if not out:
+                return False
+        
+        # memorizza nella tabella allegati gli allegati del file xml
+        
+        for _n, a in enumerate(self.ftel_acq_info.docinfo.allegati):
             att.CreateNewRow()
             att.attscope = 'contab_h'
             att.attkey = self.reg_id
@@ -1424,8 +1481,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                     os.mkdir(path)
                 except:
                     out = False
-            ext = '.%s' % a.filetype.lower()
-            filename = opj(path, '%s%s' % (f, ext))
+            name = '%s_%s.pdf' % (base_pdfname, str(_n+1))
+            filename = opj(path, name)
             att.file = filename.split('/')[-1]
             att.size = len(stream)
             att.description = att.file

@@ -37,6 +37,7 @@ import cStringIO
 import tempfile
 import os
 from ftel.acquisti.dbtables import RigheDbMem
+from ftel.acquisti.ftel_read import FTEL_Doc
 bt = Azienda.BaseTab
 
 
@@ -134,6 +135,52 @@ class FtelAcquisFrame(aw.Frame):
         self.AddSizedPanel(self.panel)
 
 
+def _get_generic_layout_pdf_stream(fullname):
+    xmldoc = FTEL_Doc(fullname)
+    _, filename = os.path.split(fullname)
+    return get_generic_layout_pdf_stream(xmldoc, filename)
+
+
+def get_generic_layout_pdf_stream(xmldoc, filename):
+    
+    doc = xmldoc.docs[0]
+    doc.anag_fornit = xmldoc.anag_fornit
+    doc.anag_cliente = xmldoc.anag_cliente
+    doc.filename = filename
+    doc._numdecqta, doc._numdecpre = doc.get_qta_prezzo_decimals()
+    
+    data = RigheDbMem()
+    for riga in doc.righe:
+        data.CreateNewRow()
+        data.numriga = riga.numriga
+        data.codart = riga.codart
+        data.descriz = riga.descriz
+        data.qta = riga.qta
+        data.unimis = riga.unimis
+        data.prezzo = riga.prezzo
+        data.sconto_pe1 = riga.sconto_pe1
+        data.sconto_pe2 = riga.sconto_pe2
+        data.sconto_pe3 = riga.sconto_pe3
+        data.sconto_pe4 = riga.sconto_pe4
+        data.sconto_pe5 = riga.sconto_pe5
+        data.sconto_pe6 = riga.sconto_pe6
+        data.sconto_val = riga.sconto_val
+        data.totale = riga.totale
+        data.aliqiva = riga.aliqiva
+    
+    data.doc = doc
+    
+    pdf_out = cStringIO.StringIO()
+    name = 'ftel_generic'
+    import report as rpt
+    rpt.Report(None, data, name, pdf_out, output="STORE")
+    pdf_out.seek(0)
+    pdf_stream = pdf_out.read()
+    pdf_out.close()
+    
+    return pdf_stream
+
+
 def show_pdf(xmldoc, filename):
     
     pdf_stream = None
@@ -144,42 +191,8 @@ def show_pdf(xmldoc, filename):
         pdf_stream = doc.allegati[0].stream
     
     if not pdf_stream:
-        
         #pdf non presente nel file xml, ne genero uno al volo partendo da un layout generico
-        
-        doc.anag_fornit = xmldoc.anag_fornit
-        doc.anag_cliente = xmldoc.anag_cliente
-        doc.filename = filename
-        doc._numdecqta, doc._numdecpre = doc.get_qta_prezzo_decimals()
-        
-        data = RigheDbMem()
-        for riga in doc.righe:
-            data.CreateNewRow()
-            data.numriga = riga.numriga
-            data.codart = riga.codart
-            data.descriz = riga.descriz
-            data.qta = riga.qta
-            data.unimis = riga.unimis
-            data.prezzo = riga.prezzo
-            data.sconto_pe1 = riga.sconto_pe1
-            data.sconto_pe2 = riga.sconto_pe2
-            data.sconto_pe3 = riga.sconto_pe3
-            data.sconto_pe4 = riga.sconto_pe4
-            data.sconto_pe5 = riga.sconto_pe5
-            data.sconto_pe6 = riga.sconto_pe6
-            data.sconto_val = riga.sconto_val
-            data.totale = riga.totale
-            data.aliqiva = riga.aliqiva
-        
-        data.doc = doc
-        
-        pdf_out = cStringIO.StringIO()
-        name = 'ftel_generic'
-        import report as rpt
-        rpt.Report(None, data, name, pdf_out, output="STORE")
-        pdf_out.seek(0)
-        pdf_stream = pdf_out.read()
-        pdf_out.close()
+        pdf_stream = get_generic_layout_pdf_stream(xmldoc, filename)
     
     if not pdf_stream:
         raise Exception("No PDF")
