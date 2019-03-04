@@ -97,7 +97,7 @@ class FatturaElettronica(dbm.DocMag):
                      STATUS_CONSEGNATO:      'turquoise1',
                      STATUS_MANCATACONS:     'seagreen1',
                      STATUS_ERRORE:          'darkorange1',
-                     STATUS_PA_ACCETTATI:    'palegreen',
+                     STATUS_PA_ACCETTATI:    'olivedrab1',
                      STATUS_PA_RIFIUTATI:    'chocolate',
                      STATUS_PA_DECOTERM:     'seashell3',}
     

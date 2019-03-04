@@ -9,6 +9,7 @@ import os
 from ftel.vendite.dbtables import FTEL_NOCODE
 from anag.clienti import ClientiDialog
 from wx.grid import EVT_GRID_CELL_LEFT_DCLICK
+import datetime
 def open_dir(f):
     if os.sys.platform.startswith('win'):
         f = f.replace('/', '\\')
@@ -72,10 +73,14 @@ class NotifichePanel(ExportPanel):
 #         return data1, data2
 #     
     def UpdateData(self):
+        date_start_pa = datetime.date.today() - datetime.timedelta(days=30)
         cn = self.FindWindowByName
         docs = self.dbdocs
         docs.ClearFilters()
-        docs.AddFilter('doc.ftel_eeb_status IN ("A", "Q", "M", "E")')
+        docs.AddFilter('doc.ftel_eeb_status IN ("A", "Q", "E") ' \
+                    + 'OR (doc.ftel_eeb_status="C" ' \
+                    + '    AND LENGTH(pdc.ftel_codice)=6 ' \
+                    + '    AND doc.datdoc>="%s")' % date_start_pa.strftime('%Y-%m-%d'))
         docs.ClearOrders()
         docs.AddOrder('doc.datdoc')
         docs.AddOrder('doc.id_tipdoc')
