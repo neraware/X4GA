@@ -1083,8 +1083,15 @@ class MagazzPanel(aw.Panel,\
                     err = "è antecedente l'ultima stampa definitiva del registro iva"
             if err:
                 err = 'La registrazione contabile derivante da questo documento\n%s' % err
-        if not err and doc.ftel_eeb_status and doc.ftel_eeb_status in "CM":
+        if not err and doc.ftel_eeb_status and doc.ftel_eeb_status in "CMTZ":
             err = 'Documento già consegnato a SDI'
+        if not err and not Env.Azienda.Login.userdata.amministratore:  # @UndefinedVariable
+            if doc.f_ann and doc.f_acq:
+                err = "Documento annullato e acquisito, impossibile modificare"
+            elif doc.f_ann:
+                err = "Documento annullato, impossibile modificare"
+            elif doc.f_acq:
+                err = "Documento acquisito, impossibile modificare"
         if err:
             aw.awu.MsgDialog(self, message=err, caption="Impossibile modificare",
                              style=wx.ICON_ERROR)
