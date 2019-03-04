@@ -219,18 +219,23 @@ class StaDifPanel(aw.Panel):
         nd1, nd2 = [ci(x).GetValue() for x in (wdr.ID_NUMDOC1, wdr.ID_NUMDOC2)]
         if nd1: docs.AddFilter('doc.numdoc>=%s', nd1)
         if nd2: docs.AddFilter('doc.numdoc<=%s', nd2)
+        wait = aw.awu.WaitDialog(self, maximum=0)
         wx.BeginBusyCursor()
         wx.Yield()
         try:
             if docs.Retrieve():
+                wait.SetRange(docs.RowsCount())
                 rs = docs._info.rs
                 cpd = docs._GetFieldIndex('id_pdc')
                 ces = docs._GetFieldIndex('f_emailed')
                 col = docs._GetFieldIndex('dastampare')
-                anag = docs.GetAnag()
                 for row in range(docs.RowsCount()):
+                    docs.MoveRow(row)
+                    anag = docs.GetAnag()
                     sel = True
-                    if te in "CAS":
+                    if cn('nopiva').IsChecked():
+                        sel = len(anag.piva or '') == 0
+                    elif te in "CAS":
                         if anag.Get(rs[row][cpd]):
                             sel = bool(anag.docsemail)
                             if sel:
@@ -242,12 +247,14 @@ class StaDifPanel(aw.Panel):
                                 if te == "S":
                                     sel = True
                     rs[row][col] = sel #seleziona tutti x default, o solo con/senza email
+                    wait.SetValue(row)
                 self.gridocs.ChangeData(docs.GetRecordset())
             else:
                 self.gridocs.ChangeData(())
                 aw.awu.MsgDialog(self, message=repr(docs.GetError()))
         finally:
             wx.EndBusyCursor()
+            wait.Destroy()
     
     def OnStampa(self, event):
         self.StampaDoc()

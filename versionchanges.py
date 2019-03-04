@@ -29,6 +29,19 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.56', None, (
+         ("BET4260",
+         """Ricezione notifiche vendite: esclude status mancata consegna, verifica
+         status anche se doc. consegnato ma fatto a p.a. negli ultimi 30 gg, per
+         possibile rifiuto dell'amministrazione destinataria successivo alla 
+         consegna."""),
+         ("BET4261",
+         """Blocco modifica documenti annullati e/o acquisiti se utente non
+         amministratore."""),
+         ("BET4262",
+         """Aggiunta selezione clienti senza p.iva in stampa differita."""),
+        ),),
+    
     ('1.9.55', None, (
          ("BET4259",
          """Allega pdf layout generico e pdf allegati alla registrazione da

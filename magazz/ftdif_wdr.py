@@ -594,11 +594,12 @@ ID_YEAR = 15047
 ID_NUMDOC1 = 15048
 ID_NUMDOC2 = 15049
 ID_TIPEMAIL = 15050
-ID_UPDATE = 15051
-ID_PANGRID = 15052
-ID_EMAIL = 15053
-ID_LISTA = 15054
-ID_STAMPA = 15055
+ID_NOPIVA = 15051
+ID_UPDATE = 15052
+ID_PANGRID = 15053
+ID_EMAIL = 15054
+ID_LISTA = 15055
+ID_STAMPA = 15056
 
 def StaDifFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -650,53 +651,65 @@ def StaDifFunc( parent, call_fit = True, set_sizer = True ):
 
     item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item16 = TipoEmailRadioBox( parent, ID_TIPEMAIL, "Seleziona la stampa dei documenti di:", wx.DefaultPosition, wx.DefaultSize, 
+    item16 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item17 = TipoEmailRadioBox( parent, ID_TIPEMAIL, "Seleziona la stampa dei documenti di:", wx.DefaultPosition, wx.DefaultSize, 
         ["Tutti i clienti","Solo clienti con email da spedire","Solo clienti con email, anche già spedite","Solo clienti senza email"] , 1, wx.RA_SPECIFY_COLS )
-    item16.SetName( "tipemail" )
-    item1.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+    item17.SetName( "tipemail" )
+    item16.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
-    item17 = wx.Button( parent, ID_UPDATE, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item17.SetName( "update" )
-    item1.Add( item17, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.RIGHT|wx.BOTTOM, 5 )
+    item18 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item19 = wx.CheckBox( parent, ID_NOPIVA, "Solo senza P.IVA", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item19.SetName( "nopiva" )
+    item18.Add( item19, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item16.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item1.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item20 = wx.Button( parent, ID_UPDATE, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item20.SetName( "update" )
+    item1.Add( item20, 0, wx.ALIGN_RIGHT|wx.ALIGN_BOTTOM|wx.RIGHT|wx.BOTTOM, 5 )
 
     item1.AddGrowableCol( 0 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item18 = wx.StaticText( parent, ID_TEXT, "Documenti presenti", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item18.SetForegroundColour( wx.BLUE )
-    item0.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item21 = wx.StaticText( parent, ID_TEXT, "Documenti presenti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item21.SetForegroundColour( wx.BLUE )
+    item0.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item19 = wx.Panel( parent, ID_PANGRID, wx.DefaultPosition, [660,300], wx.SUNKEN_BORDER )
-    item19.SetName( "pangrid" )
-    item0.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item22 = wx.Panel( parent, ID_PANGRID, wx.DefaultPosition, [660,300], wx.SUNKEN_BORDER )
+    item22.SetName( "pangrid" )
+    item0.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item20 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item23 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item21 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item24 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item22 = wx.Button( parent, ID_EMAIL, "Spedisci email", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item22.SetName( "butemail" )
-    item22.Enable(False)
-    item21.Add( item22, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item25 = wx.Button( parent, ID_EMAIL, "Spedisci email", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item25.SetName( "butemail" )
+    item25.Enable(False)
+    item24.Add( item25, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item20.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item23.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item23 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item26 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item24 = wx.Button( parent, ID_LISTA, "Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item24.SetName( "butlist" )
-    item23.Add( item24, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item27 = wx.Button( parent, ID_LISTA, "Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item27.SetName( "butlist" )
+    item26.Add( item27, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item25 = wx.Button( parent, ID_STAMPA, "Stampa documenti", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item25.SetName( "butprint" )
-    item23.Add( item25, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item28 = wx.Button( parent, ID_STAMPA, "Stampa documenti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item28.SetName( "butprint" )
+    item26.Add( item28, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item20.Add( item23, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item23.Add( item26, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item20.AddGrowableCol( 1 )
+    item23.AddGrowableCol( 1 )
 
-    item0.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 
@@ -707,11 +720,11 @@ def StaDifFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_STORYDAT1 = 15056
-ID_STORYDAT2 = 15057
-ID_STORYORDER = 15058
-ID_STORYUPD = 15059
-ID_STORYPANGRID = 15060
+ID_STORYDAT1 = 15057
+ID_STORYDAT2 = 15058
+ID_STORYORDER = 15059
+ID_STORYUPD = 15060
+ID_STORYPANGRID = 15061
 
 def FtDifHistoryFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
