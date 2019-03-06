@@ -29,7 +29,7 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.56', None, (
+    ('1.9.56', dt.Date(2019, 3, 6), (
          ("BET4260",
          """Ricezione notifiche vendite: esclude status mancata consegna, verifica
          status anche se doc. consegnato ma fatto a p.a. negli ultimi 30 gg, per
