@@ -872,6 +872,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 msg = None
                 if rei.lastprtdat is not None and self.reg_datreg<rei.lastprtdat:
                     msg = "La data di registrazione è antecedente l'ultima stampa definitiva del registro Iva"
+                elif rei.lastprtdat is not None and self.reg_datope is not None and self.reg_datope<rei.lastprtdat:
+                    msg = "La data operazione è antecedente l'ultima stampa definitiva del registro Iva"
                 elif (rei.lastprtnum or 0)>0 and rei.lastprtdat.year == self.reg_datreg.year and self.reg_numiva<rei.lastprtnum:
                     msg = "Il numero di protocollo Iva è inferiore all'ultimo protocollo stampato in definitivo sul registro."
             if not msg and self.reg_id:
@@ -882,8 +884,6 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                         datric = Env.DateTime.Date(dr.year,dr.month, dr.day)
                         if self.reg_datreg < datric:
                             msg = "Data registrazione non valida, file ricevuto il %s" % reg.dita(datric)
-                        elif self.reg_datope and self.reg_datope < datric:
-                            msg = "Data operazione (competenza IVA) non valida, file ricevuto il %s" % reg.dita(datric)
             if msg:
                 awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
                 out = False

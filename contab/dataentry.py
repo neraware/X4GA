@@ -203,7 +203,8 @@ class ContabPanel(aw.Panel,\
     
     def OnDatOpeDoc(self, event):
         cn = self.FindWindowByName
-        cn('datope').SetValue(cn('datdoc').GetValue())
+        if self.status == STATUS_EDITING:
+            cn('datope').SetValue(cn('datdoc').GetValue())
     
     def OptimizeSize(self, min_width=1000, min_height=640):
         mw, mh = min_width, min_height
@@ -567,6 +568,8 @@ class ContabPanel(aw.Panel,\
                                               self.candelete and\
                                               status == STATUS_EDITING and\
                                               not self.newreg)
+        
+        self.controls["button_docedoc"].Enable(enable and status == STATUS_EDITING)
         
         self.controls["butattach"].Enable(enable and status in (STATUS_DISPLAY,
                                                                 STATUS_EDITING))

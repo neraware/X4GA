@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.57', dt.Date(2019, 3, 8), (
+         ("BUG1220",
+         """Corretto controllo data operazione rispetto data ricezione reg. da xml."""),
+        ),),
+    
     ('1.9.56', dt.Date(2019, 3, 6), (
          ("BET4260",
          """Ricezione notifiche vendite: esclude status mancata consegna, verifica
