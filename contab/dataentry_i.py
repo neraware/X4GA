@@ -1103,6 +1103,12 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 if getattr(self, 'ftel_acq_info', None):
                     self.reg_datdoc = self.ftel_acq_info.docinfo.datdoc
                     self.reg_numdoc = self.ftel_acq_info.docinfo.numdoc
+                    # il calcolo scadenze parte dal contenuto del controllo widget datdoc
+                    # che al momento non è ancora popolato
+                    # richiamo differito del ricalcolo a fine aggiornamenti wx
+                    def ricalcola_scadenze():
+                        self.RicalcolaScadenzeDaDataDocumento(forcericalc=True)
+                    wx.CallAfter(ricalcola_scadenze)
                 
                 self.SetRegStatus(ctb.STATUS_EDITING)
                 

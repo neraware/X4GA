@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.58', dt.Date(2019, 3, 15), (
+         ("BUG1221",
+         """Corretto calcolo scadenze in reg. ft. acq. da xml."""),
+        ),),
+    
     ('1.9.57', dt.Date(2019, 3, 8), (
          ("BUG1220",
          """Corretto controllo data operazione rispetto data ricezione reg. da xml."""),
