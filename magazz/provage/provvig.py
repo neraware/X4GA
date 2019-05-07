@@ -226,7 +226,8 @@ class ProvvigAgentiPanel(wx.Panel):
         if v:
             dbprov.AddFilter('doc.datdoc<=%s', v)
         if cn('solosaldati').IsChecked():
-            dbprov.AddHaving('total_saldo IS NULL OR total_saldo=0')
+#             dbprov.AddHaving('total_saldo IS NULL OR total_saldo=0')
+            dbprov.AddFilter("(SELECT COALESCE(SUM(COALESCE(_pcf.imptot,0) - COALESCE(_pcf.imppar,0)),0) FROM contab_s _sca JOIN pcf _pcf ON _pcf.id=_sca.id_pcf WHERE _sca.id_reg=doc.id_reg)=0")
         wx.BeginBusyCursor()
         try:
             dbprov.Retrieve()

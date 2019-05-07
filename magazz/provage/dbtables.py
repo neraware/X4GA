@@ -41,8 +41,8 @@ class ProvvigAgentiDetTable(adb.DbTable):
         pdc = doc.AddJoin(bt.TABNAME_PDC,        'pdc', idLeft='id_pdc', fields=None)
         ana = pdc.AddJoin(bt.TABNAME_CLIENTI,    'anag', idLeft='id', fields=None)
         dst = doc.AddJoin(bt.TABNAME_DESTIN,     'dest', idLeft='id_dest', fields=None, join=adb.JOIN_LEFT)
-        sca = doc.AddJoin(bt.TABNAME_CONTAB_S,   'sca', idLeft='id_reg', idRight='id_reg', fields=None, join=adb.JOIN_LEFT)
-        pcf = sca.AddJoin(bt.TABNAME_PCF,        'pcf', idLeft='id_pcf', fields=None, join=adb.JOIN_LEFT)
+#         sca = doc.AddJoin(bt.TABNAME_CONTAB_S,   'sca', idLeft='id_reg', idRight='id_reg', fields=None, join=adb.JOIN_LEFT)
+#         pcf = sca.AddJoin(bt.TABNAME_PCF,        'pcf', idLeft='id_pcf', fields=None, join=adb.JOIN_LEFT)
         
         self._AddGroups()
         
@@ -65,8 +65,8 @@ class ProvvigAgentiDetTable(adb.DbTable):
         self.AddTotalOf('mov.importo*(tipdoc.provvig)', 'vendita')
         self.AddAverageOf(perpro, 'perpro')
         self.AddTotalOf('mov.importo*%(perpro)s*(tipdoc.provvig)/100' % locals(), 'provvig')
-        self.AddTotalOf('pcf.imptot-pcf.imppar', 'saldo')
-        
+#         self.AddTotalOf('pcf.imptot-pcf.imppar', 'saldo')
+#         self.AddField('(SELECT SUM(imptot-imppar) FROM pcf WHERE )', alias)
         self.AddBaseFilter('tipdoc.provvig IN (1, -1)')
         self.AddBaseFilter('tipmov.noprovvig IS NULL OR tipmov.noprovvig<>1')
         self.AddBaseFilter('age.noprovvig IS NULL OR age.noprovvig<>1')
