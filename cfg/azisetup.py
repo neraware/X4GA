@@ -544,7 +544,7 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.FTEL_VENCOD,
                 bt.FTEL_VENPDF,
                 bt.FTEL_EEB_URL,
-                bt.FTEL_EEB_USERN,
+                bt.FTEL_EEB_USER,
                 bt.FTEL_EEB_PSWD = old
         if out:
             cfg = CfgContab()
