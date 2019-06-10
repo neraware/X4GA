@@ -557,6 +557,7 @@ LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
         reg.tipreg = reg.config.tipo
         reg.datreg = self.reg_datreg
         reg.datdoc = self.reg_datdoc
+        reg.datope = self.reg_datope
         reg.numdoc = self.reg_numdoc
         reg.id_regiva = reg.config.id_regiva
         reg.id_reg_by = self.reg_id
