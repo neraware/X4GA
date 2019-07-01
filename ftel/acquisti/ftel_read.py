@@ -476,7 +476,7 @@ class FTEL_Doc(FTEL):
                         a_filetype = None
                         
                         ac = s('AlgoritmoCompressione') or ''
-                        if a_filename.lower().endswith('.zip') or ac.lower() == 'zip':
+                        if a_filename.lower().endswith('.zip') or ac.lower() == 'zip' and not a_stream.startswith('%PDF'):
                             f = StringIO(a_stream)
                             z = zipfile.ZipFile(f)
                             for zfilename in z.namelist():

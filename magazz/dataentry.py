@@ -481,11 +481,17 @@ class MagazzPanel(aw.Panel,\
         for name in 'datrif'.split():
             self.Bind(EVT_DATECHANGED, self.OnHeadChanged, cn(name))
         
-        for name in 'ftel_ordnum ftel_rifamm ftel_codcig ftel_codcup'.split():
+        for name in 'ftel_ordnum ftel_rifamm ftel_codccc ftel_codcig ftel_codcup ftel_head_caus'.split():
             self.Bind(wx.EVT_TEXT, self.OnHeadChanged, cn(name))
-        
         for name in 'ftel_orddat'.split():
             self.Bind(EVT_DATECHANGED, self.OnHeadChanged, cn(name))
+        
+        if bt.FTEL_DACOCO:
+            for name in 'ftel_contr_num ftel_contr_cig ftel_contr_cup ftel_contr_ccc '\
+                        'ftel_conve_num ftel_conve_cig ftel_conve_cup ftel_conve_ccc'.split():
+                self.Bind(wx.EVT_TEXT, self.OnHeadChanged, cn(name))
+            self.Bind(EVT_DATECHANGED, self.OnHeadChanged, cn('ftel_contr_dat'))
+            self.Bind(EVT_DATECHANGED, self.OnHeadChanged, cn('ftel_conve_dat'))
         
         # bind eventi di cambiamento dati accompagnatori
         for name in 'cau cur vet asp por con'.split():
@@ -504,7 +510,8 @@ class MagazzPanel(aw.Panel,\
         for cid, func in ((wdr.ID_BTNBODYNEW,  self.GridBodyOnCreate),
                           (wdr.ID_BTNBODYDEL,  self.GridBodyOnDelete),
                           (wdr.ID_BTNBODYPDT,  self.GridBodyOnAcqPDT),
-                          (wdr.ID_BTNBODYETIC, self.GridBodyOnLabels)):
+                          (wdr.ID_BTNBODYETIC, self.GridBodyOnLabels),
+                          (wdr.ID_BTNBODYFTEL, self.OnShowBodyFtelADG),):
             self.Bind(wx.EVT_BUTTON, func, id=cid)
         
         for type in 'des vet'.split():
@@ -539,6 +546,11 @@ class MagazzPanel(aw.Panel,\
         self.Layout_()
         wx.CallAfter(self.Layout_)
         
+        self.GridBodyFtelCreateGrid()
+        
+        s = self.FindWindowByName('splitdataftel')
+        s.SetSashGravity(1)
+        
         self.SetAcceleratorKey('I', wdr.ID_BTN_NEW,    'Inserisci',       'Inserisce un nuovo documento')
         self.SetAcceleratorKey('C', wdr.ID_BTN_SEARCH, 'Cerca',           'Cerca un documento esistente')
         self.SetAcceleratorKey('M', wdr.ID_BTN_MODIF,  'Modifica',        'Modifica il documento visualizzato')
@@ -548,10 +560,20 @@ class MagazzPanel(aw.Panel,\
         self.SetAcceleratorKey('X', wdr.ID_BTN_DELETE, 'Elimina',         'Elimina il presente documento')
         self.SetAcceleratorKey('Q', wdr.ID_BTN_QUIT,   'Abbandona',       'Abbandona il documento senza salvare')
     
+    _show_body_ftel = False
+    
     def Layout_(self):
         s = self.GetSize()
         self.SetSize((s[0]+self._delta_xy, s[1]))
         self._delta_xy = 0-self._delta_xy
+    
+    def OnShowBodyFtelADG(self, event):
+        self._show_body_ftel = not self._show_body_ftel
+        if self._show_body_ftel:
+            row = self.gridbody.GetSelectedRows()[0]
+            self.GridBodyFtelUpdateGrid(row)
+        self._Resized()
+        event.Skip()
     
     def OnVariaDestin(self, event):
         def Enable(f):
@@ -1128,9 +1150,14 @@ class MagazzPanel(aw.Panel,\
             for name in\
                 """id_pdc id_dest id_modpag id_bancf id_speinc id_agente """\
                 """id_zona id_valuta id_tiplist id_aliqiva desrif numrif """\
-                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup ftel_eeb_status """\
+                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codccc ftel_codcig ftel_codcup ftel_eeb_status ftel_head_caus """\
                 """datrif noteint notedoc sconto1 sconto2 sconto3 sconto4 sconto5 sconto6""".split():
                 if name != 'notedoc' or doc.cfgdoc.aanotedoc != 1:
+                    setattr(doc, name, cn(name).GetValue())
+            if bt.FTEL_DACOCO:
+                for name in\
+                    """ftel_contr_num ftel_contr_dat ftel_contr_cig ftel_contr_cup ftel_contr_ccc """\
+                    """ftel_conve_num ftel_conve_dat ftel_conve_cig ftel_conve_cup ftel_conve_ccc""".split():
                     setattr(doc, name, cn(name).GetValue())
             if bt.MAGNUMLIS > 0:
                 if doc.mov.RowsCount()>0 and doc.id_tiplist is not None\
@@ -1372,7 +1399,7 @@ class MagazzPanel(aw.Panel,\
             self.controls[name].SetLabel(field)
         self.Layout()
 
-    def UpdateHeadDest(self, initAll=True, update_nocodedes=True):
+    def UpdateHeadDest(self, initAll=True, update_nocodedes=True, get_ftel_info=False):
         
         cn = self.FindWindowByName
         
@@ -1422,6 +1449,15 @@ class MagazzPanel(aw.Panel,\
                             ("destaddr",    d),\
                             ("destcontact", contact)):
             cn(name).SetLabel(field)
+        
+        if bt.FTEL_INFDEST and get_ftel_info and dest.id:
+            if dest.ftel_head_caus:
+                v = dest.ftel_head_caus
+                if bt.FTEL_ROWCAU:
+                    if v:
+                        v += '\n'
+                    v += bt.FTEL_ROWCAU
+                cn('ftel_head_caus').SetValue(v)
     
     def SetAnagFilters(self):
         doc = self.dbdoc
@@ -1482,10 +1518,14 @@ class MagazzPanel(aw.Panel,\
         if name == 'id_tiplist' and doc.id_tiplist == value:
             return
         
+        if name == 'id_dest' and value is None:
+            if bt.FTEL_ROWCAU:
+                self.FindWindowByName('ftel_head_caus').SetValue(bt.FTEL_ROWCAU)
+        
         if name in doc.GetFieldNames():
             doc.__setattr__(name, value)
             if name == "id_dest":
-                self.UpdateHeadDest()
+                self.UpdateHeadDest(get_ftel_info=True)
         
         #if not self.loadingdoc:# and doc.modpag.tipo != 'R':
             #doc.totspese = None
@@ -1930,10 +1970,24 @@ class MagazzPanel(aw.Panel,\
                     event.Skip()
                 else:
                     self.SetRegStatus(STATUS_SELCAUS)
-
+    
+    def SetBodyFtElSize(self):
+        split = self.FindWindowByName('splitdataftel')
+        if self._show_body_ftel:
+            w = 600
+        else:
+            w = 0
+        split.SetSashPosition(self.GetSize()[0] - w)
+    
+    def _Resized(self):
+        self.SetProdZoneSize()
+        self.SetBodyFtElSize()
+    
     def OnResize(self, event):
         if self.IsShown():
-            wx.CallAfter(self.SetProdZoneSize)
+            def resize():
+                self._Resized()
+            wx.CallAfter(resize)
         event.Skip()
     
     def SetOneDocOnly(self, iddoc):
@@ -2263,6 +2317,8 @@ class MagazzPanel(aw.Panel,\
         self.controls["butattach"].Enable(enable and status in (STATUS_DISPLAY,
                                                                 STATUS_EDITING))
         
+        self.FindWindowByName('btnbody_adg_newdata').Enable(enable and status == STATUS_EDITING)
+        
         if 'butdoc' in self.controls:
             self.controls["butdoc"].Enable(enable and\
                                            status in (STATUS_GETKEY,\
@@ -2298,7 +2354,7 @@ class MagazzPanel(aw.Panel,\
             if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                 return False
         status = self.FindWindowByName('ftel_eeb_status').GetValue() or 'x'
-        if status in "CM":
+        if status in "CM" and self.status == STATUS_EDITING:
             err = "Attenzione: memorizzando con queto status fattura elettronica, il documento non potrà più essere modificato."
             err += '\n\nProseguo comunque ?'
             if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
@@ -2380,6 +2436,8 @@ class MagazzPanel(aw.Panel,\
         if magid is None:
             magid = magazz.GetDefaultMagazz()
         doc.id_magazz = magid
+        if bt.FTEL_ROWCAU:
+            doc.ftel_head_caus = bt.FTEL_ROWCAU
     
     def DefNumDoc(self, doc=None):
         if doc is None:
@@ -2472,8 +2530,11 @@ class MagazzPanel(aw.Panel,\
     def UpdatePanelHead(self):
         names = """id_pdc id_dest id_modpag id_agente id_zona id_valuta id_tiplist id_aliqiva """\
                 """datrif numrif desrif noteint notedoc f_ann f_acq """\
-                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codcig ftel_codcup ftel_eeb_status """\
+                """ftel_ordnum ftel_orddat ftel_rifamm ftel_codccc ftel_codcig ftel_codcup ftel_eeb_status ftel_head_caus """\
                 """sconto1 sconto2 sconto3 sconto4 sconto5 sconto6""".split()
+        if bt.FTEL_DACOCO:
+            names += """ftel_contr_num ftel_contr_dat ftel_contr_cig ftel_contr_cup ftel_contr_ccc """\
+                     """ftel_conve_num ftel_conve_dat ftel_conve_cig ftel_conve_cup ftel_conve_ccc""".split()
         if not self.dbdoc.cfgdoc.askmpnoeff:
             names.append("id_bancf")
             names.append("id_speinc")
@@ -2551,9 +2612,24 @@ class MagazzPanel(aw.Panel,\
         c["ftel_ordnum"].Enable(en)
         c["ftel_orddat"].Enable(en)
         c["ftel_rifamm"].Enable(en)
+        c["ftel_codccc"].Enable(en)
         c["ftel_codcig"].Enable(en)
         c["ftel_codcup"].Enable(en)
         c["ftel_eeb_status"].Enable(en)
+        c["ftel_head_caus"].Enable(en)
+        try:
+            c["ftel_contr_num"].Enable(en)
+            c["ftel_contr_dat"].Enable(en)
+            c["ftel_contr_ccc"].Enable(en)
+            c["ftel_contr_cig"].Enable(en)
+            c["ftel_contr_cup"].Enable(en)
+            c["ftel_conve_num"].Enable(en)
+            c["ftel_conve_dat"].Enable(en)
+            c["ftel_conve_ccc"].Enable(en)
+            c["ftel_conve_cig"].Enable(en)
+            c["ftel_conve_cup"].Enable(en)
+        except:
+            pass
         h = self.FindWindowByName('workzone').GetPageWithText('testa', exact=False)
         for n in range(6):
             l = n+1
@@ -2656,6 +2732,8 @@ class MagazzPanel(aw.Panel,\
         if show:
             showpdt = self.dbdoc.cfgdoc.GetAcqPDTMov() is not None
         self.controls["btnacqpdt"].Show(showpdt)
+        self.controls["btnbodyftel"].Enable(self.status in (STATUS_EDITING,
+                                                            STATUS_DISPLAY))
         showbcd = self.dbdoc.cfgdoc.printetic == 1
         b = self.controls["btnetic"]
         #b.Enable(self.dbdoc.mov.RowsCount()>0)

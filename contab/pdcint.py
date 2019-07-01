@@ -378,8 +378,9 @@ class PdcMastroPanel(aw.Panel):
         pdc.ClearMovFilters()
         
         e, ds, de = map(lambda x: cn(x).GetValue(), 'masesercizio masdatini masdatmov'.split())
-        pdc.SetDateStart(ds, esercizio=e)
-        pdc.SetDateEnd(de)
+        use_datope = cn('masuse_datope').IsChecked()
+        pdc.SetDateStart(ds, esercizio=e, use_datope=use_datope)
+        pdc.SetDateEnd(de, use_datope=use_datope)
         pdc.SetEsercizio(e)
         
         for tab, field, name, op in (\

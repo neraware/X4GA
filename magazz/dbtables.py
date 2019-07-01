@@ -5569,3 +5569,26 @@ class DocumentiPagati(adb.DbMem):
         db = adb.db.get_db()
         db.Retrieve(cmd)
         self.SetRecordset([]+db.rs)
+import simplejson as json
+
+class BodyFtelADG(adb.DbMem):
+    
+    _mov = None
+    
+    def __init__(self, mov=None):
+        adb.DbMem.__init__(self, 'tipdat,riftxt,rifnum,rifdat')
+        self._mov = mov
+        self.Reset()
+    
+    def json_load(self, mov):
+        rs = []
+        if mov.ftel_adg:
+            rs = json.loads(mov.ftel_adg)
+        self.SetRecordset(rs)
+        self._mov = mov
+        return rs
+    
+    def json_dump(self):
+        rs = self.GetRecordset()
+        self._mov.ftel_adg = json.dumps(rs)
+        return self._mov.ftel_adg

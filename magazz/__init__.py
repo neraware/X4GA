@@ -79,8 +79,9 @@ RSMOV_F_ANN   =  24; a('f_ann')
 RSMOV_PDCCG_ID = 25; a('id_pdccg')
 RSMOV_COSTOU =   26; a('costou')
 RSMOV_COSTOT =   27; a('costot')
-RSMOV_lastcol =\
 RSMOV_TIPLIST =  28; a('id_tiplist')
+RSMOV_lastcol =\
+RSMOV_FTEL_ADG = 29; a('ftel_adg')
 
 # i seguenti valori sono determinati in fase di caricamento tabelle
 RSMOV_codmov  = -1

@@ -853,8 +853,12 @@ RSDES_CODFISC  = 14
 RSDES_PIVA     = 15
 
 
-#campi della tabella destinatari del cliente
-desfields = 'id codice descriz indirizzo cap citta prov numtel numtel2 numcel numfax email contatto pref codfisc piva'.split()
+def get_desfields():
+    #campi della tabella destinatari del cliente
+    desfields = 'id codice descriz indirizzo cap citta prov numtel numtel2 numcel numfax email contatto pref codfisc piva'
+    if bt.FTEL_INFDEST:
+        desfields += ' ftel_head_caus ftel_body_tipdat ftel_body_riftxt ftel_body_rifnum ftel_body_rifdat' 
+    return desfields.split()
 
 
 class GrigliaPrezziAttualiPanel(wx.Panel):
@@ -1214,6 +1218,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
                                  self.rsbannew, self.rsbanmod, self.rsbandel)
 
     def WriteDestin(self):
+        desfields = get_desfields()
         return self.WriteRelated(bt.TABNAME_DESTIN, desfields, self.rsdes,\
                                  self.rsdesnew, self.rsdesmod, self.rsdesdel)
     
@@ -1328,6 +1333,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             self._ban_updating = False
 
     def LoadDestin(self):
+        desfields = get_desfields()
         rsdes = ()
         if self.db_recid is not None:
             cmd =\
@@ -1652,7 +1658,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         self._des_updating = False
         
         t = bt.tabelle[bt.TABSETUP_TABLE_DESTIN][2] #struttura tabella destinatari
-        for name in desfields:
+        for name in get_desfields():
             c = cn('des_%s' % name)
             if c:
                 n = aw.awu.ListSearch(t, lambda x: x[bt.TABSETUP_COLUMNNAME] == name)
@@ -1673,6 +1679,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             obj = obj.GetParent()
         name = obj.GetName()
         if name.startswith('des_'):
+            desfields = get_desfields()
             name = name[4:]
             if name in desfields:
                 col = desfields.index(name)
@@ -1718,23 +1725,8 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             newc = str(int(max(lastab, lasmem)+1))
         except:
             newc = '1'
-        self.rsdes.append([\
-            None, #RSDES_ID
-            newc, #RSDES_CODICE
-            None, #RSDES_DESCRIZ
-            None, #RSDES_INDIR
-            None, #RSDES_CAP
-            None, #RSDES_CITTA
-            None, #RSDES_PROV
-            None, #RSDES_NUMTEL
-            None, #RSDES_NUMTEL2
-            None, #RSDES_NUMCEL
-            None, #RSDES_NUMFAX
-            None, #RSDES_EMAIL
-            None, #RSDES_CONTATTO
-            None, #RSDES_PREF
-            None, #RSDES_CODFISC
-            None])#RSDES_PIVA
+        r = [None] * len(get_desfields())
+        r[RSDES_CODICE] = newc
         if len(self.rsdes) == 1:
             self.rsdes[0][RSDES_PREF] = 1
     
@@ -1768,15 +1760,20 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         r = self.rsdes[row]
         def cn(name):
             return self.FindWindowByName('des_%s'%name)
-        for col, name in enumerate(desfields):
+        for col, name in enumerate(get_desfields()):
             c = cn(name)
             if c:
-                c.SetValue(r[col])
+                if name in 'ftel_head_caus ftel_body_tipdat ftel_body_riftxt'.split():
+                    c.SetValue(r[col] or '')
+                elif name == 'ftel_body_rifnum':
+                    c.SetValue(r[col] or 0)
+                else:
+                    c.SetValue(r[col])
     
     def _GridDes_EnableFields(self, enable=True):
         def cn(name):
             return self.FindWindowByName('des_%s'%name)
-        for col, name in enumerate(desfields):
+        for col, name in enumerate(get_desfields()):
             c = cn(name)
             if c:
                 c.Enable(enable)
@@ -1784,10 +1781,15 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
     def _GridDes_ResetFields(self):
         def cn(name):
             return self.FindWindowByName('des_%s'%name)
-        for col, name in enumerate(desfields):
+        for col, name in enumerate(get_desfields()):
             c = cn(name)
             if c:
-                c.SetValue(None)
+                if name in 'ftel_head_caus ftel_body_tipdat ftel_body_riftxt'.split():
+                    c.SetValue('')
+                elif name == 'ftel_body_rifnum':
+                    c.SetValue(0)
+                else:
+                    c.SetValue(None)
     
     def _GridDes_OnChanged(self, event):
         row = event.GetRow()
@@ -1835,7 +1837,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
         event.Skip()
     
     def _GridDes_OnPrint(self, event):
-        self.BanDesPrint(desfields, self.rsdes, 'Lista destinazioni anagrafica')
+        self.BanDesPrint(get_desfields(), self.rsdes, 'Lista destinazioni anagrafica')
         event.Skip()
     
     def _GridDes_TestWarning(self, row):

@@ -1067,12 +1067,18 @@ class Azienda(object):
         
         FTEL_ACQPDC = None   #sottoconto di costo generico x acquisizione ft.el. fornitori
         FTEL_SOLITA = False  #flag esclusione clienti esteri
+        FTEL_DACOCO = False  #flag gestione blocco dati contratto e blocco dati convenzione
         FTEL_VENCOD = False  #flag inclusione codici prodotto
         FTEL_VENPDF = False  #flag inclusione stampa pdf
+        FTEL_ROWCAU = ''     #righe causale default
         
         FTEL_EEB_URL = ""    #evolvia bill: url
         FTEL_EEB_USER = ""   #evolvia bill: username
         FTEL_EEB_PSWD = ""   #evolvia bill: password
+        
+        FTEL_INFDEST = False #flag abilitazione dati automatismi dati gestionali su fattura elettronica
+        FTEL_TIPCOD = ""     #tipo codice per codice prodotto in xml fattura elettronica
+        FTEL_TIPDAT = ""     #tipo dato per codice prodotto in xml fattura elettronica
         
         @classmethod
         def is_eeb_enabled(cls):
@@ -1100,7 +1106,7 @@ class Azienda(object):
         MAGSEPLIS = False    #flag visualizzazione sconto effettivo del costo ultimo v/ prezzo pubblico
         MAGRELLIS = False    #flag visualizzazione ricarica effettiva di ogni singolo listino v/ costo ultimo
         MAGSELLIS = False    #flag visualizzazione sconto effettivo di ogni singolo listino v/ prezzo pubblico
-         
+        
         TABSETUP_COLUMNNAME =        0
         TABSETUP_COLUMNTYPE =        1
         TABSETUP_COLUMNLENGTH =      2
@@ -2213,6 +2219,14 @@ class Azienda(object):
                 [ "pref",       "TINYINT",  1, None, "Flag destinazione preferita", None ],
                 [ "id_pdc",     "INT",    idw, None, "ID Anagrafica di app.", None ] ]
             
+            if cls.FTEL_INFDEST:
+                cls.destin +=\
+                  [ [ "ftel_head_caus",   "VARCHAR", 60, None, "Ft.El.Causale", None ],
+                    [ "ftel_body_tipdat", "VARCHAR", 10, None, "Ft.El.Body tipo dato", None ], 
+                    [ "ftel_body_riftxt", "VARCHAR", 60, None, "Ft.El.Body rif. testo", None ], 
+                    [ "ftel_body_rifnum", "DECIMAL", 12,    4, "Ft.El.Body rif. numero", None ], 
+                    [ "ftel_body_rifdat", "DATE",  None, None, "Ft.El.Body rif. data", None ], ]
+            
             cls.set_constraints(cls.TABNAME_DESTIN,
                                 ((cls.TABSETUP_CONSTR_PDC, 'id_pdc', cls.TABCONSTRAINT_TYPE_CASCADE),))
             
@@ -3007,11 +3021,25 @@ class Azienda(object):
                 [ "ftel_rifamm",          "VARCHAR",    20, None, "Fattura elettronica: rif.amministrativo", None ], 
                 [ "ftel_ordnum",          "VARCHAR",    15, None, "Fattura elettronica: numero ordine acquisto", None ], 
                 [ "ftel_orddat",          "DATE",     None, None, "Fattura elettronica: data ordine acquisto", None ], 
+                [ "ftel_codccc",          "VARCHAR",    64, None, "Fattura elettronica: codice commessa/convenzione", None ], 
                 [ "ftel_codcig",          "VARCHAR",    15, None, "Fattura elettronica: codice GIG", None ], 
                 [ "ftel_codcup",          "VARCHAR",    15, None, "Fattura elettronica: codice CUP", None ], 
                 [ "ftel_numtrasm",        "INT",         5, None, "Fattura elettronica: numero trasmissione", None ],  
                 [ "ftel_bollovirt",       "DECIMAL",     6,    2, "Fattura elettronica: bollo virtuale", None ], 
                 [ "datope",               "DATE",     None, None, "Data operazione", None ], ]
+            
+            if cls.FTEL_DACOCO:
+                cls.movmag_h += [\
+                    [ "ftel_contr_num",   "VARCHAR",    15, None, "Fattura elettronica: numero contratto", None ], 
+                    [ "ftel_contr_dat",   "DATE",     None, None, "Fattura elettronica: data contratto", None ], 
+                    [ "ftel_contr_ccc",   "VARCHAR",    64, None, "Fattura elettronica: codice commessa/convenzione", None ],
+                    [ "ftel_contr_cig",   "VARCHAR",    15, None, "Fattura elettronica: codice GIG contratto", None ], 
+                    [ "ftel_contr_cup",   "VARCHAR",    15, None, "Fattura elettronica: codice CUP contratto", None ],
+                    [ "ftel_conve_num",   "VARCHAR",    15, None, "Fattura elettronica: numero convenzione", None ], 
+                    [ "ftel_conve_dat",   "DATE",     None, None, "Fattura elettronica: data convenzione", None ], 
+                    [ "ftel_conve_ccc",   "VARCHAR",    64, None, "Fattura elettronica: codice commessa/convenzione", None ],
+                    [ "ftel_conve_cig",   "VARCHAR",    15, None, "Fattura elettronica: codice GIG convenzione", None ], 
+                    [ "ftel_conve_cup",   "VARCHAR",    15, None, "Fattura elettronica: codice CUP convenzione", None ],] 
             
             if cls.MAGNOCODEDES:
                 cls.movmag_h += [\
@@ -3043,7 +3071,8 @@ class Azienda(object):
             
             cls.movmag_h += [\
             [ "ftel_eeb_status",      "CHAR",        1, None, "EEB: status", None ],
-            [ "ftel_eeb_message",     "VARCHAR",   255, None, "EEB: messaggio riposta invio", None ], ]
+            [ "ftel_eeb_message",     "VARCHAR",   255, None, "EEB: messaggio riposta invio", None ],
+            [ "ftel_head_caus",       "VARCHAR",   ntw, None, "FE righe causale", None ], ]
             
             cls.set_constraints(cls.TABNAME_MOVMAG_H,
                                 ((cls.TABSETUP_CONSTR_CFGMAGDOC, 'id_tipdoc',  cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -3101,6 +3130,7 @@ class Azienda(object):
                 [ "id_pdccg",   "INT",     idw, None, "ID Pdc collegamento contabile specifico", None],
                 [ "agggrip",    "TINYINT",   1, None, "Flag aggiornamento griglia prezzi", None ],
                 [ "id_tiplist", "INT",     idw, None, "ID Tipo listino", None ],
+                [ "ftel_adg",   "VARCHAR", ntw, None, "FE altri dati gestionali (json)", None ],
             ]
             
             cls.set_constraints(cls.TABNAME_MOVMAG_B,
@@ -4136,11 +4166,16 @@ class Azienda(object):
                 ('DOCSOLPAG',       'docsolpag',          f, _flt, None),
                 ('FTEL_ACQPDC',     'ftel_acqpdc',        i, _int, None),
                 ('FTEL_SOLITA',     'ftel_solita',        f, _flt, None),
+                ('FTEL_DACOCO',     'ftel_dacoco',        f, _flt, None),
+                ('FTEL_ROWCAU',     'ftel_rowcau',        s, _str, None),
                 ('FTEL_VENCOD',     'ftel_vencod',        f, _flt, None),
                 ('FTEL_VENPDF',     'ftel_venpdf',        f, _flt, None),
                 ('FTEL_EEB_URL',    'ftel_eeb_url',       s, _str, None),
                 ('FTEL_EEB_USER',   'ftel_eeb_user',      s, _str, None),
                 ('FTEL_EEB_PSWD',   'ftel_eeb_pswd',      s, _str, None),
+                ('FTEL_INFDEST',    'ftel_infdest',       f, _flt, None),
+                ('FTEL_TIPCOD',     'ftel_tipcod',        f, _str, None),
+                ('FTEL_TIPDAT',     'ftel_tipdat',        s, _str, None),
             ]
         
         

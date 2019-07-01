@@ -112,6 +112,12 @@ class TipoCassaPrevidenzaChoice(ChoiceData):
         ChoiceData.__init__(self, *args, **kwargs)
         self.SetDataLink(values=[n for n in range(1,23,1)])
 
+class FtElTipoCodiceRadioBox(RadioBox):
+
+    def __init__(self, *args, **kwargs):
+        RadioBox.__init__(self, *args, **kwargs)
+        self.SetDataLink(values=('P','F','B'))
+
 
 
 
@@ -1345,102 +1351,155 @@ def DatiAziendaFunc( parent, call_fit = True, set_sizer = True ):
     return item0
 
 ID_FTEL_ACQPDC = 15099
-ID_FTEL_EEB_URL = 15100
-ID_FTEL_EEB_USER = 15101
-ID_FTEL_EEB_PSWD = 15102
-ID_REGFISC = 15103
-ID_TIPORIT = 15104
-ID_PAGRITACC = 15105
-ID_CASSAPREV = 15106
+ID_FTEL_VENPDF = 15100
+ID_FTEL_SOLITA = 15101
+ID_FTEL_DACOCO = 15102
+ID_FTEL_INFDEST = 15103
+ID_FTEL_EEB_URL = 15104
+ID_FTEL_EEB_USER = 15105
+ID_FTEL_EEB_PSWD = 15106
+ID_FTEL_VENART = 15107
+ID_FTEL_TIPCOD = 15108
+ID_FTEL_TIPDAT = 15109
+ID_FTEL_ROWCAU = 15110
+ID_REGFISC = 15111
+ID_TIPORIT = 15112
+ID_PAGRITACC = 15113
+ID_CASSAPREV = 15114
 
 def FTEL_Setup( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
     item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item3 = wx.StaticBox( parent, -1, "Acquisti" )
-    item2 = wx.StaticBoxSizer( item3, wx.VERTICAL )
+    item2 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item4 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item4 = wx.StaticBox( parent, -1, "Acquisti" )
+    item3 = wx.StaticBoxSizer( item4, wx.VERTICAL )
     
-    item5 = wx.StaticText( parent, ID_TEXT, "Costo generico per acquisizione fatture fornitori", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item4.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
-
-    item6 = alib.LinkTablePdc(parent, ID_FTEL_ACQPDC, 'setup_ftel_acqpdc')
-    item4.Add( item6, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item4.AddGrowableCol( 0 )
-
-    item2.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item8 = wx.StaticBox( parent, -1, "Vendite" )
-    item7 = wx.StaticBoxSizer( item8, wx.VERTICAL )
+    item5 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item9 = UnoZeroCheckBox( parent, ID_CHECKBOX, "Escludi clienti esteri", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item9.SetName( "setup_ftel_solita" )
-    item7.Add( item9, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item6 = wx.StaticText( parent, ID_TEXT, "Costo generico per acquisizione fatture fornitori", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item5.Add( item6, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item10 = UnoZeroCheckBox( parent, ID_CHECKBOX, "Includi codici prod.", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item10.SetName( "setup_ftel_vencod" )
-    item7.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item7 = alib.LinkTablePdc(parent, ID_FTEL_ACQPDC, 'setup_ftel_acqpdc')
+    item5.Add( item7, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item11 = UnoZeroCheckBox( parent, ID_CHECKBOX, "Allega copia PDF", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item5.AddGrowableCol( 0 )
+
+    item3.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item2.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item9 = wx.StaticBox( parent, -1, "Vendite" )
+    item8 = wx.StaticBoxSizer( item9, wx.VERTICAL )
+    
+    item10 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item11 = UnoZeroCheckBox( parent, ID_FTEL_VENPDF, "Allega copia PDF", wx.DefaultPosition, wx.DefaultSize, 0 )
     item11.SetName( "setup_ftel_venpdf" )
-    item7.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item10.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item1.Add( item7, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item12 = UnoZeroCheckBox( parent, ID_FTEL_SOLITA, "Escludi clienti esteri", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item12.SetName( "setup_ftel_solita" )
+    item10.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item13 = wx.StaticBox( parent, -1, "ebill.evolvia.srl" )
-    item12 = wx.StaticBoxSizer( item13, wx.VERTICAL )
+    item13 = UnoZeroCheckBox( parent, ID_FTEL_DACOCO, "Gestione dati contratto/conv.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item13.SetName( "setup_ftel_dacoco" )
+    item10.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item14 = UnoZeroCheckBox( parent, ID_FTEL_INFDEST, "Dati extra su destinazioni", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item14.SetName( "setup_ftel_infdest" )
+    item10.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item8.Add( item10, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item2.Add( item8, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item2.AddGrowableCol( 0 )
+
+    item2.AddGrowableRow( 1 )
+
+    item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item15 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item14 = wx.FlexGridSizer( 0, 3, 0, 0 )
+    item17 = wx.StaticBox( parent, -1, "ebill.evolvia.srl" )
+    item16 = wx.StaticBoxSizer( item17, wx.VERTICAL )
     
-    item15 = wx.StaticText( parent, ID_TEXT, "Webservice URL:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item14.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
-
-    item16 = wx.StaticText( parent, ID_TEXT, "Username:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item14.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
-
-    item17 = wx.StaticText( parent, ID_TEXT, "Password:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item14.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
-
-    item18 = TextCtrl_LC( parent, ID_FTEL_EEB_URL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item18.SetName( "setup_ftel_eeb_url" )
-    item14.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item19 = TextCtrl_LC( parent, ID_FTEL_EEB_USER, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item19.SetName( "setup_ftel_eeb_user" )
-    item14.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item20 = TextCtrl_LC( parent, ID_FTEL_EEB_PSWD, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item20.SetName( "setup_ftel_eeb_pswd" )
-    item14.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item14.AddGrowableCol( 0 )
-
-    item14.AddGrowableCol( 1 )
-
-    item14.AddGrowableCol( 2 )
-
-    item12.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item21 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item18 = wx.FlexGridSizer( 0, 3, 0, 0 )
     
-    item22 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item19 = wx.StaticText( parent, ID_TEXT, "Webservice URL:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item20 = wx.StaticText( parent, ID_TEXT, "Username:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item21 = wx.StaticText( parent, ID_TEXT, "Password:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item22 = TextCtrl_LC( parent, ID_FTEL_EEB_URL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item22.SetName( "setup_ftel_eeb_url" )
+    item18.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item23 = TextCtrl_LC( parent, ID_FTEL_EEB_USER, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item23.SetName( "setup_ftel_eeb_user" )
+    item18.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item24 = TextCtrl_LC( parent, ID_FTEL_EEB_PSWD, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item24.SetName( "setup_ftel_eeb_pswd" )
+    item18.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item18.AddGrowableCol( 0 )
+
+    item18.AddGrowableCol( 1 )
+
+    item18.AddGrowableCol( 2 )
+
+    item16.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item15.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item25 = UnoZeroCheckBox( parent, ID_FTEL_VENART, "Includi codici prodotto", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item25.SetName( "setup_ftel_vencod" )
+    item15.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+
+    item26 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item22.AddGrowableCol( 0 )
+    item27 = FtElTipoCodiceRadioBox( parent, ID_FTEL_TIPCOD, "Identifica i prodotti usando il codice:", wx.DefaultPosition, wx.DefaultSize, 
+        ["Cod. prod.","Cod. fornit.","Barcode"] , 1, wx.RA_SPECIFY_ROWS )
+    item27.SetName( "setup_ftel_tipcod" )
+    item26.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item21.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item29 = wx.StaticBox( parent, -1, "Tipo dato" )
+    item28 = wx.StaticBoxSizer( item29, wx.VERTICAL )
+    
+    item30 = TextCtrl_LC( parent, ID_FTEL_TIPDAT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item30.SetName( "setup_ftel_tipdat" )
+    item28.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item21.AddGrowableCol( 0 )
+    item26.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item21.AddGrowableCol( 1 )
+    item26.AddGrowableCol( 1 )
 
-    item12.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item26.AddGrowableRow( 0 )
 
-    item1.Add( item12, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item15.Add( item26, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item15.AddGrowableCol( 0 )
+
+    item15.AddGrowableRow( 2 )
+
+    item1.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item32 = wx.StaticBox( parent, -1, "Righe causale" )
+    item31 = wx.StaticBoxSizer( item32, wx.VERTICAL )
+    
+    item33 = wx.TextCtrl( parent, ID_FTEL_ROWCAU, "", wx.DefaultPosition, [200,110], wx.TE_MULTILINE )
+    item33.SetName( "setup_ftel_rowcau" )
+    item31.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item1.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item1.AddGrowableCol( 0 )
 
@@ -1448,413 +1507,413 @@ def FTEL_Setup( parent, call_fit = True, set_sizer = True ):
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item23 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item34 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item24 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item35 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item26 = wx.StaticBox( parent, -1, "Dati per la Fattura Elettronica" )
-    item25 = wx.StaticBoxSizer( item26, wx.VERTICAL )
+    item37 = wx.StaticBox( parent, -1, "Dati per la Fattura Elettronica" )
+    item36 = wx.StaticBoxSizer( item37, wx.VERTICAL )
     
-    item27 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item38 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item28 = wx.StaticText( parent, ID_TEXT, "Nome:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item28, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item39 = wx.StaticText( parent, ID_TEXT, "Nome:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item39, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item29 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item40 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item30 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item30.SetName( "setup_azienda_ftel_nome" )
-    item29.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item41 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item41.SetName( "setup_azienda_ftel_nome" )
+    item40.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item31 = wx.StaticText( parent, ID_TEXT, "Cognome:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item29.Add( item31, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+    item42 = wx.StaticText( parent, ID_TEXT, "Cognome:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item40.Add( item42, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item32 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item32.SetName( "setup_azienda_ftel_cognome" )
-    item29.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item43 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item43.SetName( "setup_azienda_ftel_cognome" )
+    item40.Add( item43, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item29.AddGrowableCol( 0 )
+    item40.AddGrowableCol( 0 )
 
-    item29.AddGrowableCol( 2 )
+    item40.AddGrowableCol( 2 )
 
-    item27.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item38.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item33 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item33, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item44 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item44, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item34 = wx.StaticText( parent, ID_TEXT, "Stabile organizzazione", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item34, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item45 = wx.StaticText( parent, ID_TEXT, "Stabile organizzazione", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item45, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item35 = wx.StaticText( parent, ID_TEXT, "Indirizzo:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item35, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item46 = wx.StaticText( parent, ID_TEXT, "Indirizzo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item46, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item36 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], 0 )
-    item36.SetName( "setup_azienda_ftel_soind" )
-    item27.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item47 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], 0 )
+    item47.SetName( "setup_azienda_ftel_soind" )
+    item38.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item37 = wx.StaticText( parent, ID_TEXT, "CAP, Città, Prov.:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item37, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item48 = wx.StaticText( parent, ID_TEXT, "CAP, Città, Prov.:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item48, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item38 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item49 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item39 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [60,-1], 0 )
-    item39.SetName( "setup_azienda_ftel_socap" )
-    item38.Add( item39, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+    item50 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [60,-1], 0 )
+    item50.SetName( "setup_azienda_ftel_socap" )
+    item49.Add( item50, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item40 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
-    item40.SetName( "setup_azienda_ftel_socit" )
-    item38.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item51 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item51.SetName( "setup_azienda_ftel_socit" )
+    item49.Add( item51, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item41 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
-    item41.SetName( "setup_azienda_ftel_sopro" )
-    item38.Add( item41, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item52 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
+    item52.SetName( "setup_azienda_ftel_sopro" )
+    item49.Add( item52, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item49.AddGrowableCol( 1 )
+
+    item38.Add( item49, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item53 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item53, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item54 = wx.StaticText( parent, ID_TEXT, "Dati azienda", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item54, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item55 = wx.StaticText( parent, ID_TEXT, "Regime fiscale:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item55, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item56 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item57 = RegimeFiscaleChoice( parent, ID_REGFISC, wx.DefaultPosition, [100,-1], 
+        ["RF01 - Ordinario","RF02 - Contribuenti minimi (art. 1, c.96-117, L. 244/2007)","RF03 - Nuove iniziative produttive (art.13, L. 388/2000)","RF04 - Agricoltura e attività connesse e pesca (artt. 34 e 34-bis, D.P.R. 633/1972)","RF05 - Vendita sali e tabacchi (art. 74, c.1, D.P.R. 633/1972)","RF06 - Commercio dei fiammiferi (art. 74, c.1, D.P.R.633/1972)","RF07 - Editoria (art. 74, c.1, D.P.R. 633/1972)","RF08 - Gestione di servizi di telefonia pubblica (art. 74, c.1,D.P.R. 633/1972)","RF09 - Rivendita di documenti di trasporto pubblico e di sosta (art. 74, c.1, D.P.R. 633/1972)","RF10 - Intrattenimenti, giochi e altre attività di cui alla tariffa allegata al D.P.R. n. 640/72 (art. 74, c.6, D.P.R.633/1972)","RF11 - Agenzie di viaggi e turismo (art. 74-ter, D.P.R. ","RF12 - Agriturismo (art. 5, c.2, L. 413/1991)","RF13 - Vendite a domicilio (art. 25-bis, c.6, D.P.R. 600/1973)","RF14 - Rivendita di beni usati, di oggetti d’arte, d’antiquariato o ","RF15 - Agenzie di vendite all’asta di oggetti d’arte, antiquariato ","RF16 - IVA per cassa P.A. (art. 6, c.5, D.P.R. 633/1972)","RF17 - IVA per cassa soggetti con volume d’affari inferiore a Eur 200.000 (art. 7, D.L. 185/2008)","RF19 - Regime forfettario (art.1, c.54-89, L. 190/2014)","RF18 - Altro"] , 0 )
+    item57.SetName( "setup_azienda_ftel_regfisc" )
+    item56.Add( item57, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item56.AddGrowableCol( 0 )
+
+    item38.Add( item56, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item58 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item58, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item59 = wx.StaticText( parent, ID_TEXT, "Dati REA", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item59, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+
+    item60 = wx.StaticText( parent, ID_TEXT, "Num.Iscriz:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item60, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item61 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item62 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item62.SetName( "setup_azienda_ftel_reanum" )
+    item61.Add( item62, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item63 = wx.StaticText( parent, ID_TEXT, "Ufficio:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item61.Add( item63, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item64 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item64.SetName( "setup_azienda_ftel_reauff" )
+    item61.Add( item64, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item38.Add( item61, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item65 = wx.StaticText( parent, ID_TEXT, "Capitale sociale:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item38.Add( item65, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item66 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item67 = NumCtrl(parent, integerWidth=6, fractionWidth=2, allowNegative=False); item67.SetName('setup_azienda_ftel_capsoc')
+    item66.Add( item67, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item68 = UnoZeroCheckBox( parent, ID_CHECKBOX, "Socio unico", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.SetName( "setup_azienda_ftel_socuni" )
+    item66.Add( item68, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item69 = UnoZeroCheckBox( parent, ID_CHECKBOX, "In liquidazione", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item69.SetName( "setup_azienda_ftel_socliq" )
+    item66.Add( item69, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item38.Add( item66, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item38.AddGrowableCol( 1 )
 
-    item27.Add( item38, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item36.Add( item38, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item42 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item42, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item35.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item43 = wx.StaticText( parent, ID_TEXT, "Dati azienda", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item43, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
-
-    item44 = wx.StaticText( parent, ID_TEXT, "Regime fiscale:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item44, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item45 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item71 = wx.StaticBox( parent, -1, "Soggetto trasmittente se diverso da cedente/prestatore" )
+    item70 = wx.StaticBoxSizer( item71, wx.VERTICAL )
     
-    item46 = RegimeFiscaleChoice( parent, ID_REGFISC, wx.DefaultPosition, [100,-1], 
-        ["RF01 - Ordinario","RF02 - Contribuenti minimi (art. 1, c.96-117, L. 244/2007)","RF03 - Nuove iniziative produttive (art.13, L. 388/2000)","RF04 - Agricoltura e attività connesse e pesca (artt. 34 e 34-bis, D.P.R. 633/1972)","RF05 - Vendita sali e tabacchi (art. 74, c.1, D.P.R. 633/1972)","RF06 - Commercio dei fiammiferi (art. 74, c.1, D.P.R.633/1972)","RF07 - Editoria (art. 74, c.1, D.P.R. 633/1972)","RF08 - Gestione di servizi di telefonia pubblica (art. 74, c.1,D.P.R. 633/1972)","RF09 - Rivendita di documenti di trasporto pubblico e di sosta (art. 74, c.1, D.P.R. 633/1972)","RF10 - Intrattenimenti, giochi e altre attività di cui alla tariffa allegata al D.P.R. n. 640/72 (art. 74, c.6, D.P.R.633/1972)","RF11 - Agenzie di viaggi e turismo (art. 74-ter, D.P.R. ","RF12 - Agriturismo (art. 5, c.2, L. 413/1991)","RF13 - Vendite a domicilio (art. 25-bis, c.6, D.P.R. 600/1973)","RF14 - Rivendita di beni usati, di oggetti d’arte, d’antiquariato o ","RF15 - Agenzie di vendite all’asta di oggetti d’arte, antiquariato ","RF16 - IVA per cassa P.A. (art. 6, c.5, D.P.R. 633/1972)","RF17 - IVA per cassa soggetti con volume d’affari inferiore a Eur 200.000 (art. 7, D.L. 185/2008)","RF19 - Regime forfettario (art.1, c.54-89, L. 190/2014)","RF18 - Altro"] , 0 )
-    item46.SetName( "setup_azienda_ftel_regfisc" )
-    item45.Add( item46, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item45.AddGrowableCol( 0 )
-
-    item27.Add( item45, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item47 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item47, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item48 = wx.StaticText( parent, ID_TEXT, "Dati REA", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item48, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
-
-    item49 = wx.StaticText( parent, ID_TEXT, "Num.Iscriz:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item49, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item50 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item72 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item51 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
-    item51.SetName( "setup_azienda_ftel_reanum" )
-    item50.Add( item51, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item73 = wx.StaticText( parent, ID_TEXT, "C.F./P.I.:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item72.Add( item73, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item52 = wx.StaticText( parent, ID_TEXT, "Ufficio:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item50.Add( item52, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item74 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
+    item74.SetName( "setup_azienda_ftel_trcodfis" )
+    item72.Add( item74, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item53 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
-    item53.SetName( "setup_azienda_ftel_reauff" )
-    item50.Add( item53, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item75 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item72.Add( item75, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item27.Add( item50, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item76 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
+    item76.SetName( "setup_azienda_ftel_trstato" )
+    item72.Add( item76, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item54 = wx.StaticText( parent, ID_TEXT, "Capitale sociale:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item27.Add( item54, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item70.Add( item72, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item55 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item35.Add( item70, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item78 = wx.StaticBox( parent, -1, "Ritenuta d'acconto" )
+    item77 = wx.StaticBoxSizer( item78, wx.VERTICAL )
     
-    item56 = NumCtrl(parent, integerWidth=6, fractionWidth=2, allowNegative=False); item56.SetName('setup_azienda_ftel_capsoc')
-    item55.Add( item56, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item57 = UnoZeroCheckBox( parent, ID_CHECKBOX, "Socio unico", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item57.SetName( "setup_azienda_ftel_socuni" )
-    item55.Add( item57, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item58 = UnoZeroCheckBox( parent, ID_CHECKBOX, "In liquidazione", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item58.SetName( "setup_azienda_ftel_socliq" )
-    item55.Add( item58, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item27.Add( item55, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item27.AddGrowableCol( 1 )
-
-    item25.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item24.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
-    item60 = wx.StaticBox( parent, -1, "Soggetto trasmittente se diverso da cedente/prestatore" )
-    item59 = wx.StaticBoxSizer( item60, wx.VERTICAL )
+    item79 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item61 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item62 = wx.StaticText( parent, ID_TEXT, "C.F./P.I.:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item61.Add( item62, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item80 = wx.StaticText( parent, ID_TEXT, "Tipo di ritenuta:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item79.Add( item80, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item63 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
-    item63.SetName( "setup_azienda_ftel_trcodfis" )
-    item61.Add( item63, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
-
-    item64 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item61.Add( item64, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item65 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
-    item65.SetName( "setup_azienda_ftel_trstato" )
-    item61.Add( item65, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item59.Add( item61, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item24.Add( item59, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item67 = wx.StaticBox( parent, -1, "Ritenuta d'acconto" )
-    item66 = wx.StaticBoxSizer( item67, wx.VERTICAL )
-    
-    item68 = wx.FlexGridSizer( 0, 2, 0, 0 )
-    
-    item69 = wx.StaticText( parent, ID_TEXT, "Tipo di ritenuta:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item68.Add( item69, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item70 = TipoRitenutaChoice( parent, ID_TIPORIT, wx.DefaultPosition, [100,-1], 
+    item81 = TipoRitenutaChoice( parent, ID_TIPORIT, wx.DefaultPosition, [100,-1], 
         ["RT01 - Ritenuta persone fisiche","RT02 - Ritenuta persone giuridiche"] , 0 )
-    item70.SetName( "setup_azienda_ftel_ritacctipo" )
-    item68.Add( item70, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item81.SetName( "setup_azienda_ftel_ritacctipo" )
+    item79.Add( item81, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item71 = wx.StaticText( parent, ID_TEXT, "Codice Tipo pagamento ritenuta (A):", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item68.Add( item71, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item82 = wx.StaticText( parent, ID_TEXT, "Codice Tipo pagamento ritenuta (A):", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item79.Add( item82, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item72 = TextCtrl( parent, ID_PAGRITACC, "", wx.DefaultPosition, [80,-1], 0 )
-    item72.SetName( "setup_azienda_ftel_ritaccpag" )
-    item68.Add( item72, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item83 = TextCtrl( parent, ID_PAGRITACC, "", wx.DefaultPosition, [80,-1], 0 )
+    item83.SetName( "setup_azienda_ftel_ritaccpag" )
+    item79.Add( item83, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item68.AddGrowableCol( 1 )
+    item79.AddGrowableCol( 1 )
 
-    item66.Add( item68, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item77.Add( item79, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item24.Add( item66, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item35.Add( item77, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item74 = wx.StaticBox( parent, -1, "Cassa previdenziale" )
-    item73 = wx.StaticBoxSizer( item74, wx.VERTICAL )
+    item85 = wx.StaticBox( parent, -1, "Cassa previdenziale" )
+    item84 = wx.StaticBoxSizer( item85, wx.VERTICAL )
     
-    item75 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item86 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item76 = wx.StaticText( parent, ID_TEXT, "Tipo cassa:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item75.Add( item76, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item87 = wx.StaticText( parent, ID_TEXT, "Tipo cassa:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item86.Add( item87, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item77 = TipoCassaPrevidenzaChoice( parent, ID_CASSAPREV, wx.DefaultPosition, [100,-1], 
+    item88 = TipoCassaPrevidenzaChoice( parent, ID_CASSAPREV, wx.DefaultPosition, [100,-1], 
         ["TC01 - Cassa nazionale previdenza avvocati e procuratori legali","TC02 - Cassa previdenza dottori commercialisti","TC03 - Cassa previdenza e assistenza geometri","TC04 - Cassa nazionale ingegneri e architetti liberi professionisti","TC05 - Cassa nazionale del notariato","TC06 - Cassa nazionale ragionieri e periti commerciali","TC07 - ENASARCO","TC08 - ENPACL","TC09 - ENPAM","TC10 - ENPAF","TC11 - ENPAV","TC12 - ENPAIA","TC13 - Fondo prev. impiegati imprese spediz. e ag. marittime","TC14 - INPGI","TC15 - ONAOSI","TC16 - CASAGIT","TC17 - EPPI","TC18 - EPAP","TC19 - ENPAB","TC20 - ENPAPI","TC21 - ENPAP","TC22 - INPS"] , 0 )
-    item77.SetName( "setup_azienda_ftel_cassaprev" )
-    item75.Add( item77, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item88.SetName( "setup_azienda_ftel_cassaprev" )
+    item86.Add( item88, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item75.AddGrowableCol( 1 )
+    item86.AddGrowableCol( 1 )
 
-    item73.Add( item75, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item84.Add( item86, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item24.Add( item73, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item35.Add( item84, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item24.AddGrowableCol( 0 )
+    item35.AddGrowableCol( 0 )
 
-    item24.AddGrowableRow( 2 )
+    item35.AddGrowableRow( 2 )
 
-    item23.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item34.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item78 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item89 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item80 = wx.StaticBox( parent, -1, "Rappresentante fiscale" )
-    item79 = wx.StaticBoxSizer( item80, wx.VERTICAL )
+    item91 = wx.StaticBox( parent, -1, "Rappresentante fiscale" )
+    item90 = wx.StaticBoxSizer( item91, wx.VERTICAL )
     
-    item81 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item92 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item82 = wx.StaticText( parent, ID_TEXT, "Nome:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item81.Add( item82, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item93 = wx.StaticText( parent, ID_TEXT, "Nome:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item92.Add( item93, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item83 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item94 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item84 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item84.SetName( "setup_azienda_ftel_rfnome" )
-    item83.Add( item84, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item95 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item95.SetName( "setup_azienda_ftel_rfnome" )
+    item94.Add( item95, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item85 = wx.StaticText( parent, ID_TEXT, "Cognome:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item83.Add( item85, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item96 = wx.StaticText( parent, ID_TEXT, "Cognome:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item94.Add( item96, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item86 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item86.SetName( "setup_azienda_ftel_rfcognome" )
-    item83.Add( item86, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item97 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item97.SetName( "setup_azienda_ftel_rfcognome" )
+    item94.Add( item97, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item83.AddGrowableCol( 0 )
+    item94.AddGrowableCol( 0 )
 
-    item83.AddGrowableCol( 2 )
+    item94.AddGrowableCol( 2 )
 
-    item81.Add( item83, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item92.Add( item94, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item87 = wx.StaticText( parent, ID_TEXT, "Ragione sociale:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item81.Add( item87, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item98 = wx.StaticText( parent, ID_TEXT, "Ragione sociale:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item92.Add( item98, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item88 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], 0 )
-    item88.SetName( "setup_azienda_ftel_rfdes" )
-    item81.Add( item88, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item99 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [200,-1], 0 )
+    item99.SetName( "setup_azienda_ftel_rfdes" )
+    item92.Add( item99, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item89 = wx.StaticText( parent, ID_TEXT, "Indirizzo:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item81.Add( item89, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item100 = wx.StaticText( parent, ID_TEXT, "Indirizzo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item92.Add( item100, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item90 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item90.SetName( "setup_azienda_ftel_rfind" )
-    item81.Add( item90, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item101 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item101.SetName( "setup_azienda_ftel_rfind" )
+    item92.Add( item101, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item91 = wx.StaticText( parent, ID_TEXT, "CAP, Città, Prov.:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item81.Add( item91, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item102 = wx.StaticText( parent, ID_TEXT, "CAP, Città, Prov.:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item92.Add( item102, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item92 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item103 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item93 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [60,-1], 0 )
-    item93.SetName( "setup_azienda_ftel_rfcap" )
-    item92.Add( item93, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item104 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [60,-1], 0 )
+    item104.SetName( "setup_azienda_ftel_rfcap" )
+    item103.Add( item104, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item94 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item94.SetName( "setup_azienda_ftel_rfcit" )
-    item92.Add( item94, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item105 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item105.SetName( "setup_azienda_ftel_rfcit" )
+    item103.Add( item105, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item95 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
-    item95.SetName( "setup_azienda_ftel_rfpro" )
-    item92.Add( item95, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item106 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
+    item106.SetName( "setup_azienda_ftel_rfpro" )
+    item103.Add( item106, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item103.AddGrowableCol( 1 )
+
+    item92.Add( item103, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item107 = wx.StaticText( parent, ID_TEXT, "Cod.Fiscale:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item92.Add( item107, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item108 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item109 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
+    item109.SetName( "setup_azienda_ftel_rfcodfis" )
+    item108.Add( item109, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+
+    item110 = wx.StaticText( parent, ID_TEXT, "P.IVA:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item108.Add( item110, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item111 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [90,-1], 0 )
+    item111.SetName( "setup_azienda_ftel_rfpiva" )
+    item108.Add( item111, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item112 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item108.Add( item112, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item113 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
+    item113.SetName( "setup_azienda_ftel_rfstato" )
+    item108.Add( item113, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item108.AddGrowableCol( 1 )
+
+    item92.Add( item108, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item92.AddGrowableCol( 1 )
 
-    item81.Add( item92, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item90.Add( item92, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item96 = wx.StaticText( parent, ID_TEXT, "Cod.Fiscale:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item81.Add( item96, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item89.Add( item90, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
 
-    item97 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item115 = wx.StaticBox( parent, -1, "Terzo intermediario o soggetto emittente" )
+    item114 = wx.StaticBoxSizer( item115, wx.VERTICAL )
     
-    item98 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
-    item98.SetName( "setup_azienda_ftel_rfcodfis" )
-    item97.Add( item98, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
-
-    item99 = wx.StaticText( parent, ID_TEXT, "P.IVA:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item97.Add( item99, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item100 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [90,-1], 0 )
-    item100.SetName( "setup_azienda_ftel_rfpiva" )
-    item97.Add( item100, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item101 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item97.Add( item101, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item102 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
-    item102.SetName( "setup_azienda_ftel_rfstato" )
-    item97.Add( item102, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item97.AddGrowableCol( 1 )
-
-    item81.Add( item97, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item81.AddGrowableCol( 1 )
-
-    item79.Add( item81, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item78.Add( item79, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
-
-    item104 = wx.StaticBox( parent, -1, "Terzo intermediario o soggetto emittente" )
-    item103 = wx.StaticBoxSizer( item104, wx.VERTICAL )
+    item116 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item105 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item117 = wx.StaticText( parent, ID_TEXT, "Cod.Fiscale:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item116.Add( item117, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item118 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item106 = wx.StaticText( parent, ID_TEXT, "Cod.Fiscale:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item105.Add( item106, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item119 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
+    item119.SetName( "setup_azienda_ftel_secodfis" )
+    item118.Add( item119, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item107 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item120 = wx.StaticText( parent, ID_TEXT, "P.IVA:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item118.Add( item120, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item121 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [90,-1], 0 )
+    item121.SetName( "setup_azienda_ftel_sepiva" )
+    item118.Add( item121, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item122 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item118.Add( item122, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item123 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
+    item123.SetName( "setup_azienda_ftel_sestato" )
+    item118.Add( item123, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item118.AddGrowableCol( 1 )
+
+    item116.Add( item118, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item124 = wx.StaticText( parent, ID_TEXT, "Ragione sociale:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item116.Add( item124, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item125 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item125.SetName( "setup_azienda_ftel_sedes" )
+    item116.Add( item125, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item126 = wx.StaticText( parent, ID_TEXT, "Nome:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item116.Add( item126, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+
+    item127 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item108 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [120,-1], 0 )
-    item108.SetName( "setup_azienda_ftel_secodfis" )
-    item107.Add( item108, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+    item128 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item128.SetName( "setup_azienda_ftel_senome" )
+    item127.Add( item128, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item109 = wx.StaticText( parent, ID_TEXT, "P.IVA:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item107.Add( item109, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item129 = wx.StaticText( parent, ID_TEXT, "Cognome:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item127.Add( item129, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item110 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [90,-1], 0 )
-    item110.SetName( "setup_azienda_ftel_sepiva" )
-    item107.Add( item110, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item130 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item130.SetName( "setup_azienda_ftel_secognome" )
+    item127.Add( item130, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item111 = wx.StaticText( parent, ID_TEXT, "Stato:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item107.Add( item111, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item127.AddGrowableCol( 0 )
 
-    item112 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [35,-1], 0 )
-    item112.SetName( "setup_azienda_ftel_sestato" )
-    item107.Add( item112, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item127.AddGrowableCol( 2 )
 
-    item107.AddGrowableCol( 1 )
+    item116.Add( item127, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item105.Add( item107, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item131 = wx.StaticText( parent, ID_TEXT, "Titolo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item116.Add( item131, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item113 = wx.StaticText( parent, ID_TEXT, "Ragione sociale:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item105.Add( item113, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item114 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item114.SetName( "setup_azienda_ftel_sedes" )
-    item105.Add( item114, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item115 = wx.StaticText( parent, ID_TEXT, "Nome:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item105.Add( item115, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item116 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item132 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item117 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item117.SetName( "setup_azienda_ftel_senome" )
-    item116.Add( item117, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item133 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item133.SetName( "setup_azienda_ftel_setit" )
+    item132.Add( item133, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item118 = wx.StaticText( parent, ID_TEXT, "Cognome:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item116.Add( item118, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item134 = wx.StaticText( parent, ID_TEXT, "Cod. EORI:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item132.Add( item134, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item119 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item119.SetName( "setup_azienda_ftel_secognome" )
-    item116.Add( item119, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item135 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [100,-1], 0 )
+    item135.SetName( "setup_azienda_ftel_seeori" )
+    item132.Add( item135, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item116.AddGrowableCol( 0 )
+    item132.AddGrowableCol( 0 )
 
-    item116.AddGrowableCol( 2 )
+    item116.Add( item132, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item105.Add( item116, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item116.AddGrowableCol( 1 )
 
-    item120 = wx.StaticText( parent, ID_TEXT, "Titolo:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item105.Add( item120, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item114.Add( item116, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item121 = wx.FlexGridSizer( 1, 0, 0, 0 )
-    
-    item122 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item122.SetName( "setup_azienda_ftel_setit" )
-    item121.Add( item122, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item89.Add( item114, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
 
-    item123 = wx.StaticText( parent, ID_TEXT, "Cod. EORI:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item121.Add( item123, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
-
-    item124 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [100,-1], 0 )
-    item124.SetName( "setup_azienda_ftel_seeori" )
-    item121.Add( item124, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
-    item121.AddGrowableCol( 0 )
-
-    item105.Add( item121, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item105.AddGrowableCol( 1 )
-
-    item103.Add( item105, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-    item78.Add( item103, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
-
-    item125 = SoggettoEmittenteRadioBox( parent, ID_RADIOBOX, "Soggetto emittente", wx.DefaultPosition, wx.DefaultSize, 
+    item136 = SoggettoEmittenteRadioBox( parent, ID_RADIOBOX, "Soggetto emittente", wx.DefaultPosition, wx.DefaultSize, 
         ["XX - Non specificato","CC - Cessionario/Committ.","TZ - SoggettoTerzo"] , 1, wx.RA_SPECIFY_ROWS )
-    item125.SetName( "setup_azienda_ftel_sesogemi" )
-    item78.Add( item125, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
+    item136.SetName( "setup_azienda_ftel_sesogemi" )
+    item89.Add( item136, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item78.AddGrowableCol( 0 )
+    item89.AddGrowableCol( 0 )
 
-    item78.AddGrowableRow( 1 )
+    item89.AddGrowableRow( 1 )
 
-    item23.Add( item78, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item34.Add( item89, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item23.AddGrowableCol( 0 )
+    item34.AddGrowableCol( 0 )
 
-    item23.AddGrowableCol( 1 )
+    item34.AddGrowableCol( 1 )
 
-    item0.Add( item23, 0, wx.GROW, 5 )
+    item0.Add( item34, 0, wx.GROW, 5 )
 
     item0.AddGrowableCol( 0 )
 

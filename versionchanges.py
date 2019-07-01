@@ -29,6 +29,22 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.62', dt.Date(2019, 7, 1), (
+         ("BUG1222",
+         """Corretta identificazione aliquote iva in acquisizione xml f.e. acquisto, vengono esclude aliquote per split payment e in caso di reverse charge vengono considerate solo le aliquote con percentuali di calcolo iva non zero."""),
+         ("BET4264",
+         """Implementati dati causale testata per f.e. e dati aggiuntivi sulle righe."""),
+         ("BET4265",
+         """Implementata possibilità di preimpostazione di righe causale e dati aggiuntivi corpo da scheda destinazione."""),
+         ("BET4266",
+         """Implementati dati f.e. relativi al blocco dati contratto e blocco dati convenzione, se attivati in setup azienda."""),
+        ),),
+    
+    ('1.9.59', None, (
+         ("BET4263",
+         """Implementate righe causale nel dataentry documenti e generazione xml."""),
+        ),),
+    
     ('1.9.58', dt.Date(2019, 3, 15), (
          ("BUG1221",
          """Corretto calcolo scadenze in reg. ft. acq. da xml."""),

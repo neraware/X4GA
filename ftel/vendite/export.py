@@ -313,7 +313,7 @@ class ExportPanel(aw.Panel):
             docs.AddFilter(flt)
             e = not ('T' in flags or 'A' in flags or 'Z' in flags or 'T' in flags)
             cn('butgen').Enable(e)
-            cn('numprogr').Enable(e)
+            cn('numprogr').Enable(False) #e)
         else:
             docs.AddFilter('FALSE')
             cn('butgen').Disable()
@@ -374,7 +374,7 @@ class ExportPanel(aw.Panel):
             enable = False
         e = cn('butgen').IsEnabled() and not docs.IsEmpty()
         cn('butgen').Enable(e)
-        cn('numprogr').Enable(e)
+        cn('numprogr').Enable(False) #e)
         if enable and cn('selaut').IsChecked():
             col = docs._GetFieldIndex('fe_sel', inline=True)
             for r in docs.GetRecordset():

@@ -703,12 +703,16 @@ class PdcMastro(_PdcMovimMixin):
         self.mov.ClearBaseFilters()
         self.mov.AddBaseFilter(f)
     
-    def SetDateStart(self, data, esercizio=None):
+    def SetDateStart(self, data, esercizio=None, use_datope=False):
         self.mov.ClearFilters()
         self.saldini.ClearFilters()
         if data:
-            self.mov.AddFilter("reg.datreg>=%s", data)
-            self.saldini.AddFilter("regini.datreg<%s", data)
+            if use_datope:
+                self.mov.AddFilter("COALESCE(reg.datope, reg.datreg) >= %s", data)
+                self.saldini.AddFilter("COALESCE(reg.datope, regini.datreg) < %s", data)
+            else:
+                self.mov.AddFilter("reg.datreg>=%s", data)
+                self.saldini.AddFilter("regini.datreg<%s", data)
             if esercizio is not None:
                 pe = ProgrEsercizio()
                 ec = pe.GetEsercizioInCorso()
@@ -718,14 +722,20 @@ class PdcMastro(_PdcMovimMixin):
                 elif esercizio > ec:
                     dsec = pe.GetEsercizioDates(ec)[0]
                 if dsec:
-                    self.saldini.AddFilter('(bilmas.tipo="P" AND regini.datreg>=%s) OR (bilmas.tipo<>"P" AND regini.datreg>=%s)', dsec, dses)
+                    if use_datope:
+                        self.saldini.AddFilter('(bilmas.tipo="P" AND COALESCE(regini.datope, regini.datreg) >= %s) OR (bilmas.tipo<>"P" AND COALESCE(regini.datope, regini.datreg) >= %s)', dsec, dses)
+                    else:
+                        self.saldini.AddFilter('(bilmas.tipo="P" AND regini.datreg>=%s) OR (bilmas.tipo<>"P" AND regini.datreg>=%s)', dsec, dses)
         else:
             self.saldini.AddFilter("0")
         self._datmin = data
     
-    def SetDateEnd(self, data):
+    def SetDateEnd(self, data, use_datope=False):
         if data:
-            self.mov.AddFilter("reg.datreg<=%s", data)
+            if use_datope:
+                self.mov.AddFilter("COALESCE(reg.datope, reg.datreg) <= %s", data)
+            else:
+                self.mov.AddFilter("reg.datreg<=%s", data)
         self._datmax = data
     
     def SetEsercizio(self, e=None):

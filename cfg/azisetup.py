@@ -351,11 +351,15 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.DOCSOLPAG,
                    bt.FTEL_ACQPDC,
                    bt.FTEL_SOLITA,
+                   bt.FTEL_DACOCO,
                    bt.FTEL_VENCOD,
                    bt.FTEL_VENPDF,
                    bt.FTEL_EEB_URL,
                    bt.FTEL_EEB_USER,
-                   bt.FTEL_EEB_PSWD,)
+                   bt.FTEL_EEB_PSWD,
+                   bt.FTEL_INFDEST,
+                   bt.FTEL_TIPCOD,
+                   bt.FTEL_TIPDAT,)
             bt.TIPO_CONTAB = cn('setup_tipo_contab').GetValue()
             bt.CONSOVGES = cn('setup_consovges').GetValue()
             bt.CONBILRICL = cn('setup_conbilricl').GetValue()
@@ -444,12 +448,15 @@ class AziendaSetupPanel(_SetupPanel):
             bt.DOCSOLPAG = cn('setup_docsolpag').GetValue()
             bt.FTEL_ACQPDC = cn('setup_ftel_acqpdc').GetValue()
             bt.FTEL_SOLITA = cn('setup_ftel_solita').GetValue()
+            bt.FTEL_DACOCO = cn('setup_ftel_dacoco').GetValue()
             bt.FTEL_VENCOD = cn('setup_ftel_vencod').GetValue()
             bt.FTEL_VENPDF = cn('setup_ftel_venpdf').GetValue()
             bt.FTEL_EEB_URL = cn('setup_ftel_eeb_url').GetValue()
             bt.FTEL_EEB_USER = cn('setup_ftel_eeb_user').GetValue()
             bt.FTEL_EEB_PSWD = cn('setup_ftel_eeb_pswd').GetValue()
-            
+            bt.FTEL_INFDEST = cn('setup_ftel_infdest').GetValue()
+            bt.FTEL_TIPCOD = cn('setup_ftel_tipcod').GetValue()
+            bt.FTEL_TIPDAT = cn('setup_ftel_tipdat').GetValue()
             bt.defstru()
             out = wx.GetApp().TestDBVers(force=True)
             if not out:
@@ -541,11 +548,15 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.DOCSOLPAG,
                 bt.FTEL_ACQPDC,
                 bt.FTEL_SOLITA,
+                bt.FTEL_DACOCO,
                 bt.FTEL_VENCOD,
                 bt.FTEL_VENPDF,
                 bt.FTEL_EEB_URL,
                 bt.FTEL_EEB_USER,
-                bt.FTEL_EEB_PSWD = old
+                bt.FTEL_EEB_PSWD,
+                bt.FTEL_INFDEST,
+                bt.FTEL_TIPCOD,
+                bt.FTEL_TIPDAT, = old
         if out:
             cfg = CfgContab()
             cfg.SetEsercizio(Env.Azienda.Login.dataElab)

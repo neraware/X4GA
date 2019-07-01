@@ -1037,15 +1037,12 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                                 if tiva.aliqiva:
                                     aliqiva.AddFilter('(aliqiva.perciva=%s AND aliqiva.percind=0)', tiva.aliqiva)
                                 else:
-                                    if not tiva.natura:
-                                        raise Exception("Manca imposta e natura sul file")
-                                    aliqiva.AddFilter('aliqiva.ftel_natura=%s', tiva.natura)
-                                
-                                if info.docinfo.get_totale_imposta_split() !=  0:
-                                    aliqiva.AddFilter('aliqiva.tipo="S"')
-                                else:
-                                    aliqiva.AddFilter('aliqiva.tipo<>"S"')
-                                
+                                    if tiva.natura == "N6":
+                                        #reverse charge, filtro aliquote con calcolo > 0
+                                        aliqiva.AddFilter('(aliqiva.perciva<>0 AND aliqiva.percind=0)')
+                                    else:
+                                        aliqiva.AddFilter('aliqiva.perciva=0')
+                                aliqiva.AddFilter('aliqiva.tipo<>"S"')
                                 aliqiva.Retrieve()
                             
                             self.AddDefaultRow([nrig,             #RSDET_NUMRIGA

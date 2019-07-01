@@ -25,6 +25,10 @@ import magazz as m
 import magazz.dataentry_wdr as wdr
 
 import Env
+from awc.controls.dbgrid import ADB_Grid
+from wx.grid import EVT_GRID_CELL_LEFT_DCLICK
+from magazz import STATUS_EDITING
+from magazz.dbtables import BodyFtelADG
 bt = Env.Azienda.BaseTab
 stdcolor = Env.Azienda.Colours
 
@@ -1534,6 +1538,7 @@ class GridBody(object):
         return valok
     
     def GridBodyAddNewRow(self, before_row=None):
+        cn = self.FindWindowByName
         if self.status != m.STATUS_EDITING:
             #workaround: quando ho inserito una fattura e cerco di inserire un
             #ddt, appenda confermo il numero doc. da inserire, viene richiamato
@@ -1549,6 +1554,22 @@ class GridBody(object):
         mov.agggrip = int((bt.MAGATTGRIP or bt.MAGATTGRIF) and bt.MAGAGGGRIP and bt.MAGALWGRIP)
         if self.lastmovid is not None:
             mov.id_tipmov = self.lastmovid
+        if bt.FTEL_INFDEST:
+            id_dest = cn('id_dest').GetValue()
+            if id_dest:
+                des = adb.DbTable('destin')
+                if des.Get(id_dest) and des.OneRow():
+                    if des.ftel_body_tipdat:
+                        adg = BodyFtelADG(mov)
+                        adg.CreateNewRow()
+                        adg.tipdat = des.ftel_body_tipdat
+                        if des.ftel_body_riftxt:
+                            adg.riftxt = des.ftel_body_riftxt
+                        if des.ftel_body_rifnum:
+                            adg.rifnum = des.ftel_body_rifnum
+                        if des.ftel_body_rifdat:
+                            adg.rifdat = des.ftel_body_rifdat
+                        adg.json_dump()
         if before_row is not None:
             rsb = mov.GetRecordset()
             r = rsb.pop()
@@ -1572,6 +1593,8 @@ class GridBody(object):
         else:
             proid = None
         self.UpdateProdZone(proid)
+        if self._show_body_ftel:
+            self.GridBodyFtelUpdateGrid(row)
         event.Skip()
     
     def GridBodySetTipMovFilter(self):
@@ -1690,6 +1713,8 @@ class GridBody(object):
                 self.SetDataChanged()
                 self.MakeTotals()
                 self.UpdateBodyButtons()
+                if self._show_body_ftel:
+                    self.GridBodyFtelUpdateGrid(row)
         event.Skip()
     
     def UpdatePanelBody(self):
@@ -1698,3 +1723,179 @@ class GridBody(object):
             #self.gridbody.AutoSizeColumns()
         ##self.UpdateTotDav()
         pass
+    
+    def GridBodyFtelCreateGrid(self):
+        cn = self.FindWindowByName
+        self.dbadg = dbm.BodyFtelADG()
+        self.gridadg = BodyADG_Grid(cn('pangridadg'), self.dbadg)
+        self.gridadg.Bind(EVT_GRID_CELL_LEFT_DCLICK, self.GridBodyFtelAdgChangeValue)
+        self.Bind(wx.EVT_BUTTON, self.GridBodyFtelAdgAddData, cn('btnbody_adg_newdata'))
+    
+    def GridBodyFtelUpdateGrid(self, row):
+        cn = self.FindWindowByName
+        self.gridbody.SelectRow(row)
+        mov = self.dbdoc.mov
+        rs = []
+        is_new_row = row >= mov.RowsCount()
+        if not is_new_row:
+            mov.MoveRow(row)
+            dbadg = self.dbadg
+            rs = dbadg.json_load(mov)
+        self.gridadg.ChangeData(rs)
+        cn('btnbody_adg_newdata').Enable(not is_new_row and self.status == STATUS_EDITING)
+    
+    def GridBodyFtelAdgAddData(self, event):
+        self.GridBodyFtelAdgEdit(None)
+        event.Skip()
+    
+    def GridBodyFtelAdgChangeValue(self, event):
+        row = event.GetRow()
+        dbadg = self.dbadg
+        dbadg.MoveRow(row)
+        self.GridBodyFtelAdgEdit(row, dbadg.tipdat, dbadg.riftxt, dbadg.rifnum, dbadg.rifdat)
+    
+    def GridBodyFtelAdgEdit(self, numrow, tipdat='', riftxt=None, rifnum=None, rifdat=None):
+        dlg = BodyADG_Dialog(self, tipdat=tipdat, riftxt=riftxt, rifnum=rifnum, rifdat=rifdat)
+        _ret = dlg.ShowModal()
+        dlg.Destroy()
+        if _ret == wx.ID_OK:
+            #store
+            adg = self.dbadg
+            data = dlg.GetData()
+            if numrow is None:
+                adg.CreateNewRow()
+            else:
+                adg.MoveRow(numrow)
+            for name in 'tipdat riftxt rifnum rifdat'.split():
+                setattr(adg, name, data[name])
+            self.gridadg.ChangeData(adg.GetRecordset())
+            self.dbadg.json_dump()
+        elif _ret == wx.ID_DELETE:
+            adg = self.dbadg
+            adg.Delete()
+            self.gridadg.ChangeData(adg.GetRecordset())
+            self.dbadg.json_dump()
+
+
+class BodyADG_Grid(ADB_Grid):
+    
+    def __init__(self, parent, dbadg, **kwargs):
+        
+        ADB_Grid.__init__(self, parent, db_table=dbadg, can_edit=False, can_insert=False, **kwargs)
+        
+        self.dbadg = dbadg
+        adg = dbadg
+        
+        def ci(col):
+            return adg._GetFieldIndex(col, inline=True)
+        
+        self.AddColumn(adg, 'tipdat', 'TipoValore', col_width=80)
+        self.AddColumn(adg, 'riftxt', 'Rif. Testo', col_width=100, is_fittable=True)
+        self.AddColumn(adg, 'rifnum', 'Rif. Numero', col_type=self.TypeFloat(12, 4))
+        _coldat = ci('rifdat')
+        def get_date(row, col):
+            d = adg._info.rs[row][_coldat]
+            if d:
+                _y, _m, _d = map(int, d.split('-'))
+                d = Env.DateTime.Date(_y, _m, _d)
+                return adg.dita(d)
+            return ''
+        self.AddColumn(adg, 'rifdat', 'Rif. Data', col_width=80, get_cell_func=get_date)
+        
+        self.CreateGrid()
+
+
+class BodyADG_Panel(aw.Panel):
+    
+    _tipdat = None
+    _riftxt = None
+    _rifnum = None
+    _rifdat = None
+    
+    def __init__(self, *args, **kwargs):
+        self._tipdat = kwargs.pop('tipdat')
+        self._riftxt = kwargs.pop('riftxt')
+        self._rifnum = kwargs.pop('rifnum')
+        self._rifdat = kwargs.pop('rifdat')
+        aw.Panel.__init__(self, *args, **kwargs)
+        wdr.BodyBodyFtElEditFunc(self)
+        cn = self.FindWindowByName
+        tipdat = self._tipdat or ''
+        riftxt = self._riftxt or ''
+        rifnum = self._rifnum or 0
+        rifdat = self._rifdat or None
+        if rifdat:
+            if len(rifdat) != 10:
+                raise Exception("Data errata")
+            _y = int(rifdat[:4])
+            _m = int(rifdat[5:7])
+            _d = int(rifdat[8:])
+            rifdat = Env.DateTime.Date(_y, _m, _d)
+        cn('ftel_adg_tipdat').SetValue(tipdat)
+        cn('ftel_adg_riftxt').SetValue(riftxt)
+        cn('ftel_adg_rifnum').SetValue(rifnum)
+        cn('ftel_adg_rifdat').SetValue(rifdat)
+        self.Bind(wx.EVT_BUTTON, self.OnStore, cn('butok'))
+        if self._tipdat:
+            self.Bind(wx.EVT_BUTTON, self.OnDelete, cn('butdel'))
+        else:
+            cn('butdel').Hide()
+    
+    def OnStore(self, event):
+        cn = self.FindWindowByName
+        err = None
+        tipdat = cn('ftel_adg_tipdat').GetValue()
+        riftxt = cn('ftel_adg_riftxt').GetValue()
+        rifnum = cn('ftel_adg_rifnum').GetValue()
+        rifdat = cn('ftel_adg_rifdat').GetValue()
+        if not tipdat:
+            err = 'Tipo dato obbligatorio'
+        elif rifdat:
+            rifdat = rifdat.Format('%Y-%m-%d')
+        if err:
+            aw.awu.MsgDialog(self, err, style=wx.ICON_ERROR)
+        else:
+            self._tipdat = tipdat
+            self._riftxt = riftxt or None
+            self._rifnum = rifnum or None
+            self._rifdat = rifdat or None
+            event.Skip()
+    
+    def OnDelete(self, event):
+        if aw.awu.MsgDialog(self, "Confermi la cancellazione del dato gestionale ?", style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) == wx.ID_YES:
+            event.Skip()
+
+
+class BodyADG_Dialog(aw.Dialog):
+    
+    def __init__(self, *args, **kwargs):
+        _tipdat = kwargs.pop('tipdat')
+        _riftxt = kwargs.pop('riftxt')
+        _rifnum = kwargs.pop('rifnum')
+        _rifdat = kwargs.pop('rifdat')
+        kwargs['title'] = 'Dato gestionale per Fattura Elettronica'
+        aw.Dialog.__init__(self, *args, **kwargs)
+        self.panel = BodyADG_Panel(self, tipdat=_tipdat, riftxt=_riftxt, rifnum=_rifnum, rifdat=_rifdat)
+        self.AddSizedPanel(self.panel)
+        cn = self.FindWindowByName
+        size = self.GetSize()
+        self.SetSize([size[0]+1, size[1]+1])
+        self.SetSize(size)
+        self.CenterOnParent()
+        self.Bind(wx.EVT_BUTTON, self.OnStore, cn('butok'))
+        if _tipdat:
+            self.Bind(wx.EVT_BUTTON, self.OnDelete, cn('butdel'))
+        else:
+            cn('butdel').Hide()
+    
+    def OnStore(self, event):
+        self.EndModal(wx.ID_OK)
+    
+    def OnDelete(self, event):
+        self.EndModal(wx.ID_DELETE)
+    
+    def GetData(self):
+        return {'tipdat': self.panel._tipdat,
+                'riftxt': self.panel._riftxt,
+                'rifnum': self.panel._rifnum,
+                'rifdat': self.panel._rifdat}

@@ -14,6 +14,7 @@ from xml.dom.minidom import Document
 import re
 
 import os
+from magazz.dbtables import BodyFtelADG
 def opj(*x):
     return os.path.join(*x).replace('\\', '/')
 
@@ -227,6 +228,7 @@ class FatturaElettronica(dbm.DocMag):
         is_pa = len(ftel_codice) == 6
         
         xmldoc = FTEL_Document()
+        dbadg = BodyFtelADG()
         
         fat = xmldoc.createRoot(is_pa=is_pa)
         
@@ -484,8 +486,16 @@ class FatturaElettronica(dbm.DocMag):
                     body_gen_doc_prv = xmldoc.appendElement(body_gen_doc, 'DatiCassaPrevidenziale')
                     xmldoc.appendItems(body_gen_doc_prv, cp)
             
+            # 2.1.1.9 <ImportoTotaleDocumento>
             xmldoc.appendItems(body_gen_doc,
                                (('ImportoTotaleDocumento', fmt_ii(self.totimporto)),))
+            
+            if self.ftel_head_caus:
+                # 2.1.1.11 <Causale>
+                for rc in self.ftel_head_caus.split('\n'):
+                    rc = rc.strip()
+                    if rc:
+                        xmldoc.appendItems(body_gen_doc, (('Causale', rc),))
             
             # 2.1.2 <DatiOrdineAcquisto>
             v = []
@@ -500,6 +510,42 @@ class FatturaElettronica(dbm.DocMag):
             if v:
                 body_gen_acq = xmldoc.appendElement(body_gen, 'DatiOrdineAcquisto')
                 xmldoc.appendItems(body_gen_acq, v)
+            
+            if Env.Azienda.BaseTab.FTEL_DACOCO:
+                
+                if self.ftel_contr_num or self.ftel_contr_dat or self.ftel_contr_cig or self.ftel_contr_cup or self.ftel_contr_ccc:
+                    # 2.1.3 <DatiContratto>
+                    v = []
+                    if self.ftel_contr_num:
+                        v.append(('IdDocumento', self.ftel_contr_num))
+                    if self.ftel_contr_dat:
+                        v.append(('Data', data(self.ftel_contr_dat)))
+                    if self.ftel_contr_ccc:
+                        v.append(('CodiceCommessaConvenzione', self.ftel_contr_ccc))
+                    if self.ftel_contr_cup:
+                        v.append(('CodiceCUP', self.ftel_contr_cup))
+                    if self.ftel_contr_cig:
+                        v.append(('CodiceCIG', self.ftel_contr_cig))
+                    if v:
+                        body_gen_acq = xmldoc.appendElement(body_gen, 'DatiContratto')
+                        xmldoc.appendItems(body_gen_acq, v)
+                
+                if self.ftel_conve_num or self.ftel_conve_dat or self.ftel_conve_cig or self.ftel_conve_cup or self.ftel_conve_ccc:
+                    # 2.1.4 <DatiConvenzione>
+                    v = []
+                    if self.ftel_conve_num:
+                        v.append(('IdDocumento', self.ftel_conve_num))
+                    if self.ftel_conve_dat:
+                        v.append(('Data', data(self.ftel_conve_dat)))
+                    if self.ftel_conve_ccc:
+                        v.append(('CodiceCommessaConvenzione', self.ftel_conve_ccc))
+                    if self.ftel_conve_cup:
+                        v.append(('CodiceCUP', self.ftel_conve_cup))
+                    if self.ftel_conve_cig:
+                        v.append(('CodiceCIG', self.ftel_conve_cig))
+                    if v:
+                        body_gen_acq = xmldoc.appendElement(body_gen, 'DatiConvenzione')
+                        xmldoc.appendItems(body_gen_acq, v)
             
             if True:#self.config.ftel_flgddt:
                 # 2.1.8 <DatiDDT>
@@ -538,6 +584,8 @@ class FatturaElettronica(dbm.DocMag):
                 
                 _numriga = mov.numriga
                 _codart = mov.prod.codice
+                _codfor = mov.prod.codfor or ''
+                _barcode = mov.prod.barcode or ''
                 _descriz = mov.descriz or '.'
                 _qta = mov.qta
                 _prezzo = mov.prezzo
@@ -565,9 +613,20 @@ class FatturaElettronica(dbm.DocMag):
                 dati = []
                 
                 if Env.Azienda.BaseTab.FTEL_VENCOD and len(_codart or '') > 0:
-                    body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
-                    xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', 'COD'),
-                                                             ('CodiceValore', _codart)))
+                    _tipdat = Env.Azienda.BaseTab.FTEL_TIPDAT
+                    if _tipdat:
+                        if Env.Azienda.BaseTab.FTEL_TIPCOD == "P":
+                            _outcod = _codart
+                        elif Env.Azienda.BaseTab.FTEL_TIPCOD == "F":
+                            _outcod = _codfor
+                        elif Env.Azienda.BaseTab.FTEL_TIPCOD == "B":
+                            _outcod = _barcode
+                        else:
+                            raise Exception("Tipo codice errato in setup")
+                        if _outcod:
+                            body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
+                            xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', _tipdat),
+                                                                     ('CodiceValore', _outcod)))
                 
                 dati.append(('Descrizione', _descriz))
                 
@@ -603,6 +662,19 @@ class FatturaElettronica(dbm.DocMag):
                         dati.append(('Natura', tabiva.ftel_natura))
                     if self.ftel_rifamm:
                         dati.append(('RiferimentoAmministrazione', self.ftel_rifamm))
+                    
+                    if mov.ftel_adg:
+                        dbadg.json_load(mov)
+                        for _ in dbadg:
+                            adg = xmldoc.appendElement(body_det_row, 'AltriDatiGestionali')
+                            adgpar = [('TipoDato', dbadg.tipdat)]
+                            if dbadg.riftxt:
+                                adgpar.append(('RiferimentoTesto', dbadg.riftxt))
+                            if dbadg.rifnum:
+                                adgpar.append(('RiferimentoNumero', fmt_pr(dbadg.rifnum, 4)))
+                            if dbadg.rifdat:
+                                adgpar.append(('RiferimentoData', dbadg.rifdat)) # gia' stringa in formato %Y-%m-%d
+                            xmldoc.appendItems(adg, adgpar)
                 
                 xmldoc.appendItems(body_det_row, dati)
 
@@ -616,9 +688,20 @@ class FatturaElettronica(dbm.DocMag):
                     dati = []
                     
                     if Env.Azienda.BaseTab.FTEL_VENCOD and len(_codart or '') > 0:
-                        body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
-                        xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', 'COD'),
-                                                                 ('CodiceValore', _codart)))
+                        _tipdat = Env.Azienda.BaseTab.FTEL_TIPDAT
+                        if _tipdat:
+                            if Env.Azienda.BaseTab.FTEL_TIPCOD == "P":
+                                _outcod = _codart
+                            elif Env.Azienda.BaseTab.FTEL_TIPCOD == "F":
+                                _outcod = _codfor
+                            elif Env.Azienda.BaseTab.FTEL_TIPCOD == "B":
+                                _outcod = _barcode
+                            else:
+                                raise Exception("Tipo codice errato in setup")
+                            if _outcod:
+                                body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
+                                xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', _tipdat),
+                                                                         ('CodiceValore', _outcod)))
                     
                     dati.append(('Descrizione', _descriz))
                     
