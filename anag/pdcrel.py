@@ -1727,6 +1727,7 @@ class _CliForPanel(_PdcRelPanel, DatiBancariMixin):
             newc = '1'
         r = [None] * len(get_desfields())
         r[RSDES_CODICE] = newc
+        self.rsdes.append(r)
         if len(self.rsdes) == 1:
             self.rsdes[0][RSDES_PREF] = 1
     
