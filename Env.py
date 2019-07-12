@@ -2870,7 +2870,7 @@ class Azienda(object):
                 [ "desevarif",  "TINYINT",  1, None, "Flag descrizione riga documento evaso basata su dati riferimento", None ],
                 [ "ftel_tipdoc","CHAR",     4, None, "Fattura elettronica: Tipo documento", None ], 
                 [ "ftel_layout","CHAR",    16, None, "Fattura elettronica: Formato di stampa", None ], 
-                [ "ftel_flgddt","TINYINT",  1, None, "Flag per Documento di Trasporto", None ], ]
+                [ "ftel_flgddt","TINYINT",  1, None, "Flag non mettere riferimento ai ddt in file xml", None ], ]
             
             cls.set_constraints(cls.TABNAME_CFGMAGDOC,
                                 ((cls.TABSETUP_CONSTR_PDCTIP,    'id_pdctip',  cls.TABCONSTRAINT_TYPE_NOACTION),

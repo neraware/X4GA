@@ -627,7 +627,7 @@ class FtDif(adb.DbTable):
                     for field in bodyfields:
                         setattr(new.mov, field, getattr(mov, field))
                     new.mov.id_doc = None
-                    new.mov.id_moveva = mov.id
+#                     new.mov.id_moveva = mov.id
                     if not mov.MoveNext():
                         break
                 

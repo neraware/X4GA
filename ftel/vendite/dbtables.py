@@ -547,7 +547,7 @@ class FatturaElettronica(dbm.DocMag):
                         body_gen_acq = xmldoc.appendElement(body_gen, 'DatiConvenzione')
                         xmldoc.appendItems(body_gen_acq, v)
             
-            if True:#self.config.ftel_flgddt:
+            if not self.config.ftel_flgddt:
                 # 2.1.8 <DatiDDT>
                 ddt = dbm.DocMag()
                 ddt.ClearOrders()
