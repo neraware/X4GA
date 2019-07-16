@@ -828,6 +828,8 @@ class IntAliqIvaPanel(wx.Panel):
                               ("reg.id",     "<=%s", "numreg2"),\
                               ("reg.datreg", ">=%s", "datreg1"),\
                               ("reg.datreg", "<=%s", "datreg2"),\
+                              ("reg.datdoc", ">=%s", "datdoc"),\
+                              ("reg.datdoc", "<=%s", "datdoc"),\
                               ("reg.numdoc", ">=%s", "numdoc1"),\
                               ("reg.numdoc", "<=%s", "numdoc2"),\
                               ("reg.numiva", ">=%s", "numpro1"),\

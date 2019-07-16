@@ -139,7 +139,7 @@ ID_CTRPDCTIP = 16004
 ID_NUMDOC = 16005
 ID_DATDOC = 16006
 ID_RADIOBOX = 16007
-ID_FTEL_FLGDDT = 16008
+ID_FTEL_NODDT = 16008
 ID_TEXTCTRL = 16009
 ID_CTRNUM = 16010
 ID_AGGNUM = 16011
@@ -260,8 +260,8 @@ def Doc1Func( parent, call_fit = True, set_sizer = True ):
     item20 = wx.StaticBox( parent, -1, "Riferimento ai DDT" )
     item19 = wx.StaticBoxSizer( item20, wx.HORIZONTAL )
     
-    item21 = CheckBox( parent, ID_FTEL_FLGDDT, "Non mettere i riferimenti ai DDT se doc. differito", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item21.SetName( "ftel_flgddt" )
+    item21 = CheckBox( parent, ID_FTEL_NODDT, "Non mettere i riferimenti ai DDT se doc. differito", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item21.SetName( "ftel_noddt" )
     item19.Add( item21, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 
     item17.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )

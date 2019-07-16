@@ -29,6 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.64', dt.Date(2019, 7, 16), (
+         ("BET4267",
+         """Inserito flag in configurazione documento per evitare i riferimenti ai documenti acquisiti in file xml fattura, nel caso si usi la fatturazione differita per raggruppare documenti non ddt."""),
+        ),),
+    
+    ('1.9.63', dt.Date(2019, 7, 1), (
+         ("BUG1223",
+         """Corretto inserimento nuovi destinatari."""),
+        ),),
+    
     ('1.9.62', dt.Date(2019, 7, 1), (
          ("BUG1222",
          """Corretta identificazione aliquote iva in acquisizione xml f.e. acquisto, vengono esclude aliquote per split payment e in caso di reverse charge vengono considerate solo le aliquote con percentuali di calcolo iva non zero."""),
