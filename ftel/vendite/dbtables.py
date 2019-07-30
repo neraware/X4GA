@@ -662,22 +662,22 @@ class FatturaElettronica(dbm.DocMag):
                         dati.append(('Natura', tabiva.ftel_natura))
                     if self.ftel_rifamm:
                         dati.append(('RiferimentoAmministrazione', self.ftel_rifamm))
-                    
-                    if mov.ftel_adg:
-                        dbadg.json_load(mov)
-                        for _ in dbadg:
-                            adg = xmldoc.appendElement(body_det_row, 'AltriDatiGestionali')
-                            adgpar = [('TipoDato', dbadg.tipdat)]
-                            if dbadg.riftxt:
-                                adgpar.append(('RiferimentoTesto', dbadg.riftxt))
-                            if dbadg.rifnum:
-                                adgpar.append(('RiferimentoNumero', fmt_pr(dbadg.rifnum, 4)))
-                            if dbadg.rifdat:
-                                adgpar.append(('RiferimentoData', dbadg.rifdat)) # gia' stringa in formato %Y-%m-%d
-                            xmldoc.appendItems(adg, adgpar)
                 
                 xmldoc.appendItems(body_det_row, dati)
 
+                if mov.ftel_adg:
+                    dbadg.json_load(mov)
+                    for _ in dbadg:
+                        adg = xmldoc.appendElement(body_det_row, 'AltriDatiGestionali')
+                        adgpar = [('TipoDato', dbadg.tipdat)]
+                        if dbadg.riftxt:
+                            adgpar.append(('RiferimentoTesto', dbadg.riftxt))
+                        if dbadg.rifnum:
+                            adgpar.append(('RiferimentoNumero', fmt_pr(dbadg.rifnum, 4)))
+                        if dbadg.rifdat:
+                            adgpar.append(('RiferimentoData', dbadg.rifdat)) # gia' stringa in formato %Y-%m-%d
+                        xmldoc.appendItems(adg, adgpar)
+                
                 if mov.config.tipologia == "E":
                     #body dettaglio linea aggiunta x sconto merce
                     
