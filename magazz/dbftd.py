@@ -236,8 +236,8 @@ class FtDif(adb.DbTable):
         
         dr.ClearOrders()
         dr.AddOrder('pdc.descriz')
-        dr.AddOrder('docrag.ftel_codcig')
-        dr.AddOrder('docrag.ftel_codcup')
+        dr.AddOrder('COALESCE(docrag.ftel_codcig,"")')
+        dr.AddOrder('COALESCE(docrag.ftel_codcup,"")')
         if dg._sepmp:
             dr.AddOrder('modpag.descriz')
         if dg._sepdest:
@@ -291,10 +291,15 @@ class FtDif(adb.DbTable):
             if value:
                 dr.AddFilter('%s.%s%s%%s' % (anag, field, op), value)
         
-        for field, value in (('f_acq', self.docrag._esclacq),
-                             ('f_ann', self.docrag._esclann)):
-            if value:
-                dr.AddFilter('docrag.%s<>1' % field)
+#         for field, value in (('f_acq', self.docrag._esclacq),
+#                              ('f_ann', self.docrag._esclann)):
+#             if value:
+#                 dr.AddFilter('docrag.%s<>1' % field)
+        
+        if self.docrag._esclacq:
+            dr.AddFilter('(docrag.f_acq IS NULL OR docrag.f_acq<>1)')
+        if self.docrag._esclann:
+            dr.AddFilter('(docrag.f_ann IS NULL OR docrag.f_ann<>1)')
         
         if self.f_tipopdc in ['A', 'E']:
             if self.f_tipopdc == 'A':
