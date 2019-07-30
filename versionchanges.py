@@ -29,13 +29,16 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.65', dt.Date(2019, 7, 16), (
-         ("BUG1224",
-         """Corretto il posizionamento del blocco altri dati gestionali nel corpo dettaglio file xml fattura."""),
+    ('1.9.66', dt.Date(2019, 7, 30), (
          ("BUG1225",
          """Corretta interrogazione utilizzo aliquota iva."""),
          ("BUG1226",
          """Corretta fatturazione differita, la presenza di campi codice cig e codice cup nulli piuttosto che compilati senza dati in modo diverso, causando la mgenerazione di piu' documenti del dovuto a parita' di cliente."""),
+        ),),
+    
+    ('1.9.65', dt.Date(2019, 7, 16), (
+         ("BUG1224",
+         """Corretto il posizionamento del blocco altri dati gestionali nel corpo dettaglio file xml fattura."""),
         ),),
     
     ('1.9.64', dt.Date(2019, 7, 16), (
