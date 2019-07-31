@@ -288,7 +288,8 @@ class FatturaElettronica(dbm.DocMag):
         cedente_datianag_datifisc = xmldoc.appendElement(cedente_datianag, 'IdFiscaleIVA')
         xmldoc.appendItems(cedente_datianag_datifisc, (('IdPaese',  Env.Azienda.stato or "IT"),
                                                        ('IdCodice', Env.Azienda.piva)))
-        if Env.Azienda.codfisc:
+#         if Env.Azienda.codfisc:
+        if Env.Azienda.codfisc and Env.Azienda.codfisc != Env.Azienda.piva:
             # 1.2.1.2 <CodiceFiscale>
             xmldoc.appendItems(cedente_datianag, (('CodiceFiscale', Env.Azienda.codfisc),))
         
@@ -371,9 +372,13 @@ class FatturaElettronica(dbm.DocMag):
             cessionario_datianag_idf = xmldoc.appendElement(cessionario_datianag, 'IdFiscaleIVA')
             xmldoc.appendItems(cessionario_datianag_idf, (('IdPaese',  cli.nazione or 'IT'),
                                                           ('IdCodice', cli.piva)),)
-        if cli.nazione == 'IT' or len(cli.nazione or '') == 0:
+#         if cli.nazione == 'IT' or len(cli.nazione or '') == 0:
+#             # 1.4.1.2 <CodiceFiscale>
+#             xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc or cli.piva),))
+#         
+        if cli.codfisc and cli.codfisc != cli.piva:
             # 1.4.1.2 <CodiceFiscale>
-            xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc or cli.piva),))
+            xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc),))
         
         # 1.4.1.3 <Anagrafica>
         cessionario_datianag_anagraf = xmldoc.appendElement(cessionario_datianag, 'Anagrafica')

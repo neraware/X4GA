@@ -27,6 +27,7 @@ import awc.controls.windows as aw
 import Env
 import erman_wdr as wdr
 import httplib, mimetypes
+import requests
 
 
 def ErrorWarning(e, tb_info=None):
@@ -193,7 +194,6 @@ class X4ErrorPanel(wx.Panel):
         event.Skip()
     
     def SendTraceback(self):
-        import urllib2, base64
         server = Env.Azienda.config.Updates_url
         if not server.endswith('/'):
             server += '/'
@@ -206,25 +206,19 @@ class X4ErrorPanel(wx.Panel):
         fd = open(self.err.filename, 'rb')
         data = {'traceback_file' : fd,}
         cfg = Env.Azienda.config
-        string = '%s:%s' % (cfg.Updates_user, cfg.Updates_pswd)
-        stringb64 = base64.encodestring(string)[:-1]
         wait = aw.awu.WaitDialog(self, message="Connessione in corso...",
                                  maximum=2)
-        req = urllib2.Request(url, data, {"Authorization": "Basic %s" % stringb64})
         wait.SetValue(1)
         err = None
         try:
             wait.SetMessage("Trasmissione dettagli problema in corso...")
-            u = urllib2.urlopen(req)
+            r = requests.post(url, auth=(cfg.Updates_user, cfg.Updates_pswd), files=data)
             wait.SetValue(2)
             wx.Sleep(1)
-            r = u.read()
-            if (r or '  ')[:2] != "OK":
-                err = r
-        except urllib2.HTTPError, errobj:
-            err = "HTTPError %s" % errobj.code
-        except:
-            pass
+            if r.content != "OK":
+                err = r.content
+        except Exception, e:
+            err = repr(e.args)
         wait.Destroy()
         if err:
             aw.awu.MsgDialog(self, message="Trasmissione non riuscita:\n%s" % err)

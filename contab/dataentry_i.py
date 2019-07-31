@@ -1026,21 +1026,29 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                             aliqiva.ClearFilters()
                             aliqiva.Reset()
                             
-                            if fornit.id_aliqiva:
-                                
+                            if tiva.natura == "N6":
+                                #reverse charge, cerco automatismo aliquota iva defaut
+                                aut = adb.DbTable('cfgautom', 'auto')
+                                if aut.Retrieve('auto.codice=%s', 'magivadef') and aut.OneRow():
+                                    aliqiva.Get(aut.aut_id)
+                            
+                            if aliqiva.IsEmpty() and fornit.id_aliqiva:
+                                #aliquota iva specificata sul fornitore
                                 aliqiva.Get(fornit.id_aliqiva)
                                 if aliqiva.perciva != tiva.aliqiva:
                                     aliqiva.Reset()
                             
                             if aliqiva.IsEmpty():
-                                
+                                #aliquota iva non ancora identificata
                                 if tiva.aliqiva:
+                                    #cerco aliquota con percentuale di calcolo uguale a quanto presente nell'xml
                                     aliqiva.AddFilter('(aliqiva.perciva=%s AND aliqiva.percind=0)', tiva.aliqiva)
                                 else:
                                     if tiva.natura == "N6":
                                         #reverse charge, filtro aliquote con calcolo > 0
                                         aliqiva.AddFilter('(aliqiva.perciva<>0 AND aliqiva.percind=0)')
                                     else:
+                                        #aliquota senza percentuale e non reverse charge
                                         aliqiva.AddFilter('aliqiva.perciva=0')
                                 aliqiva.AddFilter('aliqiva.tipo<>"S"')
                                 aliqiva.Retrieve()
@@ -1059,6 +1067,11 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                                                 None,             #RSDET_NOTE
                                                 0,                #RSDET_RIGAPI
                                                 0])               #RSDET_SOLOCONT
+                        
+                        if info.docinfo.ritacc:
+                            msg = """Attenzione: Il documento è soggetto a ritenuta d'acconto per un valore di %s.\n"""\
+                                  """Verificare i valori della registrazione prima di confermarla.""" % info.sepnvi(info.docinfo.ritacc)
+                            aw.awu.MsgDialog(self, msg, style=wx.ICON_WARNING)
                         
                         self.ftel_acq_acquis()
                         
@@ -1368,13 +1381,17 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             cmd = "UPDATE contab_h SET ftel_xml=%s, sm_link=%s WHERE id=%s"
             db = adb.db.get_db()
             db.Execute(cmd, (info.filename, n_datric, self.reg_id))
-            self.ftel_acq_savefiles()
-            aw.awu.MsgDialog(self, "Documento acquisito", style=wx.ICON_INFORMATION)
+            if self.ftel_acq_savefiles():
+                aw.awu.MsgDialog(self, "Documento acquisito", style=wx.ICON_INFORMATION)
+            else:
+                aw.awu.MsgDialog(self, "Il documento è acquisito, ma si è verificato un problema durante la scrittura dei files allegati.\nControllare la connessione della rete al server.", style=wx.ICON_WARNING)
             self.GetParent().EndModal(wx.ID_OK)
         
         return out
     
     def ftel_acq_savefiles(self):
+        
+        out = True
         
         # memorizza nella tabella allegati il file xml
         
@@ -1398,6 +1415,8 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                 os.mkdir(path)
             except:
                 out = False
+        if not out:
+            return False
         filename = opj(path, self.ftel_acq_info.filename)
         att.file = filename.split('/')[-1]
         att.size = len(stream)

@@ -29,7 +29,23 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.66', dt.Date(2019, 7, 30), (
+    ('1.9.68', dt.Date(2019, 7, 30), (
+         ("BUG1226",
+         """Modificata funzionalità invio rapporto problema."""),
+        ),),
+    
+    ('1.9.67', None, (
+         ("BET4268",
+         """Inserito automatismo aliquota iva di default in acquisizione xml se natura aliquota N6 rev.charge."""),
+         ("BET4269",
+         """Introdotto controllo e segnalazione presenza ritenuta d'acconto in acquisizione xml."""),
+         ("BET4270",
+         """Introdotto controllo esito memorizzazione files allegati in acquisizione file xml."""),
+         ("BET4271",
+         """Adeguato il file xml ai controlli conformi alle specifiche del formato fattura pa 1.2.2, il codice fiscale del cliente viene messo solo se compilato e diverso dalla partita iva; stessa implementazione anche sui dati dell'azienda che emette il documento."""),
+        ),),
+    
+    ('1.9.66', None, (
          ("BUG1225",
          """Corretta interrogazione utilizzo aliquota iva."""),
          ("BUG1226",
