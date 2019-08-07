@@ -497,7 +497,10 @@ class DbRegCon(adb.DbTable,
             pcf.AddFilter("pcf.imppar=0")
             if pcf.Retrieve():
                 for p in pcf:
-                    p.DeleteRow()
+                    check = adb.DbTable('contab_s', 'scad')
+                    check.Retrieve('scad.id_pcf=%s' % pcf.id)
+                    if check.IsEmpty():
+                        p.DeleteRow()
                 pcf.Save()
         del pcf
         #self.scad.UpdatePcfStorni()

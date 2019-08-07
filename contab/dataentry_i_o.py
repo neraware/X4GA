@@ -171,6 +171,7 @@ class ContabPanelTipo_I_O(ctbi.ContabPanelTipo_I):
         row = len(self.regrsb)-1
         if self.regrsb[row][ctb.RSDET_ALIQ_ID]:
             self.UpdateIvaFromDav()
+            self.CheckQuadraturaIVA_DA()
     
     def InitPanelBody( self ):
         ctbi.ContabPanelTipo_I.InitPanelBody(self)

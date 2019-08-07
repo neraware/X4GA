@@ -29,6 +29,13 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.69', None, (
+         ("BUG1227",
+         """Eliminazione partita dopo storno se importi a zero e nessun riferimento nelle scadenze delle registrazioni."""),
+         ("BUG1228",
+         """Risolto problema di segnalazione squadratura in registrazioni iva ricorrendo al pareggiamento riga."""),
+        ),),
+    
     ('1.9.68', dt.Date(2019, 7, 30), (
          ("BUG1226",
          """Modificata funzionalità invio rapporto problema."""),
