@@ -330,7 +330,7 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
             
             return
         
-        raise Exception(resp['error'])
+#         raise Exception(resp['error'])
 
 
 class RigheDbMem(adb.DbMem):
