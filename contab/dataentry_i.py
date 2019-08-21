@@ -1785,12 +1785,12 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
         if src.IsEmpty():
             return True
         msg = \
-            """Esiste già una registrazione su questo registro IVA,\n"""\
-            """facente capo alla stessa anagrafica e con lo stesso\n"""\
-            """numero di documento:\n\n"""
-        msg += """%s %s n.%s del %s,\nregistrato il %s,\n%s %s\n\n"""\
+            u"""Esiste già una registrazione su questo registro IVA,\n"""\
+            u"""facente capo alla stessa anagrafica e con lo stesso\n"""\
+            u"""numero di documento:\n\n"""
+        msg += u"""%s %s n.%s del %s,\nregistrato il %s,\n%s %s\n\n"""\
             % (src.caus.codice, src.caus.descriz, src.numdoc, src.dita(src.datdoc), src.dita(src.datreg), src.body.pdcpa.codice, src.body.pdcpa.descriz)
-        msg += """Confermi comunque la scrittura di questa registrazione?"""
+        msg += u"""Confermi comunque la scrittura di questa registrazione?"""
         stl = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
         return awu.MsgDialog(self, msg, style=stl) == wx.ID_YES
     
