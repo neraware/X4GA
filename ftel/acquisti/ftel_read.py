@@ -170,7 +170,10 @@ class _FTEL_Head(object):
 #                 t = Decimal(str(r.prezzo)).as_tuple()
 #                 if t.digits[1] != 0:
 #                     ndp = max(ndp, abs(t.exponent))
-                ndp = max(ndp, len(str(r.prezzo))-str(r.prezzo).index('.')+1)
+                try:
+                    ndp = max(ndp, len(str(r.prezzo))-(str(r.prezzo).index('.')+1))
+                except:
+                    pass
         return ndq, ndp
     
     def get_totale_imponibile(self):
