@@ -1105,8 +1105,13 @@ class MagazzPanel(aw.Panel,\
                     err = "è antecedente l'ultima stampa definitiva del registro iva"
             if err:
                 err = 'La registrazione contabile derivante da questo documento\n%s' % err
-        if not err and doc.ftel_eeb_status and doc.ftel_eeb_status in "CMTZ":
-            err = 'Documento già consegnato a SDI'
+        if not err and doc.ftel_eeb_status:
+            if doc.ftel_eeb_status in "CMTZ":
+                err = 'Documento già consegnato a SDI'
+            elif doc.ftel_eeb_status == "A":
+                err = 'Documento in attesa di responso da gateway'
+            elif doc.ftel_eeb_status == "Q":
+                err = 'Documento in attesa di responso da SDI'
         if not err and not Env.Azienda.Login.userdata.amministratore:  # @UndefinedVariable
             if doc.f_ann and doc.f_acq:
                 err = "Documento annullato e acquisito, impossibile modificare"
@@ -2354,7 +2359,7 @@ class MagazzPanel(aw.Panel,\
             if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:
                 return False
         status = self.FindWindowByName('ftel_eeb_status').GetValue() or 'x'
-        if status in "CM" and self.status == STATUS_EDITING:
+        if status in "CMTZAQ" and self.status == STATUS_EDITING:
             err = "Attenzione: memorizzando con queto status fattura elettronica, il documento non potrà più essere modificato."
             err += '\n\nProseguo comunque ?'
             if aw.awu.MsgDialog(self, err, style=wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT) != wx.ID_YES:

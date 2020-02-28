@@ -108,7 +108,7 @@ class NotifichePanel(ExportPanel):
             col = self.dbdocs._GetFieldIndex('id', inline=True)
             docids = [r[col] for r in self.dbdocs._info.rs]
             
-            wait = aw.awu.WaitDialog(self, title="Trasmissione in corso...", maximum=len(docids))
+            wait = aw.awu.WaitDialog(self, title="Ricezione in corso...", maximum=len(docids))
             try:
                 doc = dbfe.FatturaElettronica()
                 for n, id_doc in enumerate(docids):

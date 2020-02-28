@@ -296,6 +296,7 @@ class FTEL(object):
         dom = minidom.parse(f)
         f.close()
         
+        self.dom_ftel = None
         for node in dom.childNodes:
             if node.nodeName.endswith('FatturaElettronica'):
                 self.dom_ftel = node

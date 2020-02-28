@@ -237,8 +237,8 @@ class XApp(wx.App):
         self.version_problems = version_problems
         if version_problems:
             msg =\
-            """Attenzione!!!\n\n"""\
-            """C'è qualcosa di non aggiornato nel software che usi:\n\n"""
+            u"""Attenzione!!!\n\n"""\
+            """C'e' qualcosa di non aggiornato nel software che usi:\n\n"""
             for name, verprg, verdb in version_problems:
                 msg += "%s: v. software in uso=%s, database aggiornato a v.%s\n" % (name, verprg, verdb)
             msg +=\

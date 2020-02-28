@@ -176,7 +176,8 @@ class _BilGrid(dbglib.DbGridColoriAlternati):
             f.DisplayTab('mastro')
             cn = lambda w, x: w.FindWindowByName(x)
             for cnbil, cnmas in (('datreg1', 'masdatini'),
-                                 ('datreg2', 'masdatmov')):
+                                 ('datreg2', 'masdatmov'),
+                                 ('compiva', 'masuse_datope')):
                 d = cn(win, cnbil).GetValue()
                 if d: cn(f, cnmas).SetValue(d)
             e = cn(win, 'eserc').GetValue()
@@ -739,6 +740,7 @@ class _BilPanel(aw.Panel):
                           self.FindWindowById(x).GetValue(), (wdr.ID_ESERC,
                                                               wdr.ID_DATREG1,
                                                               wdr.ID_DATREG2))
+        compiva = cn('compiva').IsChecked()
         
         if ese is None:
             aw.awu.MsgDialog(self, "Nessun esercizio presente", style=wx.ICON_ERROR)
@@ -806,13 +808,20 @@ class _BilPanel(aw.Panel):
                         b.AddFilter(f, ese)
                     val = cn('datreg2').GetValue()
                     if val:
-                        b.AddFilter('reg.datreg<=%s', val)
+                        if compiva:
+                            b.AddFilter('IF(reg.datope IS NULL, reg.datreg, reg.datope)<=%s', val)
+                        else:
+                            b.AddFilter('reg.datreg<=%s', val)
                 else:
                     #di periodo
-                    for name, expr in (('datreg1', 'reg.datreg>=%s'),
-                                       ('datreg2', 'reg.datreg<=%s')):
+                    for name, expr_reg, expr_ope in (('datreg1', 'reg.datreg>=%s', 'IF(reg.datope IS NULL, reg.datreg, reg.datope)>=%s'),
+                                                     ('datreg2', 'reg.datreg<=%s', 'IF(reg.datope IS NULL, reg.datreg, reg.datope)<=%s')):
                         val = cn(name).GetValue()
                         if val:
+                            if compiva:
+                                expr = expr_ope
+                            else:
+                                expr = expr_reg
                             b.AddFilter(expr, val)
             
             for name, expr in (('mas1',    'pdc.id_bilmas>=%s'),

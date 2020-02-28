@@ -895,10 +895,11 @@ class FatturaElettronica(dbm.DocMag):
                 loop = False
         
         #genero file xml dei documenti elaborati
-        stream = unicode(xmldoc.toprettyxml(encoding="utf-8"))
+#         stream = unicode(xmldoc.toprettyxml(encoding="utf-8"))
+        stream = xmldoc.toprettyxml(encoding="utf-8")
         text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)    
         stream = text_re.sub('>\g<1></', stream)
-        stream = stream.replace("’", "'")
+#         stream = stream.replace("’", "'")
         n = stream.index('>')+1
         stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.2.xsl"?>' + stream[n:]
         
@@ -995,8 +996,8 @@ class FatturaElettronica(dbm.DocMag):
         client = self.gateway_get_client()
         username = Env.Azienda.BaseTab.FTEL_EEB_USER
         password = hashlib.sha256(unicode(Env.Azienda.BaseTab.FTEL_EEB_PSWD)).hexdigest()
-        if filename.lower().endswith('.xml'):
-            xml_stream = unicode(xml_stream).encode('utf-8')
+#         if filename.lower().endswith('.xml'):
+#             xml_stream = unicode(xml_stream).encode('utf-8')
         xml_b64 = base64.encodestring(xml_stream)#unicode(xml_stream).encode('utf-8'))
         info = xml_b64+unicode(password).encode('utf-8')
         filehash = hashlib.sha256(info).hexdigest()

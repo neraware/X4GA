@@ -70,32 +70,33 @@ ID_ESERCLABEL = 14001
 ID_ESERC = 14002
 ID_SALEP = 14003
 ID_TEXT = 14004
-ID_PERIODO = 14005
-ID_LINE = 14006
-ID_LABDATREG = 14007
-ID_DATREG1 = 14008
-ID_DATREG2 = 14009
-ID_LABMAS = 14010
-ID_MAS1 = 14011
-ID_MAS2 = 14012
-ID_LABCON = 14013
-ID_CON1 = 14014
-ID_CON2 = 14015
-ID_LABTIP = 14016
-ID_TIP1 = 14017
-ID_TIP2 = 14018
-ID_PDC1 = 14019
-ID_PDC2 = 14020
-ID_WARNING = 14021
-ID_TIPORD = 14022
-ID_PANEL = 14023
-ID_DETCLIFOR = 14024
-ID_DETNOZERO = 14025
-ID_INCLAPE = 14026
-ID_INCLCHI = 14027
-ID_BTNUPD = 14028
-ID_BTNPRINT = 14029
-ID_PANGRIDS = 14030
+ID_COMPIVA = 14005
+ID_PERIODO = 14006
+ID_LINE = 14007
+ID_LABDATREG = 14008
+ID_DATREG1 = 14009
+ID_DATREG2 = 14010
+ID_LABMAS = 14011
+ID_MAS1 = 14012
+ID_MAS2 = 14013
+ID_LABCON = 14014
+ID_CON1 = 14015
+ID_CON2 = 14016
+ID_LABTIP = 14017
+ID_TIP1 = 14018
+ID_TIP2 = 14019
+ID_PDC1 = 14020
+ID_PDC2 = 14021
+ID_WARNING = 14022
+ID_TIPORD = 14023
+ID_PANEL = 14024
+ID_DETCLIFOR = 14025
+ID_DETNOZERO = 14026
+ID_INCLAPE = 14027
+ID_INCLCHI = 14028
+ID_BTNUPD = 14029
+ID_BTNPRINT = 14030
+ID_PANGRIDS = 14031
 
 def BilancioFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -140,14 +141,18 @@ def BilancioFunc( parent, call_fit = True, set_sizer = True ):
     item12 = wx.StaticText( parent, ID_TEXT, "Da", wx.DefaultPosition, wx.DefaultSize, 0 )
     item11.Add( item12, 0, wx.ALIGN_BOTTOM|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item13 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item13 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
     item14 = wx.StaticText( parent, ID_TEXT, "A", wx.DefaultPosition, wx.DefaultSize, 0 )
     item13.Add( item14, 0, wx.ALIGN_BOTTOM|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item15 = RCheckBox( parent, ID_PERIODO, "Periodo", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item15.SetName( "periodo" )
+    item15 = RCheckBox( parent, ID_COMPIVA, "Usa competenza IVA", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item15.SetName( "compiva" )
     item13.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item16 = RCheckBox( parent, ID_PERIODO, "Periodo", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item16.SetName( "periodo" )
+    item13.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
     item13.AddGrowableCol( 0 )
 
@@ -155,58 +160,58 @@ def BilancioFunc( parent, call_fit = True, set_sizer = True ):
 
     item11.Add( [ 20, 1 ] , 0, wx.ALIGN_CENTER, 5 )
 
-    item16 = wx.StaticLine( parent, ID_LINE, wx.DefaultPosition, [20,-1], wx.LI_HORIZONTAL )
-    item11.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
-
     item17 = wx.StaticLine( parent, ID_LINE, wx.DefaultPosition, [20,-1], wx.LI_HORIZONTAL )
     item11.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item18 = wx.StaticText( parent, ID_LABDATREG, "Registrazioni:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item11.Add( item18, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item18 = wx.StaticLine( parent, ID_LINE, wx.DefaultPosition, [20,-1], wx.LI_HORIZONTAL )
+    item11.Add( item18, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item19 = DateCtrl( parent, ID_DATREG1, "", wx.DefaultPosition, [80,-1], 0 )
-    item19.SetName( "datreg1" )
-    item11.Add( item19, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item19 = wx.StaticText( parent, ID_LABDATREG, "Registrazioni:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11.Add( item19, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item20 = DateCtrl( parent, ID_DATREG2, "", wx.DefaultPosition, [80,-1], 0 )
-    item20.SetName( "datreg2" )
+    item20 = DateCtrl( parent, ID_DATREG1, "", wx.DefaultPosition, [80,-1], 0 )
+    item20.SetName( "datreg1" )
     item11.Add( item20, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item21 = wx.StaticText( parent, ID_LABMAS, "Mastro:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item11.Add( item21, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item21 = DateCtrl( parent, ID_DATREG2, "", wx.DefaultPosition, [80,-1], 0 )
+    item21.SetName( "datreg2" )
+    item11.Add( item21, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item22 = LinkTable(parent, ID_MAS1 ); item22.SetDataLink(bilmas_table, "mas1", bilmas_dialog)
-    item11.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item22 = wx.StaticText( parent, ID_LABMAS, "Mastro:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11.Add( item22, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item23 = LinkTable(parent, ID_MAS2 ); item23.SetDataLink( bilmas_table, "mas2", bilmas_table)
+    item23 = LinkTable(parent, ID_MAS1 ); item23.SetDataLink(bilmas_table, "mas1", bilmas_dialog)
     item11.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item24 = wx.StaticText( parent, ID_LABCON, "Conto:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item11.Add( item24, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item24 = LinkTable(parent, ID_MAS2 ); item24.SetDataLink( bilmas_table, "mas2", bilmas_table)
+    item11.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item25 = LinkTable(parent, ID_CON1 ); item25.SetDataLink(bilcon_table, "con1", bilcon_dialog)
-    item11.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item25 = wx.StaticText( parent, ID_LABCON, "Conto:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11.Add( item25, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item26 = LinkTable(parent, ID_CON2 ); item26.SetDataLink(bilcon_table, "con2", bilcon_dialog)
+    item26 = LinkTable(parent, ID_CON1 ); item26.SetDataLink(bilcon_table, "con1", bilcon_dialog)
     item11.Add( item26, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item27 = wx.StaticText( parent, ID_LABTIP, "Tipo:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item11.Add( item27, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item27 = LinkTable(parent, ID_CON2 ); item27.SetDataLink(bilcon_table, "con2", bilcon_dialog)
+    item11.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item28 = LinkTable(parent, ID_TIP1 ); item28.SetDataLink( bt.TABNAME_PDCTIP, "tip1", PdcTipDialog)
-    item11.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item28 = wx.StaticText( parent, ID_LABTIP, "Tipo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11.Add( item28, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item29 = LinkTable(parent, ID_TIP2 ); item29.SetDataLink( bt.TABNAME_PDCTIP, "tip2", PdcTipDialog)
+    item29 = LinkTable(parent, ID_TIP1 ); item29.SetDataLink( bt.TABNAME_PDCTIP, "tip1", PdcTipDialog)
     item11.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item30 = wx.StaticText( parent, ID_LABTIP, "Sottoconto:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item11.Add( item30, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item30 = LinkTable(parent, ID_TIP2 ); item30.SetDataLink( bt.TABNAME_PDCTIP, "tip2", PdcTipDialog)
+    item11.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item31 = LinkTable(parent, ID_PDC1 ); item31.SetDataLink( bt.TABNAME_PDC, "pdc1", PdcDialog)
-    item11.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item31 = wx.StaticText( parent, ID_LABTIP, "Sottoconto:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11.Add( item31, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item32 = LinkTable(parent, ID_PDC2 ); item32.SetDataLink( bt.TABNAME_PDC, "pdc2", PdcDialog)
+    item32 = LinkTable(parent, ID_PDC1 ); item32.SetDataLink( bt.TABNAME_PDC, "pdc1", PdcDialog)
     item11.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item33 = LinkTable(parent, ID_PDC2 ); item33.SetDataLink( bt.TABNAME_PDC, "pdc2", PdcDialog)
+    item11.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item11.AddGrowableCol( 1 )
 
@@ -220,97 +225,97 @@ def BilancioFunc( parent, call_fit = True, set_sizer = True ):
 
     item2.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.TOP, 5 )
 
-    item33 = wx.StaticText( parent, ID_WARNING, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item33.SetForegroundColour( wx.RED )
-    item33.SetFont( wx.Font( 13, wx.ROMAN, wx.NORMAL, wx.BOLD ) )
-    item33.SetName( "warning" )
-    item2.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item34 = wx.StaticText( parent, ID_WARNING, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item34.SetForegroundColour( wx.RED )
+    item34.SetFont( wx.Font( 13, wx.ROMAN, wx.NORMAL, wx.BOLD ) )
+    item34.SetName( "warning" )
+    item2.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
     item2.AddGrowableCol( 0 )
 
     item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item34 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item35 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item35 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item36 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item36 = RadioBox( parent, ID_TIPORD, "Ordinamento", wx.DefaultPosition, wx.DefaultSize, 
+    item37 = RadioBox( parent, ID_TIPORD, "Ordinamento", wx.DefaultPosition, wx.DefaultSize, 
         ["Codice","Descrizione","Bilancio"] , 1, wx.RA_SPECIFY_COLS )
-    item36.SetName( "tipord" )
-    item35.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item37.SetName( "tipord" )
+    item36.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item37 = BilancioTipoLivelloPanel( parent, ID_PANEL, wx.DefaultPosition, wx.DefaultSize, 0 )
-    item35.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item38 = BilancioTipoLivelloPanel( parent, ID_PANEL, wx.DefaultPosition, wx.DefaultSize, 0 )
+    item36.Add( item38, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item35.AddGrowableCol( 0 )
+    item36.AddGrowableCol( 0 )
 
-    item35.AddGrowableCol( 1 )
+    item36.AddGrowableCol( 1 )
 
-    item34.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item35.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item38 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item39 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item39 = wx.CheckBox( parent, ID_DETCLIFOR, "Includi Clienti/Fornitori", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item39.SetName( "detcf" )
-    item38.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item40 = wx.CheckBox( parent, ID_DETCLIFOR, "Includi Clienti/Fornitori", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item40.SetName( "detcf" )
+    item39.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item40 = wx.CheckBox( parent, ID_DETNOZERO, "Escludi saldi a zero", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item40.SetName( "detnozero" )
-    item38.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item41 = wx.CheckBox( parent, ID_DETNOZERO, "Escludi saldi a zero", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item41.SetName( "detnozero" )
+    item39.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item38.AddGrowableCol( 0 )
+    item39.AddGrowableCol( 0 )
 
-    item38.AddGrowableCol( 1 )
+    item39.AddGrowableCol( 1 )
 
-    item34.Add( item38, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item35.Add( item39, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item41 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item42 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item42 = RadioBox( parent, ID_INCLAPE, "Aperture", wx.DefaultPosition, wx.DefaultSize, 
+    item43 = RadioBox( parent, ID_INCLAPE, "Aperture", wx.DefaultPosition, wx.DefaultSize, 
         ["Includi","Escludi","Solo Apert."] , 1, wx.RA_SPECIFY_COLS )
-    item42.SetName( "inclape" )
-    item41.Add( item42, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item43.SetName( "inclape" )
+    item42.Add( item43, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item43 = RadioBox( parent, ID_INCLCHI, "Chiusure", wx.DefaultPosition, wx.DefaultSize, 
+    item44 = RadioBox( parent, ID_INCLCHI, "Chiusure", wx.DefaultPosition, wx.DefaultSize, 
         ["Includi","Escludi","Solo Chius."] , 1, wx.RA_SPECIFY_COLS )
-    item43.SetName( "inclchi" )
-    item41.Add( item43, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
+    item44.SetName( "inclchi" )
+    item42.Add( item44, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item41.AddGrowableCol( 0 )
+    item42.AddGrowableCol( 0 )
 
-    item41.AddGrowableCol( 1 )
+    item42.AddGrowableCol( 1 )
 
-    item34.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item35.Add( item42, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item44 = wx.BoxSizer( wx.HORIZONTAL )
+    item45 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item45 = wx.Button( parent, ID_BTNUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item45.SetDefault()
-    item44.Add( item45, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
+    item46 = wx.Button( parent, ID_BTNUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item46.SetDefault()
+    item45.Add( item46, 0, wx.ALIGN_CENTER|wx.LEFT|wx.BOTTOM, 5 )
 
-    item46 = wx.Button( parent, ID_BTNPRINT, "Stampa", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item44.Add( item46, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item47 = wx.Button( parent, ID_BTNPRINT, "Stampa", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item45.Add( item47, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item34.Add( item44, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item35.Add( item45, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item1.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item1.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item1.AddGrowableCol( 0 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item47 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item48 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item48 = parent.FindWindowById( ID_PANGRIDS )
-    item47.Add( item48, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item49 = parent.FindWindowById( ID_PANGRIDS )
+    item48.Add( item49, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item47.Add( [ 900, 1 ] , 0, wx.ALIGN_CENTER, 5 )
+    item48.Add( [ 900, 1 ] , 0, wx.ALIGN_CENTER, 5 )
 
-    item47.AddGrowableCol( 0 )
+    item48.AddGrowableCol( 0 )
 
-    item47.AddGrowableRow( 0 )
+    item48.AddGrowableRow( 0 )
 
-    item0.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item48, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 
@@ -323,7 +328,7 @@ def BilancioFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BILCONTRZONE = 14031
+ID_BILCONTRZONE = 14032
 
 def BilContrFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -356,7 +361,7 @@ def BilContrFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BILPATRZONE = 14032
+ID_BILPATRZONE = 14033
 
 def BilContrPatrFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -380,14 +385,14 @@ def BilContrPatrFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LABPATATT = 14033
-ID_PANPATATT = 14034
-ID_UTIESP = 14035
-ID_LABUTIESP = 14036
-ID_LABPATTOTATT = 14037
-ID_TOTPATT = 14038
-ID_LABPUPA = 14039
-ID_TOTPUPA = 14040
+ID_LABPATATT = 14034
+ID_PANPATATT = 14035
+ID_UTIESP = 14036
+ID_LABUTIESP = 14037
+ID_LABPATTOTATT = 14038
+ID_TOTPATT = 14039
+ID_LABPUPA = 14040
+ID_TOTPUPA = 14041
 
 def BilContrPatrAttFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -450,14 +455,14 @@ def BilContrPatrAttFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LABPATPAS = 14041
-ID_PANPATPAS = 14042
-ID_PERESP = 14043
-ID_LABPERESP = 14044
-ID_LABPATTOTPAS = 14045
-ID_TOTPPAS = 14046
-ID_LABPUPP = 14047
-ID_TOTPUPP = 14048
+ID_LABPATPAS = 14042
+ID_PANPATPAS = 14043
+ID_PERESP = 14044
+ID_LABPERESP = 14045
+ID_LABPATTOTPAS = 14046
+ID_TOTPPAS = 14047
+ID_LABPUPP = 14048
+ID_TOTPUPP = 14049
 
 def BilContrPatrPasFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -520,7 +525,7 @@ def BilContrPatrPasFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BILECONZONE = 14049
+ID_BILECONZONE = 14050
 
 def BilContrEconFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -545,11 +550,11 @@ def BilContrEconFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANECOCOS = 14050
-ID_LABECOTOTCOS = 14051
-ID_TOTECOS = 14052
-ID_LABEUPC = 14053
-ID_TOTEUPC = 14054
+ID_PANECOCOS = 14051
+ID_LABECOTOTCOS = 14052
+ID_TOTECOS = 14053
+ID_LABEUPC = 14054
+ID_TOTEUPC = 14055
 
 def BilContrEconCosFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -599,11 +604,11 @@ def BilContrEconCosFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANECORIC = 14055
-ID_LABECOTOTRIC = 14056
-ID_TOTERIC = 14057
-ID_LABEUPR = 14058
-ID_TOTEUPR = 14059
+ID_PANECORIC = 14056
+ID_LABECOTOTRIC = 14057
+ID_TOTERIC = 14058
+ID_LABEUPR = 14059
+ID_TOTEUPR = 14060
 
 def BilContrEconRicFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -653,7 +658,7 @@ def BilContrEconRicFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BILGESTZONE = 14060
+ID_BILGESTZONE = 14061
 
 def BilGestFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -686,7 +691,7 @@ def BilGestFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGESPAT = 14061
+ID_PANGESPAT = 14062
 
 def BilGestPatrFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -705,7 +710,7 @@ def BilGestPatrFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGESECO = 14062
+ID_PANGESECO = 14063
 
 def BilGestEconFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -724,7 +729,7 @@ def BilGestEconFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGESORD = 14063
+ID_PANGESORD = 14064
 
 def BilGestOrdFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -743,7 +748,7 @@ def BilGestOrdFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TIPDET = 14064
+ID_TIPDET = 14065
 
 def BilancioTipoLivelloIntFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -780,12 +785,12 @@ def BilancioTipoLivelloCeeFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LABPORDDAR = 14065
-ID_PANORDDAR = 14066
-ID_LABORDTOTDAR = 14067
-ID_TOTODAR = 14068
-ID_LABOUPD = 14069
-ID_TOTOUPD = 14070
+ID_LABPORDDAR = 14066
+ID_PANORDDAR = 14067
+ID_LABORDTOTDAR = 14068
+ID_TOTODAR = 14069
+ID_LABOUPD = 14070
+ID_TOTOUPD = 14071
 
 def BilContrOrdDareFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -835,12 +840,12 @@ def BilContrOrdDareFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LABORDAVE = 14071
-ID_PANORDAVE = 14072
-ID_LABORDTOTAVE = 14073
-ID_TOTOAVE = 14074
-ID_LABOUPA = 14075
-ID_TOTOUPA = 14076
+ID_LABORDAVE = 14072
+ID_PANORDAVE = 14073
+ID_LABORDTOTAVE = 14074
+ID_TOTOAVE = 14075
+ID_LABOUPA = 14076
+ID_TOTOUPA = 14077
 
 def BilContrOrdAvereFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -890,7 +895,7 @@ def BilContrOrdAvereFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BILORDZONE = 14077
+ID_BILORDZONE = 14078
 
 def BilContrOrdFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )

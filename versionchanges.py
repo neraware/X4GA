@@ -29,11 +29,25 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.69', None, (
+    ('1.9.72', None, (
+         ("BET4272",
+         """Implementata competenza iva nei bilanci."""),
+        ),),
+    
+    ('1.9.70', None, (
+         ("BUG1230",
+         """Risolto problema di determinazione date ricezione xml acquisti."""),
+         ("BUG1231",
+         """Risolto problema di determinazione numero decimali prezzo in xml acquisti se prezzo 0.000001."""),
+        ),),
+    
+    ('1.9.69', dt.Date(2019, 7, 31), (
          ("BUG1227",
          """Eliminazione partita dopo storno se importi a zero e nessun riferimento nelle scadenze delle registrazioni."""),
          ("BUG1228",
          """Risolto problema di segnalazione squadratura in registrazioni iva ricorrendo al pareggiamento riga."""),
+         ("BUG1229",
+         """Implementato blocco modifica documenti se in status attesa responso da portale/sdi."""),
         ),),
     
     ('1.9.68', dt.Date(2019, 7, 30), (
