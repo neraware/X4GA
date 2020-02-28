@@ -29,7 +29,7 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.9.72', None, (
+    ('1.9.72', dt.Date(2020, 2, 28), (
          ("BET4272",
          """Implementata competenza iva nei bilanci."""),
         ),),
