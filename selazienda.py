@@ -364,14 +364,21 @@ class SelAziendaPanel(aw.Panel):
         c = self.x4conn.cursor()
         if (c.execute("SELECT psw FROM utenti WHERE descriz=%s", user)>0):
             psw_memo = c.fetchone()[0]
-            c.execute("select password(%s)", psw)
-            error = psw_memo != c.fetchone()[0]
+            try:
+                c.execute("select password(%s)", psw)
+                error = psw_memo != c.fetchone()[0]
+            except:
+                error = True
             if error:
                 try:
                     c.execute("select old_password(%s)", psw)
                     error = psw_memo != c.fetchone()[0]
                 except:
-                    error = True
+                    try:
+                        c.execute("select CONCAT('*', UPPER(SHA1(UNHEX(SHA1(%s)))))", psw)
+                        error = psw_memo != c.fetchone()[0]
+                    except:
+                        error = True
         else:
             error = True
         
