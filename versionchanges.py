@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.73', dt.Date(2020, 7, 31), (
+         ("BET4273",
+         """Visualizza e stampa data operazione su interroga registrazioni iva, interroga registrazioni contabili, interroga mastri."""),
+        ),),
+    
     ('1.9.72', dt.Date(2020, 2, 28), (
          ("BET4272",
          """Implementata competenza iva nei bilanci."""),

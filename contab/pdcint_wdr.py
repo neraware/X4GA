@@ -1436,7 +1436,7 @@ def IntRegConFunc( parent, call_fit = True, set_sizer = True ):
     item75.SetForegroundColour( wx.BLUE )
     item74.Add( item75, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item76 = wx.Panel( parent, ID_PANGRIDREG, wx.DefaultPosition, [980,360], wx.SUNKEN_BORDER )
+    item76 = wx.Panel( parent, ID_PANGRIDREG, wx.DefaultPosition, [1100,360], wx.SUNKEN_BORDER )
     item74.Add( item76, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item77 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -1741,7 +1741,7 @@ def IntRegIvaFunc( parent, call_fit = True, set_sizer = True ):
     item65.SetForegroundColour( wx.BLUE )
     item64.Add( item65, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item66 = wx.Panel( parent, ID_PANGRIDREG, wx.DefaultPosition, [970,360], wx.SUNKEN_BORDER )
+    item66 = wx.Panel( parent, ID_PANGRIDREG, wx.DefaultPosition, [1100,360], wx.SUNKEN_BORDER )
     item64.Add( item66, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item64.AddGrowableCol( 0 )

@@ -146,6 +146,7 @@ class IntRegConGrid(dbglib.DbGridColoriAlternati, _IntRegGridMixin):
         _CHK = gl.GRID_VALUE_BOOL+":1,0"
         
         cols = [( 80, (cn(reg, "datreg"),    "Data reg.",  _DAT, True)),
+                ( 80, (cn(reg, "datope"),    "Data op.",   _DAT, True)),
                 ( 35, (cn(cau, "codice"),    "Cod.",       _STR, True)),
                 (120, (cn(cau, "descriz"),   "Causale",    _STR, True)),
                 ( 80, (cn(reg, "datdoc"),    "Data doc.",  _DAT, True)),
@@ -162,8 +163,8 @@ class IntRegConGrid(dbglib.DbGridColoriAlternati, _IntRegGridMixin):
                 (  1, (cn(reg, "id"),        "#reg",       _STR, True)),
                 (  1, (cn(pdc, "id"),        "#pdc",       _STR, True)),]
         
-        self.SetAnchorColumns(10, 2)
-        return 8, cols
+        self.SetAnchorColumns(11, 2)
+        return 9, cols
         
     def GetAttr(self, row, col, rscol, attr=gl.GridCellAttr):
         attr = dbglib.DbGridColoriAlternati.GetAttr(self, row, col, rscol, attr)
@@ -458,6 +459,7 @@ class IntRegIvaGrid(dbglib.DbGridColoriAlternati, _IntRegGridMixin):
         
         cols = (\
             ( 80, (cn(reg, "datreg"),    "Data reg.",    _DAT, True)),
+            ( 80, (cn(reg, "datope"),    "Data op.",     _DAT, True)),
             ( 35, (cn(cau, "codice"),    "Cod.",         _STR, True)),
             (120, (cn(cau, "descriz"),   "Causale",      _STR, True)),
             ( 50, (cn(pdc, "codice"),    "Cod.",         _STR, True)),
@@ -488,7 +490,7 @@ class IntRegIvaGrid(dbglib.DbGridColoriAlternati, _IntRegGridMixin):
         map(lambda c:\
             self.SetColumnDefaultSize(c[0], c[1]), enumerate(colsize))
         
-        self.SetFitColumn(4)
+        self.SetFitColumn(5)
         self.AutoSizeColumns()
         sz = wx.FlexGridSizer(1,0,0,0)
         sz.AddGrowableCol( 0 )
