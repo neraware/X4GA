@@ -597,6 +597,11 @@ class FatturaElettronica(dbm.DocMag):
                 _importo = mov.importo
                 _um = mov.um
                 
+                _datper1 = _datper2 = None
+                if hasattr(mov, 'dm_datpar') and hasattr(mov, 'dm_datsca'):
+                    _datper1 = mov.dm_datpar
+                    _datper2 = mov.dm_datsca
+                
                 if mov.config.tipologia == "E":
                     #righe sconto merce usano aliquota first_aliq, poi si accoda riga negativa
                     tabiva = first_aliq
@@ -637,6 +642,9 @@ class FatturaElettronica(dbm.DocMag):
                 
                 if not _importo:
                     dati.append(('Quantita', '0.00'))
+                    if _datper1 and _datper2:
+                        dati.append(('DataInizioPeriodo', data(_datper1)))
+                        dati.append(('DataFinePeriodo', data(_datper2)))
                     dati.append(('PrezzoUnitario', '0.00'))
                     dati.append(('PrezzoTotale', '0.00'))
                     dati.append(('AliquotaIVA', fmt_sc(first_aliq.perciva)))
@@ -644,6 +652,9 @@ class FatturaElettronica(dbm.DocMag):
                         dati.append(('Natura', first_aliq.ftel_natura))
                 else:
                     dati.append(('Quantita', fmt_qt(_qta or 1)))
+                    if _datper1 and _datper2:
+                        dati.append(('DataInizioPeriodo', data(_datper1)))
+                        dati.append(('DataFinePeriodo', data(_datper2)))
                     if _um:
                         dati.append(('UnitaMisura', _um))
                     if _prezzo:
