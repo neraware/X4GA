@@ -26,10 +26,10 @@ def get_reqfail_msg(_type, _name, _module):
         desc = "la personalizzazione '%s'" % _name
     else:
         desc = "il plugin '%s'" % _name
-    msg = "La versione di X4GA non è compatibile con %s.\n\n" % desc
-    msg += "E' richiesta almeno la versione %s, e' installata la %s.\n\n"\
+    msg = u"La versione di X4GA non è compatibile con %s.\n\n" % desc
+    msg += u"E' richiesta almeno la versione %s, e' installata la %s.\n\n"\
                 % (x4min, version.VERSION_STRING)
-    msg += "Alcune parti del programma potrebbero avere problemi, aggiornare X4GA quanto prima."
+    msg += u"Alcune parti del programma potrebbero avere problemi, aggiornare X4GA quanto prima."
     return msg
 
 
@@ -88,11 +88,11 @@ def init_plugins():
                     continue
                 load_plugin(name)
             except PluginException:
-                cap = "Questa versione di X4GA è obsoleta!"
+                cap = u"Questa versione di X4GA è obsoleta!"
                 msg = get_reqfail_msg("P", name, Env.plugins[name])
                 raise Exception, cap+' '+msg
             except Exception, e:
-                cap = "Errore in caricamento plugin!"
+                cap = u"Errore in caricamento plugin!"
                 msg = ' -'.join(map(str, e.args))
                 raise Exception, cap+' '+msg
 

@@ -1000,6 +1000,11 @@ GROUP BY doc.id""")
                                 db.Execute(r"INSERT INTO recapiti (id_pdc, tipo, descriz, note) VALUES (%s, %s, %s, %s)",
                                            (v_id, _type, v_reca, v_note))
         
+            if oldver<'1.9.78' and ok:
+                
+                db.Execute(r"""ALTER TABLE aliqiva 
+                                    MODIFY COLUMN ftel_natura CHAR(6)""")
+        
         if ok:
             self.PerformExternalAdaptations()
             self.CreateExternalViews()

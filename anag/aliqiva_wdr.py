@@ -31,7 +31,7 @@ class NaturaIvaRadioBox(RadioBox):
 
     def __init__(self, *args, **kwargs):
         RadioBox.__init__(self, *args, **kwargs)
-        self.SetDataLink(values=["", "N1", "N2", "N3", "N4", "N5", "N6", "N7"])
+        self.SetDataLink(values=["", "N1", "N2", "N2.1", "N2.2", "N3", "N3.1", "N3.2", "N3.3", "N3.4", "N4", "N5", "N6", "N6.1", "N6.2", "N6.3", "N6.4", "N6.5", "N6.6", "N6.7", "N6.8", "N6.9", "N7", ])
 
 
 
@@ -257,10 +257,10 @@ ID_TEXTCTRL = 16012
 def AliqIvaCardFatturaPaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item1 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item1 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
     item2 = NaturaIvaRadioBox( parent, ID_RADIOBOX, "Natura", wx.DefaultPosition, wx.DefaultSize, 
-        ["-","N1 - Escluso ex Art.15","N2 - Non soggetto","N3 - Non imponibile","N4 - Esente","N5 - Regime del margine","N6 - Inversione contabile (reverse chanrge)","N7 - Assolta in altro paese UE"] , 1, wx.RA_SPECIFY_COLS )
+        ["-","N1 - Escluso ex Art.15","N2 - Non soggetto (TERMINA NEL 2020)","N2.1 - Non soggetto ad IVA artt. da 7 a 7-septies  DPR 633/72","N2.2 - Non soggetto altri casi","N3 - Non imponibile (TERMINA NEL 2020)","N3.1 - Non imponibile - esportazioni","N3.2 - Non imponibile: cessioni intracomunitarie","N3.3 - Non imponibile - cessioni verso San Marino","N3.4 - Non imponibile - operazioni assimilate alle cessioni all'esportazione","N4 - Esente","N5 - Regime del margine","N6 - Inversione contabile (reverse charge) (TERMINA NEL 2020)","N6.1 - Inversione contabile - cessione di rottami e altri materiali di recupero","N6.2 - Inversione contabile - cessione di oro e argento puro","N6.3 - Inversione contabile - subappalto nel settore edile","N6.4 - Inversione contabile - cessione di fabbricati","N6.5 - Inversione contabile - cessione di telefoni cellulari","N6.6 - Inversione contabile - cessione di prodotti elettronici","N6.7 - Inversione contabile - prestazioni comparto edile e settori connessi","N6.8 - Inversione contabile - operazioni settore energetico","N6.9 - Inversione contabile - altri casi","N7 - Assolta in altro paese UE"] , 2, wx.RA_SPECIFY_COLS )
     item2.SetName( "ftel_natura" )
     item1.Add( item2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
@@ -270,7 +270,7 @@ def AliqIvaCardFatturaPaFunc( parent, call_fit = True, set_sizer = True ):
     item4.SetForegroundColour( wx.BLUE )
     item3.Add( item4, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
 
-    item5 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
+    item5 = TextCtrl_LC( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [-1,60], wx.TE_MULTILINE )
     item5.SetName( "ftel_rifnorm" )
     item3.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 

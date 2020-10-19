@@ -314,12 +314,13 @@ class ElencoFiles(adb.DbMem, _AttachTableMixin):
         if resp['result'] == "OK":
             
             file_info = {}
-            for info in resp['datric_info'].split('|'):
-                try:
-                    filename, datric = info.split('^')
-                    file_info[filename] = Env.DateTime.date.fromordinal(int(datric))
-                except:
-                    pass
+            if resp['datric_info']:
+                for info in resp['datric_info'].split('|'):
+                    try:
+                        filename, datric = info.split('^')
+                        file_info[filename] = Env.DateTime.date.fromordinal(int(datric))
+                    except:
+                        pass
             
             for _ in self:
                 if self.filename in file_info:

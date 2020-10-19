@@ -88,9 +88,9 @@ class FtelAcquisPanel(aw.Panel):
         pi = rowlist.docxml.anag_cliente.piva
         if cf != Env.Azienda.codfisc and pi != Env.Azienda.piva:
             if cf:
-                msg = "Il documento è destinato al cod.fiscale %s\nImpossibile procedere." % cf
+                msg = u"Il documento è destinato al cod.fiscale %s\nImpossibile procedere." % cf
             else:
-                msg = "Il documento è destinato alla p.iva %s\nImpossibile procedere." % pi
+                msg = u"Il documento è destinato alla p.iva %s\nImpossibile procedere." % pi
             aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
             return
         show_pdf(rowlist.docxml, rowlist.filename)

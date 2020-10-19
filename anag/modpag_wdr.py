@@ -689,7 +689,7 @@ def ModPagCardFatturaPaFunc( parent, call_fit = True, set_sizer = True ):
     item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item3 = FatturaPaModoPagamentoRadioBox( parent, ID_MODPAG, "Tipologia:", wx.DefaultPosition, wx.DefaultSize, 
-        ["N/C - Non classificato","MP01 - Contanti","MP02 - Assegno","MP03 - Assegno circolare","MP04 - Contanti presso Tesoreria","MP05 - Bonifico","MP06 - Vaglia cambiario","MP07 - Bollettino bancario","MP08 - Carta di pagamento","MP09 - RID","MP10 - RID utenze","MP11 - RID veloce","MP12 - RIBA","MP13 - MAV","MP14 - Quietanza erario","MP15 - Giroconto su conti di contabilità speciale","MP16 - Domiciliazione bancaria","MP17 - Domiciliazione postale","MP18 - Bollettino di c/c postale","MP19 - SEPA Direct Debit","MP20 - SEPA Direct Debit CORE","MP21 - SEPA Direct Debit B2B"] , 2, wx.RA_SPECIFY_COLS )
+        ["N/C - Non classificato","MP01 - Contanti","MP02 - Assegno","MP03 - Assegno circolare","MP04 - Contanti presso Tesoreria","MP05 - Bonifico","MP06 - Vaglia cambiario","MP07 - Bollettino bancario","MP08 - Carta di pagamento","MP09 - RID","MP10 - RID utenze","MP11 - RID veloce","MP12 - RIBA","MP13 - MAV","MP14 - Quietanza erario","MP15 - Giroconto su conti di contabilità speciale","MP16 - Domiciliazione bancaria","MP17 - Domiciliazione postale","MP18 - Bollettino di c/c postale","MP19 - SEPA Direct Debit","MP20 - SEPA Direct Debit CORE","MP21 - SEPA Direct Debit B2B","MP22 - Trattenuta su somme gia' riscosse","MP23 - PagoPA"] , 2, wx.RA_SPECIFY_COLS )
     item3.SetName( "ftel_modpag" )
     item1.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 

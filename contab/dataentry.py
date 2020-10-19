@@ -1002,26 +1002,26 @@ class ContabPanel(aw.Panel,\
         try:
             cur = adb.db.get_cursor()
             cmd = """
-   SELECT row.numriga, 
-          row.tipriga, 
-          row.id_pdcpa, 
+   SELECT row0.numriga, 
+          row0.tipriga, 
+          row0.id_pdcpa, 
           pdc.codice, 
           pdc.descriz, 
-          if(row.segno="D", row.importo, NULL), 
-          if(row.segno="A", row.importo, NULL), 
-          row.id_aliqiva,
+          if(row0.segno="D", row0.importo, NULL), 
+          if(row0.segno="A", row0.importo, NULL), 
+          row0.id_aliqiva,
           iva.codice,
           iva.descriz,
-          row.solocont,
-          row.note, 
-          row.ivaman, 
-          row.davscorp 
-     FROM %s AS row 
-     JOIN %s AS pdc ON row.id_pdcpa=pdc.id 
-LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
- WHERE row.id_reg=%%s""" % (bt.TABNAME_CONTAB_B,
-                            bt.TABNAME_PDC,
-                            bt.TABNAME_ALIQIVA)
+          row0.solocont,
+          row0.note, 
+          row0.ivaman, 
+          row0.davscorp 
+     FROM %s AS row0 
+     JOIN %s AS pdc ON row0.id_pdcpa=pdc.id 
+LEFT JOIN %s AS iva ON row0.id_aliqiva=iva.id
+ WHERE row0.id_reg=%%s""" % (bt.TABNAME_CONTAB_B,
+                             bt.TABNAME_PDC,
+                             bt.TABNAME_ALIQIVA)
             cur.execute(cmd, idreg)
             rsb = cur.fetchall()
             cur.close()

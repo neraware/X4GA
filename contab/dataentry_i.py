@@ -802,10 +802,12 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
             
             self.ftel_insert = True
             i = self.ftel_acq_info
-            
+            td = self.ftel_acq_info.tipdoc
+            if td == 'TD24':
+                td = 'TD01'
             dbcau = adb.DbTable('cfgcontab')
             dbcau.AddJoin('regiva')
-            dbcau.AddFilter('regiva.tipo="A" AND cfgcontab.ftel_tipdoc="%s"' % self.ftel_acq_info.tipdoc)
+            dbcau.AddFilter('regiva.tipo="A" AND cfgcontab.ftel_tipdoc="%s"' % td)
             dbcau.Retrieve()
             if dbcau.IsEmpty():
                 f = 'FALSE'
@@ -1026,7 +1028,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                             aliqiva.ClearFilters()
                             aliqiva.Reset()
                             
-                            if tiva.natura == "N6":
+                            if (tiva.natura or '').startswith("N6"):
                                 #reverse charge, cerco automatismo aliquota iva defaut
                                 aut = adb.DbTable('cfgautom', 'auto')
                                 if aut.Retrieve('auto.codice=%s', 'magivadef') and aut.OneRow():
@@ -1044,7 +1046,7 @@ class ContabPanelTipo_I(ctb.ContabPanel,\
                                     #cerco aliquota con percentuale di calcolo uguale a quanto presente nell'xml
                                     aliqiva.AddFilter('(aliqiva.perciva=%s AND aliqiva.percind=0)', tiva.aliqiva)
                                 else:
-                                    if tiva.natura == "N6":
+                                    if (tiva.natura or '').startswith("N6"):
                                         #reverse charge, filtro aliquote con calcolo > 0
                                         aliqiva.AddFilter('(aliqiva.perciva<>0 AND aliqiva.percind=0)')
                                     else:

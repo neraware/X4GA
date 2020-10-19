@@ -900,8 +900,12 @@ class FatturaElettronica(dbm.DocMag):
         text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)    
         stream = text_re.sub('>\g<1></', stream)
 #         stream = stream.replace("’", "'")
+        
+        if "’" in stream:
+            stream = stream.replace("’", "'")
+        
         n = stream.index('>')+1
-        stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.2.xsl"?>' + stream[n:]
+        stream = stream[:n] + '\n<?xml-stylesheet type="text/xsl" href="fatturapa_v1.2.1.xsl"?>' + stream[n:]
         
         fullname = self.ftel_get_filename(numprogr, self.datdoc.year)
         pathname, filename = os.path.split(fullname)
@@ -967,9 +971,9 @@ class FatturaElettronica(dbm.DocMag):
     
     def ftel_make_style(self, year):
         path = self.ftel_get_pathname(year)
-        filename = os.path.join(path, 'fatturapa_v1.2.xsl')
+        filename = os.path.join(path, 'fatturapa_v1.2.1.xsl')
         if not os.path.isfile(filename):
-            import ftel.vendite.fatturapa_v12_xsl as xsl
+            import ftel.vendite.fatturapa_v121_xsl as xsl
             open(filename, 'w').write(xsl.xsl)
     
     @classmethod

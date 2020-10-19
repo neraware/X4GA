@@ -6,8 +6,8 @@
 # ------------------------------------------------------------------------------
 
 
-xsl_filename = 'fatturapa_v1.2.xsl'
+xsl_filename = 'fatturapa_v1.2.1.xsl'
 
 def get_xsl_stream():
-    from ftel.vendite.fatturapa_v12_xsl import xsl
+    from ftel.vendite.fatturapa_v121_xsl import xsl
     return xsl

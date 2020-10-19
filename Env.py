@@ -1818,7 +1818,7 @@ class Azienda(object):
                 [ "sm11_no",      "TINYINT",  1, None, "Flag esclusione da spesometro 2011", None ], 
                 [ "datamin",      "DATE",  None, None, "Data di validità minima", None ], 
                 [ "datamax",      "DATE",  None, None, "Data di validità massima", None ], 
-                [ "ftel_natura",  "CHAR",     2, None, "Fattura elettronica: Natura aliquota", None ],
+                [ "ftel_natura",  "CHAR",     4, None, "Fattura elettronica: Natura aliquota", None ],
                 [ "ftel_rifnorm", "VARCHAR",255, None, "Fattura elettronica: riferimento normativo", None ], 
                 [ "id_aliq_auft", "INT",    idw, None, "ID aliquota per generazione automatica autofattura", None ], 
                 [ "ftel_xmlacq",  "TINYINT",  1, None, "Fattura elettronica: aliquota disponibile x acquisizione xml ft.fornitori", None ], ]

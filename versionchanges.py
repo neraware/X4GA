@@ -29,6 +29,26 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.10.00', None, (
+         ("BET4277",
+         """Adeguamento a tracciato fattura eletronica versione 1.3."""),
+        ),),
+    
+    ('1.9.76', None, (
+         ("BET4276",
+         """Implementato calcolo provvigioni su incassato."""),
+        ),),
+    
+    ('1.9.75', None, (
+         ("BET4275",
+         """Aggiunta data operazione su interroga registrazioni contabili in stampa con dati iva."""),
+        ),),
+    
+    ('1.9.74', None, (
+         ("BET4274",
+         """Fix encoding accento rovescio in generazione xml fattura."""),
+        ),),
+    
     ('1.9.73', dt.Date(2020, 7, 31), (
          ("BET4273",
          """Visualizza e stampa data operazione su interroga registrazioni iva, interroga registrazioni contabili, interroga mastri."""),

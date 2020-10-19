@@ -220,7 +220,7 @@ class GeneraMovimentiPanel(aw.Panel):
             aw.awu.MsgDialog(self, "Impostare l'esercizio per la determinazione dei saldi")
             return
         if self.dbese.GetMovimentiGenerati():
-            aw.awu.MsgDialog(self, "Movimenti di chiusura/apertura già generati")
+            aw.awu.MsgDialog(self, "Movimenti di chiusura/apertura giÃ  generati")
             return
         sg = None
         err = False
@@ -276,7 +276,7 @@ class GeneraMovimentiPanel(aw.Panel):
         sq = False
         if not err:
             if self.dbslp.IsEmpty() and self.dbsle.IsEmpty():
-                msg = "Non è stato trovato alcun sottoconto da chiudere"
+                msg = "Non e' stato trovato alcun sottoconto da chiudere"
                 err = True
         if not err:
             tpa, tpp = tots['P']
@@ -385,7 +385,7 @@ class GeneraMovimentiPanel(aw.Panel):
             return
         
         r = aw.awu.MsgDialog(self,\
-                             """ATTENZIONE\n\nL'elaborazione è irreversibile, è """
+                             """ATTENZIONE\n\nL'elaborazione e' irreversibile, e' """
                              """consigliabile effettuare una copia di backup del database """
                              """prima di procedere.\n\n"""
                              """Confermi l'elaborazione?""",

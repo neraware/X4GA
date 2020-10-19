@@ -219,17 +219,53 @@ class ProvvigAgentiPanel(wx.Panel):
         v = cn('agente2').GetValueCod()
         if v:
             dbprov.AddFilter('age.codice<=%s', v)
-        v = cn('datdoc1').GetValue()
-        if v:
-            dbprov.AddFilter('doc.datdoc>=%s', v)
-        v = cn('datdoc2').GetValue()
-        if v:
-            dbprov.AddFilter('doc.datdoc<=%s', v)
         if cn('solosaldati').IsChecked():
-#             dbprov.AddHaving('total_saldo IS NULL OR total_saldo=0')
-            dbprov.AddFilter("(SELECT COALESCE(SUM(COALESCE(_pcf.imptot,0) - COALESCE(_pcf.imppar,0)),0) FROM contab_s _sca JOIN pcf _pcf ON _pcf.id=_sca.id_pcf WHERE _sca.id_reg=doc.id_reg)=0")
+            datmin = cn('datdoc1').GetValue().strftime('%Y-%m-%d')
+            datmax = cn('datdoc2').GetValue().strftime('%Y-%m-%d')
+#             dbprov.AddFilter("""
+#                 (
+#                     SELECT COALESCE(SUM(
+#                            COALESCE(
+#                                 IF(_cau.pcfimp=1 AND _cau.pcfsgn='+',  _sca.importo, 
+#                                 IF(_cau.pcfimp=1 AND _cau.pcfsgn='-', -_sca.importo, 0)), 0) 
+#                          - COALESCE(
+#                                 IF(_cau.pcfimp=2 AND _cau.pcfsgn='+' 
+#                                     and _reg.datreg >= '%(datmin)s' and _reg.datreg <= '%(datmax)s',  _sca.importo, 
+#                                 IF(_cau.pcfimp=2 AND _cau.pcfsgn='-'
+#                                     and _reg.datreg >= '%(datmin)s' and _reg.datreg <= '%(datmax)s', -_sca.importo, 0)), 0) 
+#                          ), 0) 
+#                       FROM contab_s  _sca 
+#                       JOIN contab_h  _reg ON _reg.id = _sca.id_reg
+#                       JOIN cfgcontab _cau ON _cau.id = _reg.id_caus
+#                      WHERE _sca.id_reg = doc.id_reg
+#                 ) = 0
+#             """ % locals())
+            dbprov.AddFilter("""
+                doc.totimporto - (
+                    SELECT COALESCE(SUM(
+                           COALESCE(
+                                IF(_cau.pcfimp='2' AND _cau.pcfsgn='+' 
+                                    and _reg.datreg >= '%(datmin)s' and _reg.datreg <= '%(datmax)s',  _sca.importo, 
+                                IF(_cau.pcfimp='2' AND _cau.pcfsgn='-'
+                                    and _reg.datreg >= '%(datmin)s' and _reg.datreg <= '%(datmax)s', -_sca.importo, 0)), 0) 
+                         ), 0) 
+                      FROM pcf _pcf
+                      JOIN contab_s  _sca ON _sca.id_pcf = _pcf.id
+                      JOIN contab_h  _reg ON _reg.id = _sca.id_reg
+                      JOIN cfgcontab _cau ON _cau.id = _reg.id_caus
+                     WHERE _pcf.id_pdc = doc.id_pdc AND _pcf.numdoc = doc.numdoc AND _pcf.datdoc = doc.datdoc
+                ) = 0
+            """ % locals())
+        else:
+            v = cn('datdoc1').GetValue()
+            if v:
+                dbprov.AddFilter('doc.datdoc>=%s', v)
+            v = cn('datdoc2').GetValue()
+            if v:
+                dbprov.AddFilter('doc.datdoc<=%s', v)
         wx.BeginBusyCursor()
         try:
+            dbprov.SetDebug()
             dbprov.Retrieve()
         finally:
             wx.EndBusyCursor()

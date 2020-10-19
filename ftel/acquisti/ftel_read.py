@@ -139,13 +139,13 @@ class _FTEL_Head(object):
             if not natura:
                 desc = 'IVA %s%%' % aliqiva
             else:
-                if natura == "N1": desc = "ESCLUSO EX ART 15"
-                if natura == "N2": desc = "NON SOGGETTO"
-                if natura == "N3": desc = "NON IMPONIBILE"
-                if natura == "N4": desc = "ESENTE"
-                if natura == "N5": desc = "REGIME DEL MARGINE"
-                if natura == "N6": desc = "INVERS.CONTABILE (REV.CHARGE)"
-                if natura == "N7": desc = "ASSOLTA IN ALTRO PAESE UE"
+                if natura.startswith("N1"): desc = "ESCLUSO EX ART 15"
+                if natura.startswith("N2"): desc = "NON SOGGETTO"
+                if natura.startswith("N3"): desc = "NON IMPONIBILE"
+                if natura.startswith("N4"): desc = "ESENTE"
+                if natura.startswith("N5"): desc = "REGIME DEL MARGINE"
+                if natura.startswith("N6"): desc = "INVERS.CONTABILE (REV.CHARGE)"
+                if natura.startswith("N7"): desc = "ASSOLTA IN ALTRO PAESE UE"
                 rifnorm = getattr(self.totiva[num], 'rifnorm')
                 if rifnorm:
                     desc = '%s - %s' % (desc, rifnorm)

@@ -55,7 +55,7 @@ class TipoDocumentoRadioBox(RadioBox):
 
     def __init__(self, *args, **kwargs):
         RadioBox.__init__(self, *args, **kwargs)
-        self.SetDataLink(values=["", "TD01", "TD02", "TD03", "TD04", "TD05", "TD06", "TD07", "TD08", "TD09", "TD10", "TD11"])
+        self.SetDataLink(values=["", "TD01", "TD02", "TD03", "TD04", "TD05", "TD06", "TD16", "TD17", "TD18", "TD19", "TD20", "TD21", "TD22", "TD23", "TD24", "TD25", "TD26", "TD27"])
 
 
 
@@ -198,7 +198,7 @@ def Setup1Func( parent, call_fit = True, set_sizer = True ):
     item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item16 = TipoDocumentoRadioBox( parent, ID_RADIOBOX, "Tipo documento", wx.DefaultPosition, wx.DefaultSize, 
-        ["Non gestito","TD01 - Fattura","TD02 - Acconto/Anticipo su fattura","TD03 - Acconto/Anticipo su parcella","TD04 - Nota di Credito","TD05 - Nota di Debito","TD06 - Parcella","TD07 - Fattura semplificata","TD08 - Nota credito semplificata","TD09 - Non utilizzato","TD10 - Fattura INTRA beni","TD11 - Fattura INTRA servizi"] , 2, wx.RA_SPECIFY_COLS )
+        ["Non gestito","TD01 - Fattura","TD02 - Acconto/Anticipo su fattura","TD03 - Acconto/Anticipo su parcella","TD04 - Nota di Credito","TD05 - Nota di Debito","TD06 - Parcella","TD16 - Integraz. ft. reverse charge interno","TD17 - Integr/autoft x acquisto servizi estero","TD18 - Integr x acquisto merci intracomun.","TD19 - Integr/autoft x acquisto merci ex art.17 c.2","TD20 - Autoft x regolar/integr fatture","TD21 - Autoft x splafonamento","TD22 - Estraz. beni da Deposito IVA","TD23 - Estraz. beni da Deposito IVA con vers.IVA","TD24 - Ft.diff. art.21, c.4, lett. a)","TD25 - Ft.diff. art.21, c.4, terzo periodo lett. b)","TD26 - Cessione beni ammortizzabili (ex art.36)","TD27 - Ft x autoconsumo o cessioni gratuite senza rivalsa"] , 2, wx.RA_SPECIFY_COLS )
     item16.SetName( "ftel_tipdoc" )
     item1.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
