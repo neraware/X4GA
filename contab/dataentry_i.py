@@ -2052,16 +2052,16 @@ class Reg_I_SearchPanel(ctb.RegSearchPanel):
                 cmd = \
 """   SELECT reg.id, reg.datreg, riv.codice, reg.numiva, """\
 """          pdc.descriz, reg.numdoc, reg.datdoc, """\
-"""IF(row.segno="D", row.importo, 0), IF(row.segno="A", row.importo, 0), """\
+"""IF(_row.segno="D", _row.importo, 0), IF(_row.segno="A", _row.importo, 0), """\
 """(SELECT srccau.codice FROM contab_h srch JOIN cfgcontab srccau ON srccau.id=srch.id_caus WHERE srch.id_reg_by=reg.id LIMIT 1), """\
 """(SELECT srccau.descriz FROM contab_h srch JOIN cfgcontab srccau ON srccau.id=srch.id_caus WHERE srch.id_reg_by=reg.id LIMIT 1), """\
 """(SELECT srch.numiva FROM contab_h srch WHERE srch.id_reg_by=reg.id LIMIT 1), """\
 """(SELECT srch.id FROM contab_h srch WHERE srch.id_reg_by=reg.id LIMIT 1) """\
 """     FROM ((%s AS reg JOIN %s AS cau ON reg.id_caus=cau.id) """\
-"""LEFT JOIN contab_b AS row ON row.id_reg=reg.id) """\
-"""LEFT JOIN pdc AS pdc ON row.id_pdcpa=pdc.id """\
+"""LEFT JOIN contab_b AS _row ON _row.id_reg=reg.id) """\
+"""LEFT JOIN pdc AS pdc ON _row.id_pdcpa=pdc.id """\
 """     JOIN regiva AS riv ON reg.id_regiva=riv.id """\
-"""    WHERE (row.numriga=1 OR row.numriga IS NULL) and %s """\
+"""    WHERE (_row.numriga=1 OR _row.numriga IS NULL) and %s """\
 """ ORDER BY reg.datreg, reg.numiva"""\
  % (bt.TABNAME_CONTAB_H, bt.TABNAME_CFGCONTAB, filter)
                 cur = adb.db.get_cursor()

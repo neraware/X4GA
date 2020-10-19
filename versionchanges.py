@@ -29,9 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
-    ('1.10.00', None, (
+    ('1.9.79', None, (
          ("BET4277",
-         """Adeguamento a tracciato fattura eletronica versione 1.3."""),
+         """Adeguamento a tracciato fattura eletronica versione 1.2.1"""),
+         ("BET4278",
+         """Implementata la gestione di sconto esterno (Tag ScontoMaggiorazione di XMLPA) mediante meccanismo riconducibile
+         al funzionamento della ritenuta d'acconto."""),
         ),),
     
     ('1.9.76', None, (

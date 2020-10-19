@@ -823,42 +823,42 @@ class ContabPanelTipo_I_S(ContabPanelTipo_I_O):
         try:
             #recordset righe contabili
             cmd = """
-   SELECT row.numriga, 
-          row.tipriga, 
-          row.id_pdcpa, 
+   SELECT _row.numriga, 
+          _row.tipriga, 
+          _row.id_pdcpa, 
           pdc.codice, 
           pdc.descriz, 
-          if(row.segno="D", if(row.tipriga="O",NULL,row.importo), NULL),
-          if(row.segno="A", if(row.tipriga="O",NULL,row.importo), NULL), 
-          row.id_aliqiva,
+          if(_row.segno="D", if(_row.tipriga="O",NULL,_row.importo), NULL),
+          if(_row.segno="A", if(_row.tipriga="O",NULL,_row.importo), NULL), 
+          _row.id_aliqiva,
           iva.codice,
           iva.descriz,
           NULL,
-          row.note, 
-          row.ivaman, 
-          row.solocont,
-          if(row.tipriga IN ("I","O"), row.imponib, 0),
-          if(row.tipriga IN ("I","O"), row.imposta, 0),
-          if(row.tipriga IN ("I","O"), row.indeduc, 0),
-          if(row.tipriga IN ("I","O"), row.imposta+IF(row.tipriga="I",row.imponib,0), 0),
-          row.id_pdciva,
+          _row.note, 
+          _row.ivaman, 
+          _row.solocont,
+          if(_row.tipriga IN ("I","O"), _row.imponib, 0),
+          if(_row.tipriga IN ("I","O"), _row.imposta, 0),
+          if(_row.tipriga IN ("I","O"), _row.indeduc, 0),
+          if(_row.tipriga IN ("I","O"), _row.imposta+IF(_row.tipriga="I",_row.imponib,0), 0),
+          _row.id_pdciva,
           pdi.codice,
           pdi.descriz,
-          row.id_pdcind,
+          _row.id_pdcind,
           pdn.codice,
           pdn.descriz,
-          IF(row.tipriga='O',1,0)
+          IF(_row.tipriga='O',1,0)
           
-     FROM %s AS row
-     JOIN %s AS pdc ON row.id_pdcpa=pdc.id
-LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
-LEFT JOIN %s AS pdi ON row.id_pdciva=pdi.id
-LEFT JOIN %s AS pdn ON row.id_pdcind=pdn.id
-    WHERE row.id_reg=%%s and row.tipriga IN ('S','C','I','O','A')""" % (bt.TABNAME_CONTAB_B,
-                                                                        bt.TABNAME_PDC,
-                                                                        bt.TABNAME_ALIQIVA,
-                                                                        bt.TABNAME_PDC,
-                                                                        bt.TABNAME_PDC)
+     FROM %s AS _row
+     JOIN %s AS pdc ON _row.id_pdcpa=pdc.id
+LEFT JOIN %s AS iva ON _row.id_aliqiva=iva.id
+LEFT JOIN %s AS pdi ON _row.id_pdciva=pdi.id
+LEFT JOIN %s AS pdn ON _row.id_pdcind=pdn.id
+    WHERE _row.id_reg=%%s and _row.tipriga IN ('S','C','I','O','A')""" % (bt.TABNAME_CONTAB_B,
+                                                                          bt.TABNAME_PDC,
+                                                                          bt.TABNAME_ALIQIVA,
+                                                                          bt.TABNAME_PDC,
+                                                                          bt.TABNAME_PDC)
             cur = adb.db.get_cursor()
             cur.execute(cmd, idreg)
             rsb = cur.fetchall()

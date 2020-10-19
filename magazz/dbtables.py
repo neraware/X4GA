@@ -279,7 +279,11 @@ class DocMag(adb.DbTable):
         self.perritacc =  0    #percentuale ritenuta d'acconto
         self.comritacc =  0    #percentuale dell'importo su cui calcolare
         self.impritacc =  0    #importo su cui calcolare la ritenuta
-        self.totritacc =  0    #importo della ritenuta calcolata
+        self.totritacc =  0    #importo dello sconto esterno
+        self.perscodoc =  0    #percentuale sconto esterno
+        self.comscodoc =  0    #percentuale dell'importo su cui calcolare
+        self.impscodoc =  0    #importo su cui calcolare lo sconto esterno
+        self.totscodoc =  0    #importo dello sconto esterno
         self.totdare =    0    #totale dare
         self.totmerce =   0    #totale merce
         self.totservi =   0    #totale servizi
@@ -1926,8 +1930,6 @@ class DocMag(adb.DbTable):
                 else:
                     self.totimponib = RoundImp(self.totimponib+imponib)
                     self.totimporto = RoundImp(self.totimporto+importo)
-            
-#             self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
         
         # ripartizione sconti su totali x pdc
         if totscrip and totpdc:
@@ -2039,17 +2041,6 @@ class DocMag(adb.DbTable):
                 else:
                     self.totimponib += imp
                     self.totimporto += mpr
-                
-#             self.totdare = RoundImp(self.totimporto - (self.totritacc or 0))
-        
-#         if self.is_split_payment():
-#             #adeguamento di totdare x split payment
-#             self.totdare = RoundImp(self.totdare - (self.totimposta or 0))
-#         
-#         ivaoma_iva, ivaoma_pdc, ivaoma_do = self.get_iva_omaggi_a_carico()
-#         if ivaoma_do:
-#             #adeguamento di totdare x iva omaggi a carico azienda
-#             self.totdare = RoundImp(self.totdare - ivaoma_iva)
         
         self.totdare = self.get_totdare()
         
@@ -2077,7 +2068,7 @@ class DocMag(adb.DbTable):
         
         ND = bt.VALINT_DECIMALS
         
-        totdare = round(self.totimporto - (self.totritacc or 0), ND)
+        totdare = round(self.totimporto - (self.totritacc or 0) - (self.totscodoc or 0), ND)
         
         if self.is_split_payment():
             #adeguamento di totdare x split payment
@@ -2348,6 +2339,7 @@ class DocMag(adb.DbTable):
                 numriga += 1
             
         if reg.config.tipo in 'IC':
+            
             #riga ritenuta d'acconto
             if bt.CONATTRITACC and self.cfgdoc.sogritacc and self.sogritacc:
                 body.CreateNewRow()
@@ -2362,6 +2354,20 @@ class DocMag(adb.DbTable):
                 body.solocont =    1
                 numriga += 1
             
+            #riga sconto esterno
+            if bt.CONATTSCODOC and self.cfgdoc.sogscodoc and self.sogscodoc:
+                body.CreateNewRow()
+                body.numriga =     numriga
+                body.tipriga =     "C"
+                body.importo =     abs(self.totscodoc)
+                body.segno =       segnocp
+                body.id_pdcpa =    tpdc[magazz.RSPDC_ID]
+                body.id_pdccp =    self.id_pdc
+                body.segno =       segnopa
+                body.id_pdcpa =    self.cfgdoc.id_pdc_sd
+                body.solocont =    1
+                numriga += 1
+        
         #altre righe contabili "C": omaggi e storno
         if self._info.magomareg:
             if bt.TIPO_CONTAB == "O":

@@ -454,6 +454,14 @@ class FatturaElettronica(dbm.DocMag):
                                     ('AliquotaRitenuta', fmt_sc(self.perritacc)),
                                     ('CausalePagamento', ra_caupag),))
             
+            if self.totscodoc:
+                # 2.1.1.8 <ScontoMaggiorazione>
+                body_gen_doc_ssd = xmldoc.appendElement(body_gen_doc, 'ScontoMaggiorazione')
+                xmldoc.appendItems(body_gen_doc_ssd, 
+                                   (('Tipo',        "SC"),
+                                    ('Percentuale', fmt_ii(self.perscodoc)),
+                                    ('Importo',     fmt_ii(self.totscodoc)),))
+            
             if self.ftel_bollovirt:
                 # 2.1.1.6 <DatiBollo>
                 body_gen_doc_bol = xmldoc.appendElement(body_gen_doc, 'DatiBollo')

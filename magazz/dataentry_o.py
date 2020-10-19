@@ -72,6 +72,11 @@ class _MagazzPanel_O_Mixin(object):
         for name in 'per com imp'.split():
             self.Bind(wx.EVT_TEXT, self.OnRitAccChanged, cn('%sritacc' % name))
         self.Bind(wx.EVT_BUTTON, self.OnRitAccImponib, ci(wdr.ID_BUTRITACC))
+        # sconto esterno
+        self.Bind(wx.EVT_CHECKBOX, self.OnSogScoDoc, cn('sogscodoc'))
+        for name in 'per com imp'.split():
+            self.Bind(wx.EVT_TEXT, self.OnScoDocChanged, cn('%sscodoc' % name))
+        self.Bind(wx.EVT_BUTTON, self.OnScoDocImponib, ci(wdr.ID_BUTSCODOC))
     
     def OnSogRitAcc(self, event):
         sra = event.GetEventObject().GetValue()
@@ -134,6 +139,69 @@ class _MagazzPanel_O_Mixin(object):
         def cn(x):
             return self.FindWindowByName(x)
         cn('impritacc').SetValue(self.dbdoc.totimponib)
+        event.Skip()
+
+    def OnSogScoDoc(self, event):
+        sra = event.GetEventObject().GetValue()
+        doc = self.dbdoc
+        doc.sogscodoc = sra
+        if not sra:
+            doc.totscodoc = 0
+#             doc.totdare = doc.totimporto
+#             if doc.is_split_payment():
+#                 doc.totdare -= doc.totimposta
+            doc.totdare = doc.get_totdare()
+        self.UpdateScoDoc()
+        event.Skip()
+    
+    def UpdateScoDoc(self):
+        doc = self.dbdoc
+        us = False
+        for ID, val in ((wdr.ID_TOTSCODOC, doc.totscodoc),
+                        (wdr.ID_TOTDARE,   doc.totdare),):
+            c = self.FindWindowById(ID)
+            if not doc.samefloat((c.GetValue() or 0), (val or 0)):
+                c.SetValue(val)
+                us = True
+        if us:
+            doc.CalcolaScadenze()
+            self.gridscad.ResetView()
+            self.GridScadCheckImporti()
+    
+    def CalcolaScoDoc(self):
+        doc = self.dbdoc
+        doc.totscodoc = round(doc.perscodoc*doc.impscodoc/100*doc.comscodoc/100, 
+                              bt.VALINT_DECIMALS)
+#         doc.totdare = doc.totimporto-doc.totritacc
+#         if doc.is_split_payment():
+#             doc.totdare -= doc.totimposta
+        doc.totdare = doc.get_totdare()
+    
+    def OnScoDocChanged(self, event):
+        if hasattr(self, 'stopscodoc'):
+            return
+        def cn(x):
+            return self.FindWindowByName(x)
+        doc = self.dbdoc
+        if self.status == STATUS_EDITING:
+            self.stopscodoc = True
+            s, p, c, i = [cn('%sscodoc' % x).GetValue() 
+                          for x in 'sog per com imp'.split()]
+            doc.sogscodoc = s
+            doc.perscodoc = p
+            doc.comscodoc = c
+            doc.impscodoc = i
+            self.CalcolaScoDoc()
+            def UpdateScad():
+                self.UpdateScoDoc()
+                del self.stopscodoc
+            wx.CallAfter(UpdateScad)
+        event.Skip()
+
+    def OnScoDocImponib(self, event):
+        def cn(x):
+            return self.FindWindowByName(x)
+        cn('impscodoc').SetValue(self.dbdoc.totimponib)
         event.Skip()
 
     def UpdatePanelFoot(self):

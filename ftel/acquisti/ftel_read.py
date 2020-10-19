@@ -70,10 +70,18 @@ class _FTEL_Head(object):
         if self.tipdoc == "TD04": return "Nota credito"
         if self.tipdoc == "TD05": return "Nota debito"
         if self.tipdoc == "TD06": return "Parcella"
-        if self.tipdoc == "TD07": return "Fattura semplif."
-        if self.tipdoc == "TD08": return "Nota cr.semplif."
-        if self.tipdoc == "TD10": return "Ft.Intra beni"
-        if self.tipdoc == "TD11": return "Ft.Intra servizi"
+        if self.tipdoc == "TD16": return "Integr.Ft.Rev.Chg."
+        if self.tipdoc == "TD17": return "AutoFt.Acq.Servizi estero"
+        if self.tipdoc == "TD18": return "AutoFt.Acq.Beni estero"
+        if self.tipdoc == "TD19": return "Autoft.Acq.Beni ex Art.17 c.2"
+        if self.tipdoc == "TD20": return "Autoft.x integr.fatture"
+        if self.tipdoc == "TD21": return "Autoft. x splafonamento"
+        if self.tipdoc == "TD22": return "Estraz.beni da dep.IVA"
+        if self.tipdoc == "TD23": return "Estraz.beni da dep.IVA e vers.IVA"
+        if self.tipdoc == "TD24": return "Ft.Diff.Art.21 c.2, lett.a"
+        if self.tipdoc == "TD25": return "Ft.Diff.Art.21 c.2, lett.b"
+        if self.tipdoc == "TD26": return "Cess.Beni ammort."
+        if self.tipdoc == "TD27": return "Ft.Autocons./Omaggi no rivalsa"
         return "??? %s" % self.tipdoc
     
     def get_descriz_datdoc(self):
@@ -105,6 +113,7 @@ class _FTEL_Head(object):
         if modpag == "MP20": return "SEPA Direct Debit CORE"
         if modpag == "MP21": return "SEPA Direct Debit B2B"
         if modpag == "MP22": return "Trattenuta su somme gia' riscosse"
+        if modpag == "MP23": return "PagoPA"
         return "??? %s" % modpag
     
     def get_descriz_iban(self):

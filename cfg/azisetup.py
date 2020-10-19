@@ -270,6 +270,9 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.CONATTRITACC,
                    bt.CONPERRITACC,
                    bt.CONCOMRITACC,
+                   bt.CONATTSCODOC,
+                   bt.CONPERSCODOC,
+                   bt.CONCOMSCODOC,
                    bt.MAGPRE_DECIMALS,
                    bt.MAGQTA_DECIMALS,
                    bt.VALINT_DECIMALS,
@@ -367,6 +370,9 @@ class AziendaSetupPanel(_SetupPanel):
             bt.CONATTRITACC = cn('setup_conattritacc').GetValue()
             bt.CONPERRITACC = cn('setup_conperritacc').GetValue()
             bt.CONCOMRITACC = cn('setup_concomritacc').GetValue()
+            bt.CONATTSCODOC = cn('setup_conattscodoc').GetValue()
+            bt.CONPERSCODOC = cn('setup_conperscodoc').GetValue()
+            bt.CONCOMSCODOC = cn('setup_concomscodoc').GetValue()
             bt.MAGPRE_DECIMALS = cn('setup_magdec_prez').GetValue()
             bt.MAGQTA_DECIMALS = cn('setup_magdec_qta').GetValue()
             bt.VALINT_DECIMALS = cn('setup_contab_decimp').GetValue()
@@ -467,6 +473,9 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.CONATTRITACC,
                 bt.CONPERRITACC,
                 bt.CONCOMRITACC,
+                bt.CONATTSCODOC,
+                bt.CONPERSCODOC,
+                bt.CONCOMSCODOC,
                 bt.MAGPRE_DECIMALS,
                 bt.MAGQTA_DECIMALS,
                 bt.VALINT_DECIMALS,

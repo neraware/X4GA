@@ -696,7 +696,7 @@
 						mode="Transparent"
 						x="40"
 						y="164"
-						width="121"
+						width="180"
 						height="9"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -714,7 +714,7 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="167"
+						x="228"
 						y="164"
 						width="54"
 						height="9"
@@ -734,7 +734,7 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="228"
+						x="287"
 						y="164"
 						width="234"
 						height="9"
@@ -1331,7 +1331,7 @@
 						mode="Transparent"
 						x="40"
 						y="172"
-						width="121"
+						width="180"
 						height="12"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -1349,7 +1349,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="228"
+						x="287"
 						y="172"
 						width="234"
 						height="12"
@@ -1369,7 +1369,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="167"
+						x="228"
 						y="172"
 						width="54"
 						height="12"

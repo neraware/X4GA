@@ -62,6 +62,17 @@ class RitAccCheckBox(UnoZeroCheckBox):
             self.GetParent().FindWindowByName('setup_con%sritacc'%name).Enable(self.IsChecked())
         event.Skip()
 
+class ScoDocCheckBox(UnoZeroCheckBox):
+
+    def __init__(self, *args, **kwargs):
+        UnoZeroCheckBox.__init__(self, *args, **kwargs)
+        self.Bind(wx.EVT_CHECKBOX, self.OnScoDocChanged)
+
+    def OnScoDocChanged(self, event):
+        for name in 'per com'.split():
+            self.GetParent().FindWindowByName('setup_con%sscodoc'%name).Enable(self.IsChecked())
+        event.Skip()
+
 class MagProvMovRadioBox(RadioBox):
 
     def __init__(self, *args, **kwargs):
@@ -189,11 +200,14 @@ ID_CONBILRCEE = 15013
 ID_CONATTRITACC = 15014
 ID_CONPERRITACC = 15015
 ID_CONCOMRITACC = 15016
-ID_SCADORD = 15017
-ID_GESSOLPAG = 15018
-ID_DOCSOLPAG = 15019
-ID_GGSSOLPAG = 15020
-ID_EFFCONSCA = 15021
+ID_CONATTSCODOC = 15017
+ID_CONPERSCODOC = 15018
+ID_CONCOMSCODOC = 15019
+ID_SCADORD = 15020
+ID_GESSOLPAG = 15021
+ID_DOCSOLPAG = 15022
+ID_GGSSOLPAG = 15023
+ID_EFFCONSCA = 15024
 
 def ContabSetup( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -337,52 +351,73 @@ def ContabSetup( parent, call_fit = True, set_sizer = True ):
 
     item0.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item40 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item41 = wx.StaticBox( parent, -1, "Sconto esterno" )
+    item40 = wx.StaticBoxSizer( item41, wx.HORIZONTAL )
     
-    item41 = OrdPartiteRadioBox( parent, ID_SCADORD, "Ordinameno scadenzari clienti/fornitori", wx.DefaultPosition, wx.DefaultSize, 
+    item42 = ScoDocCheckBox( parent, ID_CONATTSCODOC, "Attiva gestione", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item42.SetName( "setup_conattscodoc" )
+    item40.Add( item42, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+
+    item43 = wx.StaticText( parent, ID_TEXT, "Calcolo %:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item40.Add( item43, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+
+    item44 = NumCtrl( parent, integerWidth=2, fractionWidth=2, allowNegative=False); item44.SetName('setup_conperscodoc')
+    item40.Add( item44, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item45 = wx.StaticText( parent, ID_TEXT, "da applicare all'imponibile in % del:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item40.Add( item45, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+
+    item46 = NumCtrl( parent, integerWidth=3, fractionWidth=2, allowNegative=False); item46.SetName('setup_concomscodoc')
+    item40.Add( item46, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+    item0.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item47 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    
+    item48 = OrdPartiteRadioBox( parent, ID_SCADORD, "Ordinameno scadenzari clienti/fornitori", wx.DefaultPosition, wx.DefaultSize, 
         ["Data scadenza","Data documento"] , 1, wx.RA_SPECIFY_ROWS )
-    item41.SetName( "setup_scadord" )
-    item40.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item48.SetName( "setup_scadord" )
+    item47.Add( item48, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item43 = wx.StaticBox( parent, -1, "Solleciti pagamento" )
-    item42 = wx.StaticBoxSizer( item43, wx.VERTICAL )
+    item50 = wx.StaticBox( parent, -1, "Solleciti pagamento" )
+    item49 = wx.StaticBoxSizer( item50, wx.VERTICAL )
     
-    item44 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item51 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item45 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item52 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item46 = UnoZeroCheckBox( parent, ID_GESSOLPAG, "Attiva gestione", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item46.SetName( "setup_gessolpag" )
-    item45.Add( item46, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item53 = UnoZeroCheckBox( parent, ID_GESSOLPAG, "Attiva gestione", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item53.SetName( "setup_gessolpag" )
+    item52.Add( item53, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item47 = UnoZeroCheckBox( parent, ID_DOCSOLPAG, "Allega documenti", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item47.SetName( "setup_docsolpag" )
-    item45.Add( item47, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+    item54 = UnoZeroCheckBox( parent, ID_DOCSOLPAG, "Allega documenti", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item54.SetName( "setup_docsolpag" )
+    item52.Add( item54, 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
-    item44.Add( item45, 0, wx.ALIGN_CENTER, 5 )
+    item51.Add( item52, 0, wx.ALIGN_CENTER, 5 )
 
-    item48 = wx.StaticText( parent, ID_TEXT, "GG scad:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item44.Add( item48, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
+    item55 = wx.StaticText( parent, ID_TEXT, "GG scad:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item51.Add( item55, 0, wx.ALIGN_CENTER|wx.LEFT|wx.TOP|wx.BOTTOM, 5 )
 
-    item49 = NumCtrl( parent, integerWidth=3, fractionWidth=0, allowNegative=False); item49.SetName('setup_ggssolpag')
-    item44.Add( item49, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item56 = NumCtrl( parent, integerWidth=3, fractionWidth=0, allowNegative=False); item56.SetName('setup_ggssolpag')
+    item51.Add( item56, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item42.Add( item44, 0, wx.ALIGN_CENTER, 5 )
+    item49.Add( item51, 0, wx.ALIGN_CENTER, 5 )
 
-    item40.Add( item42, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
+    item47.Add( item49, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item51 = wx.StaticBox( parent, -1, "Contabilizzazione effetti" )
-    item50 = wx.StaticBoxSizer( item51, wx.VERTICAL )
+    item58 = wx.StaticBox( parent, -1, "Contabilizzazione effetti" )
+    item57 = wx.StaticBoxSizer( item58, wx.VERTICAL )
     
-    item52 = UnoZeroCheckBox( parent, ID_EFFCONSCA, "Usa la data di scadenza", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item52.SetName( "setup_effconsca" )
-    item50.Add( item52, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+    item59 = UnoZeroCheckBox( parent, ID_EFFCONSCA, "Usa la data di scadenza", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item59.SetName( "setup_effconsca" )
+    item57.Add( item59, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 
-    item40.Add( item50, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
+    item47.Add( item57, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item40.AddGrowableCol( 2 )
+    item47.AddGrowableCol( 2 )
 
-    item0.Add( item40, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 
@@ -393,67 +428,67 @@ def ContabSetup( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_MAGDEFAULT = 15022
-ID_magdec_qta = 15023
-ID_magdec_prez = 15024
-ID_magricpre = 15025
-ID_MAGPZCONF = 15026
-ID_MAGPZGRIP = 15027
-ID_MAGSCORPCOS = 15028
-ID_MAGSCORPPRE = 15029
-ID_FOREIGN = 15030
-ID_MAGSCOCAT = 15031
-ID_MAGGESACC = 15032
-ID_MAGEANPREFIX = 15033
-ID_MAGDATCHI = 15034
-ID_MAGNUMLIS = 15035
-ID_MAGDATLIS = 15036
-ID_MAGBCOLIS = 15037
-ID_MAGFORLIS = 15038
-ID_MAGROWLIS = 15039
-ID_MAGVLIFOR = 15040
-ID_MAGVLIMAR = 15041
-ID_MAGVLICAT = 15042
-ID_MAGVLIGRU = 15043
-ID_MAGRICLIS = 15044
-ID_MAGSCOLIS = 15045
-ID_MAGPPROMO = 15046
-ID_MAGVRGLIS = 15047
-ID_MAGVSGLIS = 15048
-ID_MAGREPLIS = 15049
-ID_MAGRELLIS = 15050
-ID_MAGSEPLIS = 15051
-ID_MAGSELLIS = 15052
-ID_MAGERPLIS = 15053
-ID_MAGESPLIS = 15054
-ID_MAGATTGRIP = 15055
-ID_MAGCDEGRIP = 15056
-ID_LINE = 15057
-ID_MAGATTGRIF = 15058
-ID_MAGCDEGRIF = 15059
-ID_MAGAGGGRIP = 15060
-ID_MAGALWGRIP = 15061
-ID_MAGDATGRIP = 15062
-ID_MAGNOCODEVET = 15063
-ID_MAGNOCDEFVET = 15064
-ID_MAGEXTRAVET = 15065
-ID_MAGNOCODEDES = 15066
-ID_MAGNOCDEFDES = 15067
-ID_MAGIMGPROD = 15068
-ID_MAGDIGSEARCH = 15069
-ID_MAGRETSEARCH = 15070
-ID_MAGEXCSEARCH = 15071
-ID_MAGVISGIA = 15072
-ID_MAGVISDIS = 15073
-ID_MAGVISCOS = 15074
-ID_MAGVISPRE = 15075
-ID_MAGVISCPF = 15076
-ID_MAGVISBCD = 15077
-ID_MAGPROVATT = 15078
-ID_MAGPROVCLI = 15079
-ID_MAGPROVPRO = 15080
-ID_MAGPROVMOV = 15081
-ID_MAGPROVSEQ = 15082
+ID_MAGDEFAULT = 15025
+ID_magdec_qta = 15026
+ID_magdec_prez = 15027
+ID_magricpre = 15028
+ID_MAGPZCONF = 15029
+ID_MAGPZGRIP = 15030
+ID_MAGSCORPCOS = 15031
+ID_MAGSCORPPRE = 15032
+ID_FOREIGN = 15033
+ID_MAGSCOCAT = 15034
+ID_MAGGESACC = 15035
+ID_MAGEANPREFIX = 15036
+ID_MAGDATCHI = 15037
+ID_MAGNUMLIS = 15038
+ID_MAGDATLIS = 15039
+ID_MAGBCOLIS = 15040
+ID_MAGFORLIS = 15041
+ID_MAGROWLIS = 15042
+ID_MAGVLIFOR = 15043
+ID_MAGVLIMAR = 15044
+ID_MAGVLICAT = 15045
+ID_MAGVLIGRU = 15046
+ID_MAGRICLIS = 15047
+ID_MAGSCOLIS = 15048
+ID_MAGPPROMO = 15049
+ID_MAGVRGLIS = 15050
+ID_MAGVSGLIS = 15051
+ID_MAGREPLIS = 15052
+ID_MAGRELLIS = 15053
+ID_MAGSEPLIS = 15054
+ID_MAGSELLIS = 15055
+ID_MAGERPLIS = 15056
+ID_MAGESPLIS = 15057
+ID_MAGATTGRIP = 15058
+ID_MAGCDEGRIP = 15059
+ID_LINE = 15060
+ID_MAGATTGRIF = 15061
+ID_MAGCDEGRIF = 15062
+ID_MAGAGGGRIP = 15063
+ID_MAGALWGRIP = 15064
+ID_MAGDATGRIP = 15065
+ID_MAGNOCODEVET = 15066
+ID_MAGNOCDEFVET = 15067
+ID_MAGEXTRAVET = 15068
+ID_MAGNOCODEDES = 15069
+ID_MAGNOCDEFDES = 15070
+ID_MAGIMGPROD = 15071
+ID_MAGDIGSEARCH = 15072
+ID_MAGRETSEARCH = 15073
+ID_MAGEXCSEARCH = 15074
+ID_MAGVISGIA = 15075
+ID_MAGVISDIS = 15076
+ID_MAGVISCOS = 15077
+ID_MAGVISPRE = 15078
+ID_MAGVISCPF = 15079
+ID_MAGVISBCD = 15080
+ID_MAGPROVATT = 15081
+ID_MAGPROVCLI = 15082
+ID_MAGPROVPRO = 15083
+ID_MAGPROVMOV = 15084
+ID_MAGPROVSEQ = 15085
 
 def MagazzSetup( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1029,20 +1064,20 @@ def MagazzSetup( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_OPTNOTIFICHE = 15083
-ID_OPTTABSEARCH = 15084
-ID_OPTDIGSEARCH = 15085
-ID_OPTSPASEARCH = 15086
-ID_OPTLNKCRDPDC = 15087
-ID_OPTLNKGRDPDC = 15088
-ID_OPTLNKCRDCLI = 15089
-ID_OPTLNKGRDCLI = 15090
-ID_OPTLNKCRDFOR = 15091
-ID_OPTLNKGRDFOR = 15092
-ID_BACKUPDIR = 15093
-ID_GCP_USER = 15094
-ID_GCP_PSWD = 15095
-ID_GC_PRINT = 15096
+ID_OPTNOTIFICHE = 15086
+ID_OPTTABSEARCH = 15087
+ID_OPTDIGSEARCH = 15088
+ID_OPTSPASEARCH = 15089
+ID_OPTLNKCRDPDC = 15090
+ID_OPTLNKGRDPDC = 15091
+ID_OPTLNKCRDCLI = 15092
+ID_OPTLNKGRDCLI = 15093
+ID_OPTLNKCRDFOR = 15094
+ID_OPTLNKGRDFOR = 15095
+ID_BACKUPDIR = 15096
+ID_GCP_USER = 15097
+ID_GCP_PSWD = 15098
+ID_GC_PRINT = 15099
 
 def OpzioniFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1186,8 +1221,8 @@ def OpzioniFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TEXTCTRL = 15097
-ID_AZIENDA_LOGO = 15098
+ID_TEXTCTRL = 15100
+ID_AZIENDA_LOGO = 15101
 
 def DatiAziendaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1350,22 +1385,22 @@ def DatiAziendaFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_FTEL_ACQPDC = 15099
-ID_FTEL_VENPDF = 15100
-ID_FTEL_SOLITA = 15101
-ID_FTEL_DACOCO = 15102
-ID_FTEL_INFDEST = 15103
-ID_FTEL_EEB_URL = 15104
-ID_FTEL_EEB_USER = 15105
-ID_FTEL_EEB_PSWD = 15106
-ID_FTEL_VENART = 15107
-ID_FTEL_TIPCOD = 15108
-ID_FTEL_TIPDAT = 15109
-ID_FTEL_ROWCAU = 15110
-ID_REGFISC = 15111
-ID_TIPORIT = 15112
-ID_PAGRITACC = 15113
-ID_CASSAPREV = 15114
+ID_FTEL_ACQPDC = 15102
+ID_FTEL_VENPDF = 15103
+ID_FTEL_SOLITA = 15104
+ID_FTEL_DACOCO = 15105
+ID_FTEL_INFDEST = 15106
+ID_FTEL_EEB_URL = 15107
+ID_FTEL_EEB_USER = 15108
+ID_FTEL_EEB_PSWD = 15109
+ID_FTEL_VENART = 15110
+ID_FTEL_TIPCOD = 15111
+ID_FTEL_TIPDAT = 15112
+ID_FTEL_ROWCAU = 15113
+ID_REGFISC = 15114
+ID_TIPORIT = 15115
+ID_PAGRITACC = 15116
+ID_CASSAPREV = 15117
 
 def FTEL_Setup( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )

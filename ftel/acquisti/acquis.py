@@ -94,9 +94,13 @@ class FtelAcquisPanel(aw.Panel):
             aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
             return
         show_pdf(rowlist.docxml, rowlist.filename)
-        dlg = ContabDialogTipo_I_O(self, ftel_acq_info=rowlist)
-        done = dlg.ShowModal() == wx.ID_OK
-        dlg.Destroy()
+        if rowlist.docxml.anag_fornit.piva == Env.Azienda.piva:
+            aw.awu.MsgDialog(self, u"Documento emesso da %s e destinato a se stesso, non verrà acquisito." % rowlist.docxml.anag_fornit.descriz)
+            done = True
+        else:
+            dlg = ContabDialogTipo_I_O(self, ftel_acq_info=rowlist)
+            done = dlg.ShowModal() == wx.ID_OK
+            dlg.Destroy()
         if done:
             rowlist.archive_file()
             self.update_list()

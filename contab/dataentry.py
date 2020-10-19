@@ -1404,11 +1404,11 @@ class RegSearchPanel(aw.Panel):
             try:
                 cmd = \
 """SELECT reg.id, reg.datreg, pdc.descriz, reg.numdoc, reg.datdoc, """\
-"""IF(row.segno="D", row.importo, 0), IF(row.segno="A", row.importo, 0) """\
+"""IF(_row.segno="D", _row.importo, 0), IF(_row.segno="A", _row.importo, 0) """\
 """FROM ((%s AS reg INNER JOIN %s AS cau ON reg.id_caus=cau.id) """\
-"""JOIN contab_b AS row ON row.id_reg=reg.id) """\
-"""JOIN pdc AS pdc ON row.id_pdcpa=pdc.id """\
-"""WHERE row.numriga=1 and %s """\
+"""JOIN contab_b AS _row ON _row.id_reg=reg.id) """\
+"""JOIN pdc AS pdc ON _row.id_pdcpa=pdc.id """\
+"""WHERE _row.numriga=1 and %s """\
 """ORDER BY reg.datreg, year(reg.datdoc), reg.numdoc;"""\
  % (bt.TABNAME_CONTAB_H, bt.TABNAME_CFGCONTAB, filter)
                 cur = adb.db.get_cursor()

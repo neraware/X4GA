@@ -1332,6 +1332,14 @@ class MagazzPanel(aw.Panel,\
                 sra = self.FindWindowByName('sogritacc')
                 sra.SetValue(ra)
                 sra.TestPercentuali(doc)
+            if bt.CONATTSCODOC and doc.cfgdoc.sogscodoc:
+                sd = 1
+                if hasattr(anag, 'sogscodoc'):
+                    sd = anag.sogscodoc or 0
+                doc.sogscodoc = sd
+                ssd = self.FindWindowByName('sogscodoc')
+                ssd.SetValue(sd)
+                ssd.TestPercentuali(doc)
         copyCols = copyCols.split()
         hcol = {}
         hcol["descriz"] = doc.pdc.descriz
@@ -1882,6 +1890,20 @@ class MagazzPanel(aw.Panel,\
                 if MsgDialog(self, msg, style=style) != wx.ID_YES:
                     return False
         
+        if bt.CONATTSCODOC and doc.cfgdoc.sogscodoc and doc.sogscodoc:
+            if not self.FindWindowByName('ftel_head_caus').GetValue():
+                msg = "Attivando lo sconto esterno, occorre documentarne il motivo sulle righe causale in testata"
+                style = wx.ICON_ERROR
+                MsgDialog(self, msg, style=style)
+                return False
+            if not doc.samefloat(doc.impscodoc, doc.totimponib):
+                msg =\
+                    """Lo sconto esterno viene calcolato su un importo """\
+                    """differente dall'imponibile del documento.\nConfermi?"""
+                style = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
+                if MsgDialog(self, msg, style=style) != wx.ID_YES:
+                    return False
+        
         #controllo fidi
         if not self.CheckFidoCliente():
             return False
@@ -2064,6 +2086,8 @@ class MagazzPanel(aw.Panel,\
             if a:
                 a = cfg.HasMovAcconto() or cfg.HasMovStornoAcconto()
             self.FindWindowByName('panacconti').Show(a)
+            c = self.FindWindowByName('panscodocdati')
+            c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
             self.Layout_()
         finally:
             self.Thaw()
@@ -2084,7 +2108,7 @@ class MagazzPanel(aw.Panel,\
         if self.FindWindowById(wdr.ID_CAUSALE).GetValue():
             self.SetCausale()
         else:
-            for name in 'panmargine panritaccdati'.split():
+            for name in 'panmargine panritaccdati panscodocdati'.split():
                 c = self.FindWindowByName(name)
                 if c:
                     c.Hide()
@@ -2138,6 +2162,8 @@ class MagazzPanel(aw.Panel,\
             if a:
                 a = cfg.HasMovAcconto() or cfg.HasMovStornoAcconto()
             cn('panacconti').Show(a)
+            c = self.FindWindowByName('panscodocdati')
+            c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
             self.Layout_()
         finally:
             self.Thaw()
@@ -2652,6 +2678,7 @@ class MagazzPanel(aw.Panel,\
         self.FindWindowByName('notedoc').Enable(enable)
         self.EnableDatiAcc()
         self.EnableRitAccControls(enable)
+        self.EnableScoDocControls(enable)
     
     def EnableRitAccControls(self, enable=True):
         def cn(x):
@@ -2662,6 +2689,16 @@ class MagazzPanel(aw.Panel,\
         for name in 'per com imp'.split():
             cn('%sritacc'%name).Enable(enable)
         cn('butritacc').Enable(enable)
+    
+    def EnableScoDocControls(self, enable=True):
+        def cn(x):
+            return self.FindWindowByName(x)
+        enable = enable and bool(bt.CONATTSCODOC and self.dbdoc.cfgdoc.sogscodoc)
+        cn('panscodocdati').Enable(enable)
+        enable = enable and cn('sogscodoc').GetValue()
+        for name in 'per com imp'.split():
+            cn('%sscodoc'%name).Enable(enable)
+        cn('butscodoc').Enable(enable)
     
     def EnableDatiAcc(self):
         doc = self.dbdoc

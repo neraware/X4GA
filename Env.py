@@ -1008,6 +1008,10 @@ class Azienda(object):
         CONPERRITACC = None  #percentuale di calcolo della ritenuta d'acconto
         CONCOMRITACC = None  #percentuale di competenza del totale imponibile per r.a.
         
+        CONATTSCODOC = False #flag gestione sconto esterno
+        CONPERSCODOC = None  #percentuale di calcolo dello sconto esterno
+        CONCOMSCODOC = None  #percentuale di competenza del totale imponibile per sconto esterno
+        
         VALINT_DECIMALS = 2  #numero decimali su valuta interna
         VALUTE_DECIMALS = 6  #numero decimali su valuta estera
         
@@ -2853,6 +2857,8 @@ class Azienda(object):
                 [ "checkfido",  "TINYINT",  1, None, "Flag controllo fido cliente", None ],
                 [ "sogritacc",  "TINYINT",  1, None, "Flag gestione ritenuta d'acconto", None ],
                 [ "id_pdc_ra",  "INT",    idw, None, "ID sottoconto per ritenuta d'acconto", None ],
+                [ "sogscodoc",  "TINYINT",  1, None, "Flag gestione sconto esterno", None ],
+                [ "id_pdc_sd",  "INT",    idw, None, "ID sottoconto per sconto esterno", None ],
                 [ "autoqtaonbc","TINYINT",  1, None, "Flag auto quantita' su lettura barcode", None ],
                 [ "printer",    "CHAR",    60, None, "Nome stampante da usare, se prefissata", None ],
                 [ "copies",     "INT",      3, None, "Numero copie x stampe dirette", None ],
@@ -3026,7 +3032,12 @@ class Azienda(object):
                 [ "ftel_codcup",          "VARCHAR",    15, None, "Fattura elettronica: codice CUP", None ], 
                 [ "ftel_numtrasm",        "INT",         5, None, "Fattura elettronica: numero trasmissione", None ],  
                 [ "ftel_bollovirt",       "DECIMAL",     6,    2, "Fattura elettronica: bollo virtuale", None ], 
-                [ "datope",               "DATE",     None, None, "Data operazione", None ], ]
+                [ "datope",               "DATE",     None, None, "Data operazione", None ], 
+                [ "sogscodoc",            "TINYINT",     1, None, "Flag documento soggetto sconto (ScontoMaggiorazione)", None ],
+                [ "perscodoc",            "DECIMAL",     4,    2, "Percentuale di ScontoMaggiorazione", None ],
+                [ "comscodoc",            "DECIMAL",     5,    2, "Percentuale dell'importo su cui applicare lo ScontoMaggiorazione", None ],
+                [ "impscodoc",            "DECIMAL",   IVI,  DVI, "Importo su cui applicare lo ScontoMaggiorazione", None ],
+                [ "totscodoc",            "DECIMAL",   IVI,  DVI, "Importo dello ScontoMaggiorazione", None ], ]
             
             if cls.FTEL_DACOCO:
                 cls.movmag_h += [\
@@ -4081,6 +4092,9 @@ class Azienda(object):
                 ('CONATTRITACC',    'conattritacc',       f, _int, None),
                 ('CONPERRITACC',    'conperritacc',       i, _flt, None),
                 ('CONCOMRITACC',    'concomritacc',       i, _flt, None),
+                ('CONATTSCODOC',    'conattscodoc',       f, _int, None),
+                ('CONPERSCODOC',    'conperscodoc',       i, _flt, None),
+                ('CONCOMSCODOC',    'concomscodoc',       i, _flt, None),
                 ('MAGPRE_DECIMALS', 'magdec_prez',        i, _int, '%si prezzi' % d),
                 ('MAGQTA_DECIMALS', 'magdec_qta',         i, _int, '%slle quantità' % d),
                 ('MAGEAN_PREFIX',   'mageanprefix',       s, _str, 'del prefisso EAN'),

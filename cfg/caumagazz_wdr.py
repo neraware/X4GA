@@ -81,6 +81,12 @@ class RitAccCheckBox(LinkedCheckBox):
     linkname = 'id_pdc_ra'
 
 
+class ScoDocCheckBox(LinkedCheckBox):
+    
+    values = values={True: 1, False: 0}
+    linkname = 'id_pdc_sd'
+
+
 class AccorpaIvaCheckBox(RCheckBox):
     
     def __init__(self, *args, **kwargs):
@@ -646,53 +652,55 @@ ID_CTRCAUCON = 16053
 ID_SCORPIVA = 16054
 ID_SOGRITACC = 16055
 ID_CTRPDCRITACC = 16056
-ID_ASKPROTIVA = 16057
-ID_AUTOQTAONBC = 16058
-ID_RPTCOLLI = 16059
-ID_DESEVARIF = 16060
-ID_CTRACQDOC1 = 16061
-ID_TIPACQ1 = 16062
-ID_COPYDOC1 = 16063
-ID_EVADOC1 = 16064
-ID_ACQDOC1 = 16065
-ID_ANNACQ1 = 16066
-ID_CHECKACQ1 = 16067
-ID_CTRACQDOC2 = 16068
-ID_TIPACQ2 = 16069
-ID_COPYDOC2 = 16070
-ID_EVADOC2 = 16071
-ID_ACQDOC2 = 16072
-ID_ANNACQ2 = 16073
-ID_CHECKACQ2 = 16074
-ID_CTRACQDOC3 = 16075
-ID_TIPACQ3 = 16076
-ID_COPYDOC3 = 16077
-ID_EVADOC3 = 16078
-ID_ACQDOC3 = 16079
-ID_ANNACQ3 = 16080
-ID_CHECKACQ3 = 16081
-ID_CTRACQDOC4 = 16082
-ID_TIPACQ4 = 16083
-ID_COPYDOC4 = 16084
-ID_EVADOC4 = 16085
-ID_ACQDOC4 = 16086
-ID_ANNACQ4 = 16087
-ID_CHECKACQ4 = 16088
-ID_CHECKFIDO = 16089
-ID_VISLISTINI = 16090
-ID_VISCOSTO = 16091
-ID_VISGIAC = 16092
-ID_VISULTMOV = 16093
-ID_ULTMOVBEF = 16094
-ID_VISMARGINE = 16095
-ID_ASKDATIACC = 16096
-ID_TRAKGC = 16097
-ID_TRACAU = 16098
-ID_TRAASP = 16099
-ID_TRACUR = 16100
-ID_TRAPOR = 16101
-ID_TRAVET = 16102
-ID_TRACON = 16103
+ID_SOGSCODOC = 16057
+ID_CTRPDCSCODOC = 16058
+ID_ASKPROTIVA = 16059
+ID_AUTOQTAONBC = 16060
+ID_RPTCOLLI = 16061
+ID_DESEVARIF = 16062
+ID_CTRACQDOC1 = 16063
+ID_TIPACQ1 = 16064
+ID_COPYDOC1 = 16065
+ID_EVADOC1 = 16066
+ID_ACQDOC1 = 16067
+ID_ANNACQ1 = 16068
+ID_CHECKACQ1 = 16069
+ID_CTRACQDOC2 = 16070
+ID_TIPACQ2 = 16071
+ID_COPYDOC2 = 16072
+ID_EVADOC2 = 16073
+ID_ACQDOC2 = 16074
+ID_ANNACQ2 = 16075
+ID_CHECKACQ2 = 16076
+ID_CTRACQDOC3 = 16077
+ID_TIPACQ3 = 16078
+ID_COPYDOC3 = 16079
+ID_EVADOC3 = 16080
+ID_ACQDOC3 = 16081
+ID_ANNACQ3 = 16082
+ID_CHECKACQ3 = 16083
+ID_CTRACQDOC4 = 16084
+ID_TIPACQ4 = 16085
+ID_COPYDOC4 = 16086
+ID_EVADOC4 = 16087
+ID_ACQDOC4 = 16088
+ID_ANNACQ4 = 16089
+ID_CHECKACQ4 = 16090
+ID_CHECKFIDO = 16091
+ID_VISLISTINI = 16092
+ID_VISCOSTO = 16093
+ID_VISGIAC = 16094
+ID_VISULTMOV = 16095
+ID_ULTMOVBEF = 16096
+ID_VISMARGINE = 16097
+ID_ASKDATIACC = 16098
+ID_TRAKGC = 16099
+ID_TRACAU = 16100
+ID_TRAASP = 16101
+ID_TRACUR = 16102
+ID_TRAPOR = 16103
+ID_TRAVET = 16104
+ID_TRACON = 16105
 
 def Doc2Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -734,59 +742,79 @@ def Doc2Func( parent, call_fit = True, set_sizer = True ):
 
     item2.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item12 = wx.StaticBox( parent, -1, "Gestione Ritenuta d'Acconto" )
-    item11 = wx.StaticBoxSizer( item12, wx.VERTICAL )
+    item11 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item13 = RitAccCheckBox( parent, ID_SOGRITACC, "Attiva la gestione delle ritenute d'acconto e contabilizzale su:", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item13.SetName( "sogritacc" )
-    item11.Add( item13, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+    item13 = wx.StaticBox( parent, -1, "Gestione Ritenuta d'Acconto" )
+    item12 = wx.StaticBoxSizer( item13, wx.VERTICAL )
+    
+    item14 = RitAccCheckBox( parent, ID_SOGRITACC, "Attiva e contabilizza su:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item14.SetName( "sogritacc" )
+    item12.Add( item14, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item14 = LinkTablePdc(parent, ID_CTRPDCRITACC, "id_pdc_ra")
-    item11.Add( item14, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item15 = LinkTablePdc(parent, ID_CTRPDCRITACC, "id_pdc_ra")
+    item12.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item2.Add( item11, 0, wx.GROW|wx.LEFT|wx.RIGHT, 5 )
+    item11.Add( item12, 0, wx.GROW|wx.LEFT, 5 )
+
+    item17 = wx.StaticBox( parent, -1, "Gestione Sconto Esterno" )
+    item16 = wx.StaticBoxSizer( item17, wx.VERTICAL )
+    
+    item18 = ScoDocCheckBox( parent, ID_SOGSCODOC, "Attiva e contabilizza su:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item18.SetName( "sogscodoc" )
+    item16.Add( item18, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item19 = LinkTablePdc(parent, ID_CTRPDCSCODOC, "id_pdc_sd")
+    item16.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item11.Add( item16, 0, wx.GROW|wx.LEFT|wx.RIGHT, 5 )
+
+    item11.AddGrowableCol( 0 )
+
+    item11.AddGrowableCol( 1 )
+
+    item2.Add( item11, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item2.AddGrowableCol( 0 )
 
     item1.Add( item2, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item15 = RadioBox( parent, ID_ASKPROTIVA, "Protocollo IVA", wx.DefaultPosition, wx.DefaultSize, 
+    item20 = RadioBox( parent, ID_ASKPROTIVA, "Protocollo IVA", wx.DefaultPosition, wx.DefaultSize, 
         ["Non richiesto","Proposto zero","Proposto numero documento","Proposto da registro IVA"] , 1, wx.RA_SPECIFY_COLS )
-    item15.SetName( "askprotiva" )
-    item1.Add( item15, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
+    item20.SetName( "askprotiva" )
+    item1.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5 )
 
-    item16 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item21 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item18 = wx.StaticBox( parent, -1, "Barcode" )
-    item17 = wx.StaticBoxSizer( item18, wx.VERTICAL )
+    item23 = wx.StaticBox( parent, -1, "Barcode" )
+    item22 = wx.StaticBoxSizer( item23, wx.VERTICAL )
     
-    item19 = CheckBox( parent, ID_AUTOQTAONBC, "Auto qta = 1", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item19.SetName( "autoqtaonbc" )
-    item17.Add( item19, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item24 = CheckBox( parent, ID_AUTOQTAONBC, "Auto qta = 1", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item24.SetName( "autoqtaonbc" )
+    item22.Add( item24, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item16.Add( item17, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item21.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item21 = wx.StaticBox( parent, -1, "Segnacolli" )
-    item20 = wx.StaticBoxSizer( item21, wx.VERTICAL )
+    item26 = wx.StaticBox( parent, -1, "Segnacolli" )
+    item25 = wx.StaticBoxSizer( item26, wx.VERTICAL )
     
-    item22 = CheckBox( parent, ID_RPTCOLLI, "Attiva stampa", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item22.SetName( "rptcolli" )
-    item20.Add( item22, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item27 = CheckBox( parent, ID_RPTCOLLI, "Attiva stampa", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item27.SetName( "rptcolli" )
+    item25.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item16.Add( item20, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item21.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item24 = wx.StaticBox( parent, -1, "Evasione doc." )
-    item23 = wx.StaticBoxSizer( item24, wx.VERTICAL )
+    item29 = wx.StaticBox( parent, -1, "Evasione doc." )
+    item28 = wx.StaticBoxSizer( item29, wx.VERTICAL )
     
-    item25 = CheckBox( parent, ID_DESEVARIF, "Usa dati rif.", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item25.SetName( "desevarif" )
-    item23.Add( item25, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item30 = CheckBox( parent, ID_DESEVARIF, "Usa dati rif.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item30.SetName( "desevarif" )
+    item28.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item16.Add( item23, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item21.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item16.AddGrowableRow( 2 )
+    item21.AddGrowableRow( 2 )
 
-    item1.Add( item16, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.TOP, 5 )
+    item1.Add( item21, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.TOP, 5 )
 
     item1.AddGrowableCol( 0 )
 
@@ -794,305 +822,305 @@ def Doc2Func( parent, call_fit = True, set_sizer = True ):
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item26 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item31 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item28 = wx.StaticBox( parent, -1, "Acquisizione ed evazione altri documenti" )
-    item27 = wx.StaticBoxSizer( item28, wx.VERTICAL )
+    item33 = wx.StaticBox( parent, -1, "Acquisizione ed evazione altri documenti" )
+    item32 = wx.StaticBoxSizer( item33, wx.VERTICAL )
     
-    item29 = wx.FlexGridSizer( 0, 6, 0, 0 )
+    item34 = wx.FlexGridSizer( 0, 6, 0, 0 )
     
-    item30 = wx.StaticText( parent, ID_TEXT, "Documento", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item29.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
+    item35 = wx.StaticText( parent, ID_TEXT, "Documento", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item34.Add( item35, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM, 5 )
 
-    item31 = wx.StaticText( parent, ID_TEXT, "Copia", wx.DefaultPosition, [30,-1], 0 )
-    item29.Add( item31, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item36 = wx.StaticText( parent, ID_TEXT, "Copia", wx.DefaultPosition, [30,-1], 0 )
+    item34.Add( item36, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item32 = wx.StaticText( parent, ID_TEXT, "Evadi", wx.DefaultPosition, [30,-1], 0 )
-    item29.Add( item32, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item37 = wx.StaticText( parent, ID_TEXT, "Evadi", wx.DefaultPosition, [30,-1], 0 )
+    item34.Add( item37, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item33 = wx.StaticText( parent, ID_TEXT, "Acquis", wx.DefaultPosition, [30,-1], 0 )
-    item29.Add( item33, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item38 = wx.StaticText( parent, ID_TEXT, "Acquis", wx.DefaultPosition, [30,-1], 0 )
+    item34.Add( item38, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item34 = wx.StaticText( parent, ID_TEXT, "Annul", wx.DefaultPosition, [30,-1], 0 )
-    item29.Add( item34, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item39 = wx.StaticText( parent, ID_TEXT, "Annul", wx.DefaultPosition, [30,-1], 0 )
+    item34.Add( item39, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item35 = wx.StaticText( parent, ID_TEXT, "Check", wx.DefaultPosition, [30,-1], 0 )
-    item29.Add( item35, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+    item40 = wx.StaticText( parent, ID_TEXT, "Check", wx.DefaultPosition, [30,-1], 0 )
+    item34.Add( item40, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-    item36 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item41 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item37 = LinkTable(parent, ID_CTRACQDOC1 ); item37.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc1", None )
-    item36.Add( item37, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item42 = LinkTable(parent, ID_CTRACQDOC1 ); item42.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc1", None )
+    item41.Add( item42, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item38 = TextCtrl(parent, ID_TIPACQ1); item38.SetName('tipacq1'); item38.Show(False)
-    item36.Add( item38, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
+    item43 = TextCtrl(parent, ID_TIPACQ1); item43.SetName('tipacq1'); item43.Show(False)
+    item41.Add( item43, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
 
-    item36.AddGrowableCol( 0 )
+    item41.AddGrowableCol( 0 )
 
-    item29.Add( item36, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item34.Add( item41, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item39 = CheckBox( parent, ID_COPYDOC1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item39.SetName( "_copydoc1" )
-    item29.Add( item39, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item44 = CheckBox( parent, ID_COPYDOC1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item44.SetName( "_copydoc1" )
+    item34.Add( item44, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item40 = CheckBox( parent, ID_EVADOC1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item40.SetName( "_evadoc1" )
-    item29.Add( item40, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item45 = CheckBox( parent, ID_EVADOC1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item45.SetName( "_evadoc1" )
+    item34.Add( item45, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item41 = CheckBox( parent, ID_ACQDOC1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item41.SetName( "_acqdoc1" )
-    item29.Add( item41, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item46 = CheckBox( parent, ID_ACQDOC1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item46.SetName( "_acqdoc1" )
+    item34.Add( item46, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item42 = CheckBox( parent, ID_ANNACQ1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item42.SetName( "annacq1" )
-    item29.Add( item42, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item47 = CheckBox( parent, ID_ANNACQ1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item47.SetName( "annacq1" )
+    item34.Add( item47, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item43 = CheckBox( parent, ID_CHECKACQ1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item43.SetName( "checkacq1" )
-    item29.Add( item43, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item48 = CheckBox( parent, ID_CHECKACQ1, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item48.SetName( "checkacq1" )
+    item34.Add( item48, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item44 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item49 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item45 = LinkTable(parent, ID_CTRACQDOC2 ); item45.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc2", None )
-    item44.Add( item45, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item50 = LinkTable(parent, ID_CTRACQDOC2 ); item50.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc2", None )
+    item49.Add( item50, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item46 = TextCtrl(parent, ID_TIPACQ2); item46.SetName('tipacq2'); item46.Show(False)
-    item44.Add( item46, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
+    item51 = TextCtrl(parent, ID_TIPACQ2); item51.SetName('tipacq2'); item51.Show(False)
+    item49.Add( item51, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
 
-    item44.AddGrowableCol( 0 )
+    item49.AddGrowableCol( 0 )
 
-    item29.Add( item44, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item34.Add( item49, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item47 = CheckBox( parent, ID_COPYDOC2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item47.SetName( "_copydoc2" )
-    item29.Add( item47, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item52 = CheckBox( parent, ID_COPYDOC2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item52.SetName( "_copydoc2" )
+    item34.Add( item52, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item48 = CheckBox( parent, ID_EVADOC2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item48.SetName( "_evadoc2" )
-    item29.Add( item48, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item53 = CheckBox( parent, ID_EVADOC2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item53.SetName( "_evadoc2" )
+    item34.Add( item53, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item49 = CheckBox( parent, ID_ACQDOC2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item49.SetName( "_acqdoc2" )
-    item29.Add( item49, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item54 = CheckBox( parent, ID_ACQDOC2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item54.SetName( "_acqdoc2" )
+    item34.Add( item54, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item50 = CheckBox( parent, ID_ANNACQ2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item50.SetName( "annacq2" )
-    item29.Add( item50, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item55 = CheckBox( parent, ID_ANNACQ2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item55.SetName( "annacq2" )
+    item34.Add( item55, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item51 = CheckBox( parent, ID_CHECKACQ2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item51.SetName( "checkacq2" )
-    item29.Add( item51, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item56 = CheckBox( parent, ID_CHECKACQ2, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item56.SetName( "checkacq2" )
+    item34.Add( item56, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item52 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item57 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item53 = LinkTable(parent, ID_CTRACQDOC3 ); item53.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc3", None )
-    item52.Add( item53, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item58 = LinkTable(parent, ID_CTRACQDOC3 ); item58.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc3", None )
+    item57.Add( item58, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item54 = TextCtrl(parent, ID_TIPACQ3); item54.SetName('tipacq3'); item54.Show(False)
-    item52.Add( item54, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
+    item59 = TextCtrl(parent, ID_TIPACQ3); item59.SetName('tipacq3'); item59.Show(False)
+    item57.Add( item59, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
 
-    item52.AddGrowableCol( 0 )
+    item57.AddGrowableCol( 0 )
 
-    item29.Add( item52, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item34.Add( item57, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item55 = CheckBox( parent, ID_COPYDOC3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item55.SetName( "_copydoc3" )
-    item29.Add( item55, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item60 = CheckBox( parent, ID_COPYDOC3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item60.SetName( "_copydoc3" )
+    item34.Add( item60, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item56 = CheckBox( parent, ID_EVADOC3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item56.SetName( "_evadoc3" )
-    item29.Add( item56, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item61 = CheckBox( parent, ID_EVADOC3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item61.SetName( "_evadoc3" )
+    item34.Add( item61, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item57 = CheckBox( parent, ID_ACQDOC3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item57.SetName( "_acqdoc3" )
-    item29.Add( item57, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item62 = CheckBox( parent, ID_ACQDOC3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item62.SetName( "_acqdoc3" )
+    item34.Add( item62, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item58 = CheckBox( parent, ID_ANNACQ3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item58.SetName( "annacq3" )
-    item29.Add( item58, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item63 = CheckBox( parent, ID_ANNACQ3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item63.SetName( "annacq3" )
+    item34.Add( item63, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item59 = CheckBox( parent, ID_CHECKACQ3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item59.SetName( "checkacq3" )
-    item29.Add( item59, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item64 = CheckBox( parent, ID_CHECKACQ3, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item64.SetName( "checkacq3" )
+    item34.Add( item64, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item60 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item65 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item61 = LinkTable(parent, ID_CTRACQDOC4 ); item61.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc4", None )
-    item60.Add( item61, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item66 = LinkTable(parent, ID_CTRACQDOC4 ); item66.SetDataLink( bt.TABNAME_CFGMAGDOC, "id_acqdoc4", None )
+    item65.Add( item66, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item62 = TextCtrl(parent, ID_TIPACQ4); item62.SetName('tipacq4'); item62.Show(False)
-    item60.Add( item62, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
+    item67 = TextCtrl(parent, ID_TIPACQ4); item67.SetName('tipacq4'); item67.Show(False)
+    item65.Add( item67, 0, wx.ALIGN_CENTER|wx.BOTTOM, 5 )
 
-    item60.AddGrowableCol( 0 )
+    item65.AddGrowableCol( 0 )
 
-    item29.Add( item60, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item34.Add( item65, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item63 = CheckBox( parent, ID_COPYDOC4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item63.SetName( "_copydoc4" )
-    item29.Add( item63, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item68 = CheckBox( parent, ID_COPYDOC4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.SetName( "_copydoc4" )
+    item34.Add( item68, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item64 = CheckBox( parent, ID_EVADOC4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item64.SetName( "_evadoc4" )
-    item29.Add( item64, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item69 = CheckBox( parent, ID_EVADOC4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item69.SetName( "_evadoc4" )
+    item34.Add( item69, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item65 = CheckBox( parent, ID_ACQDOC4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item65.SetName( "_acqdoc4" )
-    item29.Add( item65, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item70 = CheckBox( parent, ID_ACQDOC4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item70.SetName( "_acqdoc4" )
+    item34.Add( item70, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item66 = CheckBox( parent, ID_ANNACQ4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item66.SetName( "annacq4" )
-    item29.Add( item66, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item71 = CheckBox( parent, ID_ANNACQ4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item71.SetName( "annacq4" )
+    item34.Add( item71, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item67 = CheckBox( parent, ID_CHECKACQ4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.SetName( "checkacq4" )
-    item29.Add( item67, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item72 = CheckBox( parent, ID_CHECKACQ4, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item72.SetName( "checkacq4" )
+    item34.Add( item72, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item29.AddGrowableCol( 0 )
+    item34.AddGrowableCol( 0 )
 
-    item27.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item32.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item26.Add( item27, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item31.Add( item32, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item68 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    item73 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
-    item70 = wx.StaticBox( parent, -1, "Fido cliente" )
-    item69 = wx.StaticBoxSizer( item70, wx.VERTICAL )
+    item75 = wx.StaticBox( parent, -1, "Fido cliente" )
+    item74 = wx.StaticBoxSizer( item75, wx.VERTICAL )
     
-    item71 = CheckBox( parent, ID_CHECKFIDO, "Doc. sottoposto a controllo", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item71.SetName( "checkfido" )
-    item69.Add( item71, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item76 = CheckBox( parent, ID_CHECKFIDO, "Doc. sottoposto a controllo", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item76.SetName( "checkfido" )
+    item74.Add( item76, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item68.Add( item69, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item73.Add( item74, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item73 = wx.StaticBox( parent, -1, "Del prodotto, visualizza:" )
-    item72 = wx.StaticBoxSizer( item73, wx.VERTICAL )
+    item78 = wx.StaticBox( parent, -1, "Del prodotto, visualizza:" )
+    item77 = wx.StaticBoxSizer( item78, wx.VERTICAL )
     
-    item74 = CheckBox( parent, ID_VISLISTINI, "Dati e listini in vigore", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item74.SetName( "vislistini" )
-    item72.Add( item74, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item79 = CheckBox( parent, ID_VISLISTINI, "Dati e listini in vigore", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item79.SetName( "vislistini" )
+    item77.Add( item79, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item75 = wx.BoxSizer( wx.HORIZONTAL )
+    item80 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item76 = CheckBox( parent, ID_VISCOSTO, "Costo U.", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item76.SetName( "viscosto" )
-    item75.Add( item76, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item81 = CheckBox( parent, ID_VISCOSTO, "Costo U.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item81.SetName( "viscosto" )
+    item80.Add( item81, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item77 = CheckBox( parent, ID_VISGIAC, "Giacenza", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item77.SetName( "visgiac" )
-    item75.Add( item77, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item82 = CheckBox( parent, ID_VISGIAC, "Giacenza", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item82.SetName( "visgiac" )
+    item80.Add( item82, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item72.Add( item75, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item77.Add( item80, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item78 = wx.BoxSizer( wx.HORIZONTAL )
+    item83 = wx.BoxSizer( wx.HORIZONTAL )
     
-    item79 = CheckBox( parent, ID_VISULTMOV, "Movim. anag.", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item79.SetName( "visultmov" )
-    item78.Add( item79, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item84 = CheckBox( parent, ID_VISULTMOV, "Movim. anag.", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item84.SetName( "visultmov" )
+    item83.Add( item84, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item80 = CheckBox( parent, ID_ULTMOVBEF, "Dai priorità", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item80.SetToolTip( wx.ToolTip("Se attivato, rende prioritaria la visualizzazione dei movimenti rispetto ai dati del prodotto") )
-    item80.SetName( "ultmovbef" )
-    item78.Add( item80, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item85 = CheckBox( parent, ID_ULTMOVBEF, "Dai priorità", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item85.SetToolTip( wx.ToolTip("Se attivato, rende prioritaria la visualizzazione dei movimenti rispetto ai dati del prodotto") )
+    item85.SetName( "ultmovbef" )
+    item83.Add( item85, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item72.Add( item78, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item77.Add( item83, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item68.Add( item72, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item73.Add( item77, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item82 = wx.StaticBox( parent, -1, "Margine vendita" )
-    item81 = wx.StaticBoxSizer( item82, wx.VERTICAL )
+    item87 = wx.StaticBox( parent, -1, "Margine vendita" )
+    item86 = wx.StaticBoxSizer( item87, wx.VERTICAL )
     
-    item83 = CheckBox( parent, ID_VISMARGINE, "Visualizza", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item83.SetName( "vismargine" )
-    item81.Add( item83, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item88 = CheckBox( parent, ID_VISMARGINE, "Visualizza", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item88.SetName( "vismargine" )
+    item86.Add( item88, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item68.Add( item81, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item73.Add( item86, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item68.AddGrowableRow( 2 )
+    item73.AddGrowableRow( 2 )
 
-    item26.Add( item68, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item31.Add( item73, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item26.AddGrowableCol( 0 )
+    item31.AddGrowableCol( 0 )
 
-    item0.Add( item26, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item85 = wx.StaticBox( parent, -1, "Dati accompagnatori richiesti" )
-    item84 = wx.StaticBoxSizer( item85, wx.VERTICAL )
+    item90 = wx.StaticBox( parent, -1, "Dati accompagnatori richiesti" )
+    item89 = wx.StaticBoxSizer( item90, wx.VERTICAL )
     
-    item86 = wx.FlexGridSizer( 1, 0, 0, 0 )
+    item91 = wx.FlexGridSizer( 1, 0, 0, 0 )
     
-    item87 = CheckBox( parent, ID_ASKDATIACC, "Attiva", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item87.SetName( "askdatiacc" )
-    item86.Add( item87, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item92 = CheckBox( parent, ID_ASKDATIACC, "Attiva", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item92.SetName( "askdatiacc" )
+    item91.Add( item92, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item88 = RCheckBox( parent, ID_TRAKGC, "Peso e colli", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item88.SetName( "asktrakgc" )
-    item86.Add( item88, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item93 = RCheckBox( parent, ID_TRAKGC, "Peso e colli", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item93.SetName( "asktrakgc" )
+    item91.Add( item93, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item84.Add( item86, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item89.Add( item91, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item89 = wx.FlexGridSizer( 0, 4, 0, 0 )
+    item94 = wx.FlexGridSizer( 0, 4, 0, 0 )
     
-    item90 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item89.Add( item90, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item95 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item94.Add( item95, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item91 = wx.StaticText( parent, ID_TEXT, "Valore di default", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item89.Add( item91, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item96 = wx.StaticText( parent, ID_TEXT, "Valore di default", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item94.Add( item96, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item92 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item89.Add( item92, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item97 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item94.Add( item97, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item93 = wx.StaticText( parent, ID_TEXT, "Valore di default", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item89.Add( item93, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item98 = wx.StaticText( parent, ID_TEXT, "Valore di default", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item94.Add( item98, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item94 = RCheckBox( parent, ID_TRACAU, "Causale trasporto", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item94.SetName( "asktracau" )
-    item89.Add( item94, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item99 = RCheckBox( parent, ID_TRACAU, "Causale trasporto", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item99.SetName( "asktracau" )
+    item94.Add( item99, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item95 = LinkTable(parent, ID_TRACAU ); item95.SetDataLink( bt.TABNAME_TRACAU, "id_tracau", TraCauDialog )
-    item89.Add( item95, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item100 = LinkTable(parent, ID_TRACAU ); item100.SetDataLink( bt.TABNAME_TRACAU, "id_tracau", TraCauDialog )
+    item94.Add( item100, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item96 = RCheckBox( parent, ID_TRAASP, "Aspetto esteriore beni", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item96.SetName( "asktraasp" )
-    item89.Add( item96, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item101 = RCheckBox( parent, ID_TRAASP, "Aspetto esteriore beni", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item101.SetName( "asktraasp" )
+    item94.Add( item101, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item97 = LinkTable(parent, ID_TRAASP ); item97.SetDataLink( bt.TABNAME_TRAASP, "id_traasp", TraAspDialog )
-    item89.Add( item97, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item102 = LinkTable(parent, ID_TRAASP ); item102.SetDataLink( bt.TABNAME_TRAASP, "id_traasp", TraAspDialog )
+    item94.Add( item102, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item98 = RCheckBox( parent, ID_TRACUR, "Trasporto a cura", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item98.SetName( "asktracur" )
-    item89.Add( item98, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item103 = RCheckBox( parent, ID_TRACUR, "Trasporto a cura", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item103.SetName( "asktracur" )
+    item94.Add( item103, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item99 = LinkTable(parent, ID_TRACUR ); item99.SetDataLink( bt.TABNAME_TRACUR, "id_tracur", TraCurDialog )
-    item89.Add( item99, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item104 = LinkTable(parent, ID_TRACUR ); item104.SetDataLink( bt.TABNAME_TRACUR, "id_tracur", TraCurDialog )
+    item94.Add( item104, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item100 = RCheckBox( parent, ID_TRAPOR, "Porto", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item100.SetName( "asktrapor" )
-    item89.Add( item100, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item105 = RCheckBox( parent, ID_TRAPOR, "Porto", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item105.SetName( "asktrapor" )
+    item94.Add( item105, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item101 = LinkTable(parent, ID_TRAPOR ); item101.SetDataLink( bt.TABNAME_TRAPOR, "id_trapor", TraPorDialog )
-    item89.Add( item101, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item106 = LinkTable(parent, ID_TRAPOR ); item106.SetDataLink( bt.TABNAME_TRAPOR, "id_trapor", TraPorDialog )
+    item94.Add( item106, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item102 = RCheckBox( parent, ID_TRAVET, "Vettore", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item102.SetName( "asktravet" )
-    item89.Add( item102, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+    item107 = RCheckBox( parent, ID_TRAVET, "Vettore", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item107.SetName( "asktravet" )
+    item94.Add( item107, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
 
-    item103 = LinkTable(parent, ID_TRAVET ); item103.SetDataLink( bt.TABNAME_TRAVET, "id_travet", TraVetDialog )
-    item89.Add( item103, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item108 = LinkTable(parent, ID_TRAVET ); item108.SetDataLink( bt.TABNAME_TRAVET, "id_travet", TraVetDialog )
+    item94.Add( item108, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item104 = RCheckBox( parent, ID_TRACON, "Contrassegno", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item104.SetName( "asktracon" )
-    item89.Add( item104, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item109 = RCheckBox( parent, ID_TRACON, "Contrassegno", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item109.SetName( "asktracon" )
+    item94.Add( item109, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item105 = LinkTable(parent, ID_TRACON ); item105.SetDataLink( bt.TABNAME_TRACON, "id_tracon", TraConDialog )
-    item89.Add( item105, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
+    item110 = LinkTable(parent, ID_TRACON ); item110.SetDataLink( bt.TABNAME_TRACON, "id_tracon", TraConDialog )
+    item94.Add( item110, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.BOTTOM, 5 )
 
-    item89.AddGrowableCol( 1 )
+    item94.AddGrowableCol( 1 )
 
-    item89.AddGrowableCol( 3 )
+    item94.AddGrowableCol( 3 )
 
-    item84.Add( item89, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item89.Add( item94, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item0.Add( item84, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item0.Add( item89, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
     item0.AddGrowableCol( 0 )
 
@@ -1103,10 +1131,10 @@ def Doc2Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDMOV = 16104
-ID_BUTNEWMOV = 16105
-ID_BUTDELMOV = 16106
-ID_MOVBOOK = 16107
+ID_PANGRIDMOV = 16106
+ID_BUTNEWMOV = 16107
+ID_BUTDELMOV = 16108
+ID_MOVBOOK = 16109
 
 def MovFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -1156,30 +1184,30 @@ def MovFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TIPOLOGIA = 16108
-ID_LENDESCRIZ = 16109
-ID_ASKVALORI = 16110
-ID_CANPREZZO0 = 16111
-ID_TIPVALUNI = 16112
-ID_TIPSCONTI = 16113
-ID_AGGCOSTO = 16114
-ID_AGGPREZZO = 16115
-ID_MODIMPRICALC = 16116
-ID_AGGGRP = 16117
-ID_RICCOSTO = 16118
-ID_CHECKBOX = 16119
-ID_AGGFORNIT = 16120
-ID_ACQPDT = 16121
-ID_NOMASTROPROD = 16122
-ID_PROOBB = 16123
-ID_NOPROVVIG = 16124
-ID_LABELPDC = 16125
-ID_CTRPDC = 16126
-ID_PDCRESET = 16127
-ID_ISACCONTO = 16128
-ID_ISACCSTOR = 16129
-ID_ACC_SEPIVA = 16130
-ID_PRTDESTOT = 16131
+ID_TIPOLOGIA = 16110
+ID_LENDESCRIZ = 16111
+ID_ASKVALORI = 16112
+ID_CANPREZZO0 = 16113
+ID_TIPVALUNI = 16114
+ID_TIPSCONTI = 16115
+ID_AGGCOSTO = 16116
+ID_AGGPREZZO = 16117
+ID_MODIMPRICALC = 16118
+ID_AGGGRP = 16119
+ID_RICCOSTO = 16120
+ID_CHECKBOX = 16121
+ID_AGGFORNIT = 16122
+ID_ACQPDT = 16123
+ID_NOMASTROPROD = 16124
+ID_PROOBB = 16125
+ID_NOPROVVIG = 16126
+ID_LABELPDC = 16127
+ID_CTRPDC = 16128
+ID_PDCRESET = 16129
+ID_ISACCONTO = 16130
+ID_ISACCSTOR = 16131
+ID_ACC_SEPIVA = 16132
+ID_PRTDESTOT = 16133
 
 def Mov1Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1465,7 +1493,7 @@ def Mov1Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_TXTEMAIL = 16132
+ID_TXTEMAIL = 16134
 
 def Doc3Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1489,22 +1517,22 @@ def Doc3Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_AGGINI = 16133
-ID_AGGINIV = 16134
-ID_AGGCAR = 16135
-ID_AGGCARV = 16136
-ID_AGGSCA = 16137
-ID_AGGSCAV = 16138
-ID_AGGORDFOR = 16139
-ID_AGGORDCLI = 16140
-ID_AGGCVCCAR = 16141
-ID_AGGCVCSCA = 16142
-ID_AGGCVFCAR = 16143
-ID_AGGCVFSCA = 16144
-ID_STATFTCLI = 16145
-ID_STATCSCLI = 16146
-ID_MANCOSTO = 16147
-ID_STATFTFOR = 16148
+ID_AGGINI = 16135
+ID_AGGINIV = 16136
+ID_AGGCAR = 16137
+ID_AGGCARV = 16138
+ID_AGGSCA = 16139
+ID_AGGSCAV = 16140
+ID_AGGORDFOR = 16141
+ID_AGGORDCLI = 16142
+ID_AGGCVCCAR = 16143
+ID_AGGCVCSCA = 16144
+ID_AGGCVFCAR = 16145
+ID_AGGCVFSCA = 16146
+ID_STATFTCLI = 16147
+ID_STATCSCLI = 16148
+ID_MANCOSTO = 16149
+ID_STATFTFOR = 16150
 
 def Mov2Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )

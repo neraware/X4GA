@@ -256,10 +256,10 @@ class Reg_SI_SearchPanel(ctbi.Reg_I_SearchPanel):
                 cmd = \
 """   SELECT reg.id, reg.datreg, riv.codice, reg.numiva, """\
 """          pdc.descriz, reg.numdoc, reg.datdoc, """\
-"""          SUM(row.imponib), SUM(row.imposta) """\
+"""          SUM(_row.imponib), SUM(_row.imposta) """\
 """     FROM ((%s AS reg JOIN %s AS cau ON reg.id_caus=cau.id) """\
-"""LEFT JOIN contab_b AS row ON row.id_reg=reg.id) """\
-"""LEFT JOIN pdc AS pdc ON row.id_pdcpa=pdc.id """\
+"""LEFT JOIN contab_b AS _row ON _row.id_reg=reg.id) """\
+"""LEFT JOIN pdc AS pdc ON _row.id_pdcpa=pdc.id """\
 """     JOIN regiva AS riv ON reg.id_regiva=riv.id """\
 """    WHERE %s """\
 """ GROUP BY reg.id, reg.datreg, riv.codice, reg.numiva, """\

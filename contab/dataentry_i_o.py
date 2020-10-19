@@ -425,45 +425,45 @@ class ContabPanelTipo_I_O(ctbi.ContabPanelTipo_I):
         try:
             #recordset righe contabili
             cmd = """
-   SELECT row.numriga, 
-          row.tipriga, 
-          row.id_pdcpa, 
+   SELECT _row.numriga, 
+          _row.tipriga, 
+          _row.id_pdcpa, 
           pdc.codice, 
           pdc.descriz, 
-          if(row.segno="D", row.importo, NULL),
-          if(row.segno="A", row.importo, NULL), 
-          row.id_aliqiva,
+          if(_row.segno="D", _row.importo, NULL),
+          if(_row.segno="A", _row.importo, NULL), 
+          _row.id_aliqiva,
           iva.codice,
           iva.descriz,
-          row.davscorp,
-          row.note, 
-          row.ivaman, 
-          row.solocont 
-     FROM %s AS row
-     JOIN %s AS pdc ON row.id_pdcpa=pdc.id
-LEFT JOIN %s AS iva ON row.id_aliqiva=iva.id
-    WHERE row.id_reg=%%s and row.tipriga IN ('S','C','A')""" % (bt.TABNAME_CONTAB_B,
-                                                                bt.TABNAME_PDC,
-                                                                bt.TABNAME_ALIQIVA,)
+          _row.davscorp,
+          _row.note, 
+          _row.ivaman, 
+          _row.solocont 
+     FROM %s AS _row
+     JOIN %s AS pdc ON _row.id_pdcpa=pdc.id
+LEFT JOIN %s AS iva ON _row.id_aliqiva=iva.id
+    WHERE _row.id_reg=%%s and _row.tipriga IN ('S','C','A')""" % (bt.TABNAME_CONTAB_B,
+                                                                  bt.TABNAME_PDC,
+                                                                  bt.TABNAME_ALIQIVA,)
             cur = adb.db.get_cursor()
             cur.execute(cmd, idreg)
             rsb = cur.fetchall()
             
             #recordset righe iva
             cmd =\
-"""SELECT row.id_aliqiva, iva.codice, iva.descriz, """\
-"""row.imponib, row.imposta, row.importo, row.indeduc, """\
-"""row.ivaman, row.id_pdciva, pcv.codice, pcv.descriz, """\
-"""row.id_pdcind, pcn.codice, pcn.descriz, row.note, """\
-"""IF(row.tipriga='I',0,1) """\
-"""FROM %s AS row """\
-"""JOIN %s AS iva ON row.id_aliqiva=iva.id """\
-"""LEFT JOIN %s AS pcv ON row.id_pdciva=pcv.id """\
-"""LEFT JOIN %s AS pcn ON row.id_pdcind=pcn.id """\
-"""WHERE row.id_reg=%%s and row.tipriga IN ('I', 'O')""" % ( bt.TABNAME_CONTAB_B,\
-                                                             bt.TABNAME_ALIQIVA,\
-                                                             bt.TABNAME_PDC,\
-                                                             bt.TABNAME_PDC )
+"""SELECT _row.id_aliqiva, iva.codice, iva.descriz, """\
+"""_row.imponib, _row.imposta, _row.importo, _row.indeduc, """\
+"""_row.ivaman, _row.id_pdciva, pcv.codice, pcv.descriz, """\
+"""_row.id_pdcind, pcn.codice, pcn.descriz, _row.note, """\
+"""IF(_row.tipriga='I',0,1) """\
+"""FROM %s AS _row """\
+"""JOIN %s AS iva ON _row.id_aliqiva=iva.id """\
+"""LEFT JOIN %s AS pcv ON _row.id_pdciva=pcv.id """\
+"""LEFT JOIN %s AS pcn ON _row.id_pdcind=pcn.id """\
+"""WHERE _row.id_reg=%%s and _row.tipriga IN ('I', 'O')""" % ( bt.TABNAME_CONTAB_B,\
+                                                               bt.TABNAME_ALIQIVA,\
+                                                               bt.TABNAME_PDC,\
+                                                               bt.TABNAME_PDC )
             cur.execute(cmd, idreg)
             rsi = cur.fetchall()
             cur.close()
