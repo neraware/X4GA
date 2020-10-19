@@ -872,7 +872,7 @@ class FatturaElettronica(dbm.DocMag):
                 filename = filename.replace('.xml', '.pdf')
                 
                 zip_h = StringIO()
-                zf = zipfile.ZipFile(zip_h, mode='wb', compression=zipfile.ZIP_DEFLATED)
+                zf = zipfile.ZipFile(zip_h, mode='w', compression=zipfile.ZIP_DEFLATED)
                 zf.writestr(str(filename), pdf_stream)
                 zf.close()
                 zip_h.seek(0)
