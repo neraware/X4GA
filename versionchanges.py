@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.89', dt.Date(2020, 11, 23), (
+         ("BET4282",
+         """Colorazione di sfondo particolare delle finestre di inserimento documenti e registrazioni contabili se
+         data elaborazione diversa da data corrente."""),
+        ),),
+    
     ('1.9.88', None, (
          ("BET4281",
          """Aggiunta sulla scheda anagrafica fornitori il campo 'regime fiscale', necessario in caso di emissione

@@ -40,6 +40,7 @@ import awc.controls.mixin as cmix
 import Env
 from awc.controls.datectrl import DateCtrl
 from cfg.cfgmagazz import CfgDocMov
+import datetime
 Esercizio = Env.Azienda.Esercizio
 bt = Env.Azienda.BaseTab
 bc = Env.Azienda.Colours
@@ -559,6 +560,12 @@ class MagazzPanel(aw.Panel,\
         self.SetAcceleratorKey('P', wdr.ID_BTN_PRINT,  'Stampa e Chiudi', 'Stampa il presente documento')
         self.SetAcceleratorKey('X', wdr.ID_BTN_DELETE, 'Elimina',         'Elimina il presente documento')
         self.SetAcceleratorKey('Q', wdr.ID_BTN_QUIT,   'Abbandona',       'Abbandona il documento senza salvare')
+    
+        if Env.Azienda.Login.dataElab != datetime.date.today():
+            self.SetBackgroundColour('#b4e4ed')
+            nb = self.FindWindowByName('workzone')
+            for n in range(nb.GetPageCount()):
+                nb.GetPage(n).SetBackgroundColour('#b4e4ed')
     
     _show_body_ftel = False
     

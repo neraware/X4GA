@@ -40,6 +40,7 @@ from stormdb.dbtable import DbTable
 from contab.dbtables import DbRegCon
 import report as rpt
 from stormdb import JOIN_LEFT
+import datetime
 Esercizio = Env.Azienda.Esercizio
 bt = Env.Azienda.BaseTab
 
@@ -200,6 +201,9 @@ class ContabPanel(aw.Panel,\
         self.Bind(wx.EVT_BUTTON, self.OnDatOpeDoc, butdod)
         
         self.Bind(wx.EVT_SIZE,   self.OnResize)
+        
+        if Env.Azienda.Login.dataElab != datetime.date.today():
+            self.SetBackgroundColour('#b4e4ed')
     
     def OnDatOpeDoc(self, event):
         cn = self.FindWindowByName
