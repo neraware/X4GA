@@ -422,7 +422,10 @@ class DocMag(adb.DbTable):
     def get_numdoc_print(self):
         if self.regcon.id:
             return self.regcon.get_numdoc_print()
-        return self.numdoc
+        numdoc = '%s' % self.numdoc
+        if self.config.toolbarra:
+            numdoc = '%s/%s' % (numdoc, self.config.toolbarra)
+        return numdoc
     
     def CalcolaIVA(self, *args, **kwargs):
         return self.dbiva.CalcolaIVA(*args, **kwargs)

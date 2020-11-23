@@ -341,7 +341,7 @@ class UtentiPanel(ga.AnagPanel):
         psw=self.FindWindowById(wdr.ID_PSW).GetValue()
         if self.oldPassword<>psw:
             cur = adb.db.get_cursor()
-            cur.execute("select password('%s');" % psw)
+            cur.execute("select CONCAT('*', UPPER(SHA1(UNHEX(SHA1('%s')))))" % psw)
             ecrypt_psw = cur.fetchone()[0]
             cur.close()
             self.FindWindowById(wdr.ID_PSW).SetValue(ecrypt_psw)

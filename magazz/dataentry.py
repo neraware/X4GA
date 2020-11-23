@@ -1159,6 +1159,13 @@ class MagazzPanel(aw.Panel,\
                 """datrif noteint notedoc sconto1 sconto2 sconto3 sconto4 sconto5 sconto6""".split():
                 if name != 'notedoc' or doc.cfgdoc.aanotedoc != 1:
                     setattr(doc, name, cn(name).GetValue())
+            if not doc.modpag.askbanca:
+                self.controls['id_bancf'].SetValue(None)
+                doc.id_bancf = None
+            if not doc.modpag.askspese:
+                self.controls['id_speinc'].SetValue(None)
+                doc.id_speinc = None
+                doc.totspese = None
             if bt.FTEL_DACOCO:
                 for name in\
                     """ftel_contr_num ftel_contr_dat ftel_contr_cig ftel_contr_cup ftel_contr_ccc """\
@@ -1333,7 +1340,7 @@ class MagazzPanel(aw.Panel,\
                 sra.SetValue(ra)
                 sra.TestPercentuali(doc)
             if bt.CONATTSCODOC and doc.cfgdoc.sogscodoc:
-                sd = 1
+                sd = bool(doc.sogscodoc)
                 if hasattr(anag, 'sogscodoc'):
                     sd = anag.sogscodoc or 0
                 doc.sogscodoc = sd
@@ -2086,8 +2093,9 @@ class MagazzPanel(aw.Panel,\
             if a:
                 a = cfg.HasMovAcconto() or cfg.HasMovStornoAcconto()
             self.FindWindowByName('panacconti').Show(a)
-            c = self.FindWindowByName('panscodocdati')
-            c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
+            if bt.CONATTSCODOC:
+                c = self.FindWindowByName('panscodocdati')
+                c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
             self.Layout_()
         finally:
             self.Thaw()
@@ -2162,8 +2170,9 @@ class MagazzPanel(aw.Panel,\
             if a:
                 a = cfg.HasMovAcconto() or cfg.HasMovStornoAcconto()
             cn('panacconti').Show(a)
-            c = self.FindWindowByName('panscodocdati')
-            c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
+            if bt.CONATTSCODOC:
+                c = self.FindWindowByName('panscodocdati')
+                c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
             self.Layout_()
         finally:
             self.Thaw()
@@ -2691,14 +2700,15 @@ class MagazzPanel(aw.Panel,\
         cn('butritacc').Enable(enable)
     
     def EnableScoDocControls(self, enable=True):
-        def cn(x):
-            return self.FindWindowByName(x)
-        enable = enable and bool(bt.CONATTSCODOC and self.dbdoc.cfgdoc.sogscodoc)
-        cn('panscodocdati').Enable(enable)
-        enable = enable and cn('sogscodoc').GetValue()
-        for name in 'per com imp'.split():
-            cn('%sscodoc'%name).Enable(enable)
-        cn('butscodoc').Enable(enable)
+        if bt.CONATTSCODOC:
+            def cn(x):
+                return self.FindWindowByName(x)
+            enable = enable and bool(bt.CONATTSCODOC and self.dbdoc.cfgdoc.sogscodoc)
+            cn('panscodocdati').Enable(enable)
+            enable = enable and cn('sogscodoc').GetValue()
+            for name in 'per com imp'.split():
+                cn('%sscodoc'%name).Enable(enable)
+            cn('butscodoc').Enable(enable)
     
     def EnableDatiAcc(self):
         doc = self.dbdoc

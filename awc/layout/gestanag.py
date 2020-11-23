@@ -42,6 +42,7 @@ import awc.controls.images as awcimg
 from gestanag_wdr import *
 
 from Env import Azienda, GetUserMaxSqlCount
+from awc.controls import choice
 bt = Azienda.BaseTab
 
 from awc.util import GetNamedChildrens
@@ -1528,6 +1529,10 @@ class AnagPanel(aw.Panel):
                                 datectrl.DateTimeCtrl,
                                 entries.PrintersComboBox)):
                 ctr.SetValue(None)
+            
+            elif issubclass(c, choice.ChoiceData):
+                ctr.SetValue(ctr._values[0])
+                
         except:
             pass
 

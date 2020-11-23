@@ -94,7 +94,7 @@ class RegimeFiscaleChoice(ChoiceData):
     
     def __init__(self, *args, **kwargs):
         ChoiceData.__init__(self, *args, **kwargs)
-        self.SetDataLink(values=[n for n in range(1,19,1)])
+        self.SetDataLink(values=[n for n in range(1,20,1)])
 
 
 

@@ -449,7 +449,7 @@ class ExportPanel(aw.Panel):
                 doc = dbfe.FatturaElettronica()
                 for n, xdoc in enumerate(self.dbdocs):
                     if xdoc.fe_sel:
-                        if len(xdoc.pdc.ftel_codice or '') == 0 and len(xdoc.pdc.ftel_pec or '') == 0:
+                        if len(xdoc.pdc.ftel_codice or '') == 0 and len(xdoc.pdc.ftel_pec or '') == 0 and not(xdoc.config.ftel_autacq):
                             void += 1
                         else:
                             doc.Get(xdoc.id)

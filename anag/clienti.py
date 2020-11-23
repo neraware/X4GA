@@ -341,6 +341,9 @@ class ClientiPanel(pdcrel._CliForPanel):
         cn('piva').SetStateControl(cn('nazione'))
         self.InitGrigliaPrezzi()
         
+        cn('ftel_regfisc').Hide()
+        cn('ftel_regfisc_label').Hide()
+        
         self.Bind(EVT_LINKTABCHANGED, self.OnPdcGrpChanged, cn('id_pdcgrp'))
         self.Bind(EVT_LINKTABCHANGED, self.OnStatoChanged, cn('id_stato'))
         

@@ -2087,6 +2087,7 @@ class Azienda(object):
                 [ "id_statpdc", "INT",    idw, None, "ID status p.d.c.", None ], 
                 [ "ftel_codice","VARCHAR",  7, None, "Fattura elettronica: codice destinatario pa", None],
                 [ "ftel_pec",   "VARCHAR",255, None, "Fattura elettronica: indirizzo pec", None],
+                [ "ftel_regfisc","VARCHAR", 4, None, "Fattura elettronica: regime fiscale", None],
             ]
             
             cls.set_constraints(cls.TABNAME_PDC,
@@ -2876,7 +2877,9 @@ class Azienda(object):
                 [ "desevarif",  "TINYINT",  1, None, "Flag descrizione riga documento evaso basata su dati riferimento", None ],
                 [ "ftel_tipdoc","CHAR",     4, None, "Fattura elettronica: Tipo documento", None ], 
                 [ "ftel_layout","CHAR",    16, None, "Fattura elettronica: Formato di stampa", None ], 
-                [ "ftel_noddt", "TINYINT",  1, None, "Flag non mettere riferimento ai ddt in file xml", None ], ]
+                [ "ftel_noddt", "TINYINT",  1, None, "Flag non mettere riferimento ai ddt in file xml", None ], 
+                [ "ftel_autacq","TINYINT",  1, None, "Flag documento autofattura per acquisto da fornitore esente fattura", None ], 
+                [ "ftel_aacqtd","CHAR",     4, None, "Tipo documento xml in caso di emissione per conto fornitore", None ], ]
             
             cls.set_constraints(cls.TABNAME_CFGMAGDOC,
                                 ((cls.TABSETUP_CONSTR_PDCTIP,    'id_pdctip',  cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -3032,7 +3035,11 @@ class Azienda(object):
                 [ "ftel_codcup",          "VARCHAR",    15, None, "Fattura elettronica: codice CUP", None ], 
                 [ "ftel_numtrasm",        "INT",         5, None, "Fattura elettronica: numero trasmissione", None ],  
                 [ "ftel_bollovirt",       "DECIMAL",     6,    2, "Fattura elettronica: bollo virtuale", None ], 
-                [ "datope",               "DATE",     None, None, "Data operazione", None ], 
+                [ "datope",               "DATE",     None, None, "Data operazione", None ], ]
+            
+            
+            if cls.CONATTSCODOC:
+                cls.movmag_h += [\
                 [ "sogscodoc",            "TINYINT",     1, None, "Flag documento soggetto sconto (ScontoMaggiorazione)", None ],
                 [ "perscodoc",            "DECIMAL",     4,    2, "Percentuale di ScontoMaggiorazione", None ],
                 [ "comscodoc",            "DECIMAL",     5,    2, "Percentuale dell'importo su cui applicare lo ScontoMaggiorazione", None ],

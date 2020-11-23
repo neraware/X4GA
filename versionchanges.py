@@ -29,6 +29,24 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.88', None, (
+         ("BET4281",
+         """Aggiunta sulla scheda anagrafica fornitori il campo 'regime fiscale', necessario in caso di emissione
+         documento per conto del fornitore (SoggettoEmittente = Cessionario/Committente."""),
+        ),),
+    
+    ('1.9.83', None, (
+         ("BET4280",
+         """Implementata la possibilita' di emissione di documento per conto del fornitore (autofatture per acquisti
+         intracomunitari, in reverse charge, da fornitori esentati dall'obbligo della fatturazione)."""),
+        ),),
+    
+    ('1.9.81', None, (
+         ("BET4279",
+         """Implementata la data operazione, ovvero competenza iva, nella maschera di selezione della fatturazione differita.
+         Il valore non e' editabile, viene calcolato in base alla data documento e alle date dei documenti da raggruppare."""),
+        ),),
+    
     ('1.9.79', None, (
          ("BET4277",
          """Adeguamento a tracciato fattura eletronica versione 1.2.1"""),

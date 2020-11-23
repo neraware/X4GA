@@ -416,6 +416,8 @@ class FtDifPanel(aw.Panel):
         
         for evt, cbf, name in (
             (EVT_DATECHANGED, self.OnDatDocChanged, 'datdoc'),
+            (EVT_DATECHANGED, self.OnDatMinChanged, 'datmin'),
+            (EVT_DATECHANGED, self.OnDatMaxChanged, 'datmax'),
             (wx.EVT_BUTTON,   self.OnEstrai,        'butest'),
             (wx.EVT_BUTTON,   self.OnRaggr,         'butrag'),
             (wx.EVT_BUTTON,   self.OnListaRag,      'listrag'),
@@ -712,6 +714,7 @@ class FtDifPanel(aw.Panel):
         cn = self.FindWindowByName
         self.ftd.docgen._firstdat = cn('datdoc').GetValue()
         self.ftd.docgen._firstnum = cn('numdoc').GetValue()
+        self.ftd.docgen._firstope = cn('datope').GetValue()
         
         wait = aw.awu.WaitDialog(
             self, message="Raggruppamento documenti in corso...",
@@ -737,6 +740,27 @@ class FtDifPanel(aw.Panel):
             cn('datlast').SetValue(self.ftd.docgen._lastdat)
             cn('numlast').SetValue(self.ftd.docgen._lastnum)
             cn('numdoc').SetValue((self.ftd.docgen._lastnum or 0)+1)
+            self.UpdateDatOpe()
+    
+    def OnDatMinChanged(self, event):
+        self.UpdateDatOpe()
+        event.Skip()
+    
+    def OnDatMaxChanged(self, event):
+        self.UpdateDatOpe()
+        event.Skip()
+    
+    def UpdateDatOpe(self):
+        cn = self.FindWindowByName
+        datdoc = cn('datdoc').GetValue()
+        datmax = cn('datmax').GetValue()
+        if datmax:
+            datope = datmax
+            if datdoc and datdoc.month == datmax.month and datdoc.year == datmax.year:
+                datope = datdoc
+        else:
+            datope = datdoc
+        cn('datope').SetValue(datope)
     
     def SetRaggr(self, fdid):
         

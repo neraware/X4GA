@@ -343,6 +343,7 @@ class FtDif(adb.DbTable):
         
         dat = dg._firstdat
         num = dg._firstnum-1
+        ope = dg._firstope
         niv = None
         if self.tipdoc.colcg and self.tipdoc.caucon.id_regiva:
             if self.tipdoc.numdoc == '3':
@@ -365,6 +366,7 @@ class FtDif(adb.DbTable):
         
         headfields = {'datreg':    dat,
                       'datdoc':    dat,
+                      'datope':    ope,
                       'numdoc':    num,
                       'id_tipdoc': self.id_docgen,
                       'totpeso':   0,

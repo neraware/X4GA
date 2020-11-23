@@ -15,6 +15,8 @@ import re
 
 import os
 from magazz.dbtables import BodyFtelADG
+from stormdb import JOIN_LEFT
+import version
 def opj(*x):
     return os.path.join(*x).replace('\\', '/')
 
@@ -110,10 +112,11 @@ class FatturaElettronica(dbm.DocMag):
     
     def __init__(self, *args, **kwargs):
         dbm.DocMag.__init__(self, *args, **kwargs)
-        self['pdc'].AddJoin('clienti', 'anag', idLeft='id')
-        self.AddBaseFilter('(caucon.ftel_tipdoc IS NOT NULL AND caucon.ftel_tipdoc<>"")')
-        self.AddBaseFilter('regiva.tipo="V"')
+        self['pdc'].AddJoin('clienti', 'anag', idLeft='id', join=JOIN_LEFT)
+        self['pdc'].AddJoin('fornit', 'anafor', idLeft='id', join=JOIN_LEFT)
+        self.AddBaseFilter('(regiva.tipo="V" AND (caucon.ftel_tipdoc IS NOT NULL AND caucon.ftel_tipdoc<>"")) OR config.ftel_autacq IS TRUE')
         self.Reset()
+        self.SetDebug()
         
         self.dbcfg = dbm.adb.DbTable('cfgsetup', 'setup')        
         self.dbcfg.Retrieve('setup.chiave=%s', 'azienda_ftel_flagdescriz')
@@ -196,6 +199,8 @@ class FatturaElettronica(dbm.DocMag):
         return dataz
     
     def get_keydoc(self):
+        if version.VERSION_STRING >= '1.9.84':
+            return '%s-%s' % (Env.Azienda.piva, self.id)
         return str(self.id)
     
     def ftel_make_files(self, numprogr, pa_callback):
@@ -253,173 +258,263 @@ class FatturaElettronica(dbm.DocMag):
         xmldoc.appendItems(datitrasm, (('ProgressivoInvio',    str(numprogr).zfill(5)),
                                        ('FormatoTrasmissione', xmldoc.sdicver),))
         
-        # 1.1.5 <ContattiTrasmittente>
-        xmldoc.appendItems(datitrasm, (('CodiceDestinatario',  ftel_codice),))
-        
-        # 1.1.5 <ContattiTrasmittente>
-        dati = []
-        if Env.Azienda.numtel:
-            numtel = ''
-            for x in Env.Azienda.numtel.replace('+39',''):
-                if x.isalnum():
-                    numtel += x
-            if numtel:
-                # 1.1.5.1 <Telefono>
-                dati.append(('Telefono', numtel))
-        if Env.Azienda.email:
-            # 1.1.5.2 <Email>
-            dati.append(('Email', Env.Azienda.email))
-        if dati:
-            contattitrasm = xmldoc.appendElement(datitrasm, 'ContattiTrasmittente',)
-            xmldoc.appendItems(contattitrasm, dati)
-        
-        if not ftel_codice or ftel_codice == FTEL_NOCODE:
-            if self.pdc.ftel_pec:
-                # 1.1.6 <PECDestinatario>
-                xmldoc.appendItems(datitrasm, (('PECDestinatario',  self.pdc.ftel_pec),))
-        
-        # 1.2 <CedentePrestatore>
-        cedente = xmldoc.appendElement(head, 'CedentePrestatore')
-        
-        # 1.2.1 <DatiAnagrafici>
-        cedente_datianag = xmldoc.appendElement(cedente, 'DatiAnagrafici')
-        
-        # 1.2.1.1 <IdFiscaleIVA>
-        cedente_datianag_datifisc = xmldoc.appendElement(cedente_datianag, 'IdFiscaleIVA')
-        xmldoc.appendItems(cedente_datianag_datifisc, (('IdPaese',  Env.Azienda.stato or "IT"),
-                                                       ('IdCodice', Env.Azienda.piva)))
-#         if Env.Azienda.codfisc:
-        if Env.Azienda.codfisc and Env.Azienda.codfisc != Env.Azienda.piva:
-            # 1.2.1.2 <CodiceFiscale>
-            xmldoc.appendItems(cedente_datianag, (('CodiceFiscale', Env.Azienda.codfisc),))
-        
-        # 1.2.1.3 <Anagrafica>
-        cedente_datianag_anagraf = xmldoc.appendElement(cedente_datianag, 'Anagrafica')
-        dati = []
-        if dataz['cognome']:
-            dati.append(('Nome', dataz['nome']))
-            dati.append(('Cognome', dataz['cognome']))
-        else:
-            dati.append(('Denominazione', Env.Azienda.descrizione))
-        xmldoc.appendItems(cedente_datianag_anagraf, dati)
-        
-        # 1.2.1.8 <RegimeFiscale>
-        try:
-            regfisc = 'RF%s' % str(int(dataz['regfisc'])).zfill(2)
-        except:
-            regfisc = 'RF01'
-        xmldoc.appendItems(cedente_datianag, (('RegimeFiscale', regfisc),))
-        
-        # 1.2.2 <Sede>
-        cedente_sede = xmldoc.appendElement(cedente, 'Sede')
-        xmldoc.appendItems(cedente_sede, (('Indirizzo', Env.Azienda.indirizzo),
-                                          ('CAP',       Env.Azienda.cap),
-                                          ('Comune',    Env.Azienda.citta),
-                                          ('Provincia', Env.Azienda.prov),
-                                          ('Nazione',   Env.Azienda.stato),))
-        
-        if dataz['soind'] and dataz['socap'] and dataz['socit'] and dataz['sopro']:
-            # 1.2.3 <StabileOrganizzazione>
-            cedente_staborg = xmldoc.appendElement(cedente, 'StabileOrganizzazione')
-            xmldoc.appendItems(cedente_staborg, (('Indirizzo', dataz['soind']),
-                                                 ('CAP',       dataz['socap']),
-                                                 ('Comune',    dataz['socit']),
-                                                 ('Provincia', dataz['sopro']),
-                                                 ('Nazione',   'IT'),))
-        
-        if dataz['reanum']:
-            # 1.2.4 <IscrizioneREA>
-            cedente_rea = xmldoc.appendElement(cedente, 'IscrizioneREA')
-            xmldoc.appendItems(cedente_rea, (('Ufficio',   dataz['reauff']),
-                                             ('NumeroREA', dataz['reanum']),))
-            if dataz['capsoc']:
-                if dataz['socuni']:
-                    socuni = 'SU'
-                else:
-                    socuni = 'SM'
-                xmldoc.appendItems(cedente_rea, (('CapitaleSociale', fmt_ii(dataz['capsoc'])),
-                                                 ('SocioUnico',      socuni),))
-            if dataz['socliq']:
-                socliq = 'LS'
-            else:
-                socliq = 'LN'
-            xmldoc.appendItems(cedente_rea, (('StatoLiquidazione', socliq),))
-        
-        if dataz['rfdes'] or dataz['rfcognome']:
+        if self.config.ftel_autacq:
+            
+            # documento di autofattura per acquisto da soggetti esonerati dall'obbligo della fatturazione:
+            # nel file xml il fornitore è l'azienda, il cliente è l'anafgrafica del documento (il vero fornitore)
+            
+            ftel_tipdoc = self.config.ftel_aacqtd or ''
+            if not ftel_tipdoc.startswith('TD'):
+                raise Exception("Errata definizione tipo documento xml")
+            
+            # 1.1.5 <ContattiTrasmittente>
+            xmldoc.appendItems(datitrasm, (('CodiceDestinatario',  ftel_codice),))
+            
+            # 1.2 <CedentePrestatore>
+            cedente = xmldoc.appendElement(head, 'CedentePrestatore')
+            
+            # 1.2.1 <DatiAnagrafici>
+            cedente_datianag = xmldoc.appendElement(cedente, 'DatiAnagrafici')
+            
+            # 1.2.1.1 <IdFiscaleIVA>
+            cedente_datianag_datifisc = xmldoc.appendElement(cedente_datianag, 'IdFiscaleIVA')
+            xmldoc.appendItems(cedente_datianag_datifisc, (('IdPaese',  cli.nazione or "IT"),
+                                                           ('IdCodice', cli.piva)))
+    #         if Env.Azienda.codfisc:
+            if cli.codfisc and cli.codfisc != cli.piva:
+                # 1.2.1.2 <CodiceFiscale>
+                xmldoc.appendItems(cedente_datianag, (('CodiceFiscale', cli.codfisc),))
+            
+            # 1.2.1.3 <Anagrafica>
+            cedente_datianag_anagraf = xmldoc.appendElement(cedente_datianag, 'Anagrafica')
             dati = []
-            if dataz['rfcognome']:
-                dati.append(('Cognome', dataz['rfcognome']))
-                dati.append(('Nome', dataz['rfnome']))
-            else:
-                dati.append(('Denominazione', dataz['rfdes']))
-            # 1.3 <RappresentanteFiscale>
-            cedente_rapfis = xmldoc.appendElement(cedente, 'RappresentanteFiscale')
-            # 1.3.1 <DatiAnagrafici>
-            cedente_rapfis_anag = xmldoc.appendElement(cedente_rapfis, 'DatiAnagrafici')
-            xmldoc.appendItems(cedente_rapfis_anag, dati)
-            # 1.3.1.1 <IdFiscaleIVA>
-            cedente_rapfis_idf = xmldoc.appendElement(cedente_rapfis_anag, 'IdFiscaleIVA')
-            xmldoc.appendItems(cedente_rapfis_idf, (('IdPaese',  dataz['rfstato']),
-                                                    ('IdCodice', dataz['rfcodfis'] or dataz['rfpiva'])),)
-        
-        # 1.4 <CessionarioCommittente>
-        cessionario = xmldoc.appendElement(head, 'CessionarioCommittente')
-        
-        # 1.4.1 <DatiAnagrafici>
-        cessionario_datianag = xmldoc.appendElement(cessionario, 'DatiAnagrafici')
-        if cli.piva:
-            # 1.4.1.1 <IdFiscaleIVA>
-            cessionario_datianag_idf = xmldoc.appendElement(cessionario_datianag, 'IdFiscaleIVA')
-            xmldoc.appendItems(cessionario_datianag_idf, (('IdPaese',  cli.nazione or 'IT'),
-                                                          ('IdCodice', cli.piva)),)
-#         if cli.nazione == 'IT' or len(cli.nazione or '') == 0:
-#             # 1.4.1.2 <CodiceFiscale>
-#             xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc or cli.piva),))
-#         
-        if cli.codfisc and cli.codfisc != cli.piva:
-            # 1.4.1.2 <CodiceFiscale>
-            xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc),))
-        
-        # 1.4.1.3 <Anagrafica>
-        cessionario_datianag_anagraf = xmldoc.appendElement(cessionario_datianag, 'Anagrafica')
-        xmldoc.appendItems(cessionario_datianag_anagraf, (('Denominazione', pdc.descriz),))
-        
-        #1.4.2 <Sede>
-        cessionario_sede = xmldoc.appendElement(cessionario, 'Sede')
-        xmldoc.appendItems(cessionario_sede, (('Indirizzo', cli.indirizzo),
+            if True:
+#             if dataz['cognome']:
+#                 dati.append(('Nome', dataz['nome']))
+#                 dati.append(('Cognome', dataz['cognome']))
+#             else:
+                dati.append(('Denominazione', pdc.descriz))
+            xmldoc.appendItems(cedente_datianag_anagraf, dati)
+            
+            # 1.2.1.8 <RegimeFiscale>
+            if not 1 <= int(pdc.ftel_regfisc or 0) <= 19:
+                raise Exception("Manca indicazione del regime fiscale su %s" % pdc.descriz)
+            xmldoc.appendItems(cedente_datianag, (('RegimeFiscale', "RF%s" % pdc.ftel_regfisc.zfill(2)),))
+            
+            # 1.2.2 <Sede>
+            cedente_sede = xmldoc.appendElement(cedente, 'Sede')
+            xmldoc.appendItems(cedente_sede, (('Indirizzo', cli.indirizzo),
                                               ('CAP',       cli.cap),
                                               ('Comune',    cli.citta),
                                               ('Provincia', cli.prov),
                                               ('Nazione',   cli.nazione or "IT"),))
-        
-        if dataz['secodfis']:
-            #1.5 <TerzoIntermediarioOSoggettoEmittente>
-            tsogemi = xmldoc.appendElement(head, 'TerzoIntermediarioOSoggettoEmittente')
-            #1.5.1 <DatiAnagrafici>
-            tsogemi_datianag = xmldoc.appendElement(tsogemi, 'DatiAnagrafici')
-            tsogemi_datianag_id_iva = xmldoc.appendElement(tsogemi_datianag, 'IdFiscaleIVA')
-            xmldoc.appendItems(tsogemi_datianag_id_iva, (('IdPaese', dataz['sestato'] or "IT"),
-                                                         ('IdCodice', dataz['sepiva'])))
-            #1.5.2 <CodiceFiscale>
-            xmldoc.appendItems(tsogemi_datianag, (('CodiceFiscale', dataz['secodfis']),))
-            #1.5.3 <Anagrafica>
-            tsogemi_datianag_anag = xmldoc.appendElement(tsogemi_datianag, 'Anagrafica')
-            f = []
-            if dataz['sedes']:
-                f.append(('Denominazione', dataz['sedes']))
-            if dataz['senome']:
-                f.append(('Nome', dataz['senome']))
-            if dataz['secognome']:
-                f.append(('Cognome', dataz['secognome']))
-            if dataz['setit']:
-                f.append(('Titolo', dataz['setit']))
-            if dataz['seeori']:
-                f.append(('CodEORI', dataz['seeori']))
-            xmldoc.appendItems(tsogemi_datianag_anag, f)
-        
-        if dataz['sesogemi']:
+            
+            # 1.4 <CessionarioCommittente>
+            cessionario = xmldoc.appendElement(head, 'CessionarioCommittente')
+            
+            # 1.4.1 <DatiAnagrafici>
+            cessionario_datianag = xmldoc.appendElement(cessionario, 'DatiAnagrafici')
+            if cli.piva:
+                # 1.4.1.1 <IdFiscaleIVA>
+                cessionario_datianag_idf = xmldoc.appendElement(cessionario_datianag, 'IdFiscaleIVA')
+                xmldoc.appendItems(cessionario_datianag_idf, (('IdPaese',  Env.Azienda.stato or "IT"),
+                                                              ('IdCodice', Env.Azienda.piva)),)
+    #         if cli.nazione == 'IT' or len(cli.nazione or '') == 0:
+    #             # 1.4.1.2 <CodiceFiscale>
+    #             xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc or cli.piva),))
+    #         
+            if Env.Azienda.codfisc and Env.Azienda.codfisc != Env.Azienda.piva:
+                # 1.4.1.2 <CodiceFiscale>
+                xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', Env.Azienda.codfisc),))
+            
+            # 1.4.1.3 <Anagrafica>
+            cessionario_datianag_anagraf = xmldoc.appendElement(cessionario_datianag, 'Anagrafica')
+            xmldoc.appendItems(cessionario_datianag_anagraf, (('Denominazione', Env.Azienda.descrizione),))
+            
+            #1.4.2 <Sede>
+            cessionario_sede = xmldoc.appendElement(cessionario, 'Sede')
+            xmldoc.appendItems(cessionario_sede, (('Indirizzo', Env.Azienda.indirizzo),
+                                                  ('CAP',       Env.Azienda.cap),
+                                                  ('Comune',    Env.Azienda.citta),
+                                                  ('Provincia', Env.Azienda.prov),
+                                                  ('Nazione',   Env.Azienda.stato or "IT"),))
+            
             #1.6 <SoggettoEmittente>
-            xmldoc.appendItems(head, (('SoggettoEmittente', dataz['sesogemi']),))
+            xmldoc.appendItems(head, (('SoggettoEmittente', "CC"),))
+            
+        else:
+            
+            # documento di vendita normale
+            
+            ftel_tipdoc = self.config.caucon.ftel_tipdoc
+            
+            # 1.1.5 <ContattiTrasmittente>
+            xmldoc.appendItems(datitrasm, (('CodiceDestinatario',  ftel_codice),))
+            
+            # 1.1.5 <ContattiTrasmittente>
+            dati = []
+            if Env.Azienda.numtel:
+                numtel = ''
+                for x in Env.Azienda.numtel.replace('+39',''):
+                    if x.isalnum():
+                        numtel += x
+                if numtel:
+                    # 1.1.5.1 <Telefono>
+                    dati.append(('Telefono', numtel))
+            if Env.Azienda.email:
+                # 1.1.5.2 <Email>
+                dati.append(('Email', Env.Azienda.email))
+            if dati:
+                contattitrasm = xmldoc.appendElement(datitrasm, 'ContattiTrasmittente',)
+                xmldoc.appendItems(contattitrasm, dati)
+            
+            if not ftel_codice or ftel_codice == FTEL_NOCODE:
+                if self.pdc.ftel_pec:
+                    # 1.1.6 <PECDestinatario>
+                    xmldoc.appendItems(datitrasm, (('PECDestinatario',  self.pdc.ftel_pec),))
+            
+            # 1.2 <CedentePrestatore>
+            cedente = xmldoc.appendElement(head, 'CedentePrestatore')
+            
+            # 1.2.1 <DatiAnagrafici>
+            cedente_datianag = xmldoc.appendElement(cedente, 'DatiAnagrafici')
+            
+            # 1.2.1.1 <IdFiscaleIVA>
+            cedente_datianag_datifisc = xmldoc.appendElement(cedente_datianag, 'IdFiscaleIVA')
+            xmldoc.appendItems(cedente_datianag_datifisc, (('IdPaese',  Env.Azienda.stato or "IT"),
+                                                           ('IdCodice', Env.Azienda.piva)))
+    #         if Env.Azienda.codfisc:
+            if Env.Azienda.codfisc and Env.Azienda.codfisc != Env.Azienda.piva:
+                # 1.2.1.2 <CodiceFiscale>
+                xmldoc.appendItems(cedente_datianag, (('CodiceFiscale', Env.Azienda.codfisc),))
+            
+            # 1.2.1.3 <Anagrafica>
+            cedente_datianag_anagraf = xmldoc.appendElement(cedente_datianag, 'Anagrafica')
+            dati = []
+            if dataz['cognome']:
+                dati.append(('Nome', dataz['nome']))
+                dati.append(('Cognome', dataz['cognome']))
+            else:
+                dati.append(('Denominazione', Env.Azienda.descrizione))
+            xmldoc.appendItems(cedente_datianag_anagraf, dati)
+            
+            # 1.2.1.8 <RegimeFiscale>
+            try:
+                regfisc = 'RF%s' % str(int(dataz['regfisc'])).zfill(2)
+            except:
+                regfisc = 'RF01'
+            xmldoc.appendItems(cedente_datianag, (('RegimeFiscale', regfisc),))
+            
+            # 1.2.2 <Sede>
+            cedente_sede = xmldoc.appendElement(cedente, 'Sede')
+            xmldoc.appendItems(cedente_sede, (('Indirizzo', Env.Azienda.indirizzo),
+                                              ('CAP',       Env.Azienda.cap),
+                                              ('Comune',    Env.Azienda.citta),
+                                              ('Provincia', Env.Azienda.prov),
+                                              ('Nazione',   Env.Azienda.stato),))
+            
+            if dataz['soind'] and dataz['socap'] and dataz['socit'] and dataz['sopro']:
+                # 1.2.3 <StabileOrganizzazione>
+                cedente_staborg = xmldoc.appendElement(cedente, 'StabileOrganizzazione')
+                xmldoc.appendItems(cedente_staborg, (('Indirizzo', dataz['soind']),
+                                                     ('CAP',       dataz['socap']),
+                                                     ('Comune',    dataz['socit']),
+                                                     ('Provincia', dataz['sopro']),
+                                                     ('Nazione',   'IT'),))
+            
+            if dataz['reanum']:
+                # 1.2.4 <IscrizioneREA>
+                cedente_rea = xmldoc.appendElement(cedente, 'IscrizioneREA')
+                xmldoc.appendItems(cedente_rea, (('Ufficio',   dataz['reauff']),
+                                                 ('NumeroREA', dataz['reanum']),))
+                if dataz['capsoc']:
+                    if dataz['socuni']:
+                        socuni = 'SU'
+                    else:
+                        socuni = 'SM'
+                    xmldoc.appendItems(cedente_rea, (('CapitaleSociale', fmt_ii(dataz['capsoc'])),
+                                                     ('SocioUnico',      socuni),))
+                if dataz['socliq']:
+                    socliq = 'LS'
+                else:
+                    socliq = 'LN'
+                xmldoc.appendItems(cedente_rea, (('StatoLiquidazione', socliq),))
+            
+            if dataz['rfdes'] or dataz['rfcognome']:
+                dati = []
+                if dataz['rfcognome']:
+                    dati.append(('Cognome', dataz['rfcognome']))
+                    dati.append(('Nome', dataz['rfnome']))
+                else:
+                    dati.append(('Denominazione', dataz['rfdes']))
+                # 1.3 <RappresentanteFiscale>
+                cedente_rapfis = xmldoc.appendElement(cedente, 'RappresentanteFiscale')
+                # 1.3.1 <DatiAnagrafici>
+                cedente_rapfis_anag = xmldoc.appendElement(cedente_rapfis, 'DatiAnagrafici')
+                xmldoc.appendItems(cedente_rapfis_anag, dati)
+                # 1.3.1.1 <IdFiscaleIVA>
+                cedente_rapfis_idf = xmldoc.appendElement(cedente_rapfis_anag, 'IdFiscaleIVA')
+                xmldoc.appendItems(cedente_rapfis_idf, (('IdPaese',  dataz['rfstato']),
+                                                        ('IdCodice', dataz['rfcodfis'] or dataz['rfpiva'])),)
+            
+            # 1.4 <CessionarioCommittente>
+            cessionario = xmldoc.appendElement(head, 'CessionarioCommittente')
+            
+            # 1.4.1 <DatiAnagrafici>
+            cessionario_datianag = xmldoc.appendElement(cessionario, 'DatiAnagrafici')
+            if cli.piva:
+                # 1.4.1.1 <IdFiscaleIVA>
+                cessionario_datianag_idf = xmldoc.appendElement(cessionario_datianag, 'IdFiscaleIVA')
+                xmldoc.appendItems(cessionario_datianag_idf, (('IdPaese',  cli.nazione or 'IT'),
+                                                              ('IdCodice', cli.piva)),)
+    #         if cli.nazione == 'IT' or len(cli.nazione or '') == 0:
+    #             # 1.4.1.2 <CodiceFiscale>
+    #             xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc or cli.piva),))
+    #         
+            if cli.codfisc and cli.codfisc != cli.piva:
+                # 1.4.1.2 <CodiceFiscale>
+                xmldoc.appendItems(cessionario_datianag, (('CodiceFiscale', cli.codfisc),))
+            
+            # 1.4.1.3 <Anagrafica>
+            cessionario_datianag_anagraf = xmldoc.appendElement(cessionario_datianag, 'Anagrafica')
+            xmldoc.appendItems(cessionario_datianag_anagraf, (('Denominazione', pdc.descriz),))
+            
+            #1.4.2 <Sede>
+            cessionario_sede = xmldoc.appendElement(cessionario, 'Sede')
+            xmldoc.appendItems(cessionario_sede, (('Indirizzo', cli.indirizzo),
+                                                  ('CAP',       cli.cap),
+                                                  ('Comune',    cli.citta),
+                                                  ('Provincia', cli.prov),
+                                                  ('Nazione',   cli.nazione or "IT"),))
+            
+            if dataz['secodfis']:
+                #1.5 <TerzoIntermediarioOSoggettoEmittente>
+                tsogemi = xmldoc.appendElement(head, 'TerzoIntermediarioOSoggettoEmittente')
+                #1.5.1 <DatiAnagrafici>
+                tsogemi_datianag = xmldoc.appendElement(tsogemi, 'DatiAnagrafici')
+                tsogemi_datianag_id_iva = xmldoc.appendElement(tsogemi_datianag, 'IdFiscaleIVA')
+                xmldoc.appendItems(tsogemi_datianag_id_iva, (('IdPaese', dataz['sestato'] or "IT"),
+                                                             ('IdCodice', dataz['sepiva'])))
+                #1.5.2 <CodiceFiscale>
+                xmldoc.appendItems(tsogemi_datianag, (('CodiceFiscale', dataz['secodfis']),))
+                #1.5.3 <Anagrafica>
+                tsogemi_datianag_anag = xmldoc.appendElement(tsogemi_datianag, 'Anagrafica')
+                f = []
+                if dataz['sedes']:
+                    f.append(('Denominazione', dataz['sedes']))
+                if dataz['senome']:
+                    f.append(('Nome', dataz['senome']))
+                if dataz['secognome']:
+                    f.append(('Cognome', dataz['secognome']))
+                if dataz['setit']:
+                    f.append(('Titolo', dataz['setit']))
+                if dataz['seeori']:
+                    f.append(('CodEORI', dataz['seeori']))
+                xmldoc.appendItems(tsogemi_datianag_anag, f)
+            
+            if dataz['sesogemi']:
+                #1.6 <SoggettoEmittente>
+                xmldoc.appendItems(head, (('SoggettoEmittente', dataz['sesogemi']),))
         
         loop = True
         while loop:
@@ -434,11 +529,11 @@ class FatturaElettronica(dbm.DocMag):
             body_gen_doc = xmldoc.appendElement(body_gen, 'DatiGeneraliDocumento')
             
             xmldoc.appendItems(body_gen_doc, 
-                               (('TipoDocumento',          self.config.caucon.ftel_tipdoc),
+                               (('TipoDocumento',          ftel_tipdoc),
 #                                 ('Causale',                self.config.descriz),  #indicato in v.1.1, ma da errore
                                 ('Divisa',                 'EUR'),
                                 ('Data',                   data(self.datdoc)),
-                                ('Numero',                 self.get_numdoc_print()),))
+                                ('Numero',                 str(self.get_numdoc_print())),))
             
             if self.totritacc:
                 # 2.1.1.5 <DatiRitenuta>
@@ -660,11 +755,11 @@ class FatturaElettronica(dbm.DocMag):
                         dati.append(('Natura', first_aliq.ftel_natura))
                 else:
                     dati.append(('Quantita', fmt_qt(_qta or 1)))
+                    if _um:
+                        dati.append(('UnitaMisura', _um))
                     if _datper1 and _datper2:
                         dati.append(('DataInizioPeriodo', data(_datper1)))
                         dati.append(('DataFinePeriodo', data(_datper2)))
-                    if _um:
-                        dati.append(('UnitaMisura', _um))
                     if _prezzo:
                         dati.append(('PrezzoUnitario', fmt_pr(_prezzo, DP)))
                     else:
@@ -824,16 +919,19 @@ class FatturaElettronica(dbm.DocMag):
                     dativa.append(('EsigibilitaIVA', esig))
                 xmldoc.appendItems(body_det_rie, dativa)
             
-            # 2.4 <DatiPagamento>
-            body_pag = xmldoc.appendElement(body, 'DatiPagamento')
-            
-            # 2.4.1 <CondizioniPagamento>
-            xmldoc.appendItems(body_pag, (('CondizioniPagamento', self.modpag.ftel_tippag),))
-            
             if self.id_reg is not None:
+                
                 reg = self.regcon
                 reg.Get(self.id_reg)
+                
                 if reg.OneRow():
+                    
+                    # 2.4 <DatiPagamento>
+                    body_pag = xmldoc.appendElement(body, 'DatiPagamento')
+                    
+                    # 2.4.1 <CondizioniPagamento>
+                    xmldoc.appendItems(body_pag, (('CondizioniPagamento', self.modpag.ftel_tippag),))
+                    
                     if len(self.regcon.scad) == 0:
                         datipag = [('ModalitaPagamento',     self.modpag.ftel_modpag),
                                    ('DataScadenzaPagamento', data(self.datdoc)),

@@ -142,10 +142,10 @@ class _MagazzPanel_O_Mixin(object):
         event.Skip()
 
     def OnSogScoDoc(self, event):
-        sra = event.GetEventObject().GetValue()
+        sd = event.GetEventObject().GetValue()
         doc = self.dbdoc
-        doc.sogscodoc = sra
-        if not sra:
+        doc.sogscodoc = sd
+        if not sd:
             doc.totscodoc = 0
 #             doc.totdare = doc.totimporto
 #             if doc.is_split_payment():
@@ -254,6 +254,14 @@ class _MagazzPanel_O_Mixin(object):
                         (wdr.ID_IMPRITACC,  doc.impritacc),\
                         (wdr.ID_TOTRITACC,  doc.totritacc),):
             self.FindWindowById(ID).SetValue(val)
+        
+        if bt.CONATTSCODOC:
+            for ID, val in ((wdr.ID_SOGSCODOC,  doc.sogscodoc),\
+                            (wdr.ID_PERSCODOC,  doc.perscodoc),\
+                            (wdr.ID_COMSCODOC,  doc.comscodoc),\
+                            (wdr.ID_IMPSCODOC,  doc.impscodoc),\
+                            (wdr.ID_TOTSCODOC,  doc.totscodoc),):
+                self.FindWindowById(ID).SetValue(val)
         
         def update_bollo():
             self.FindWindowByName('ftel_bollovirt').SetValue(doc.ftel_bollovirt)
