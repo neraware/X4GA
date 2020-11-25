@@ -26,7 +26,7 @@ import ftel.vendite.dbtables as dbfe
 import Env
 import report as rpt
 
-from ftel.vendite.export import ExportGrid, ExportPanel
+from ftel.vendite.export import ExportGrid, ExportPanel, DettaglioScartoDialog
 
 FRAME_TITLE = "Esportazione documenti in formato Fattura Elettronica"
 
@@ -53,6 +53,8 @@ class NotifichePanel(ExportPanel):
             c = cn(name)
             if c:
                 self.Bind(wx.EVT_BUTTON, func, c)
+        
+        self.gridocs.Bind(EVT_GRID_CELL_LEFT_DCLICK, self.OnCellDoubleClicked)
     
     def OnRiceviNotifiche(self, event):
         self.RiceviNotifiche()
@@ -150,6 +152,18 @@ class NotifichePanel(ExportPanel):
             return True
         
         return False
+    
+    def OnCellDoubleClicked(self, event):
+        row, col = event.GetRow(), event.GetCol()
+        doc = self.dbdocs
+        doc.MoveRow(row)
+        if Env.Azienda.BaseTab.is_eeb_enabled() and col == self.gridocs.COL_MESSAG:
+            if doc.ftel_eeb_status == "E":
+                dettaglio_scarto = doc.gateway_receive_dettaglio_scarto()
+                dlg = DettaglioScartoDialog(self, dettaglio_scarto=[ds['error_desc'] for ds in dettaglio_scarto])
+                dlg.ShowModal()
+                dlg.Destroy()
+        event.Skip()
 
 
 class NotificheFrame(aw.Frame):

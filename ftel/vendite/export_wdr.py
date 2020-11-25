@@ -327,6 +327,27 @@ def ColorsFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
+ID_TEXTCTRL = 10011
+
+def FtelDettaglioScartoFunc( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
+    
+    item1 = wx.TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [800,350], wx.TE_MULTILINE )
+    item1.SetName( "dettaglio_scarto" )
+    item1.Enable(False)
+    item0.Add( item1, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item0.AddGrowableCol( 0 )
+
+    item0.AddGrowableRow( 0 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
 # Menubar functions
 
 # Toolbar functions

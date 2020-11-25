@@ -2100,9 +2100,8 @@ class MagazzPanel(aw.Panel,\
             if a:
                 a = cfg.HasMovAcconto() or cfg.HasMovStornoAcconto()
             self.FindWindowByName('panacconti').Show(a)
-            if bt.CONATTSCODOC:
-                c = self.FindWindowByName('panscodocdati')
-                c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
+            c = self.FindWindowByName('panscodocdati')
+            c.Show(bool(bt.CONATTSCODOC and cfg.sogscodoc))
             self.Layout_()
         finally:
             self.Thaw()

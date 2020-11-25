@@ -17,6 +17,7 @@ import os
 from magazz.dbtables import BodyFtelADG
 from stormdb import JOIN_LEFT
 import version
+import simplejson
 def opj(*x):
     return os.path.join(*x).replace('\\', '/')
 
@@ -1141,6 +1142,27 @@ class FatturaElettronica(dbm.DocMag):
         return client.service.get_notifica(username=username,
                                            keydoc=keydoc,
                                            key_hash=key_hash)
+    
+    def gateway_receive_dettaglio_scarto(self):
+         
+        client = self.gateway_get_client()
+        username = Env.Azienda.BaseTab.FTEL_EEB_USER
+        password = hashlib.sha256(unicode(Env.Azienda.BaseTab.FTEL_EEB_PSWD)).hexdigest()
+        keydoc = self.get_keydoc()
+        info = keydoc+unicode(password).encode('utf-8')
+        key_hash = hashlib.sha256(info).hexdigest()
+        
+        resp = client.service.get_dettaglio_scarto(username=username,
+                                                   keydoc=keydoc,
+                                                   key_hash=key_hash)
+        print resp
+        if resp['result'] == "ERROR":
+            raise Exception(resp['error'])
+        
+        if resp['result'] == "OK":
+            return simplejson.loads(base64.b64decode(resp['data']))
+        
+        raise Exception
 
 
 class FTEL_Document(Document):

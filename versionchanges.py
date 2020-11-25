@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.90', dt.Date(2020, 11, 24), (
+         ("BET4283",
+         """Introdotta la possibilita' di visionare i dettagli del motivo dì scarto dei file xml spediti a ebill."""),
+        ),),
+    
     ('1.9.89', dt.Date(2020, 11, 23), (
          ("BET4282",
          """Colorazione di sfondo particolare delle finestre di inserimento documenti e registrazioni contabili se

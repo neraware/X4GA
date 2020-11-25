@@ -202,17 +202,24 @@ class ExportPanel(aw.Panel):
         row, col = event.GetRow(), event.GetCol()
         doc = self.dbdocs
         doc.MoveRow(row)
-        dlg = ClientiDialog(self, onecodeonly=doc.id_pdc)
-        dlg.OneCardOnly(doc.id_pdc)
-        dlg.CenterOnScreen()
-        if col == self.gridocs.COL_CODDES:
-            dlg.FindWindowByName('ftel_codice').SetFocus()
-        elif col == self.gridocs.COL_INDPEC:
-            dlg.FindWindowByName('ftel_pec').SetFocus()
-        _reload = (dlg.ShowModal() > 0)
-        dlg.Destroy()
-        if _reload:
-            self.UpdateData()
+        if Env.Azienda.BaseTab.is_eeb_enabled() and col == self.gridocs.COL_MESSAG:
+            if doc.ftel_eeb_status == "E":
+                dettaglio_scarto = doc.gateway_receive_dettaglio_scarto()
+                dlg = DettaglioScartoDialog(self, dettaglio_scarto=[ds['error_desc'] for ds in dettaglio_scarto])
+                dlg.ShowModal()
+                dlg.Destroy()
+        else:
+            dlg = ClientiDialog(self, onecodeonly=doc.id_pdc)
+            dlg.OneCardOnly(doc.id_pdc)
+            dlg.CenterOnScreen()
+            if col == self.gridocs.COL_CODDES:
+                dlg.FindWindowByName('ftel_codice').SetFocus()
+            elif col == self.gridocs.COL_INDPEC:
+                dlg.FindWindowByName('ftel_pec').SetFocus()
+            _reload = (dlg.ShowModal() > 0)
+            dlg.Destroy()
+            if _reload:
+                self.UpdateData()
         event.Skip()
     
     def init_colors(self):
@@ -513,3 +520,23 @@ def check_aliqiva():
         aw.awu.MsgDialog(None, "Per procedere occorre configurare le modalità di pagamento secondo le classificazioni della fattura elettronica", style=wx.ICON_ERROR)
         return False
     return True
+
+
+
+class DettaglioScartoPanel(aw.Panel):
+    
+    def __init__(self, *args, **kwargs):
+        aw.Panel.__init__(self, *args, **kwargs)
+        wdr.FtelDettaglioScartoFunc(self)
+
+
+class DettaglioScartoDialog(aw.Dialog):
+    
+    def __init__(self, *args, **kwargs):
+        ds = kwargs.pop('dettaglio_scarto')
+        kwargs['title'] = 'Dettaglio scarto'
+        aw.Dialog.__init__(self, *args, **kwargs)
+        self.panel = DettaglioScartoPanel(self)
+        self.AddSizedPanel(self.panel)
+        cn = self.FindWindowByName
+        cn('dettaglio_scarto').SetValue('\n'.join(ds))
