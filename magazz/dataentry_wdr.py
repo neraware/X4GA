@@ -4193,13 +4193,13 @@ def ScoDocDatiPanelFunc( parent, call_fit = True, set_sizer = True ):
 
     item1.Add( item5, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item11 = wx.StaticText( parent, ID_TEXT, "della base imponibile:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item11 = wx.StaticText( parent, ID_TEXT, "della base di calcolo:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item1.Add( item11, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item12 = bt.GetValIntNumCtrl(parent, ID_IMPSCODOC, 'impscodoc')
     item1.Add( item12, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item13 = wx.Button( parent, ID_BUTSCODOC, "Tutto l'imponibile", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item13 = wx.Button( parent, ID_BUTSCODOC, "Sul Tot.Documento", wx.DefaultPosition, wx.DefaultSize, 0 )
     item13.SetName( "butscodoc" )
     item1.Add( item13, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 

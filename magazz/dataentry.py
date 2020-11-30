@@ -1866,6 +1866,12 @@ class MagazzPanel(aw.Panel,\
 #             msg = """La ritenuta d'acconto non può essere applicata in split payment"""
 #             aw.awu.MsgDialog(self, msg, style=wx.ICON_ERROR)
 #             return False
+        
+        nr = 1
+        for mov in doc.mov:
+            mov.numriga = nr
+            nr += 1
+        
         doc.ftel_bollovirt = self.FindWindowByName('ftel_bollovirt').GetValue()
         if len(doc._info.righep0)>0:
             if MsgDialog(self, "Sono presenti righe senza prezzo.\nConfermi l'operazione?", 
@@ -1910,10 +1916,10 @@ class MagazzPanel(aw.Panel,\
                 style = wx.ICON_ERROR
                 MsgDialog(self, msg, style=style)
                 return False
-            if not doc.samefloat(doc.impscodoc, doc.totimponib):
+            if not doc.samefloat(doc.impscodoc, doc.totimporto):
                 msg =\
                     """Lo sconto esterno viene calcolato su un importo """\
-                    """differente dall'imponibile del documento.\nConfermi?"""
+                    """differente dal totale documento.\nConfermi?"""
                 style = wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT
                 if MsgDialog(self, msg, style=style) != wx.ID_YES:
                     return False

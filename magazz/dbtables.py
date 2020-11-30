@@ -2810,6 +2810,16 @@ class DocMag(adb.DbTable):
             for _ in sitacc:
                 totale += (sitacc.acconto_disponib or 0)
         return totale
+    
+    def get_scodoc_pdc_descriz(self):
+        sdd = ''
+        if self.sogscodoc:
+            id_pdc = self.cfgdoc.id_pdc_sd
+            if id_pdc:
+                pdc = adb.DbTable('pdc')
+                if pdc.Get(self.cfgdoc.id_pdc_sd) and pdc.OneRow():
+                    sdd = pdc.descriz
+        return sdd
 
 
 # ------------------------------------------------------------------------------

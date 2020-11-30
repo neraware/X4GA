@@ -29,6 +29,11 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.91', dt.Date(2020, 11, 30), (
+         ("BET4284",
+         """Ottimizzazione meccanismo sconto esterno/contributo."""),
+        ),),
+    
     ('1.9.90', dt.Date(2020, 11, 24), (
          ("BET4283",
          """Introdotta la possibilita' di visionare i dettagli del motivo dì scarto dei file xml spediti a ebill."""),

@@ -72,11 +72,12 @@ class _MagazzPanel_O_Mixin(object):
         for name in 'per com imp'.split():
             self.Bind(wx.EVT_TEXT, self.OnRitAccChanged, cn('%sritacc' % name))
         self.Bind(wx.EVT_BUTTON, self.OnRitAccImponib, ci(wdr.ID_BUTRITACC))
-        # sconto esterno
-        self.Bind(wx.EVT_CHECKBOX, self.OnSogScoDoc, cn('sogscodoc'))
-        for name in 'per com imp'.split():
-            self.Bind(wx.EVT_TEXT, self.OnScoDocChanged, cn('%sscodoc' % name))
-        self.Bind(wx.EVT_BUTTON, self.OnScoDocImponib, ci(wdr.ID_BUTSCODOC))
+        if bt.CONATTSCODOC:
+            # sconto esterno
+            self.Bind(wx.EVT_CHECKBOX, self.OnSogScoDoc, cn('sogscodoc'))
+            for name in 'per com imp'.split():
+                self.Bind(wx.EVT_TEXT, self.OnScoDocChanged, cn('%sscodoc' % name))
+            self.Bind(wx.EVT_BUTTON, self.OnScoDocImporto, ci(wdr.ID_BUTSCODOC))
     
     def OnSogRitAcc(self, event):
         sra = event.GetEventObject().GetValue()
@@ -198,10 +199,10 @@ class _MagazzPanel_O_Mixin(object):
             wx.CallAfter(UpdateScad)
         event.Skip()
 
-    def OnScoDocImponib(self, event):
+    def OnScoDocImporto(self, event):
         def cn(x):
             return self.FindWindowByName(x)
-        cn('impscodoc').SetValue(self.dbdoc.totimponib)
+        cn('impscodoc').SetValue(self.dbdoc.totimporto)
         event.Skip()
 
     def UpdatePanelFoot(self):
