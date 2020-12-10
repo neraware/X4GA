@@ -356,6 +356,7 @@ class AziendaSetupPanel(_SetupPanel):
                    bt.FTEL_SOLITA,
                    bt.FTEL_DACOCO,
                    bt.FTEL_VENCOD,
+                   bt.FTEL_VENCOX,
                    bt.FTEL_VENPDF,
                    bt.FTEL_EEB_URL,
                    bt.FTEL_EEB_USER,
@@ -456,6 +457,7 @@ class AziendaSetupPanel(_SetupPanel):
             bt.FTEL_SOLITA = cn('setup_ftel_solita').GetValue()
             bt.FTEL_DACOCO = cn('setup_ftel_dacoco').GetValue()
             bt.FTEL_VENCOD = cn('setup_ftel_vencod').GetValue()
+            bt.FTEL_VENCOX = cn('setup_ftel_vencox').GetValue()
             bt.FTEL_VENPDF = cn('setup_ftel_venpdf').GetValue()
             bt.FTEL_EEB_URL = cn('setup_ftel_eeb_url').GetValue()
             bt.FTEL_EEB_USER = cn('setup_ftel_eeb_user').GetValue()
@@ -559,6 +561,7 @@ class AziendaSetupPanel(_SetupPanel):
                 bt.FTEL_SOLITA,
                 bt.FTEL_DACOCO,
                 bt.FTEL_VENCOD,
+                bt.FTEL_VENCOX,
                 bt.FTEL_VENPDF,
                 bt.FTEL_EEB_URL,
                 bt.FTEL_EEB_USER,

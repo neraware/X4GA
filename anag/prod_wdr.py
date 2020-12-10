@@ -212,6 +212,15 @@ class ProdottoHeadingPanel(wx.Panel):
         self.Hide()
 
 
+class FtElCodiciPanel(wx.Panel):
+    
+    def __init__(self, *args, **kwargs):
+        wx.Panel.__init__(self, *args, **kwargs)
+        if bt.FTEL_VENCOX:
+            ProdFtElCodici(self)
+
+
+
 
 # Window functions
 
@@ -325,9 +334,10 @@ ID_KGCONF = 14026
 ID_DIMX = 14027
 ID_DIMY = 14028
 ID_DIMZ = 14029
-ID_VOLUME = 14030
-ID_BUTCALVOL = 14031
-ID_NOTEFOTOZONE = 14032
+ID_BUTCALVOL = 14030
+ID_VOLUME = 14031
+ID_PANCOX = 14032
+ID_NOTEFOTOZONE = 14033
 
 def ProdAnagFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -557,62 +567,75 @@ def ProdAnagFunc( parent, call_fit = True, set_sizer = True ):
 
     item46.Add( item47, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item66 = wx.StaticBox( parent, -1, "Imballo" )
-    item65 = wx.StaticBoxSizer( item66, wx.VERTICAL )
+    item65 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item67 = wx.FlexGridSizer( 0, 7, 0, 0 )
+    item67 = wx.StaticBox( parent, -1, "Imballo" )
+    item66 = wx.StaticBoxSizer( item67, wx.VERTICAL )
     
-    item68 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.Add( item68, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item68 = wx.FlexGridSizer( 0, 8, 0, 0 )
+    
+    item69 = wx.StaticText( parent, ID_TEXT, "cm.X", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item69, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item69 = wx.StaticText( parent, ID_TEXT, "Largh.X", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.Add( item69, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item70 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item70, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item70 = wx.StaticText( parent, ID_TEXT, "Alt.Y", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.Add( item70, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
-
-    item71 = wx.StaticText( parent, ID_TEXT, "Prof.Z", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.Add( item71, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item71 = wx.StaticText( parent, ID_TEXT, "cm.Y", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item71, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
     item72 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.Add( item72, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item68.Add( item72, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item73 = wx.StaticText( parent, ID_TEXT, "Volume", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.Add( item73, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item73 = wx.StaticText( parent, ID_TEXT, "cm.Z", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item73, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
     item74 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item67.Add( item74, 0, wx.ALIGN_CENTER, 5 )
+    item68.Add( item74, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
 
-    item75 = wx.StaticText( parent, ID_TEXT, "cm.", wx.DefaultPosition, [20,-1], wx.ALIGN_RIGHT )
-    item67.Add( item75, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+    item75 = wx.StaticText( parent, ID_TEXT, "Volume m3", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item75, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
 
-    item76 = NumCtrl( parent, integerWidth=4, fractionWidth=2, allowNegative=False, groupDigits=False); item76.SetName("dimx")
-    item67.Add( item76, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item76 = wx.StaticText( parent, ID_TEXT, "", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item76, 0, wx.ALIGN_CENTER, 5 )
 
-    item77 = NumCtrl( parent, integerWidth=4, fractionWidth=2, allowNegative=False, groupDigits=False); item77.SetName("dimy")
-    item67.Add( item77, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item77 = NumCtrl( parent, integerWidth=4, fractionWidth=2, allowNegative=False, groupDigits=False); item77.SetName("dimx")
+    item68.Add( item77, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item78 = NumCtrl( parent, integerWidth=4, fractionWidth=2, allowNegative=False, groupDigits=False); item78.SetName("dimz")
-    item67.Add( item78, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item78 = wx.StaticText( parent, ID_TEXT, "x", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item78, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item79 = wx.StaticText( parent, ID_TEXT, "m3", wx.DefaultPosition, [20,-1], wx.ALIGN_RIGHT )
-    item67.Add( item79, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+    item79 = NumCtrl( parent, integerWidth=4, fractionWidth=2, allowNegative=False, groupDigits=False); item79.SetName("dimy")
+    item68.Add( item79, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item80 = NumCtrl( parent, integerWidth=4, fractionWidth=5, allowNegative=False, groupDigits=False); item80.SetName("volume")
-    item67.Add( item80, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+    item80 = wx.StaticText( parent, ID_TEXT, "x", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item68.Add( item80, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item81 = CalcolaVolumeButton( parent, ID_BUTCALVOL, "Calc.", wx.DefaultPosition, [50,-1], 0 )
-    item81.SetName( "butcalvol" )
-    item67.Add( item81, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 5 )
+    item81 = NumCtrl( parent, integerWidth=4, fractionWidth=2, allowNegative=False, groupDigits=False); item81.SetName("dimz")
+    item68.Add( item81, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item65.Add( item67, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item82 = CalcolaVolumeButton( parent, ID_BUTCALVOL, "=", wx.DefaultPosition, [20,-1], 0 )
+    item82.SetName( "butcalvol" )
+    item68.Add( item82, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 5 )
 
-    item46.Add( item65, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+    item83 = NumCtrl( parent, integerWidth=2, fractionWidth=5, allowNegative=False, groupDigits=False); item83.SetName("volume")
+    item68.Add( item83, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item83 = NoteFotoNotebook( parent, ID_NOTEFOTOZONE, wx.DefaultPosition, [200,160], 0 )
-    item82 = item83
+    item66.Add( item68, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item65.Add( item66, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+
+    item84 = FtElCodiciPanel( parent, ID_PANCOX, wx.DefaultPosition, wx.DefaultSize, 0 )
+    item84.SetName( "panel_ftelcox" )
+    item65.Add( item84, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item65.AddGrowableCol( 1 )
+
+    item46.Add( item65, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item86 = NoteFotoNotebook( parent, ID_NOTEFOTOZONE, wx.DefaultPosition, [200,160], 0 )
+    item85 = item86
     
-    item46.Add( item82, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
+    item46.Add( item85, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.BOTTOM, 5 )
 
     item46.AddGrowableCol( 0 )
 
@@ -637,14 +660,14 @@ def ProdAnagFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LBL_SEARCHRESULTS = 14033
-ID_FILT_TIPART = 14034
-ID_FILT_CATART = 14035
-ID_FILT_GRUART = 14036
-ID_FILT_FORNIT = 14037
-ID_FILT_MARART = 14038
-ID_FILT_STATART1 = 14039
-ID_FILT_STATART2 = 14040
+ID_LBL_SEARCHRESULTS = 14034
+ID_FILT_TIPART = 14035
+ID_FILT_CATART = 14036
+ID_FILT_GRUART = 14037
+ID_FILT_FORNIT = 14038
+ID_FILT_MARART = 14039
+ID_FILT_STATART1 = 14040
+ID_FILT_STATART2 = 14041
 
 def ProdSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -778,7 +801,7 @@ def ProdSpecSearchFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PROGRZONE = 14041
+ID_PROGRZONE = 14042
 
 def ProdProgrFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -811,40 +834,40 @@ def ProdProgrFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LINE = 14042
-ID_PPRLABPROQTA = 14043
-ID_PPRLABPROIMP = 14044
-ID_PPRLABPROMED = 14045
-ID_PPRLABPROINI = 14046
-ID_PPRMAGINI = 14047
-ID_PPRMAGINIV = 14048
-ID_PPRMAGINIM = 14049
-ID_PPRLABPROCAR = 14050
-ID_PPRMAGCAR = 14051
-ID_PPRMAGCARV = 14052
-ID_PPRMAGCARM = 14053
-ID_PPRLABPROSCA = 14054
-ID_PPRMAGSCA = 14055
-ID_PPRMAGSCAV = 14056
-ID_PPRMAGSCAM = 14057
-ID_PPRLABPRBORC = 14058
-ID_PPRMAGBKOCLI = 14059
-ID_PPRMAGBKOCLIV = 14060
-ID_PPRMAGBKOCLIM = 14061
-ID_PPRLABPRBORF = 14062
-ID_PPRMAGBKOFOR = 14063
-ID_PPRMAGBKOFORV = 14064
-ID_PPRMAGBKOFORM = 14065
-ID_PPRLABPROGIA = 14066
-ID_PPRMAGGIA = 14067
-ID_PPRLABPROGPR = 14068
-ID_PPRMAGGPR = 14069
-ID_PPRLABPROCSU = 14070
-ID_PPRMAGCSU = 14071
-ID_PPRLABPROCSM = 14072
-ID_PPRMAGCSM = 14073
-ID_PPRLABPROMAG = 14074
-ID_PPRPANPROMAG = 14075
+ID_LINE = 14043
+ID_PPRLABPROQTA = 14044
+ID_PPRLABPROIMP = 14045
+ID_PPRLABPROMED = 14046
+ID_PPRLABPROINI = 14047
+ID_PPRMAGINI = 14048
+ID_PPRMAGINIV = 14049
+ID_PPRMAGINIM = 14050
+ID_PPRLABPROCAR = 14051
+ID_PPRMAGCAR = 14052
+ID_PPRMAGCARV = 14053
+ID_PPRMAGCARM = 14054
+ID_PPRLABPROSCA = 14055
+ID_PPRMAGSCA = 14056
+ID_PPRMAGSCAV = 14057
+ID_PPRMAGSCAM = 14058
+ID_PPRLABPRBORC = 14059
+ID_PPRMAGBKOCLI = 14060
+ID_PPRMAGBKOCLIV = 14061
+ID_PPRMAGBKOCLIM = 14062
+ID_PPRLABPRBORF = 14063
+ID_PPRMAGBKOFOR = 14064
+ID_PPRMAGBKOFORV = 14065
+ID_PPRMAGBKOFORM = 14066
+ID_PPRLABPROGIA = 14067
+ID_PPRMAGGIA = 14068
+ID_PPRLABPROGPR = 14069
+ID_PPRMAGGPR = 14070
+ID_PPRLABPROCSU = 14071
+ID_PPRMAGCSU = 14072
+ID_PPRLABPROCSM = 14073
+ID_PPRMAGCSM = 14074
+ID_PPRLABPROMAG = 14075
+ID_PPRPANPROMAG = 14076
 
 def ProdProgr2Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1010,14 +1033,14 @@ def ProdProgr2Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PPRLABPROMOV = 14076
-ID_PROMOVLABDAT1 = 14077
-ID_PROMOVDAT1 = 14078
-ID_PROMOVLABDAT2 = 14079
-ID_PROMOVDAT2 = 14080
-ID_PROMOVMAG = 14081
-ID_PROMOVBUTUPD = 14082
-ID_PROMOVPAN = 14083
+ID_PPRLABPROMOV = 14077
+ID_PROMOVLABDAT1 = 14078
+ID_PROMOVDAT1 = 14079
+ID_PROMOVLABDAT2 = 14080
+ID_PROMOVDAT2 = 14081
+ID_PROMOVMAG = 14082
+ID_PROMOVBUTUPD = 14083
+ID_PROMOVPAN = 14084
 
 def ProdProgr3Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1080,7 +1103,7 @@ def ProdProgr3Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_MASTROZONE = 14084
+ID_MASTROZONE = 14085
 
 def ProdMastroFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1109,46 +1132,46 @@ def ProdMastroFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LABMASMAG = 14085
-ID_LABMASAGE = 14086
-ID_MASID_MAGAZZ = 14087
-ID_MASID_AGENTE = 14088
-ID_LABMASDOC = 14089
-ID_LABMASMOV = 14090
-ID_MASID_TIPDOC = 14091
-ID_MASID_TIPMOV = 14092
-ID_LABMASPDC = 14093
-ID_LABMASIVA = 14094
-ID_MASID_PDC = 14095
-ID_MASID_ALIQIVA = 14096
-ID_MASESCACQ = 14097
-ID_MASESCANN = 14098
-ID_MASESCNAS = 14099
-ID_SOLOPRMANCA = 14100
-ID_LABMASNUM1 = 14101
-ID_LABMASDAT1 = 14102
-ID_LABMASNUM2 = 14103
-ID_LABMASDAT2 = 14104
-ID_MASNUMDOC1 = 14105
-ID_MASDATDOC1 = 14106
-ID_MASNUMDOC2 = 14107
-ID_MASDATDOC2 = 14108
-ID_LABMASREG = 14109
-ID_MASNUMREG1 = 14110
-ID_MASDATREG1 = 14111
-ID_MASNUMREG2 = 14112
-ID_MASDATREG2 = 14113
-ID_LABMASRIF = 14114
-ID_MASNUMRIF1 = 14115
-ID_MASDATRIF1 = 14116
-ID_MASNUMRIF2 = 14117
-ID_MASDATRIF2 = 14118
-ID_ORDINV = 14119
-ID_MASBUTUPD = 14120
-ID_MASBUTPRT = 14121
-ID_LABMASTOTDOCQ = 14122
-ID_TOTNUMMOV = 14123
-ID_TOTIMPORTO = 14124
+ID_LABMASMAG = 14086
+ID_LABMASAGE = 14087
+ID_MASID_MAGAZZ = 14088
+ID_MASID_AGENTE = 14089
+ID_LABMASDOC = 14090
+ID_LABMASMOV = 14091
+ID_MASID_TIPDOC = 14092
+ID_MASID_TIPMOV = 14093
+ID_LABMASPDC = 14094
+ID_LABMASIVA = 14095
+ID_MASID_PDC = 14096
+ID_MASID_ALIQIVA = 14097
+ID_MASESCACQ = 14098
+ID_MASESCANN = 14099
+ID_MASESCNAS = 14100
+ID_SOLOPRMANCA = 14101
+ID_LABMASNUM1 = 14102
+ID_LABMASDAT1 = 14103
+ID_LABMASNUM2 = 14104
+ID_LABMASDAT2 = 14105
+ID_MASNUMDOC1 = 14106
+ID_MASDATDOC1 = 14107
+ID_MASNUMDOC2 = 14108
+ID_MASDATDOC2 = 14109
+ID_LABMASREG = 14110
+ID_MASNUMREG1 = 14111
+ID_MASDATREG1 = 14112
+ID_MASNUMREG2 = 14113
+ID_MASDATREG2 = 14114
+ID_LABMASRIF = 14115
+ID_MASNUMRIF1 = 14116
+ID_MASDATRIF1 = 14117
+ID_MASNUMRIF2 = 14118
+ID_MASDATRIF2 = 14119
+ID_ORDINV = 14120
+ID_MASBUTUPD = 14121
+ID_MASBUTPRT = 14122
+ID_LABMASTOTDOCQ = 14123
+ID_TOTNUMMOV = 14124
+ID_TOTIMPORTO = 14125
 
 def ProdMastro1Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1396,7 +1419,7 @@ def ProdMastro1Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_MASPANMASTRO = 14125
+ID_MASPANMASTRO = 14126
 
 def ProdMastro2Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1427,8 +1450,8 @@ def ProdMastro2Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BUTVEDIPREVIGCLI = 14126
-ID_PANGRIDGRC = 14127
+ID_BUTVEDIPREVIGCLI = 14127
+ID_PANGRIDGRC = 14128
 
 def GriglieCliFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1461,8 +1484,8 @@ def GriglieCliFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BUTVEDIPREVIGFOR = 14128
-ID_PANGRIDGRF = 14129
+ID_BUTVEDIPREVIGFOR = 14129
+ID_PANGRIDGRF = 14130
 
 def GriglieForFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1495,8 +1518,8 @@ def GriglieForFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANELSTRU = 14130
-ID_PRINT = 14131
+ID_PANELSTRU = 14131
+ID_PRINT = 14132
 
 def InvStruFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1532,12 +1555,12 @@ def InvStruFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANEL_VALORI_BEFORE = 14132
-ID_PANVALORI = 14133
-ID_PANEL_VALORI_AFTER = 14134
-ID_LISTINIPANEL = 14135
-ID_GRIGLIECLIPANEL = 14136
-ID_GRIGLIEFORPANEL = 14137
+ID_PANEL_VALORI_BEFORE = 14133
+ID_PANVALORI = 14134
+ID_PANEL_VALORI_AFTER = 14135
+ID_LISTINIPANEL = 14136
+ID_GRIGLIECLIPANEL = 14137
+ID_GRIGLIEFORPANEL = 14138
 
 def ListGriFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1594,7 +1617,7 @@ def ListGriFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_MASTROEVAZONE = 14138
+ID_MASTROEVAZONE = 14139
 
 def ProdMastroEvaFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1623,24 +1646,24 @@ def ProdMastroEvaFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_NODOCANN = 14139
-ID_NODOCACQ = 14140
-ID_NOMOVANN = 14141
-ID_EVABUTUPD = 14142
-ID_EVABUTPRT = 14143
-ID_EVAPARZ = 14144
-ID_EVANONE = 14145
-ID_EVACHIUSI = 14146
-ID_MASTOTNUMMOV = 14147
-ID_LABMASTOTDOCV = 14148
-ID_MASTOTDOCQ = 14149
-ID_MASTOTDOCV = 14150
-ID_LABMASACQ = 14151
-ID_MASTOTACQQ = 14152
-ID_MASTOTACQV = 14153
-ID_LABMASRES = 14154
-ID_MASTOTRESQ = 14155
-ID_MASTOTRESV = 14156
+ID_NODOCANN = 14140
+ID_NODOCACQ = 14141
+ID_NOMOVANN = 14142
+ID_EVABUTUPD = 14143
+ID_EVABUTPRT = 14144
+ID_EVAPARZ = 14145
+ID_EVANONE = 14146
+ID_EVACHIUSI = 14147
+ID_MASTOTNUMMOV = 14148
+ID_LABMASTOTDOCV = 14149
+ID_MASTOTDOCQ = 14150
+ID_MASTOTDOCV = 14151
+ID_LABMASACQ = 14152
+ID_MASTOTACQQ = 14153
+ID_MASTOTACQV = 14154
+ID_LABMASRES = 14155
+ID_MASTOTRESQ = 14156
+ID_MASTOTRESV = 14157
 
 def ProdMastroEvaFunc1( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1927,7 +1950,7 @@ def ProdMastroEvaFunc1( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_MASPANMASTROEVA = 14157
+ID_MASPANMASTROEVA = 14158
 
 def ProdMastroEvaFunc2( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1958,7 +1981,7 @@ def ProdMastroEvaFunc2( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PPRPANPROPRO = 14158
+ID_PPRPANPROPRO = 14159
 
 def ProdProgr1Func( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1981,7 +2004,7 @@ def ProdProgr1Func( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDLATT = 14159
+ID_PANGRIDLATT = 14160
 
 def ProdAnagListiniFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2004,7 +2027,7 @@ def ProdAnagListiniFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDGIAC = 14160
+ID_PANGRIDGIAC = 14161
 
 def ProdAnagGiacenzeFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2050,7 +2073,7 @@ def ProdAnagNoteFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANIMAGE = 14161
+ID_PANIMAGE = 14162
 
 def ProdAnagFotoFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2070,12 +2093,12 @@ def ProdAnagFotoFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_FATDATMIN = 14162
-ID_FATDATMAX = 14163
-ID_FATORDER = 14164
-ID_BTNFATUPD = 14165
-ID_BTNFATPRT = 14166
-ID_STATZONE = 14167
+ID_FATDATMIN = 14163
+ID_FATDATMAX = 14164
+ID_FATORDER = 14165
+ID_BTNFATUPD = 14166
+ID_BTNFATPRT = 14167
+ID_STATZONE = 14168
 
 def ProdIntMagPanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2144,7 +2167,7 @@ def ProdIntMagPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDFATCLI = 14168
+ID_PANGRIDFATCLI = 14169
 
 def ProdIntMagPaneFatCliFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2168,7 +2191,7 @@ def ProdIntMagPaneFatCliFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDLIS = 14169
+ID_PANGRIDLIS = 14170
 
 def ListiniFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2194,10 +2217,10 @@ def ListiniFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_LABELFROMDATA = 14170
-ID_FROMDATLIS = 14171
-ID_BTNLISTNEW = 14172
-ID_BTNLISTDEL = 14173
+ID_LABELFROMDATA = 14171
+ID_FROMDATLIS = 14172
+ID_BTNLISTNEW = 14173
+ID_BTNLISTDEL = 14174
 
 def ListiniDataFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2236,9 +2259,9 @@ def ListiniDataFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PANGRIDPROMO = 14174
-ID_BUTPRINT = 14175
-ID_BUTSAVE = 14176
+ID_PANGRIDPROMO = 14175
+ID_BUTPRINT = 14176
+ID_BUTSAVE = 14177
 
 def ProdPromoFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2276,10 +2299,10 @@ def ProdPromoFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PROMOLINE1 = 14177
-ID_LABELPROMO = 14178
-ID_PROMOPRZ = 14179
-ID_BUTCHGPROMO = 14180
+ID_PROMOLINE1 = 14178
+ID_LABELPROMO = 14179
+ID_PROMOPRZ = 14180
+ID_BUTCHGPROMO = 14181
 
 def Promo1PanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -2317,13 +2340,13 @@ def Promo1PanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PROMOLINE2 = 14181
-ID_PROMOSC1 = 14182
-ID_PROMOSC2 = 14183
-ID_PROMOSC3 = 14184
-ID_PROMOSC4 = 14185
-ID_PROMOSC5 = 14186
-ID_PROMOSC6 = 14187
+ID_PROMOLINE2 = 14182
+ID_PROMOSC1 = 14183
+ID_PROMOSC2 = 14184
+ID_PROMOSC3 = 14185
+ID_PROMOSC4 = 14186
+ID_PROMOSC5 = 14187
+ID_PROMOSC6 = 14188
 
 def Promo2PanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.BoxSizer( wx.VERTICAL )
@@ -2423,10 +2446,10 @@ def Promo2PanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_DATMIN = 14188
-ID_DATMAX = 14189
-ID_BUTCANCPROMO = 14190
-ID_BUTSAVEPROMO = 14191
+ID_DATMIN = 14189
+ID_DATMAX = 14190
+ID_BUTCANCPROMO = 14191
+ID_BUTSAVEPROMO = 14192
 
 def DatiPromoFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2559,7 +2582,7 @@ def DatiPromoFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PERPRO = 14192
+ID_PERPRO = 14193
 
 def ProvvigPanelFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -2582,9 +2605,9 @@ def ProvvigPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_PROD_TOOLBAR = 14193
-ID_GIAC_SELMAG = 14194
-ID_SOLOGIAC = 14195
+ID_PROD_TOOLBAR = 14194
+ID_GIAC_SELMAG = 14195
+ID_SOLOGIAC = 14196
 
 def ProdToolBarFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -2651,35 +2674,35 @@ def CostoPrezzoPanelFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_COSTO = 14196
-ID_LABELPREZZO = 14197
-ID_PREZZO = 14198
-ID_BTNRICALC = 14199
-ID_BTNRICLIS = 14200
-ID_PANPROMO1 = 14201
-ID_LABELRIC1 = 14202
-ID_LABELRIC2 = 14203
-ID_LABELRIC3 = 14204
-ID_RICAR1 = 14205
-ID_RICAR2 = 14206
-ID_RICAR3 = 14207
-ID_RICAR4 = 14208
-ID_RICAR5 = 14209
-ID_RICAR6 = 14210
-ID_LABELSC1 = 14211
-ID_LABELSC2 = 14212
-ID_LABELSC3 = 14213
-ID_SCONTO1 = 14214
-ID_SCONTO2 = 14215
-ID_SCONTO4 = 14216
-ID_SCONTO5 = 14217
-ID_SCONTO6 = 14218
-ID_PANPROMO2 = 14219
-ID_PANPROVVIG = 14220
-ID_GRUPREZ = 14221
-ID_PDCACQ = 14222
-ID_PDCVEN = 14223
-ID_PANCSTPRZ = 14224
+ID_COSTO = 14197
+ID_LABELPREZZO = 14198
+ID_PREZZO = 14199
+ID_BTNRICALC = 14200
+ID_BTNRICLIS = 14201
+ID_PANPROMO1 = 14202
+ID_LABELRIC1 = 14203
+ID_LABELRIC2 = 14204
+ID_LABELRIC3 = 14205
+ID_RICAR1 = 14206
+ID_RICAR2 = 14207
+ID_RICAR3 = 14208
+ID_RICAR4 = 14209
+ID_RICAR5 = 14210
+ID_RICAR6 = 14211
+ID_LABELSC1 = 14212
+ID_LABELSC2 = 14213
+ID_LABELSC3 = 14214
+ID_SCONTO1 = 14215
+ID_SCONTO2 = 14216
+ID_SCONTO4 = 14217
+ID_SCONTO5 = 14218
+ID_SCONTO6 = 14219
+ID_PANPROMO2 = 14220
+ID_PANPROVVIG = 14221
+ID_GRUPREZ = 14222
+ID_PDCACQ = 14223
+ID_PDCVEN = 14224
+ID_PANCSTPRZ = 14225
 
 def ValoriFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 1, 0, 0, 0 )
@@ -2919,9 +2942,9 @@ def ValoriFunc( parent, call_fit = True, set_sizer = True ):
     
     return item0
 
-ID_BKCLI = 14225
-ID_BKFOR = 14226
-ID_PANGRIDDISP = 14227
+ID_BKCLI = 14226
+ID_BKFOR = 14227
+ID_PANGRIDDISP = 14228
 
 def ProdAnagDisponibFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -2952,6 +2975,42 @@ def ProdAnagDisponibFunc( parent, call_fit = True, set_sizer = True ):
     item0.AddGrowableCol( 0 )
 
     item0.AddGrowableRow( 1 )
+
+    if set_sizer == True:
+        parent.SetSizer( item0 )
+        if call_fit == True:
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+
+def ProdFtElCodici( parent, call_fit = True, set_sizer = True ):
+    item0 = wx.BoxSizer( wx.VERTICAL )
+    
+    item2 = wx.StaticBox( parent, -1, "Codici F.E." )
+    item1 = wx.StaticBoxSizer( item2, wx.VERTICAL )
+    
+    item3 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    
+    item4 = wx.StaticText( parent, ID_TEXT, "Tipo:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item4, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item5 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [50,-1], 0 )
+    item5.SetName( "ftel_codtipo" )
+    item3.Add( item5, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM, 5 )
+
+    item6 = wx.StaticText( parent, ID_TEXT, "Valore:", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item3.Add( item6, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5 )
+
+    item7 = TextCtrl( parent, ID_TEXTCTRL, "", wx.DefaultPosition, [80,-1], 0 )
+    item7.SetName( "ftel_codvalore" )
+    item3.Add( item7, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item3.AddGrowableCol( 1 )
+
+    item1.Add( item3, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+    item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.BOTTOM, 5 )
 
     if set_sizer == True:
         parent.SetSizer( item0 )

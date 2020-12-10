@@ -1073,6 +1073,7 @@ class Azienda(object):
         FTEL_SOLITA = False  #flag esclusione clienti esteri
         FTEL_DACOCO = False  #flag gestione blocco dati contratto e blocco dati convenzione
         FTEL_VENCOD = False  #flag inclusione codici prodotto
+        FTEL_VENCOX = False  #flag inclusione codici prodotto definiti su scheda prodotto
         FTEL_VENPDF = False  #flag inclusione stampa pdf
         FTEL_ROWCAU = ''     #righe causale default
         
@@ -2654,6 +2655,12 @@ class Azienda(object):
                 [ "ucardat",    "DATE",  None, None, "Data ultimo carico", None ],
             ]
             
+            if cls.FTEL_VENCOX:
+                cls.prod += [
+                    [ "ftel_codtipo",   "VARCHAR", 35, None, "Ftel: codice tipo", None ],
+                    [ "ftel_codvalore", "VARCHAR", 35, None, "Ftel: codice valore", None ],
+                ]
+            
             cls.set_constraints(cls.TABNAME_PROD,
                                 ((cls.TABSETUP_CONSTR_ALIQIVA, 'id_aliqiva', cls.TABCONSTRAINT_TYPE_NOACTION),
                                  (cls.TABSETUP_CONSTR_TIPART,  'id_tipart',  cls.TABCONSTRAINT_TYPE_NOACTION),
@@ -4190,6 +4197,7 @@ class Azienda(object):
                 ('FTEL_DACOCO',     'ftel_dacoco',        f, _flt, None),
                 ('FTEL_ROWCAU',     'ftel_rowcau',        s, _str, None),
                 ('FTEL_VENCOD',     'ftel_vencod',        f, _flt, None),
+                ('FTEL_VENCOX',     'ftel_vencox',        f, _flt, None),
                 ('FTEL_VENPDF',     'ftel_venpdf',        f, _flt, None),
                 ('FTEL_EEB_URL',    'ftel_eeb_url',       s, _str, None),
                 ('FTEL_EEB_USER',   'ftel_eeb_user',      s, _str, None),

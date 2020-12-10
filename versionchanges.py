@@ -29,6 +29,12 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.92', dt.Date(2020, 12, 10), (
+         ("BET4285",
+         """Aggiunta possibilita' di definizione di codice tipo e valore su scheda prodotto, 
+         relativamente al tracciato xml fattura elettronica sezione 2.2.1.3."""),
+        ),),
+    
     ('1.9.91', dt.Date(2020, 11, 30), (
          ("BET4284",
          """Ottimizzazione meccanismo sconto esterno/contributo."""),

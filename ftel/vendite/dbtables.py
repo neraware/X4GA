@@ -727,6 +727,7 @@ class FatturaElettronica(dbm.DocMag):
                 dati = []
                 
                 if Env.Azienda.BaseTab.FTEL_VENCOD and len(_codart or '') > 0:
+                    # 2.2.1.3 con valore in base a setup
                     _tipdat = Env.Azienda.BaseTab.FTEL_TIPDAT
                     if _tipdat:
                         if Env.Azienda.BaseTab.FTEL_TIPCOD == "P":
@@ -741,6 +742,13 @@ class FatturaElettronica(dbm.DocMag):
                             body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
                             xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', _tipdat),
                                                                      ('CodiceValore', _outcod)))
+                
+                if Env.Azienda.BaseTab.FTEL_VENCOX and len(_codart or '') > 0:
+                    # 2.2.1.3 con valori appostiti della scheda prodotto
+                    if mov.prod.ftel_codtipo and mov.prod.ftel_codvalore:
+                        body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
+                        xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', mov.prod.ftel_codtipo),
+                                                                 ('CodiceValore', mov.prod.ftel_codvalore)))
                 
                 dati.append(('Descrizione', _descriz))
                 
@@ -808,6 +816,7 @@ class FatturaElettronica(dbm.DocMag):
                     dati = []
                     
                     if Env.Azienda.BaseTab.FTEL_VENCOD and len(_codart or '') > 0:
+                        # 2.2.1.3 con valore in base a setup
                         _tipdat = Env.Azienda.BaseTab.FTEL_TIPDAT
                         if _tipdat:
                             if Env.Azienda.BaseTab.FTEL_TIPCOD == "P":
@@ -822,6 +831,13 @@ class FatturaElettronica(dbm.DocMag):
                                 body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
                                 xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', _tipdat),
                                                                          ('CodiceValore', _outcod)))
+                    
+                    if Env.Azienda.BaseTab.FTEL_VENCOX and len(_codart or '') > 0:
+                        # 2.2.1.3 con valori appostiti della scheda prodotto
+                        if mov.prod.ftel_codtipo and mov.prod.ftel_codvalore:
+                            body_det_row_codart = xmldoc.appendElement(body_det_row, 'CodiceArticolo')
+                            xmldoc.appendItems(body_det_row_codart, (('CodiceTipo', mov.prod.ftel_codtipo),
+                                                                     ('CodiceValore', mov.prod.ftel_codvalore)))
                     
                     dati.append(('Descrizione', _descriz))
                     
