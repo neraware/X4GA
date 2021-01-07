@@ -29,6 +29,26 @@ import mx.DateTime as dt
 
 history = (
            
+    ('1.9.94', dt.Date(2021, 1, 7), (
+         ("BUG1231",
+         """E' stata corretta la gestione delle aliquote iva, con l'aggiunta dei codici natura 
+         N3.5 e N3.6 prima mancanti."""),
+         ("BET4287",
+         """E' stata aggiunta, nella maschere di interrogazione del fatturato contabile acquisti/vendite,
+         la possibilita' di filtrare le anagrafiche in base alla categoria di appartenenza."""),
+         ("BET4288",
+         """E' stata aggiunta, nella maschere di interrogazione delle registrazioni contabili e delle
+         registrazioni iva, la possibilita' di indicare che le date del periodo di interesse devono considerare
+         la data operazione, laddove impostata."""),
+        ),),
+    
+    ('1.9.93', None, (
+         ("BET4286",
+         """E' stato corretto il controllo dell'aliquota iva utilizzata nei documenti, che se 
+         di tipo tipo acquisto cee ora e' possibile usarla anche per la relativa autofattura nel
+         documento di magazzino."""),
+        ),),
+    
     ('1.9.92', dt.Date(2020, 12, 10), (
          ("BET4285",
          """Aggiunta possibilita' di definizione di codice tipo e valore su scheda prodotto, 

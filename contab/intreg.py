@@ -287,8 +287,8 @@ class IntRegConPanel(aw.Panel):
         
         for col, op, name in (("reg.id",        ">=", "numreg1"),
                               ("reg.id",        "<=", "numreg2"),
-                              ("reg.datreg",    ">=", "datreg1"),
-                              ("reg.datreg",    "<=", "datreg2"),
+#                               ("reg.datreg",    ">=", "datreg1"),
+#                               ("reg.datreg",    "<=", "datreg2"),
                               ("reg.numdoc",    ">=", "numdoc1"),
                               ("reg.numdoc",    "<=", "numdoc2"),
                               ("reg.datdoc",    ">=", "datdoc1"),
@@ -298,6 +298,19 @@ class IntRegConPanel(aw.Panel):
             val = gcv(name)
             if val:
                 reg.AddFilter("%s%s%%s" % (col, op), val)
+        
+        cn = self.FindWindowByName
+        d1, d2 = cn('datreg1').GetValue(), cn('datreg2').GetValue()
+        if cn('use_datope').IsChecked():
+            if d1:
+                reg.AddFilter('IF(reg.datope IS NULL, reg.datreg, reg.datope)>=%s', d1)
+            if d2:
+                reg.AddFilter('IF(reg.datope IS NULL, reg.datreg, reg.datope)<=%s', d2)
+        else:
+            if d1:
+                reg.AddFilter('reg.datreg>=%s', d1)
+            if d2:
+                reg.AddFilter('reg.datreg<=%s', d2)
         
         val = gcv('id_aliqiva')
         if val:
@@ -566,8 +579,8 @@ class IntRegIvaPanel(wx.Panel):
         
         for col, op, name in (("reg.id",     ">=%s", "numreg1"),\
                               ("reg.id",     "<=%s", "numreg2"),\
-                              ("reg.datreg", ">=%s", "datreg1"),\
-                              ("reg.datreg", "<=%s", "datreg2"),\
+#                               ("reg.datreg", ">=%s", "datreg1"),\
+#                               ("reg.datreg", "<=%s", "datreg2"),\
                               ("reg.datdoc", ">=%s", "datdoc1"),\
                               ("reg.datdoc", "<=%s", "datdoc2"),\
                               ("reg.numdoc", ">=%s", "numdoc1"),\
@@ -576,6 +589,19 @@ class IntRegIvaPanel(wx.Panel):
                               ("reg.numiva", "<=%s", "numpro2")):
             val = gcv(name)
             if val: reg.AddFilter("%s%s" % (col, op), val)
+        
+        cn = self.FindWindowByName
+        d1, d2 = cn('datreg1').GetValue(), cn('datreg2').GetValue()
+        if cn('use_datope').IsChecked():
+            if d1:
+                reg.AddFilter('IF(reg.datope IS NULL, reg.datreg, reg.datope)>=%s', d1)
+            if d2:
+                reg.AddFilter('IF(reg.datope IS NULL, reg.datreg, reg.datope)<=%s', d2)
+        else:
+            if d1:
+                reg.AddFilter('reg.datreg>=%s', d1)
+            if d2:
+                reg.AddFilter('reg.datreg<=%s', d2)
         
         for col in ("id_caus", "id_regiva"):
             val = gcv(col)

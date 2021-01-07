@@ -190,15 +190,29 @@ class FatturatoContabileClientiFornitPanel(aw.Panel):
         return True
     
     def UpdateData(self):
+        
         cn = self.FindWindowByName
+        
         av, qa, d1, d2, ss, si, sc, sx, ct = map(lambda x: cn(x).GetValue(), 
                                                  'acqven qualianag datmin datmax id_stato stati_ita stati_cee stati_ext congr_tipana'.split())
+        
         self.detail = dr = cn('detail').IsChecked()
         if av == 'A':
             fat = self.dbfat = dbc.FatturatoContabileFornitori(detail=dr)
         else:
             fat = self.dbfat = dbc.FatturatoContabileClienti(detail=dr)
+        
         fat.ClearFilters()
+        
+        if av == 'A':
+            cat = cn('id_catfor').GetValue()
+            if cat:
+                fat.AddFilter('fornit.id_categ=%s' % cat)
+        else:
+            cat = cn('id_catcli').GetValue()
+            if cat:
+                fat.AddFilter('cliente.id_categ=%s' % cat)
+        
         ri = []
         regs = cn('registri')
         for n in range(len(regs.valori)):
@@ -208,6 +222,7 @@ class FatturatoContabileClientiFornitPanel(aw.Panel):
             aw.awu.MsgDialog(self, "Nessun registro selezionato")
             return
         fat.AddFilter('reg.id_regiva IN (%s)' % ', '.join(map(str, ri)))
+        
         if ct:
             fat.AddFilter('tipana.tipo=%s', fat.clifor)
         fat.AddFilter('reg.datreg>=%s', d1)
@@ -236,6 +251,7 @@ class FatturatoContabileClientiFornitPanel(aw.Panel):
                 sf += 'IF(tipana.tipo="C", stato_cli.codice<>"IT" AND stato_cli.is_cee=0, stato_for.codice<>"IT" AND stato_for.is_cee=0)'
         if sf:
             fat.AddFilter(sf)
+        
         wx.BeginBusyCursor()
         try:
             if not fat.Retrieve():
@@ -243,6 +259,7 @@ class FatturatoContabileClientiFornitPanel(aw.Panel):
                 return False
         finally:
             wx.EndBusyCursor()
+        
         self.gridfat.Destroy()
         self.gridfat = FatturatoContabileClientiFornitGrid(cn('pangridfat'), fat, detail=dr)
         self.gridfat.ChangeData(fat.GetRecordset())

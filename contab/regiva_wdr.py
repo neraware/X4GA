@@ -24,7 +24,7 @@ from awc.controls.notebook import Notebook
 
 from anag.basetab import WorkZoneNotebook
 
-from anag.lib import LinkTableRegIva, LinkTableStati, LinkTableRegIvaNoScheda
+from anag.lib import LinkTableRegIva, LinkTableStati, LinkTableRegIvaNoScheda, LinkTableCatFor, LinkTableCatCli
 
 import Env
 Azienda = Env.Azienda
@@ -70,6 +70,15 @@ class AcqVenRadioBox(RadioBox):
     def __init__(self, *args, **kwargs):
         RadioBox.__init__(self, *args, **kwargs)
         self.SetDataLink(values=["A", "V"])
+        self.Bind(wx.EVT_RADIOBOX, self.OnChanged)
+    
+    def OnChanged(self, event):
+        parent = self.GetParent()
+        cn = parent.FindWindowByName
+        cn('id_catfor').Show(self.GetValue() == "A")
+        cn('id_catcli').Show(self.GetValue() == "V")
+        parent.Layout()
+        event.Skip()
 
 
 class QualiAnagraficheRadioBox(RadioBox):
@@ -1668,8 +1677,10 @@ ID_STATI_CEE = 10123
 ID_STATI_EXT = 10124
 ID_STATO = 10125
 ID_QUALIANAG = 10126
-ID_CONGR_TIPANA = 10127
-ID_PANGRIDFAT = 10128
+ID_CATFOR = 10127
+ID_CATCLI = 10128
+ID_CONGR_TIPANA = 10129
+ID_PANGRIDFAT = 10130
 
 def FatturatoContabileClientiFornitFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )
@@ -1766,42 +1777,51 @@ def FatturatoContabileClientiFornitFunc( parent, call_fit = True, set_sizer = Tr
     item26 = wx.FlexGridSizer( 0, 1, 0, 0 )
     
     item27 = QualiAnagraficheRadioBox( parent, ID_QUALIANAG, "Anagrafiche:", wx.DefaultPosition, wx.DefaultSize, 
-        ["Tutte","Solo in blacklist","Solo con stato in blacklist"] , 1, wx.RA_SPECIFY_COLS )
+        ["Tutte","Anag.blaclist","Stato blacklist"] , 1, wx.RA_SPECIFY_ROWS )
     item27.SetName( "qualianag" )
     item26.Add( item27, 0, wx.GROW|wx.LEFT|wx.TOP, 5 )
 
-    item28 = CheckBox( parent, ID_CONGR_TIPANA, "Congruenza tipo anagrafico", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item28.SetName( "congr_tipana" )
+    item28 = wx.StaticText( parent, ID_TEXT, "Categoria:", wx.DefaultPosition, wx.DefaultSize, 0 )
     item26.Add( item28, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
+
+    item29 = LinkTableCatFor(parent, ID_CATFOR, "id_catfor")
+    item26.Add( item29, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item30 = LinkTableCatCli(parent, ID_CATCLI, "id_catcli"); item30.Hide()
+    item26.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+
+    item31 = CheckBox( parent, ID_CONGR_TIPANA, "Congruenza tipo anagrafico", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item31.SetName( "congr_tipana" )
+    item26.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 
     item1.Add( item26, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item29 = wx.Button( parent, ID_BUTUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item29.SetDefault()
-    item29.SetName( "butupd" )
-    item1.Add( item29, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
+    item32 = wx.Button( parent, ID_BUTUPD, "Aggiorna", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item32.SetDefault()
+    item32.SetName( "butupd" )
+    item1.Add( item32, 0, wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
 
     item1.AddGrowableCol( 2 )
 
     item0.Add( item1, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-    item30 = wx.StaticText( parent, ID_TEXT, "Elenco anagrafiche e fatturati", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item30.SetForegroundColour( wx.BLUE )
-    item0.Add( item30, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
+    item33 = wx.StaticText( parent, ID_TEXT, "Elenco anagrafiche e fatturati", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item33.SetForegroundColour( wx.BLUE )
+    item0.Add( item33, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5 )
 
-    item31 = wx.Panel( parent, ID_PANGRIDFAT, wx.DefaultPosition, [1000,420], wx.SUNKEN_BORDER )
-    item31.SetName( "pangridfat" )
-    item0.Add( item31, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item34 = wx.Panel( parent, ID_PANGRIDFAT, wx.DefaultPosition, [1000,420], wx.SUNKEN_BORDER )
+    item34.SetName( "pangridfat" )
+    item0.Add( item34, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item32 = wx.FlexGridSizer( 0, 2, 0, 0 )
+    item35 = wx.FlexGridSizer( 0, 2, 0, 0 )
     
-    item33 = wx.Button( parent, ID_BUTPRT, "&Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
-    item33.SetName( "butprt" )
-    item32.Add( item33, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
+    item36 = wx.Button( parent, ID_BUTPRT, "&Lista", wx.DefaultPosition, wx.DefaultSize, 0 )
+    item36.SetName( "butprt" )
+    item35.Add( item36, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5 )
 
-    item32.AddGrowableCol( 1 )
+    item35.AddGrowableCol( 1 )
 
-    item0.Add( item32, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+    item0.Add( item35, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 
     item0.AddGrowableCol( 0 )
 
@@ -1814,7 +1834,7 @@ def FatturatoContabileClientiFornitFunc( parent, call_fit = True, set_sizer = Tr
     
     return item0
 
-ID_PANGRIDTSOG = 10129
+ID_PANGRIDTSOG = 10131
 
 def LiqIvaTotTipiSoggettiFunc( parent, call_fit = True, set_sizer = True ):
     item0 = wx.FlexGridSizer( 0, 1, 0, 0 )

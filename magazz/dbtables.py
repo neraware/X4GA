@@ -2508,8 +2508,8 @@ class DocMag(adb.DbTable):
         for mov in self.mov:
             if mov.id_aliqiva is not None:
                 if mov.iva.tipo == 'C':
-                    if regivatip != "A":
-                        raise Exception, "Impossibile usare l'aliquota %s, riservata agli acquisti intracomunitari, se il registro non e' di tipo Acquisti" % mov.iva.codice
+                    if regivatip != "A" and regivatip != "V":
+                        raise Exception, "Impossibile usare l'aliquota %s, riservata agli acquisti intracomunitari, se il registro non e' di tipo Acquisti o Vendite" % mov.iva.codice
                     cod = "ivaacqcee"
                     break
                 elif mov.iva.tipo == 'S':
